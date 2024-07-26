@@ -1,0 +1,61 @@
+{% extends template %}
+{% block content %}
+
+{% if user.questioncount.count|add:'0' < 20 %}
+<div id="alert" class="container" style="position: relative;;background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);position: absolute;margin: 100px auto;padding: 50px; width: 90%;height: 80vh;z-index: 99999;">
+    <button class="btn btn-secondary" style="position: absolute;top: 20px;right: 20px;" onclick="disable()"><i class="b bi-x"></i></button>
+    <h5 style="color: coral;font-size: 23px;"> Alert </h5>
+    <p style="color: cornflowerblue;font-size: 20px;">In our aim to make account approval absolutely free, you are required
+        to submit atleast 10 question on each 2 topics as assigned from your dashboard.Once submitted
+        we will review the questions approve your account and add a star to your rating.
+         NB You cannot be assigned learners unless you complete this step !!!
+    </p>
+    <small style="color: coral;">Questions Remaining  {{ user.questioncount.count|add:'-20' }}</small>
+  
+  </div>
+{% endif %}
+
+  <div class="container" style="margin-top: 130px;">
+
+    <!-- <a class="btn btn-primary">Schedule Session</a> -->
+    <br><br>
+    <ul class="list-group" style="border-radius: 10px !important;">
+        {% for session in sessions %}
+        {% if session.active %}
+        <a href="{% url 'session' session.id %}">
+          <li class="list-group-item" style="border-radius: 10px !important;border: 2px solid cornflowerblue;">
+            <h6 class="btn btn-outline-secondary">{{ session.subject }} {{ session.subject.grade }}</h6>
+            <br>
+            {% if user.role == 'Teacher' %}
+                <p>Session with {% for student in session.students.all %}  {{ student.personalprofile.get_names }}, {% endfor %} on {{ session.date }}</p>
+            {% else %}
+                <p>Session with {{ session.teacher }} on {{ session.date }}</p>
+            {% endif %}
+          </li>
+        </a>
+        {% else %}
+        <a href="{% url 'session' session.id %}">
+            <li class="list-group-item" style="border-radius: 10px !important;border: 0.1px solid coral;">
+              <h6 class="btn btn-outline-danger">{{ session.subject }} {{ session.subject.grade }}</h6>
+              <br>
+              {% if user.role == 'Teacher' %}
+                <p>Session with {% for student in session.students.all %}  {{ student.personalprofile.get_names }}, {% endfor %} on {{ session.date }}</p>
+              {% else %}
+                <p>Session with {{ session.teacher }} on {{ session.date }}</p>
+              {% endif %}
+            </li>
+          </a>
+        {% endif %}
+          <br>
+        {% endfor %}
+    </ul>
+
+</div>
+<script>
+    
+  
+  function disable() {
+    document.getElementById("alert").style.display ='none';
+  }
+</script>
+{% endblock %}

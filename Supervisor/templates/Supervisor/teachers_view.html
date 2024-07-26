@@ -1,0 +1,71 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+
+<div class="container">
+    <!-- <a href="{% url 'create-user' %}"><button class="btn btn-secondary">Add Teacher</button></a> -->
+
+    <br><br>
+    <form method="post">
+      {% csrf_token %}
+      <div class="input-group mb-3">
+          <input type="text" class="form-control" name="search" placeholder="search by name, email or admission" aria-label="Recipient's username" aria-describedby="button-addon2">
+          
+          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
+      </div>
+    </form>
+    
+
+    <table class="table" >
+        <thead>
+          <tr>
+            <th><h6>Name</h6></th>
+             <th><h6>Subjects</h6></th>
+            <th><h6>Rank</h6></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            {% for user in users %}
+            <tr>
+              <td><a href="{% url 'teacher-id' user.id %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.surname }} {{ user.personalprofile.l_name }}</h6></a></td>  
+             
+              <td>
+                {% for subject in user.teacherprofile.subject.all %}  
+
+                  <button class="btn btn-outline-secondary">{{ subject }}</button>
+                {% endfor %}
+              </td>
+              <td>{% with user|get_stars:1 as stars %}
+                  {% if stars %}
+                    {% for star in stars %}
+                    <i class="bi bi-star-fill" style="color: gold;"></i>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+              </td>
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+     </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

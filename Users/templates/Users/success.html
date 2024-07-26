@@ -1,0 +1,31 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+
+
+
+
+<div class="container" style="margin-top: 130px;">
+  {% if id %}
+    <h6 style="font-family: Dekko;">Verify Account</h6>
+
+    <p>An email has been sent to <strong style="color: cornflowerblue;">{{ id }}</strong>.
+         Click the link on the email to verify your account.
+          Note you cannot login to your account unless you verify.
+        If an account is not verified within 2 hrs the account is deleted!</p>
+
+  {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

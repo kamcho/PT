@@ -1,0 +1,83 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+
+    {% if not subjects %}
+    <br><br><br>
+    <form>
+        <div class="dropdown" style="padding-left:25px;">
+            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Grade {{ grade }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="{% url 'exams'  4  %}">4</a></li>
+                <li><a class="dropdown-item" href="{% url 'exams'  5  %}">5</a></li>
+                <li><a class="dropdown-item" href="{% url 'exams'  6  %}">6</a></li>
+                <li><a class="dropdown-item" href="{% url 'exams'  7  %}">7</a></li>
+            </ul>
+        </div>
+    </form>
+    {% else %}
+   
+    <div class="subject-select-content-container" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;">
+        <div class="container">
+            <a class="btn btn-primary" href="{% url 'overall-analytics' user.email user.academicprofile.current_class %}" style="position: absolute;top:90px;right: 7%;">Analytics</a>
+        </div>
+<!--        <div class="container">-->
+<!--            <br>-->
+<!--                <div>-->
+<!--                <a href=""><button class="btn btn-warning">Analytics</button></a>-->
+<!--                </div>-->
+<!--            </div>-->
+<br><br>
+<form class="container">
+    <div class="dropdown" style="padding-left:25px;">
+        <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Grade {{ grade }}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="{% url 'exams'  4  %}">4</a></li>
+            <li><a class="dropdown-item" href="{% url 'exams'  5  %}">5</a></li>
+            <li><a class="dropdown-item" href="{% url 'exams'  6  %}">6</a></li>
+            <li><a class="dropdown-item" href="{% url 'exams'  7  %}">7</a></li>
+        </ul>
+    </div>
+</form>
+
+        <div class="subjects-select-view" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;">
+
+            {% for subject in subjects %}
+                <a href="{% url 'exam-topic-id' subject.id %}">
+                    <div class="subject-select-card">
+                        <div class="">
+                            <h6><i class="bi bi-bookmark-plus"> </i> {{ subject }}.</h6>
+                            <small>Grade <span class="badge bg-secondary" > {{ subject.grade }}</span></small>
+                        </div>
+
+                        <div class="kid-exam-topics-card">
+                            <small class="text-muted">Topics</small><br>
+                            {% for topic in user|get_topics:subject.id %}
+
+                                <small>{{ topic.topic__name }}</small><br>
+                            {% endfor %}
+
+                        </div>
+                        <div class="kid-exam-progress-card">
+                            <small >Tests Done  <span class="badge bg-info" style="margin-left: 38px;">{{ user|get_test_count:subject.id }}</span></small>
+                    <br>
+                    <small >Topics Covered  <span class="badge bg-secondary" style="margin-left:12px;">{{ user|get_topic_count:subject.id }}</span></small>
+                    <br>
+                        </div>
+
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endif %}
+{% endblock %}

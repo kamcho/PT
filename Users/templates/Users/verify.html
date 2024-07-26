@@ -1,0 +1,33 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+
+
+
+
+<div class="container" style="margin-top: 130px;">
+    {% if user %}
+    <h6 style="font-family: Dekko;">Verify Account</h6>
+
+    <p>An email was sent to <strong style="color: cornflowerblue;">{{ user }}</strong>.
+         Click the link on the email to verify your account.
+            <strong><small style="color: coral;">NOTE</small> if this is not your email click cancel</strong>
+        </p>
+
+
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-primary" name="verify" id="verify">Verify</button>
+    <button class="btn btn-danger" style="margin-left: 60px;">Cancel</button>
+</form>
+
+
+{% endif %}
+
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends template %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="subject-select-content-container" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;">
+    <br><br>
+<form class="container">
+    <div class="dropdown" style="padding-left:25px;">
+        <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Grade {{ grade }}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="{% url 'overall-analytics' mail 4 %}">4</a></li>
+            <li><a class="dropdown-item" href="{% url 'overall-analytics' mail 5 %}">5</a></li>
+            <li><a class="dropdown-item" href="{% url 'overall-analytics' mail 6 %}">6</a></li>
+            <li><a class="dropdown-item" href="{% url 'overall-analytics' mail 7 %}">7</a></li>
+        </ul>
+    </div>
+</form>
+    
+        {% if subjects %}
+        
+            
+        <div class="subjects-select-view">
+            {% for subject in subjects %}
+            <div class="subject-select-card">
+
+            <a href="{% url 'subject-analysis' mail subject.id %}"><h6 class="p-tx"><i class="bi bi-bookmark-plus"></i> {{ subject }} </h6></a>
+                <small style="padding:10px;" >Tests Done {{ mail|get_total_test:subject.id }} <span class="badge bg-info" style="margin-left: 30px;">{{ test.subject_count }}</span></small>
+                <br>
+
+
+    <br>
+            <div class="kid-in-card">
+                
+                <small class="text-muted">progress</small><br>
+
+                <small >Correct Answers  <span class="badge bg-secondary" style="margin-left:47px;">{{ mail|get_total_correct:subject.id }}</span></small>
+                <br>
+                <small >Attempted Questions  <span class="badge bg-secondary" style="margin-left:14px;">{{ mail|get_total:subject.id }}</span></small>
+
+                <br>
+                <br>
+
+
+
+                {% with mail|get_accuracy:subject.id as accuracy  %}
+                <div class="progress" style="width: 80%;">
+                    <div class="progress-bar" role="progressbar" style="background-color: purple;width: {{ accuracy }}%;" aria-valuemin="0" > {{ accuracy }} %</div>
+                </div>
+                {% endwith %}
+                
+            </div>
+
+
+        </div>
+
+            {% endfor %}
+
+
+        </div>
+
+{% endif %}
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+{% with marks=child|subject_analytics_marks:test.subject__id  %}
+                {% with size=child|subject_analytics_size:test.subject__id  %}
+                <small class="text-muted">progress</small><br>
+
+                <small >Total Marks  <span class="badge bg-secondary" style="margin-left:27px;">{{ marks }}</span></small>
+                <br>
+                <small >Overall Marks  <span class="badge bg-secondary" style="margin-left:14px;">{{ size }}</span></small>
+
+                <br>
+                <br>
+
+
+
+
+                <div class="progress" style="width: 80%;">
+                    <div class="progress-bar" role="progressbar" style="background-color: purple;" aria-valuemin="0" >{{ marks|divide:size }} %</div>
+                </div>
+                    {% endwith %}
+                {% endwith %}

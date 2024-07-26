@@ -1,0 +1,75 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+{% if user.questioncount.count|add:'0' < 20 %}
+<div id="alert" class="container" style="position: relative;;background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);position: absolute;margin: 100px auto;padding: 50px; width: 90%;height: 80vh;z-index: 99999;">
+    <button class="btn btn-secondary" style="position: absolute;top: 20px;right: 20px;" onclick="disable()"><i class="b bi-x"></i></button>
+    <h5 style="color: coral;font-size: 23px;"> Alert </h5>
+    <p style="color: cornflowerblue;font-size: 20px;">In our aim to make account approval absolutely free, you are required
+        to submit atleast 10 question on each 2 topics as assigned from your dashboard.Once submitted
+        we will review the questions approve your account and add a star to your rating.
+         NB You cannot be assigned learners unless you complete this step !!!
+    </p>
+    <small style="color: coral;">Questions Remaining  {{ user.questioncount.count|add:'-20' }}</small>
+  
+  </div>
+{% endif %}
+
+{% if not classes %}
+
+
+{% else %}
+<div class="subject-select-content-continer" style="background-color: aliceblue;height: 100vh;">
+<div class="">
+
+    <div class="subjects-select-view" style="background-color: aliceblue;">
+    {% for class in classes %}
+        <div class="subject-select-card">
+            <a href="{% url 'class-task-view-select' class.id %}"><h6><i class="bi bi-bookmark"></i> {{ class.subject }} </h6></a>
+            <small><i class="bi bi-gear"> </i> Grade <span class="badge bg-info text-light">{{ class.subject.grade }}</span></small>
+            <br>
+            <br>
+            <div class="subject-select-in-card">
+
+             <small ><i class="bi bi-bookmark"></i>
+                        {{ class.subject }}
+             </small>
+            <br>
+            <small><i class="bi bi-person-circle"></i>  {{ class.students.count }} Student|s</small>
+        </div>
+        <br>
+    </div>
+
+{% endfor %}
+
+    </div>
+</div>
+
+</div>
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    
+  
+    function disable() {
+      document.getElementById("alert").style.display ='none';
+    }
+  </script>
+
+
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends template %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+<div style="margin-top: 90px;padding: 60px;">
+
+    
+<div class="two">
+    <div class="trc-pic">
+        <img class="trc-pic" src="{% static 'Users/zara.png'  %}">
+
+    </div>
+
+    <div class="io">
+        <h6 style="font-size: 22px;color: cornflowerblue;">{{ teacher.personalprofile.get_names|title }}</h6>
+        {% if user == teacher %}
+            <a href="{% url 'update-profile' user.email %}" class="btn btn-secondary">Edit Profile</a>
+        {% endif %}
+        <br><br>
+        <div>
+            <h6>BIO</h6>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex nisi voluptas maxime saepe
+                 molestiae doloremque, cumque placeat! Voluptates quasi,
+                 sapiente corporis harum vero consequuntur deleniti quos quidem unde quisquam natus.</p>
+        </div>
+
+        <subjects>
+            <h6>Subjects</h6>
+            {% for subject in teacher.teacherprofile.subject.all %}
+              <div >
+                <h6 class="btn btn-outline-secondary">{{ subject }}</h6>
+                <br>
+                
+              </div>
+              <br>
+              
+            {% endfor %}
+        </subjects>
+        <small>Rank</small><br>
+        {% with teacher|get_stars:1 as stars %}
+            {% if stars %}
+            {% for star in stars %}
+                <i class="bi bi-star-fill" style="color: gold;"></i>
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <br><br>
+        
+        <a class="btn btn-primary" href=""><i class="bi bi-heart"></i> Add as My Teacher</a>
+    </div>
+
+</div>
+<hr>
+
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock %}

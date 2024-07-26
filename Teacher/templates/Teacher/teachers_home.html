@@ -1,0 +1,90 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+<div class="subject-select-content-container">
+        {% if user.questioncount.count|add:'0' < 20 %}
+<div id="alert" class="container" style="position: relative;;background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);position: absolute;margin: 100px auto;padding: 50px; width: 90%;height: 80vh;z-index: 99999;">
+    <button class="btn btn-secondary" style="position: absolute;top: 20px;right: 20px;" onclick="disable()"><i class="b bi-x"></i></button>
+    <h5 style="color: coral;font-size: 23px;"> Alert </h5>
+    <p style="color: cornflowerblue;font-size: 20px;">In our aim to make account approval absolutely free, you are required
+        to submit atleast 10 question on each 2 topics as assigned from your dashboard.Once submitted
+        we will review the questions approve your account and add a star to your rating.
+         NB You cannot be assigned learners unless you complete this step !!!
+    </p>
+    <small style="color: coral;">Questions Remaining  {{ user.questioncount.count|add:'-20' }}</small>
+  
+  </div>
+{% endif %}
+<br><br><br>
+
+<div class="subjects-select-view">
+
+<a href="{% url 'my-classes' %}">
+        <div class="subject-select-card">
+
+                <h6><i class="bi bi-houses">  </i>My Classes</h6>
+                <br>
+                <div class="card-in-card">
+<!--                    {% for class in classes %}-->
+<!--                        <small><i class="bi bi-house"></i> {{ class.class_id }}</small>-->
+<!--                    {% endfor %}-->
+                    <small>View the classes you teach. Remember to always update your classes upon changes.</small>
+                </div>
+
+        </div>
+        </a>
+
+        <a href="{% url 'my-classes' %}">
+        <div class="subject-select-card">
+                <h6><i class="bi bi-spellcheck">  </i>Class Tests</h6>
+                <br>
+                <div class="card-in-card">
+                        <small>View manage and update tests you have created. You can also view
+                        the students performance from here.</small>
+                </div>
+        </div>
+
+        </a>
+
+        <a  style="opacity: .4;">
+        <div class="subject-select-card">
+                <h6><i class="bi bi-graph-up">  </i>Analytics</h6>
+                <br>
+                <div class="card-in-card">
+                        <small>Your perfomance analytics are currently not available.</small>
+                </div>
+        </div>
+                </a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+<script>
+    
+  
+        function disable() {
+          document.getElementById("alert").style.display ='none';
+        }
+      </script>
+
+
+{% endblock %}

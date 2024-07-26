@@ -1,0 +1,13 @@
+whitenoise==6.6.0
+uuid==1.30
+channels==4.0.0
+crispy-bootstrap4==2023.1
+daphne==4.0.0
+Django==4.2.3
+django-allauth==0.60.1
+django-crispy-forms==2.1
+ElasticEmail==4.0.23
+mysqlclient==2.2.1
+openai==1.14.3
+Pillow==10.1.0
+psycopg2-binary==2.9.9

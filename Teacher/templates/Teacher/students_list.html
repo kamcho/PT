@@ -1,0 +1,32 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<br><br><br>
+    <div class="bg-gradiet" style="color: whte;">
+        <br><br><br>
+        {% if not students %}
+        {% else %}
+
+        <div class="container" >
+            <h6></h6>
+        {% for student in students %}
+        <div>
+            <h6><a href="{% url 'students-profile' student.id %}" style="color: rgb(8, 8, 8) !important;">{{ forloop.counter }}. <i class="bi bi-person"></i> {{ student.personalprofile.get_names }}</a></p></h6>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+{% endif %}
+
+
+{% endblock %}

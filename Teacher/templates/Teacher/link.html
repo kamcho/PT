@@ -1,0 +1,27 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+  <div class="container" style="margin-top: 130px;">
+
+    <p>Select the subject you want Trc. {{ teacher.personalprofile.get_names }} to teach.</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <select class="form-select" required name="subject">
+        <option></option>
+        {% for subject in teacher.teacherprofile.subject.all %}
+          <option value="{{ subject.id }}">{{ subject }} {{ subject.grade }}</option>
+        {% endfor %}
+      </select>
+      <br>
+
+
+      <button class="btn btn-primary">Add Teacher</button>
+      </form>
+
+  </div>
+
+
+  {% endblock %}
