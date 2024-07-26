@@ -1,4 +1,3 @@
-from click import prompt
 from django.db import models
 import uuid
 from Users.models import MyUser

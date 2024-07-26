@@ -1,4 +1,3 @@
-from email.policy import default
 import uuid
 
 from django.contrib.contenttypes.fields import GenericForeignKey
