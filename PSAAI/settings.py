@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'http://kevinnjoroge.pythonanywhere.com']
-CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46",'https://189c-41-81-190-96.ngrok-free.app','http://kevinnjoroge.pythonanywhere.com']
+ALLOWED_HOSTS = ['*', 'kevin254.pythonanywhere.com']
+CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46",'https://189c-41-81-190-96.ngrok-free.app','kevin254.pythonanywhere.com']
 # SITE_ID = 2
 # Application definition
 
@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount',
     # 'allauth.socialaccount.providers.google',
     'crispy_forms',
-    'rest_framework',
     'Users',
     'SubjectList',
     'Exams',
