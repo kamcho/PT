@@ -306,9 +306,11 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
                     'model': 'DatabaseError',
                 }
             )
+            return redirect('logout')
         finally:
 
             # If a user has not updated their profile redirect them to profile editing page
+         
             if f_name == '':
                 return redirect('edit-profile')
             else:
