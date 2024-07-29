@@ -28,6 +28,8 @@ class TeacherRanking(models.Model):
     
 
     
+
+    
 class StudentList(models.Model):
     user = models.ForeignKey(MyUser, related_name='teacher_user', on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
