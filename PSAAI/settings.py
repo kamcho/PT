@@ -108,19 +108,19 @@ WSGI_APPLICATION = 'PSAAI.wsgi.application'
 
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / "mydatabase.sqlite3",
-    # }
-
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tutor',      # Database name
-        'USER': 'root',  # Your MySQL username
-        'PASSWORD': '',  # Your MySQL password
-        'HOST': 'localhost',  # Or your IP address if MySQL server is on a different host
-        'PORT': '3306',       # MySQL default port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "mydatabase.sqlite3",
     }
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'tutor',      # Database name
+    #     'USER': 'root',  # Your MySQL username
+    #     'PASSWORD': '',  # Your MySQL password
+    #     'HOST': 'localhost',  # Or your IP address if MySQL server is on a different host
+    #     'PORT': '3306',       # MySQL default port
+    # }
 }
 
 
