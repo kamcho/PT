@@ -293,7 +293,20 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
-            
+            logger.critical(
+                error_message,
+                exc_info=True,  # Include exception info in the log message
+                extra={
+                    'app_name': __name__,
+                    'url': self.request.get_full_path(),
+                    'school': settings.SCHOOL_ID,
+                    'error_type': error_type,
+                    'user': self.request.user,
+                    'level': 'Warning',
+                    'model': 'DatabaseError',
+                }
+            )
+            f_name = None
         finally:
             print(f_name, 'djklfnf/n/n/n/n')
 

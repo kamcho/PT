@@ -151,6 +151,10 @@ class Grade(models.Model):
 
     def __str__(self):
         return str(self.grade)
+    
+    class Meta:
+        db_table = 'users_grade'  # Custom table name
+        managed = False
 
 class AcademicProfile(models.Model):
 
@@ -159,6 +163,10 @@ class AcademicProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+    
+    class Meta:
+        db_table = 'users_academicprofile'  # Custom table name
+        managed = False
     
 class PersonalProfile(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
@@ -181,4 +189,8 @@ class PersonalProfile(models.Model):
             return first + ' ' + last+ '.' + ' '+surname
         else:
             return self.user
+        
+    class Meta:
+        db_table = 'users_personalprofile'  # Custom table name
+        managed = False
     
