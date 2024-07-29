@@ -17,6 +17,10 @@ class TeacherProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
+    class Meta:
+        db_table = 'teacher_teacherprofile'  # Custom table name
+        managed = False
 
 class TeacherRanking(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
@@ -26,6 +30,10 @@ class TeacherRanking(models.Model):
     def __str__(self):
         return str(self.user)
     
+    class Meta:
+        db_table = 'teacher_teacherranking'  # Custom table name
+        managed = False
+    
 
     
 
@@ -34,6 +42,10 @@ class StudentList(models.Model):
     user = models.ForeignKey(MyUser, related_name='teacher_user', on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     students = models.ManyToManyField(MyUser, related_name='students')
+
+    class Meta:
+        db_table = 'teacher_studentlist'  # Custom table name
+        managed = False
 
    
 
@@ -52,6 +64,9 @@ class SessionBooking(models.Model):
 
     def __str__(self):
         return str(self.teacher)
+    class Meta:
+        db_table = 'teacher_sessionbooking'  # Custom table name
+        managed = False
     
     def active(self):
         now = timezone.now()

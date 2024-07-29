@@ -17,8 +17,16 @@ class Updates(models.Model):
     def __str__(self):
         return str(self.title)
     
+    class Meta:
+        db_table = 'supervisor_updates'  # Custom table name
+        managed = False
+    
 class FileModel(models.Model):
     file = models.FileField(upload_to='gallery/')  # Choose your upload_to path
+
+    class Meta:
+        db_table = 'supervisor_filemodel'  # Custom table name
+        managed = False
 
 
 class QuestionCount(models.Model):
@@ -33,6 +41,10 @@ class QuestionCount(models.Model):
     def __str__(self):
         return str(self.user)
     
+    class Meta:
+        db_table = 'supervisor_questioncount'  # Custom table name
+        managed = False
+    
 
 class QuizAssignment(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
@@ -40,6 +52,10 @@ class QuizAssignment(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
+    class Meta:
+        db_table = 'supervisor_quizassignment'  # Custom table name
+        managed = False
 
 class Inquire(models.Model):
     date = models.DateField(auto_now=True)
@@ -49,3 +65,7 @@ class Inquire(models.Model):
 
     def __str__(self):
         return str(self.names)
+    
+    class Meta:
+        db_table = 'supervisor_inquire'  # Custom table name
+        managed = False

@@ -25,3 +25,7 @@ class LogEntry(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - {self.error_type}: {self.message}"
+    
+    class Meta:
+        db_table = 'logs_logentry'  # Custom table name
+        managed = False

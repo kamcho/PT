@@ -14,6 +14,10 @@ class Subscriptions(models.Model):
 
     def __str__(self):
         return str(self.type)
+    
+    class Meta:
+        db_table = 'subscription_subscriptions'  # Custom table name
+        managed = False
 
 
 class MySubscription(models.Model):
@@ -26,6 +30,10 @@ class MySubscription(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
+    class Meta:
+        db_table = 'subscription_mysubscription'  # Custom table name
+        managed = False
 
     def active(self):
         today = datetime.date.today()
@@ -52,6 +60,10 @@ class StripeCardPayments(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
+    class Meta:
+        db_table = 'subscription_stripecardpayments'  # Custom table name
+        managed = False
 
 
 class MpesaPayments(models.Model):
@@ -68,6 +80,10 @@ class MpesaPayments(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
+    class Meta:
+        db_table = 'subscription_mpesapayments'  # Custom table name
+        managed = False
 
 
 class PendingPayment(models.Model):
@@ -79,3 +95,4 @@ class PendingPayment(models.Model):
 
     def __str__(self):
             return str(self.user)
+    
