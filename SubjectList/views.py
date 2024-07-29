@@ -18,7 +18,7 @@ from django.utils import timezone
 from openai import OpenAI
 import openai
 
-from Exams.models import ClassTest, ClassTestStudentTest, StudentTest
+from Exams.models import ClassTest, ClassTestStudentTest, StudentTest, TopicalQuizes
 from SubjectList.models import Completion, Prompt, RateLimiter, Subject, Subtopic, Progress, TopicExamNotifications, Topic, TopicalExamResults, Course, \
      AccountInquiries
 # from Teacher.models import ClassTestNotifications
@@ -459,6 +459,252 @@ class Read(LoginRequiredMixin, TemplateView):
             return redirect('student-home')
 
         return context
+
+
+class SubtopicInfo(LoginRequiredMixin, TemplateView):
+    template_name = 'SubjectList/subtopic_info.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        choose preferred media type for reading for reading.
+        Args:
+            (str): The name of the subtopic.
+            (str): The name of the topic.
+
+        Returns:
+            dict: A dictionary containing context data for the template.
+        """
+        context = super().get_context_data(**kwargs)
+        try:
+            subtopic = self.kwargs.get('subtopic')
+            subtopic = Subtopic.objects.get(id=subtopic)
+            context['subtopic'] = subtopic
+            quizes = TopicalQuizes.objects.filter(subtopic=subtopic).order_by('?')
+            if quizes.count() >= 10:
+                context['size'] = 10
+                if subtopic.subject.name == 'Mathematics':
+                    context['time'] = 30
+                else:
+                    context['time'] = 25
+            else:
+                context['size'] = quizes.count()
+                if subtopic.subject.name == 'Mathematics':
+                    context['time'] = round(quizes.count() * 3)
+                else:
+                    context['time'] = round(quizes.count() * 2.5)
+                
+
+            
+        except:
+            messages.error(self.request, 'An error occured. DO NOT EDIT URL!!!')
+
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            user = request.user
+            duration = self.get_context_data().get('time')
+            test_size = self.get_context_data().get('size')
+            subtopic = self.get_context_data().get('subtopic')
+
+            try:
+
+                test = StudentTest.objects.create(
+                    user=user,
+                    subject=subtopic.subject,
+                    # uuid=test_uuid,
+                    topic=subtopic.topic,
+                    test_size=test_size,
+                    duration=duration
+                )
+
+                # Retrieve and add a set of quizzes to the test
+                quizzes = TopicalQuizes.objects.filter(subtopic=subtopic).order_by('?')[:test_size]
+                test.quiz.add(*quizzes)
+                
+                self.request.session['test_mode'] = 'test_mode'
+                
+                
+                subject = subtopic.subject
+                topic = subtopic.topic
+                # Redirect to the 'tests' view with appropriate arguments
+                about = f'{subject}: {topic} test quiz is ready.'
+                message = f'The quiz for {topic}  is now ready. This test is designed to test your understanding in this topic and all its subtopics. Once started, the quiz will finish in 15 minutes. ' \
+                          'Good luck.'
+
+                # Check if user's progress already exists for the subtopic
+                my_progress = Progress.objects.filter(user=user, topic=topic)
+                is_progress = my_progress.filter(subtopic=subtopic)
+
+                if my_progress:
+                    if is_progress:
+                        messages.success(request, 'Your progress has been successfully saved.')
+                    else:
+                        try:
+                            # Create a new progress record
+                            messages.success(request, 'Your progress has been successfully saved')
+                            progress = Progress.objects.get(user=user, topic=topic, subject=subject)
+
+                            progress.subtopic.add(subtopic)
+                            progress.save()
+                        except Exception as e:
+                            # Handle IntegrityError (duplicate progress)
+                            messages.error(request, "Oops! That didn't work. Please try again. "
+                                                    "If the problem persists, please contact the admin!")
+                            error_message = str(e)  # Get the error message as a string
+                            error_type = type(e).__name__
+
+                            logger.critical(
+                                error_message,
+                                exc_info=True,  # Include exception info in the log message
+                                extra={
+                                    'app_name': __name__,
+                                    'url': self.request.get_full_path(),
+                                    'school': settings.SCHOOL_ID,
+                                    'error_type': error_type,
+                                    'user': self.request.user,
+                                    'level': 'Critical',
+                                    'model': 'Progress',
+                                }
+                            )
+                            return redirect(request.get_full_path())
+
+                        # Check if all subtopics are completed
+                        total_topics = topic.topics_count
+                        all_subtopics = my_progress.values('subtopic').distinct().count()
+                        if all_subtopics == int(total_topics):
+                            try:
+                                # Create a notification for completed topic. this notification will be used to create
+                                # Topical Tests.
+                                notification = TopicExamNotifications.objects.create(user=user, about=about,
+                                                                                     notification_type='topical-quiz',
+                                                                                     subject=subject, message=message,
+                                                                                     topic=topic,
+                                                                                     date=timezone.now())
+                                messages.success(self.request, f'You have completed {topic}, Take the topical assesment test from the Exam panel.')
+
+                                # Compose email body
+                                body = f"Dear {user.personalprofile.f_name}, We are thrilled to congratulate you on " \
+                                       f"successfully completing the {topic} in {subject}! Your dedication and hard work " \
+                                       f"are truly commendable, and we applaud your commitment to your studies. To " \
+                                       f"further enhance your understanding and mastery of the topic, " \
+                                       f"we have prepared a tailored test exclusively for you. This test is designed to " \
+                                       f"challenge your knowledge and reinforce your grasp of the concepts covered in {topic}" \
+                                       f"and identify areas for further improvement. Your results will provide valuable " \
+                                       f"insights into your progress and guide your learning journey." \
+                                       f"If you have any questions or encounter any issues," \
+                                       f"please feel free to reach out to our support team, and" \
+                                       f"we will be more than happy to assist you. Keep up the great work, and we look" \
+                                       f"forward to your continued success in your studies! \n"
+
+                                # Send email
+                                # send_mail(user=user.email, subject=about, body=body)
+                            except Exception as e:
+                                # Handle IntegrityError during notification creation
+                                messages.error(request, 'Sorry, we could not complete your request. If the problem '
+                                                        'persists, please contact the @support')
+                                error_message = str(e)  # Get the error message as a string
+                                error_type = type(e).__name__
+
+                                logger.critical(
+                                    error_message,
+                                    exc_info=True,  # Include exception info in the log message
+                                    extra={
+                                        'app_name': __name__,
+                                        'url': self.request.get_full_path(),
+                                        'school': settings.SCHOOL_ID,
+                                        'error_type': error_type,
+                                        'user': self.request.user,
+                                        'level': 'Critical',
+                                        'model': 'TopicExamNotifications',
+                                    }
+                                )
+                                return redirect(request.get_full_path())
+                else:
+                    try:
+                        # Create a new progress record
+                        messages.success(request, 'Your progress has been successfully saved')
+                        progress = Progress.objects.create(user=user, subject=subject)
+                        progress.topic.add(topic)
+                        progress.subtopic.add(subtopic)
+                        progress.save()
+                    except Exception as e:
+                        # Handle IntegrityError (duplicate progress)
+                        messages.error(request, "Oops! That didn't work. Please try again. "
+                                                "If the problem persists, please contact the admin!")
+                        error_message = str(e)  # Get the error message as a string
+                        error_type = type(e).__name__
+
+                        logger.critical(
+                            error_message,
+                            exc_info=True,  # Include exception info in the log message
+                            extra={
+                                'app_name': __name__,
+                                'url': self.request.get_full_path(),
+                                'school': settings.SCHOOL_ID,
+                                'error_type': error_type,
+                                'user': self.request.user,
+                                'level': 'Critical',
+                                'model': 'Progress',
+                            }
+                        )
+                        return redirect(request.get_full_path())
+
+                    # Check if all subtopics are completed
+                    total_topics = topic.topics_count
+                    all_subtopics = my_progress.values('subtopic').distinct().count()
+                    if all_subtopics == int(total_topics):
+                        try:
+                            # Create a notification for completed topic. this notification will be used to create
+                            # Topical Tests.
+                            notification = TopicExamNotifications.objects.create(user=user, about=about,
+                                                                                 notification_type='topical-quiz',
+                                                                                 subject=subject, message=message,
+                                                                                 topic=topic,
+                                                                                 date=timezone.now())
+
+                            # Compose email body
+                            body = f"Dear {user.personalprofile.f_name}, We are thrilled to congratulate you on " \
+                                   f"successfully completing the {topic} in {subject}! Your dedication and hard work " \
+                                   f"are truly commendable, and we applaud your commitment to your studies. To " \
+                                   f"further enhance your understanding and mastery of the topic, " \
+                                   f"we have prepared a tailored test exclusively for you. This test is designed to " \
+                                   f"challenge your knowledge and reinforce your grasp of the concepts covered in {topic}" \
+                                   f"and identify areas for further improvement. Your results will provide valuable " \
+                                   f"insights into your progress and guide your learning journey." \
+                                   f"If you have any questions or encounter any issues," \
+                                   f"please feel free to reach out to our support team, and" \
+                                   f"we will be more than happy to assist you. Keep up the great work, and we look" \
+                                   f"forward to your continued success in your studies! \n"
+
+                            # Send email
+                            send_mail(user=user.email, subject=about, body=body)
+                        except Exception as e:
+                            # Handle IntegrityError during notification creation
+                            messages.error(request, 'Sorry, we could not complete your request. If the problem '
+                                                    'persists, please contact the @support')
+                            error_message = str(e)  # Get the error message as a string
+                            error_type = type(e).__name__
+
+                            logger.critical(
+                                error_message,
+                                exc_info=True,  # Include exception info in the log message
+                                extra={
+                                    'app_name': __name__,
+                                    'url': self.request.get_full_path(),
+                                    'school': settings.SCHOOL_ID,
+                                    'error_type': error_type,
+                                    'user': self.request.user,
+                                    'level': 'Critical',
+                                    'model': 'TopicExamNotifications',
+                                }
+                            )
+                
+                return redirect('tests', 'Topical', test.uuid)
+            except:
+                messages.error(self.request, 'An error occured. @contact support')
+                return redirect(self.request.get_full_path())
+
 
 
 class MediaSelect(LoginRequiredMixin, TemplateView):

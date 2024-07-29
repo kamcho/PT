@@ -1,5 +1,5 @@
 from django.urls import path
-from SubjectList.views import AskAi, CreateCourse, Learning, ManageCourse, ManageSubTopic, ManageSubject, ManageTopic, Tests, MediaSelect, Read, Assignment, Finish, AssignmentDetail, Syllabus, Messages, MyProgress, \
+from SubjectList.views import AskAi, CreateCourse, Learning, ManageCourse, ManageSubTopic, ManageSubject, ManageTopic, SubtopicInfo, Tests, MediaSelect, Read, Assignment, Finish, AssignmentDetail, Syllabus, Messages, MyProgress, \
     ContactUs
 from .import views
 urlpatterns = [
@@ -10,6 +10,8 @@ urlpatterns = [
     path('<str:uuid>/Assignment-Lobby', AssignmentDetail.as_view(), name='assignment-lobby'),
     path('Save/<str:topic> /<str:subtopic>/Save-Progress/', Finish.as_view(), name='save-progress'),
     path('<str:subject_id>/Syllabus-Coverage/', Syllabus.as_view(), name='syllabus'),
+    path('<str:subtopic>/Objectives/', SubtopicInfo.as_view(), name='subtopic-info'),
+    
     path('<str:topic>/<str:subtopic>/Media-Select/', MediaSelect.as_view(), name='media' ),
     path('Notifications/', Messages.as_view(), name='notifications'),
     path('Grade-<str:grade>/Learning-Progress', MyProgress.as_view(), name='progress'),

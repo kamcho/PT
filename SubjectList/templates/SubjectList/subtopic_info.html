@@ -1,0 +1,43 @@
+{% extends 'Users/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+
+<br><br><br>
+<div class="container">
+
+<h5>{{ subtopic.subject }} - {{ subtopic.subject.grade }}</h5>
+<h6>{{ subtopic.topic.name }}</h6>
+<p>{{ subtopic }}</p>
+
+<p>We have scheduled a test on the subtopic {{ subtopic }}.
+     The purpose of this test is to evaluate your grasp of the material
+    and identify areas where further improvement may be needed. Additional
+    information about the test is provided below.
+</p>
+
+<h6>Time {{ time }} minutes</h6>
+<h6>Questions {{ size }}</h6>
+
+<h6><strong>NB. Upon completing all test on subtopics in {{ subtopic.topic.name }}, youll be provided with a final test !! </strong></h6>
+
+
+<br><br>
+
+
+<form method="post">
+    {% csrf_token %}
+    <strong>A test once started cannot be stopped</strong>
+    <br>
+    <button class="btn btn-danger" style="width: 100px;">Start</button>
+
+</form>
+
+
+</div>
+
+
+{% endblock %}

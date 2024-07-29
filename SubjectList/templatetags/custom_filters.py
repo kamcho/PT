@@ -363,7 +363,7 @@ def get_topic_count(user, subject):
 
 @register.filter
 def get_correct_choice(quiz):
-    correct_choice = TopicalQuizAnswers.objects.get(quiz__quiz=quiz, is_correct=True)
+    correct_choice = TopicalQuizAnswers.objects.get(quiz__id=quiz, is_correct=True)
 
     return correct_choice.choice
 
