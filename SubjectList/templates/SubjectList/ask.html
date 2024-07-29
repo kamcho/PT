@@ -1,8 +1,7 @@
 {% extends 'Users/base.html' %}
 {% load custom_filters %}
 {% block content %}
-<br><br>
-<div class="subject-select-content-" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;height: 100vh;">
+<div  style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;height: 80vh;margin-top: 60px;">
     <br><br>
     <div class="container chat">
         
@@ -26,7 +25,6 @@
                     <input type="text" class="form-control" placeholder="You have finished your allocated tokens. Contact support for assistance!" id="chat-input" disabled>
                 {% endif %}
                 <button type="button" id="gpt-button" class="btn btn-primary" style="border-radius: 10px;">Ask AI</button>
-                <button type="button" id="upload-image-button" class="btn btn-secondary" style="border-radius: 10px;">Upload Image</button>
             </div>
         </div>
     </div>
@@ -88,7 +86,7 @@
                 success: function(data) {
                     // Display AI's response in the chat interface
                     let html_ai_response = `
-                        <div href="#" class="ai">
+                        <div href="#" class="ai" >
                             <h6><i class='bi bi-robot'></i> Robo AI</h6>
                             <div class="d-flex gap-2 w-100 justify-content-between">
                                 <div>
@@ -97,6 +95,8 @@
                             </div>
                             <br><br>
                             <h6 class='play'><i class='bi bi-play-circle'></i></h6>
+                        </div>
+                        <div style="margin-bottom:80px;">
                         </div>
                     `;
                     $("#list-group").append(html_ai_response);

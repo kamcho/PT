@@ -706,6 +706,9 @@ tr:nth-child(even) {
         height: fit-content;
         margin: 60px auto;
     }
+    .three{
+      grid-template-columns: repeat(2,.7fr);
+    }
     .event-card{
         margin: 15px auto !important;
     }
@@ -735,6 +738,12 @@ tr:nth-child(even) {
         background-color:rgba(29, 25, 46, .8);
 
     
+    }
+    .main-body{
+      margin-top: 60px;
+    }
+    .three{
+      display: inline;
     }
     .event-view{
         display: inline;

@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'kevin254.pythonanywhere.com']
-CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46",'https://189c-41-81-190-96.ngrok-free.app','kevin254.pythonanywhere.com']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46"]
 # SITE_ID = 2
 # Application definition
 
@@ -108,19 +108,19 @@ WSGI_APPLICATION = 'PSAAI.wsgi.application'
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "mydatabase.sqlite3",
-    }
-
     # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'tutor',      # Database name
-    #     'USER': 'root',  # Your MySQL username
-    #     'PASSWORD': '',  # Your MySQL password
-    #     'HOST': 'localhost',  # Or your IP address if MySQL server is on a different host
-    #     'PORT': '3306',       # MySQL default port
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / "mydatabase.sqlite3",
     # }
+
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tutor',      # Database name
+        'USER': 'root',  # Your MySQL username
+        'PASSWORD': '',  # Your MySQL password
+        'HOST': 'localhost',  # Or your IP address if MySQL server is on a different host
+        'PORT': '3306',       # MySQL default port
+    }
 }
 
 
