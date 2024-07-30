@@ -179,7 +179,7 @@ class TopicExamNotifications(Notifications):
         return str(self.user)
     
     class Meta:
-        db_table = 'subjectlist_topicexamnotification'  # Custom table name
+        db_table = 'subjectlist_topicexamnotifications'  # Custom table name
         managed = False
 
 
