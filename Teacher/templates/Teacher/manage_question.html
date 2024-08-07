@@ -17,13 +17,13 @@
           {% for choice in choices %}
             {% if choice.is_correct %}
             <div class="form-floating" style="color: green;">
-                <input class="form-control" placeholder="quiz" name="choice" value="{{ choice.choice }}" style="color: green;">
+                <input class="form-control" placeholder="quiz" name="correct" value="{{ choice.choice }}" style="color: green;">
                 <label for="floatingTextarea">Correct</label>
             </div>
             <br>
             {% else %}
             <div class="form-floating">
-                <input class="form-control" placeholder="quiz" name="choice" value="{{ choice.choice }}" style="color: coral;">
+                <input class="form-control" placeholder="quiz" name="choices" value="{{ choice.choice }}" style="color: coral;">
                 <label for="floatingTextarea" style="color: crimson;">False</label>
             </div>
             <br>
@@ -35,7 +35,9 @@
         <!-- <button class="btn btn-info" name="delete">Update</button> -->
         {% if user.role == 'Supervisor' %}
          <button class="btn btn-danger" name="delete">Delete</button>
+         <button class="btn btn-primary" name="update">Update</button>
          {% else %}
+         <button class="btn btn-primary" name="update">Update</button>
          <button class="btn btn-danger" name="delete" >Delete</button>
         {% endif %}
 

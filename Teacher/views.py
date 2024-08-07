@@ -1394,6 +1394,30 @@ class ManageQuestion(LoginRequiredMixin, TemplateView):
                 dlete = self.get_context_data().get('quiz')
                 dlete.delete()
                 messages.success(self.request, 'SUCCESS!')
+            else:
+                quiz = self.get_context_data().get('quiz')
+                choices = self.get_context_data().get('choices')
+
+                quiz1 = self.request.POST.get('quiz')
+                right = self.request.POST.get('correct')
+                choicelist = self.request.POST.getlist('choices')
+       
+                
+
+                quiz.quiz = quiz1
+                quiz.save()
+                correct = choices.get(is_correct=True)
+                correct.choice = right
+                correct.save()
+                wrong = choices.filter(is_correct=False)
+                index = 0
+                for ans in wrong:
+                    ans.choice = choicelist[index]
+                    ans.save()
+                    index = index + 1
+                messages.success(self.request, 'Update was a success')
+                return redirect(self.request.get_full_path())
+
 
 
         return redirect('questions',dlete.subject.id)
