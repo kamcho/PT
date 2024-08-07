@@ -38,7 +38,7 @@
             <div>
                 <select class="form-select" aria-label="Default select example" id="subscription" name="subscription" required>
                     {% for obj in subscriptions %}
-                      <option value="{{ obj.type }}">{{ obj.type }} ({{ obj.validity }} )</option>
+                      <option value="{{ obj.type }}">{{ obj.type }} ({{ obj.validity }} Month-s )</option>
                     {% endfor %}
                     
                 </select>
@@ -50,7 +50,7 @@
                 <input type="number" class="form-control" id="amount" name="amount" placeholder="0 Ksh" readonly required>
             </div>
 
-            <button type="submit" class="btn btn-warning" onclick="validateForm()">Pay</button>
+            <button type="submit" class="btn btn-primary" onclick="validateForm()">Pay</button>
     </form>
 
     <div style="width: 70%;margin: 0 auto;">
@@ -59,8 +59,14 @@
         <p>1. Go to lipa na m-pesa</p>
         <p>2. select paybil</p>
         <p>3. Enter <strong style="color: cornflowerblue;">4161900</strong> as paybill number</p>
-        <p>4. Enter <strong style="color: cornflowerblue;">{{ user.mysubscription.account }}</strong> as account number</p>
+        <p>4. Enter <strong style="color: cornflowerblue;">{{ user.id }}</strong> as account number</p>
         <p>5. Enter amount of the subscription you want</p>
+            <div style="color: coral;padding-left: 20px;">
+                <strong>Silver 200 ksh</strong><br>
+                <strong>Gold 350 ksh</strong><br>
+                <strong>Platinum 750 ksh</strong>
+            </div>
+            <br>
         <p>6. Enter m-pesa pin</p>
     </div>
     </div>
@@ -74,9 +80,9 @@
 
     // Define the prices for different subscriptions
     const prices = {
-        Basic: 300,
-        Gold: 750,
-        Platinum: 500,
+        Silver: 200,
+        Gold: 350,
+        Platinum: 750,
     };
 
     // Update the amount when subscription or kid selection changes

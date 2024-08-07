@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.db.models.signals import m2m_changed
 
+from Subscription.models import MySubscription
 from Supervisor.models import QuestionCount
 from Teacher.models import TeacherRanking
 
@@ -16,6 +17,7 @@ def create_profile(sender, instance, created, **kwargs):
         PersonalProfile.objects.create(user=instance)
         if instance.role == 'Student':
             AcademicProfile.objects.create(user=instance)
+            # MySubscription.objects.create(user=instance, )
 
         elif instance.role == 'Teacher':
             TeacherRanking.objects.create(user=instance)

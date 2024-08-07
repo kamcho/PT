@@ -24,11 +24,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     path('', include('Users.urls')),
-    path('', include('SubjectList.urls')),
-    path('', include('Exams.urls')),
-    path('', include('Subscription.urls')),
+    path('IAMLearning/', include('SubjectList.urls')),
+    path('Exams/', include('Exams.urls')),
+    path('Subscriptions/', include('Subscription.urls')),
     path('Support/', include('Support.urls')),
-    path('', include('Supervisor.urls')),
+    path('Supervisor/', include('Supervisor.urls')),
     path('Logs/', include('Logs.urls')),
     path('Guardian/', include('Guardian.urls')),
  

@@ -231,13 +231,18 @@
 
 
 /* EXAMS */
-.file-container{
-    width: 80%;
+.responsive-image {
+    max-width: 100%;
+    height: auto;
 }
-.quiz-file{
-    width: 400px;
-    height: 400px;
+
+/* Ensure the container doesn't overflow */
+.image-container {
+    width: 100%;
+    max-width: 800px; /* Adjust this as needed */
+    margin: 0 auto; /* Center the image container */
 }
+
 
 @media (max-width: 1200px) {
     .upcoming-classes-view{

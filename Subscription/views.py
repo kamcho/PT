@@ -53,10 +53,8 @@ class Pay(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['template'] = 'Users/base.html'
         elif self.request.user.role == 'Guardian':
             context['template'] = 'Guardian/baseg.html'
-        account = MySubscription.objects.get(user=self.request.user)
-        ac = account.user.personalprofile.f_name[0].lower() + account.user.personalprofile.l_name[0].lower() + str(account.user.id)
-        account.account = ac
-        account.save()
+       
+        
         context['subscriptions'] = Subscriptions.objects.all().order_by('amount')
         
 
