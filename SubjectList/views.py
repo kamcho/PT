@@ -80,8 +80,7 @@ class ManageCourse(TemplateView):
                 topics_count = self.request.POST.get('set_count')
                 try:
                     subject = Subject.objects.create(name=name, topics=topics_count, grade=grade, course=course)
-                    subject = Subject.objects.create(name=name, topics=topics_count, grade=5, course=course)
-                    subject = Subject.objects.create(name=name, topics=topics_count, grade=6, course=course)
+                    
                 except:
                     messages.error(self.request, 'Error when creating this object. Please complete the form!')
 
