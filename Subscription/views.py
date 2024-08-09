@@ -1,6 +1,7 @@
 import datetime
 import json
-from datetime import timedelta
+from django.utils import timezone
+from datetime import timedelta, datetime
 import requests
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -12,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from requests.auth import HTTPBasicAuth
 from SubjectList.models import PaymentNotifications
+from Subscription.tests import generate_access_token, process_number
 from Users.models import MyUser, PersonalProfile
 from .models import  MpesaPayments, MySubscription, PendingPayment, Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -65,7 +67,7 @@ class Pay(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             amount = self.request.POST.get('amount')
             phone = self.request.POST.get('phone')
             subscription = self.request.POST.get('subscription')
-            user = self.request.user.mysubscription.account
+            user = self.request.user.id
             
             if amount != '0':
                 
@@ -80,40 +82,9 @@ class Pay(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         roles = ['Student']
         return self.request.user.role in roles
 
-def process_number(input_str):
-    if input_str.startswith('0'):
-        # Remove the leading '0' and replace it with '254'
-        return '254' + input_str[1:]
-    elif input_str.startswith('254'):
-        # If it starts with '254', return the original string
-        return input_str
-    else:
-        # If it doesn't start with either '0' or '254', return the original string
-        return input_str
-def generate_access_token():
-    access_token_url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
-    consumer_key = "aSG8gGG7GWSGapToKz8ySyALUx9zIdbBr1CHldVhyOLjJsCz"
-    consumer_secret = "o8qwdbzapgcvOd1lsBOkKGCL4JwMQyG9ZmKlKC7uaLIc4FsRJFbzfV10EAoL0P6u"
-
-    # make a get request using python requests liblary
-    response = requests.get(access_token_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
-
-    # return access_token from response
-    if response.status_code == 200:
-        access_token = response.json()['access_token']        
-        return access_token
-    else:
-        return None    
 
 
 
-def generate_mpesa_password(paybill_number):
-    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    consumer_key = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
-    concatenated_string = f"{paybill_number}{consumer_key}{timestamp}"
-    base64_encoded = base64.b64encode(concatenated_string.encode()).decode('utf-8')
-
-    return str(base64_encoded)
 
 
 def initiate_payment(phone, user, total):
@@ -150,53 +121,88 @@ def initiate_payment(phone, user, total):
     return response
 
 
-def paymentMetadata(user, checkout_id, subscription, phone, beneficiaries):
-    subscription = Subscriptions.objects.get(type=subscription)
-    learners = MyUser.objects.filter(email__in=beneficiaries)
-    user = MyUser.objects.get(email=user)
-    payment = PendingPayment.objects.create(user=user, checkout_id=checkout_id, subscriptions=subscription, phone=phone)   
-    payment.beneficiaries.set(learners)
-    payment.save()
-
-    return None
 
 
+def processPayments(request):
+    # transactions = pullTransactions()
+    transactions = [{'transactionId': 'SH80FBUUHW', 'trxDate': '2024-08-08T21:28:56+03:00', 'msisdn': 254722985477, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': '5', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
+                    {'transactionId': 'SH87F80I47', 'trxDate': '2024-08-08T21:02:51+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'jhn', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
+                    {'transactionId': 'SH89F73ZIL', 'trxDate': '2024-08-08T20:57:02+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'kng', 'amount': '1.0', 'organizationname': 'CRIMSONS ANALYTICS'}]
+    # print(transactions)
+    if transactions:
+        for transaction in transactions:
+            try:
+                receipt = transaction['transactionId']
+                phone = transaction['msisdn']
+                account = transaction['billreference']
+                trxdate = transaction['trxDate']
+                amount = int(float(transaction['amount']))
 
-def updatePayment(user, subscription, amount, student_list, phone, transaction_date, receipt, checkout_id):
+                if amount > 0:
+                    sub = MySubscription.objects.get(user__id=3)
+                    
+                    subscriptions = Subscriptions.objects.get(amount=150)
+                    if sub.expiry >= datetime.date.today():
+                        expiry = sub.expiry + timedelta(days=subscriptions.duration)
+                    else:
+                        expiry = datetime.today() + timedelta(days=subscriptions.duration)
+                    sub.expiry = expiry
+                    sub.type = subscriptions
+                    sub.save()
+                    updatePayment(sub.user, subscriptions, amount, phone, trxdate, receipt)
+                    messages.success(request, '200 ok')
+                    break
+            except:
+                pass
+    return HttpResponse('code : 200 ok')
+
+# def paymentMetadata(user, checkout_id, subscription, phone, beneficiaries):
+#     subscription = Subscriptions.objects.get(type=subscription)
+#     learners = MyUser.objects.filter(email__in=beneficiaries)
+#     user = MyUser.objects.get(email=user)
+#     payment = PendingPayment.objects.create(user=user, checkout_id=checkout_id, subscriptions=subscription, phone=phone)   
+#     payment.beneficiaries.set(learners)
+#     payment.save()
+
+#     return None
+
+
+
+def updatePayment(user, subscription, amount, phone, transaction_date, receipt):
   
 
     user = MyUser.objects.get(email=user)
     sub_type = Subscriptions.objects.get(type=subscription)
     try:
-        payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
-                                            transaction_date=transaction_date, sub_type=sub_type, receipt=receipt, checkout_id=checkout_id)
-        updateSubscription(beneficiaries=student_list, duration=subscription)
+        payment = MpesaPayments.objects.create(user=user, amount=amount, phone=phone,
+                                            transaction_date=transaction_date, sub_type=sub_type, receipt=receipt)
+        
 
     except Exception as e:
         return str(e)
-    return user
-
-def updateSubscription(beneficiaries, duration):
-    
-    beneficiaries = beneficiaries.split(", ")
-    subscription_type = Subscriptions.objects.get(type=duration)
-    duration = subscription_type.duration
-    sub_type = subscription_type
-
-    for user in beneficiaries:
-        try:
-            subscription = MySubscription.objects.get(user__email=user)
-            subscription.expiry = subscription.expiry + timedelta(days=duration)
-            subscription.type = sub_type
-            subscription.save()
-        except MySubscription.DoesNotExist as e:
-            user = MyUser.objects.get(email=user)
-            subscription = MySubscription.objects.create(user=user, type=subscription_type)
-            subscription.expiry = subscription.expiry + timedelta(days=duration)
-            subscription.type = sub_type
-            subscription.save()
-
     return None
+
+# def updateSubscription(beneficiaries, duration):
+    
+#     beneficiaries = beneficiaries.split(", ")
+#     subscription_type = Subscriptions.objects.get(type=duration)
+#     duration = subscription_type.duration
+#     sub_type = subscription_type
+
+#     for user in beneficiaries:
+#         try:
+#             subscription = MySubscription.objects.get(user__email=user)
+#             subscription.expiry = subscription.expiry + timedelta(days=duration)
+#             subscription.type = sub_type
+#             subscription.save()
+#         except MySubscription.DoesNotExist as e:
+#             user = MyUser.objects.get(email=user)
+#             subscription = MySubscription.objects.create(user=user, type=subscription_type)
+#             subscription.expiry = subscription.expiry + timedelta(days=duration)
+#             subscription.type = sub_type
+#             subscription.save()
+
+#     return None
         
 
 
