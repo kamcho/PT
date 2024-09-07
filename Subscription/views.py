@@ -151,7 +151,7 @@ def processPayments(request):
                     sub.save()
                     updatePayment(sub.user, subscriptions, amount, phone, trxdate, receipt)
                     messages.success(request, '200 ok')
-                    break
+                    # break
             except:
                 pass
     return HttpResponse('code : 200 ok')

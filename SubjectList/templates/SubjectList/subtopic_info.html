@@ -9,9 +9,9 @@
 <br><br><br>
 <div class="container">
 
-<h5>{{ subtopic.subject }} - {{ subtopic.subject.grade }}</h5>
-<h6>{{ subtopic.topic.name }}</h6>
-<p>{{ subtopic }}</p>
+<h5>{{ subtopic.subject }} Grade {{ subtopic.subject.grade }}</h5>
+<h6>Topic : {{ subtopic.topic.name }}</h6>
+<p>Subtopic : {{ subtopic }}</p>
 
 <p>We have scheduled a test on the subtopic {{ subtopic }}.
      The purpose of this test is to evaluate your grasp of the material
@@ -19,15 +19,15 @@
     information about the test is provided below.
 </p>
 
-<h6>Time {{ time }} minutes</h6>
-<h6>Questions {{ size }}</h6>
-
-<h6><strong>NB. Upon completing all test on subtopics in {{ subtopic.topic.name }}, youll be provided with a final test !! </strong></h6>
+<h6><i class="bi bi-clock" style="color: cornflowerblue;"> </i>Time <strong style="color: coral;">{{ time }}</strong> minutes</h6>
+<h6><i class="bi bi-ui-checks" style="color: cornflowerblue;"> </i>Questions <strong style="color: coral;">{{ size }}</strong></h6>
+<br>
+<h6><strong>NB. Upon completing all test on subtopics in this topic ({{ subtopic.topic.name }}), you will be provided with a final test !! </strong></h6>
 
 
 <br><br>
 
-
+{% if user.mysubscription.status %}
 <form method="post">
     {% csrf_token %}
     <strong>A test once started cannot be stopped</strong>
@@ -35,6 +35,11 @@
     <button class="btn btn-danger" style="width: 100px;">Start</button>
 
 </form>
+{% else %}
+<p>You do not have an active subscription. To take this test kindly subscribe by clicking the button below:</p>
+                <a href="{% url 'subscription' %}"><button class="btn btn-primary">Subscribe</button></a>
+
+        {% endif %}
 
 
 </div>

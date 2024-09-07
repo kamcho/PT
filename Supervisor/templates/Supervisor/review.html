@@ -1,0 +1,41 @@
+{% extends 'Teacher/teachers_base.html' %}
+
+{% load custom_filters %}
+{% block content %}
+
+
+
+    <br><br><br><br>
+    <div class="container">
+
+<form method="post">
+    {% csrf_token %}
+
+
+        <div  class="input-group">
+           
+            <br>
+            <select class="form-select" name="topic">
+                {% for topic in topics %} 
+                    <option value="{{ topic.id }}">{{ topic.name }}</option>
+                {% endfor %}
+               
+            </select>
+
+        </div>
+<br>
+<button class="btn btn-secondary">Filter</button>
+    </form>
+   
+<br><br>
+{% if filters %}
+
+
+    {% for sub in subtopics %}
+        <h6>{{ sub }} : {{ user|get_dev:sub.id }}</h6>
+
+    {% endfor %}
+
+{% endif %}
+</div>
+{% endblock %}

@@ -10,6 +10,7 @@ from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import TemplateView
 from SubjectList.models import Progress, Topic
+from Subscription.models import Referal
 from Supervisor.models import Inquire, Updates
 from Users.models import PersonalProfile, MyUser, AcademicProfile
 from django.contrib.sitemaps import Sitemap
@@ -43,6 +44,7 @@ class RegisterView(TemplateView):
             role = request.POST.get('role')
             grade = request.POST.get('grade')
             gender = request.POST.get('gender')
+            code = request.POST.get('code')
 
             if email and pwd2 and pwd1:
                 if pwd2 == pwd1:
@@ -56,6 +58,13 @@ class RegisterView(TemplateView):
                             grade = Grade.objects.get(grade=grade)
                             academic_profile.current_class = grade
                             academic_profile.save()
+                            if code:
+                                try:
+                                    referer = MyUser.objects.get(id=code)
+                                    referal = Referal.objects.create(user=user, referer=referer)
+                                except:
+                                    pass
+                            
                         profile, created = PersonalProfile.objects.get_or_create(user=user)
                         profile.gender = gender
                         profile.save()

@@ -1437,6 +1437,41 @@ class ContactUs(LoginRequiredMixin, TemplateView):
 class AskAi(TemplateView):
     template_name = 'SubjectList/ask.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        prompts = Prompt.objects.filter(user=user).order_by('date')
+    
+        # Create a list to store the chat history
+        chat_history = []
+
+        # Loop through each prompt and its corresponding completion
+        for prompt in prompts:
+            # Add the prompt to the chat history
+            chat_history.append({
+                'type': 'prompt',
+                'uuid': prompt.uuid,
+                'content': prompt.quiz,
+                'date': prompt.date
+            })
+
+            # Get the completion related to the current prompt
+            completion = Completion.objects.filter(prompt=prompt).first()
+            
+            # If there is a completion, add it to the chat history
+            if completion:
+                chat_history.append({
+                    'type': 'completion',
+                    'uuid': completion.uuid,
+                    'content': completion.response,
+                    'date': completion.prompt.date
+                })
+            context['chats'] = chat_history
+
+            return context
+
+
+
 
 def chatgpt_answer(request):
     if request.method == 'POST' :
@@ -1446,7 +1481,7 @@ def chatgpt_answer(request):
         print(image_base64, 'img')
         new = 'sk-proj-BrLw8BFj8boMh5e4OLli'
         old = 'T3BlbkFJIewY0eI951IcuhHnmEnh'
-        api_key = new+old
+        api_key = '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'
         quiz = Prompt.objects.create(user=request.user, quiz=question)
         prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
         

@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from itertools import groupby
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib import messages
@@ -24,8 +24,8 @@ from Guardian.models import MyKids
 from Supervisor.models import FileModel, Updates
 from Teacher.models import StudentList
 from Users.models import AcademicProfile, MyUser, PersonalProfile
-from Exams.models import ClassTest, ClassTestStudentTest, GeneralTest, StudentTest
-from SubjectList.models import Subject, Subtopic, Course
+from Exams.models import ClassTest, ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes
+from SubjectList.models import Subject, Subtopic, Course, Topic
 
 def get_marks_distribution_data(grade, term, year):
     # Replace 'YourGradeModelField' with the actual field name representing the grade in your SchoolClass model
@@ -1647,4 +1647,33 @@ class AssignmentsView(TemplateView):
                 'users':self.get_context_data().get('users'),
                 'subjects': self.get_context_data().get('subjects'),
             }
+            return render(self.request, self.template_name, context)
+        
+
+class TopicReview(TemplateView):
+    template_name = 'Supervisor/review.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        subject = self.kwargs['subject']
+        topics = Topic.objects.filter(subject__id=subject)
+        context['topics'] = topics
+        print(topics)
+
+        return context
+
+
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            topic = self.request.POST.get('topic')
+            quizes = TopicalQuizes.objects.filter(topic__id=topic)
+
+            context = {
+                'quizes':quizes.values('subtopic__name').aggregate(sm=Count('subtopic__name')),
+                'topics':self.get_context_data().get('topics'),
+                'filters':True,
+                'subtopics':Subtopic.objects.filter(topic__id=topic)
+
+            }
+
             return render(self.request, self.template_name, context)

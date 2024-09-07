@@ -56,23 +56,31 @@
           <div class="offcanvas-header">
             {% if user.mysubscription.status %}
             <small>Subscription</small>
-              <h5 class="btn btn-primary" id="offcanvasNavbarLabel">Active</h5>
+              <a class="nav-link" href="{% url 'subscription' %}">
+               
+                 <i class="bi bi-cash"></i>
+              <small>Subscription Active</small>
+              </a>
             {% else %}
-              <h5 class="btn btn-danger" id="offcanvasNavbarLabel">Expired</h5>
+            <a class="nav-link" href="{% url 'subscription' %}">
+               
+              <i class="bi bi-cash" style="color: crimson;"></i>
+              <small style="color: crimson;">Subscription Expired</small>
+           </a>
             {% endif %}
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
               <li>
-                <a class="nav-link" href="{% url 'home' %}" ><i class="bi bi-house" > </i>Home</a>
+                <a class="nav-link" ><i class="bi bi-house" > </i>Review</a>
             </li>
               {% if user.is_authenticated %}
        
 
               
           <li>
-              <a class="nav-link" href="{% url 'student-home' %}" ><i class="bi bi-ui-checks" > </i>Portal</a>
+              <a class="nav-link" href="{% url 'student-home' %}" ><i class="bi bi-ui-checks" > </i>Home</a>
           </li>
          
           <li>
@@ -113,24 +121,11 @@
 
          
 
-       <li>
-           <a class="nav-link" href="{% url 'contact' %}">
-            
-              <i class="bi bi-headphones"></i> Support
-              </a>
-            </li>
-
-            <li>
-              <a class="nav-link" href="{% url 'subscription' %}">
-               
-                 <i class="bi bi-cash"></i> Subscription
-                 </a>
-               </li>
        
-            <li>
-          <a class="nav-link" href="{% url 'my-sessions' %}" ><i class="bi bi-display"> </i>Class Sessions</a>
-      </li>
-       </li>
+
+            
+       
+           
                 
         
        <li>
@@ -141,7 +136,9 @@
           </li>
       
 
-
+          <li>
+            <a class="nav-link" href="{% url 'my-sessions' %}" ><i class="bi bi-display"> </i>Class Sessions</a>
+        </li>
         <li>
             <a class="nav-link" href="{% url 'students-profile' user.id  %}" ><i class="bi bi-person-check" > </i>Profile</a>
           </li>
@@ -150,7 +147,12 @@
             <a class="nav-link" href="{% url 'teachers-view'   %}" ><i class="bi bi-people" > </i>Teachers</a>
           </li> -->
 
-
+          <li>
+            <a class="nav-link" href="{% url 'contact' %}">
+             
+               <i class="bi bi-headphones"></i> Support
+               </a>
+             </li>
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}" ><i class="bi bi-box-arrow-left" > </i>Sign out</a>

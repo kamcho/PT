@@ -47,4 +47,6 @@ urlpatterns = [
     path('Enable-Exam-Mode', ExamMode.as_view(), name='exam-mode'),
     path('Print-Card/<str:email>/<str:grade>/<str:term>/<str:rank>/', PrintReport.as_view(), name='print-report'),
 
+    path('topicq-review/<str:subject>', TopicReview.as_view(), name='topic-review'),
+
 ]

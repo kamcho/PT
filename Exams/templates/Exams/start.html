@@ -23,12 +23,17 @@
         {% if done == 'True' %}
 
         {% else %}
+        {% if user.mysubscription.status %}
 
                 <form method="post">
                     {% csrf_token %}
                         <button class="btn btn-danger">Start</button>
 
                 </form>
+        {% else %}
+                <a href="{% url 'subscription' %}"><button class="btn btn-danger">Subscription Expired</button></a>
+
+        {% endif %}
            
         {% endif %}
     {% endif %}

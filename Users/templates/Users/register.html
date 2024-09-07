@@ -65,6 +65,11 @@
         <input class="input" type="password" placeholder="" name="pwd2" required>
         <span>Confirm password</span>
     </label>
+    <br>
+    <label>
+      <input class="input" type="number" name="code"  id="code" required autocomplete="off" disabled>
+      <span>Referal Code</span>
+  </label>
     <button class="submit">Submit</button>
 
     <p class="signin">Already have an acount ? <a href="{% url 'login' %}">Signin</a> </p>
@@ -74,6 +79,7 @@
 <script>
   function enableGrade() {
     document.getElementById("grade").disabled = false;
+    document.getElementById("code").disabled = false;
   }
 
   function disableGrade() {

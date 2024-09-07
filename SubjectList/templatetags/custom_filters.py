@@ -533,3 +533,9 @@ def topic_percentile(topic):
         return percentage
     else:
         return 0
+    
+
+@register.filter
+def get_dev(user, topic):
+    quizes = TopicalQuizes.objects.filter(subtopic__id=topic)
+    return quizes.count()

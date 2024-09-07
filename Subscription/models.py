@@ -1,5 +1,5 @@
 import datetime
-
+from django.utils import timezone
 from django.db import models
 
 # Create your models here.
@@ -19,6 +19,14 @@ class Subscriptions(models.Model):
         db_table = 'subscription_subscriptions'  # Custom table name
         managed = False
 
+class Referal(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    referer = models.ForeignKey(MyUser, related_name='referer',  on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'subscription_referal'  # Custom table name
+        managed = False
+
 
 class MySubscription(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
@@ -30,6 +38,8 @@ class MySubscription(models.Model):
 
     def __str__(self):
         return str(self.user)
+    def status(self):
+        return self.expiry >= datetime.date.today()
     
     class Meta:
         db_table = 'subscription_mysubscription'  # Custom table name
