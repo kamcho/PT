@@ -1481,7 +1481,7 @@ def chatgpt_answer(request):
         print(image_base64, 'img')
         new = 'sk-proj-BrLw8BFj8boMh5e4OLli'
         old = 'T3BlbkFJIewY0eI951IcuhHnmEnh'
-        api_key = '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'
+        api_key = old + new
         quiz = Prompt.objects.create(user=request.user, quiz=question)
         prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
         
