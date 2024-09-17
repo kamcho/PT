@@ -55,7 +55,7 @@
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
           <div class="offcanvas-header">
             {% if user.mysubscription.status %}
-            <small>Subscription</small>
+            <!-- <small>Subscription</small> -->
               <a class="nav-link" href="{% url 'subscription' %}">
                
                  <i class="bi bi-cash"></i>
@@ -72,9 +72,7 @@
           </div>
           <div class="offcanvas-body">
             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
-              <li>
-                <a class="nav-link" ><i class="bi bi-house" > </i>Review</a>
-            </li>
+             
               {% if user.is_authenticated %}
        
 
