@@ -20,7 +20,11 @@ logger = logging.getLogger('django')
 
 class IsTeacher(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.role == 'Teacher'
+        
+        if self.request.user.is_authenticated:
+            return self.request.user.role == 'Teacher'
+        else:
+            return False
     
 
 class TeacherView(IsTeacher, TemplateView):
