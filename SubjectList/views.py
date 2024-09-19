@@ -209,7 +209,11 @@ class ManageSubTopic(TemplateView):
 
 class IsStudent(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.role == 'Student'
+        if self.request.user.is_authenticated:
+
+            return self.request.user.role == 'Student'
+        else:
+            return False
 
 def send_mail(user, subject, body):
     """

@@ -186,7 +186,7 @@ class PersonalProfile(models.Model):
         if first or last or surname:
             if last:
                 last = last[0]
-            return first + ' ' + last+ '.' + ' '+surname
+            return first.upper() + ' ' + last.upper() + '.' + ' ' + surname.upper()
         else:
             return self.user
         
