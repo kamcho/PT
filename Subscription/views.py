@@ -106,7 +106,7 @@ def initiate_payment(phone, user, total):
         "Password": password,  # Use the generated password
         "Timestamp": timestamp,
         "TransactionType": "CustomerPayBillOnline",
-        "Amount": 1,
+        "Amount": total,
         "PartyA": phone,
         "PartyB": 4161900,
         "PhoneNumber": phone,
@@ -139,9 +139,9 @@ def processPayments(request):
                 amount = int(float(transaction['amount']))
 
                 if amount > 0:
-                    sub = MySubscription.objects.get(user__id=3)
+                    sub = MySubscription.objects.get(user__id=account)
                     
-                    subscriptions = Subscriptions.objects.get(amount=150)
+                    subscriptions = Subscriptions.objects.get(amount=amount)
                     if sub.expiry >= datetime.date.today():
                         expiry = sub.expiry + timedelta(days=subscriptions.duration)
                     else:
