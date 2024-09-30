@@ -30,10 +30,8 @@ class Referal(models.Model):
 
 class MySubscription(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
-    account = models.CharField(max_length=10, null=True)
     date = models.DateField(auto_now=True)
     expiry = models.DateField(auto_created=True, default=datetime.date.today )
-    status = models.BooleanField(default=False)
     type = models.ForeignKey(Subscriptions, to_field='type', on_delete=models.CASCADE)
 
     def __str__(self):

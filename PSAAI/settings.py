@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-import Logs
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['mwalimuprivate.com','www.mwalimuprivate.com', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://www.mwalimuprivate.com/']
