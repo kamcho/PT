@@ -75,7 +75,7 @@ class RegisterView(TemplateView):
                             # Log the user in
                             login(self.request, user)
                             # Redirect to a success page
-                            return redirect('router')
+                            return redirect('rout')
                         else:
                             return redirect('login')
                         
