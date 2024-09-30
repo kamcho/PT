@@ -51,6 +51,7 @@ class MyUser(AbstractBaseUser):
         ADMIN = "Admin"
         Guardian = "Guardian"
         Supervisor = "Supervisor"
+        Referer = "Referer"
        
 
 
@@ -87,6 +88,20 @@ class MyUser(AbstractBaseUser):
         db_table = 'users_myuser'  # Custom table name
         managed = False
 
+
+
+class RefererManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        result = super().get_queryset(*args, **kwargs)
+        return result.filter(role=MyUser.Role.Referer)
+
+
+class Referer(MyUser):
+    base_role = MyUser.Role.Referer
+    partner = RefererManager()
+
+    class Meta:
+        proxy = True
 
 
 

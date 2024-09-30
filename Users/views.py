@@ -68,14 +68,16 @@ class RegisterView(TemplateView):
                         profile, created = PersonalProfile.objects.get_or_create(user=user)
                         profile.gender = gender
                         profile.save()
-                        # user = authenticate(self.request, username=email, password=pwd1)
-                        # self.request.session['id'] = user.uuid
+                        user = authenticate(self.request, username=email, password=pwd1)
+                        self.request.session['id'] = user.uuid
                         self.request.session['mail'] = user.email
-                        # if user is not None:
-                        #     # Log the user in
-                        #     login(self.request, user)
-                        #     # Redirect to a success page
-                        return redirect('success')
+                        if user is not None:
+                            # Log the user in
+                            login(self.request, user)
+                            # Redirect to a success page
+                            return redirect('router')
+                        else:
+                            return redirect('login')
                         
 
                             
