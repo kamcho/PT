@@ -282,7 +282,7 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
             else:
                 assignments = ClassTest.objects.filter(class_id__id__in=current_class)
         else:
-            messages.error(self.request, 'You have not set your grade. Contact @support')
+            # messages.error(self.request, 'You have not set your grade. Contact @support')
             assignments = []
         if not test1 and not assignments:
             messages.info(self.request, 'You do not have any undone tests.')
@@ -1483,8 +1483,9 @@ def chatgpt_answer(request):
 
         image_base64 = request.POST.get('image_base64')
         print(image_base64, 'img')
-        new = 'sk-proj-BrLw8BFj8boMh5e4OLli'
-        old = 'T3BlbkFJIewY0eI951IcuhHnmEnh'
+        
+        new = 'sk-proj-0FM3OGweCdZ6dIHNhWU2XeZ3b5PZ899zAeITjVnZZ59awtKMqkKi2G76v'
+        old = '3fNnkN3Iir4C5bNSDT3BlbkFJwpCmyikXNKbq9w0ueFN7Tbqjnne1q6W84lYG48k8F7gDk1ji9eiDqkLogiZgJScS49mu2qU6MA'
         api_key = old + new
         quiz = Prompt.objects.create(user=request.user, quiz=question)
         prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
