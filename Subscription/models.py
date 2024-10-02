@@ -53,25 +53,25 @@ class MySubscription(models.Model):
             return self.user.role
 
 
-class StripeCardPayments(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    transact_id = models.CharField(max_length=100)
-    amount = models.IntegerField()
-    currency = models.CharField(max_length=10)
-    name = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    brand = models.CharField(max_length=30)
-    date = models.DateTimeField(auto_now=True)
-    created = models.CharField(max_length=15)
-    type = models.CharField(max_length=100, default='Platinum')
-    student_list = models.CharField(max_length=100, default='Null')
+# class StripeCardPayments(models.Model):
+#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     transact_id = models.CharField(max_length=100)
+#     amount = models.IntegerField()
+#     currency = models.CharField(max_length=10)
+#     name = models.CharField(max_length=100)
+#     country = models.CharField(max_length=100)
+#     brand = models.CharField(max_length=30)
+#     date = models.DateTimeField(auto_now=True)
+#     created = models.CharField(max_length=15)
+#     type = models.CharField(max_length=100, default='Platinum')
+#     student_list = models.CharField(max_length=100, default='Null')
 
-    def __str__(self):
-        return str(self.user)
+#     def __str__(self):
+#         return str(self.user)
     
-    class Meta:
-        db_table = 'subscription_stripecardpayments'  # Custom table name
-        managed = False
+#     class Meta:
+#         db_table = 'subscription_stripecardpayments'  # Custom table name
+#         managed = False
 
 
 class MpesaPayments(models.Model):
@@ -94,13 +94,13 @@ class MpesaPayments(models.Model):
         managed = False
 
 
-class PendingPayment(models.Model):
-    checkout_id = models.CharField(max_length=100, default='default')
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    beneficiaries = models.ManyToManyField(MyUser, related_name='beneficiaries')
-    phone = models.CharField(max_length=15)
-    subscriptions = models.ForeignKey(Subscriptions, on_delete=models.CASCADE)
+# class PendingPayment(models.Model):
+#     checkout_id = models.CharField(max_length=100, default='default')
+#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     beneficiaries = models.ManyToManyField(MyUser, related_name='beneficiaries')
+#     phone = models.CharField(max_length=15)
+#     subscriptions = models.ForeignKey(Subscriptions, on_delete=models.CASCADE)
 
-    def __str__(self):
-            return str(self.user)
+#     def __str__(self):
+#             return str(self.user)
     
