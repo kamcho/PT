@@ -4,7 +4,7 @@ from .models import *
 
 admin.site.register(Subscriptions)
 admin.site.register(MySubscription)
-admin.site.register(StripeCardPayments)
-admin.site.register(PendingPayment)
+# admin.site.register(StripeCardPayments)
+# admin.site.register(PendingPayment)
 admin.site.register(MpesaPayments)
 admin.site.register(Referal)
