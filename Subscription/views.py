@@ -1,6 +1,4 @@
 import datetime
-import json
-from django.utils import timezone
 from datetime import timedelta, datetime
 import requests
 from django.contrib import messages
@@ -15,7 +13,7 @@ from requests.auth import HTTPBasicAuth
 from SubjectList.models import PaymentNotifications
 from Subscription.tests import generate_access_token, process_number
 from Users.models import MyUser, PersonalProfile
-from .models import  MpesaPayments, MySubscription, PendingPayment, Subscriptions
+from .models import  MpesaPayments, MySubscription,  Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
