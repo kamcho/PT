@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from requests.auth import HTTPBasicAuth
+from Logs.models import LogEntry
 from SubjectList.models import PaymentNotifications, RateLimiter
 from Subscription.tests import generate_access_token, process_number, pullTransactions
 from Users.models import MyUser, PersonalProfile
@@ -123,11 +124,7 @@ def initiate_payment(phone, user, total):
 
 def processPayments(request):
     transactions = pullTransactions()
-    # transactions = [{'transactionId': 'SH80FBUUHW', 'trxDate': '2024-08-08T21:28:56+03:00', 'msisdn': 254722985477, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': '5', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
-    #                 {'transactionId': 'SH87F80I47', 'trxDate': '2024-08-08T21:02:51+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'jhn', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
-    #                 {'transactionId': 'SH89F73ZIL', 'trxDate': '2024-08-08T20:57:02+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'kng', 'amount': '1.0', 'organizationname': 'CRIMSONS ANALYTICS'}]
-    # # print(transactions)
-    print('entering main loop')
+
     if transactions:
 
         for transaction in transactions:
@@ -142,10 +139,10 @@ def processPayments(request):
                     account = transaction['billreference']
                     trxdate = transaction['trxDate']
                     amount = int(float(transaction['amount']))
-
+                    print(account, 'Accoutnt:')
                     if amount > 0:
                         sub = MySubscription.objects.get(user__id=account)
-                        print(sub.user)
+                        
                         subscriptions = Subscriptions.objects.get(amount=150)
                         if sub.status():
                             expiry = sub.expiry + timedelta(days=subscriptions.duration)
@@ -172,6 +169,7 @@ def processPayments(request):
                         
                         # break
                 except Exception as e:
+                    log = LogEntry.objects.create(message=str(e),app_name='pay',school='3f2504e0-4f89-41d3-9a0c-0305e82c3301',level='Debug', error_type=str(e))
                     print(str(e))
     return HttpResponse('code : 200 ok')
 
