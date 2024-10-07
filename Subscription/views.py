@@ -14,6 +14,7 @@ from Subscription.tests import generate_access_token, process_number, pullTransa
 from Users.models import MyUser, PersonalProfile
 from .models import  MpesaPayments, MySubscription,  Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -168,7 +169,6 @@ def processPayments(request):
                         obj.save()
                         print('payment processed \n\n\n')
                         updatePayment(sub.user, subscriptions, amount, phone, trxdate, receipt)
-                        messages.success(request, '200 ok')
                         
                         # break
                 except Exception as e:
