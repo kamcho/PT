@@ -145,7 +145,7 @@ def processPayments(request):
                     if amount > 0:
                         sub = MySubscription.objects.get(user__id=account)
                         print(sub.user)
-                        subscriptions = Subscriptions.objects.get(amount=amount)
+                        subscriptions = Subscriptions.objects.get(amount=150)
                         if sub.status():
                             expiry = sub.expiry + timedelta(days=subscriptions.duration)
 
