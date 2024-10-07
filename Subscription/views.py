@@ -1,4 +1,5 @@
 from datetime import timedelta, datetime
+
 import datetime
 import requests
 from django.contrib import messages
@@ -136,7 +137,7 @@ def processPayments(request):
                 
 
             except:
-                send_mail('paid', f'user_id {rec}: amount - {transaction['amount']}', settings.EMAIL_HOST_USER, ['kevingitundu@gmail.com'], fail_silently=False)
+                send_mail('paid', f'user_id {rec}: amount - {transaction["amount"]}', settings.EMAIL_HOST_USER, ['kevingitundu@gmail.com'], fail_silently=False)
 
                 try:
                     receipt = transaction['transactionId']

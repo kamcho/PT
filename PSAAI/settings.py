@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'Analytics',
     'Teacher',
     'Supervisor',
-   
     'Logs',
     'Subscription',
     'crispy_bootstrap4',
@@ -216,6 +215,9 @@ password = os.environ.get('SchoolMaidPassword')
 service_api = os.environ.get('MailServiceAPI')
 service_id = os.environ.get('ServiceID')
 school_id = os.environ.get('SchoolID')
+
+# settings.py
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
