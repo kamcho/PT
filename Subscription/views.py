@@ -16,6 +16,8 @@ from Users.models import MyUser, PersonalProfile
 from .models import  MpesaPayments, MySubscription,  Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 # Create your views here.
@@ -129,10 +131,13 @@ def processPayments(request):
 
         for transaction in transactions:
             try:
-                payment = MpesaPayments.objects.get(receipt=transaction['transactionId'])
+                rec = transaction['transactionId']
+                payment = MpesaPayments.objects.get(receipt=rec)
                 
 
             except:
+                send_mail('paid', f'user_id {rec}: amount - {transaction['amount']}', settings.EMAIL_HOST_USER, ['kevingitundu@gmail.com'], fail_silently=False)
+
                 try:
                     receipt = transaction['transactionId']
                     phone = transaction['msisdn']
