@@ -6,7 +6,7 @@ urlpatterns = [
 
     path('Subscriptions', Subscribe.as_view(), name='subscription'),
     path('Pay/', Pay.as_view(), name='pay'),
-    path('process-payments/', views.processPayments, name='process-payment'),
+    path('process-payments/v2', views.processPayments, name='process-payment'),
 
 
 ]

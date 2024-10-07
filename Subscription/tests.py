@@ -78,7 +78,7 @@ def register_url():
 
 def parse_date():
     today = datetime.now()
-    yesterday = today - timedelta(minutes=5)
+    yesterday = today - timedelta(minutes=3)
     start = yesterday.strftime("%Y-%m-%d %H:%M:%S")
     now = today.strftime("%Y-%m-%d %H:%M:%S")
     return start, now
