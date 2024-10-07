@@ -483,18 +483,19 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
             subtopic = Subtopic.objects.get(id=subtopic)
             context['subtopic'] = subtopic
             quizes = TopicalQuizes.objects.filter(subtopic=subtopic).order_by('?')
-            if quizes.count() >= 10:
-                context['size'] = 10
-                if subtopic.subject.name == 'Mathematics':
-                    context['time'] = 30
+            if quizes.count():
+                if quizes.count() >= 10:
+                    context['size'] = 10
+                    if subtopic.subject.name == 'Mathematics':
+                        context['time'] = 30
+                    else:
+                        context['time'] = 25
                 else:
-                    context['time'] = 25
-            else:
-                context['size'] = quizes.count()
-                if subtopic.subject.name == 'Mathematics':
-                    context['time'] = round(quizes.count() * 3)
-                else:
-                    context['time'] = round(quizes.count() * 2.5)
+                    context['size'] = quizes.count()
+                    if subtopic.subject.name == 'Mathematics':
+                        context['time'] = round(quizes.count() * 3)
+                    else:
+                        context['time'] = round(quizes.count() * 2.5)
                 
 
             
@@ -1519,5 +1520,5 @@ def chatgpt_answer(request):
             return JsonResponse({'answer': response_})
         
         except Exception as e:
-            # quiz.delete()
-            return JsonResponse({'answer': str(e)})
+            reason = 'We could not process your request at this time. Please try again later or contact @support'
+            return JsonResponse({'answer': reason})

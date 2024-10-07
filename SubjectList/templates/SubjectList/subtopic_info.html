@@ -13,6 +13,16 @@
 <h6>Topic : {{ subtopic.topic.name }}</h6>
 <p>Subtopic : {{ subtopic }}</p>
 
+{% if not size %}
+<br><br>
+<h5 style="color: coral;">This test cannot be taken now. Kindly proceed to the next topic !</h6>
+<div style="padding: 40px;">
+    <h5> Possible Reasons</h5>
+    <p>1. The subtopic is under review in compliance with CBC,</p>
+    <p>2. There is not enough test questions due to the nature of the subtopic,</p>
+    <p>3. K.I.C.D has removed the substrand from the {{ subtopic.subject }} Grade {{ subtopic.subject.grade }} course.</p>
+</div>
+{% else %}
 <p>We have scheduled a test on the subtopic {{ subtopic }}.
      The purpose of this test is to evaluate your grasp of the material
     and identify areas where further improvement may be needed. Additional
@@ -43,6 +53,6 @@
 
 
 </div>
-
+{% endif %}
 
 {% endblock %}

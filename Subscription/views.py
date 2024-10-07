@@ -149,7 +149,7 @@ def processPayments(request):
                     if amount > 0:
                         sub = MySubscription.objects.get(user__id=account)
                         
-                        subscriptions = Subscriptions.objects.get(amount=150)
+                        subscriptions = Subscriptions.objects.get(amount=amount)
                         if sub.status():
                             expiry = sub.expiry + timedelta(days=subscriptions.duration)
 
@@ -160,7 +160,7 @@ def processPayments(request):
                         sub.save()
                         obj = RateLimiter.objects.get(user__id=account)
                         token_data = {
-                            'Silver':1,
+                            'Silver':100,
                             'Gold':8500,
                             'Platinum':18000,
                         }

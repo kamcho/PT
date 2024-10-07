@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.db.models.signals import m2m_changed
 
+from SubjectList.models import RateLimiter
 from Subscription.models import MySubscription, Subscriptions
 from Supervisor.models import QuestionCount
 from Teacher.models import TeacherRanking
@@ -18,6 +19,7 @@ def create_profile(sender, instance, created, **kwargs):
         if instance.role == 'Student':
             AcademicProfile.objects.create(user=instance)
             sub = Subscriptions.objects.all().last()
+            RateLimiter.objects.create(user=instance, tokens=100, speech=0, image=0)
             
             MySubscription.objects.create(user=instance, type=sub )
 
