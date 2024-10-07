@@ -10,8 +10,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from requests.auth import HTTPBasicAuth
-from SubjectList.models import PaymentNotifications
-from Subscription.tests import generate_access_token, process_number
+from SubjectList.models import PaymentNotifications, RateLimiter
+from Subscription.tests import generate_access_token, process_number, pullTransactions
 from Users.models import MyUser, PersonalProfile
 from .models import  MpesaPayments, MySubscription,  Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -122,36 +122,52 @@ def initiate_payment(phone, user, total):
 
 
 def processPayments(request):
-    # transactions = pullTransactions()
-    transactions = [{'transactionId': 'SH80FBUUHW', 'trxDate': '2024-08-08T21:28:56+03:00', 'msisdn': 254722985477, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': '5', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
-                    {'transactionId': 'SH87F80I47', 'trxDate': '2024-08-08T21:02:51+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'jhn', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
-                    {'transactionId': 'SH89F73ZIL', 'trxDate': '2024-08-08T20:57:02+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'kng', 'amount': '1.0', 'organizationname': 'CRIMSONS ANALYTICS'}]
-    # print(transactions)
+    transactions = pullTransactions()
+    # transactions = [{'transactionId': 'SH80FBUUHW', 'trxDate': '2024-08-08T21:28:56+03:00', 'msisdn': 254722985477, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': '5', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
+    #                 {'transactionId': 'SH87F80I47', 'trxDate': '2024-08-08T21:02:51+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'jhn', 'amount': '5.0', 'organizationname': 'CRIMSONS ANALYTICS'},
+    #                 {'transactionId': 'SH89F73ZIL', 'trxDate': '2024-08-08T20:57:02+03:00', 'msisdn': 254742134431, 'sender': 'MPESA', 'transactiontype': 'c2b-pay-bill-debi', 'billreference': 'kng', 'amount': '1.0', 'organizationname': 'CRIMSONS ANALYTICS'}]
+    # # print(transactions)
     if transactions:
         for transaction in transactions:
             try:
-                receipt = transaction['transactionId']
-                phone = transaction['msisdn']
-                account = transaction['billreference']
-                trxdate = transaction['trxDate']
-                amount = int(float(transaction['amount']))
+                payment = MpesaPayments.objects.get(receipt=transaction['transactionId'])
+                
 
-                if amount > 0:
-                    sub = MySubscription.objects.get(user__id=account)
-                    
-                    subscriptions = Subscriptions.objects.get(amount=amount)
-                    if sub.expiry >= datetime.date.today():
-                        expiry = sub.expiry + timedelta(days=subscriptions.duration)
-                    else:
-                        expiry = datetime.today() + timedelta(days=subscriptions.duration)
-                    sub.expiry = expiry
-                    sub.type = subscriptions
-                    sub.save()
-                    updatePayment(sub.user, subscriptions, amount, phone, trxdate, receipt)
-                    messages.success(request, '200 ok')
-                    # break
             except:
-                pass
+                try:
+                    receipt = transaction['transactionId']
+                    phone = transaction['msisdn']
+                    account = transaction['billreference']
+                    trxdate = transaction['trxDate']
+                    amount = int(float(transaction['amount']))
+
+                    if amount > 0:
+                        sub = MySubscription.objects.get(user__id=account)
+                        
+                        subscriptions = Subscriptions.objects.get(amount=150)
+                        if sub.expiry >= datetime.date.today():
+                            expiry = sub.expiry + timedelta(days=subscriptions.duration)
+                        else:
+                            expiry = datetime.today() + timedelta(days=subscriptions.duration)
+                        sub.expiry = expiry
+                        sub.type = subscriptions
+                        sub.save()
+                        obj, rl = RateLimiter.objects.get_or_create(user__id=account)
+                        token_data = {
+                            'Silver':0,
+                            'Gold':8500,
+                            'Platinum':18000,
+                        }
+                        tokens = token_data[subscriptions['type']]
+                        obj.tokens = tokens
+                        obj.image = 0
+                        obj.speech = 0
+                        obj.save()
+                        updatePayment(sub.user, subscriptions, amount, phone, trxdate, receipt)
+                        messages.success(request, '200 ok')
+                        # break
+                except:
+                    pass
     return HttpResponse('code : 200 ok')
 
 # def paymentMetadata(user, checkout_id, subscription, phone, beneficiaries):
@@ -170,6 +186,7 @@ def updatePayment(user, subscription, amount, phone, transaction_date, receipt):
   
 
     user = MyUser.objects.get(email=user)
+    
     sub_type = Subscriptions.objects.get(type=subscription)
     try:
         payment = MpesaPayments.objects.create(user=user, amount=amount, phone=phone,

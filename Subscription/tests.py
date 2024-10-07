@@ -49,7 +49,7 @@ def pullTransactions():
             transactions = data['Response'][0]
             return transactions
         else:
-            print(data['ResponseCode'])
+            return None
 
     
     return response.json()
@@ -78,7 +78,7 @@ def register_url():
 
 def parse_date():
     today = datetime.now()
-    yesterday = today - timedelta(1)
+    yesterday = today - timedelta(minutes=5)
     start = yesterday.strftime("%Y-%m-%d %H:%M:%S")
     now = today.strftime("%Y-%m-%d %H:%M:%S")
     return start, now

@@ -5,7 +5,7 @@ from . import views
 # app_name = 'Guardian'
 urlpatterns = [
     path('My-Kids/', MyKidsView.as_view(), name='my-kids'),
-    path('', GuardianHome.as_view(), name='guardian-home'),
+    path('Parent', GuardianHome.as_view(), name='guardian-home'),
     path('Learner/<str:email>/', views.TaskSelection.as_view(), name='task-view-select'),
     path('Guardian/<str:email>/Grade-<str:grade>/Overall/', KidTests.as_view(), name='kid-test'),
     path('<str:email>/<str:subject>/TopicInfo', KidExamTopicView.as_view(), name='kid-exam-topic-id'),
