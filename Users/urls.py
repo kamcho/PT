@@ -8,6 +8,7 @@ from Users import views
 sitemaps = {
     'static': StaticViewSitemap,
 }
+
 urlpatterns = [
 
     path('Sign-Up/', RegisterView.as_view(), name='register'),

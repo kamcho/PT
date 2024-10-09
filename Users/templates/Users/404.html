@@ -1,0 +1,21 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="centered-div" style="margin-top: 60px;display: flex;
+justify-content: center;  /* Centers horizontally */
+align-items: center;      /* Centers vertically */
+height: 80vh;">
+
+    {% if error %}
+    <h6>Oooops! That did not work </h6>
+    {% else %}
+    <h6>Oooops! We could not find the requested resource </h6>
+    {% endif %}
+    <a class="btn btn-secondary" href="{% url 'rout' %}" style="margin-left: 40px;">Go Home</a>
+</div>
+
+
+
+{% endblock %}

@@ -19,6 +19,9 @@ from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
 
+
+handler404 = 'Users.views.error_404'
+handler500 = 'Users.views.error_500'
 urlpatterns = [
 
     path('admin/', admin.site.urls),

@@ -21,7 +21,17 @@ import logging
 
 logger = logging.getLogger('django')
 
-    
+
+def error_404(request, exception):
+    # messages.error(request, 'We could not find the requested page !')
+    return render(request, 'Users/404.html', status=404)
+
+
+def error_500(request):
+    messages.error(request, 'Ooops! An error occured. Please try again or contact @support')
+    context = {'error':True}
+    return render(request, 'Users/404.html',context=context, status=500)
+
 class StaticViewSitemap(Sitemap):
     changefreq = 'daily'
     priority = 0.5
@@ -574,8 +584,8 @@ class StudentsHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
         except Exception as e:
             context['grade'] = 4
-
-            messages.error(self.request, f' {str(e)} An error occurred. Please contact @support')
+           
+            messages.error(self.request, f'An error occurred. Please contact @support')
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
