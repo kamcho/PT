@@ -28,4 +28,4 @@ while True:
     dt = urllib.request.urlopen(url) 
    
     print('called', dt)
-    time.sleep(5)  
+    time.sleep(45)  
