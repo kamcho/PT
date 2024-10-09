@@ -20,7 +20,10 @@ logger = logging.getLogger('django')
 
 class IsGuardian(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.role == 'Guardian'
+        if self.request.user.is_authenticated:
+            return self.request.user.role == 'Guardian'
+        else:
+            return False
     
 
 class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
