@@ -118,7 +118,7 @@ DATABASES = {
         'PASSWORD': '141778215aA!',  # Your MySQL password
         'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
         'PORT': '3306',       # MySQL default port
-        'CONN_MAX_AGE': 600,
+        'CONN_MAX_AGE': 0,
     }
 }
 
