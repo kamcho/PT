@@ -8,10 +8,12 @@ justify-content: center;  /* Centers horizontally */
 align-items: center;      /* Centers vertically */
 height: 80vh;">
 
-    {% if error %}
-    <h6>Oooops! That did not work </h6>
+    {% if error == '500' %}
+    <h6>Ooops! An error occured. Try again or contact @support</h6>
+    {% elif error == '404' %}
+    <h6>Oooops! We could not find the resource </h6>
     {% else %}
-    <h6>Oooops! We could not find the requested resource </h6>
+    <h6>Oooops! That did not work. Try again</h6>
     {% endif %}
     <a class="btn btn-secondary" href="{% url 'rout' %}" style="margin-left: 40px;">Go Home</a>
 </div>

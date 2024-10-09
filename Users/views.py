@@ -29,8 +29,18 @@ def error_404(request, exception):
 
 def error_500(request):
     messages.error(request, 'Ooops! An error occured. Please try again or contact @support')
-    context = {'error':True}
+    context = {'error':'500'}
     return render(request, 'Users/404.html',context=context, status=500)
+
+def error_403(request, exception):
+    # messages.error(request, 'Ooops! An error occured. Please try again or contact @support')
+    context = {'error':'403'}
+    return render(request, 'Users/404.html', status=403)
+
+def error_400(request, exception):
+    # messages.error(request, 'Ooops! An error occured. Please try again or contact @support')
+    context = {'error':'400'}
+    return render(request, 'Users/404.html', status=400)
 
 class StaticViewSitemap(Sitemap):
     changefreq = 'daily'

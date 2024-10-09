@@ -22,6 +22,8 @@ from django.contrib.auth import views as auth_views
 
 handler404 = 'Users.views.error_404'
 handler500 = 'Users.views.error_500'
+handler403 = 'Users.views.error_403'
+handler400 = 'Users.views.error_400'
 urlpatterns = [
 
     path('admin/', admin.site.urls),
