@@ -819,13 +819,13 @@ class CreateQuestion(IsTeacher, LoginRequiredMixin, TemplateView):
                 context['subjects'] = subjects
 
             except ObjectDoesNotExist:
-                pass
+                messages.error(self.request, 'You have not been assigned any Topic! Contact @support')
 
 
 
             except Exception as e:
                 # Handle multiple profiles returned
-                messages.error(self.request, 'An error occurred when processing your request. Please contact @support.')
+                messages.error(self.request, 'You have not been assigned any Topic! Contact @support')
                 error_message = str(e)  # Get the error message as a string
                 error_type = type(e).__name__
 
@@ -845,10 +845,10 @@ class CreateQuestion(IsTeacher, LoginRequiredMixin, TemplateView):
                     }
                 )
             # print(selected_subjects)
-            if not subjects:
-                messages.warning(self.request, 'You have not selected any Subjects and can therefore, not add any '
-                                               'questions.')
-                context['subjects'] = None
+            # if not subjects:
+            #     messages.warning(self.request, 'You have not selected any Subjects and can therefore, not add any '
+            #                                    'questions.')
+            #     context['subjects'] = None
 
 
             context['base_html'] = 'Teacher/teachers_base.html'
