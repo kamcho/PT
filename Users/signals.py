@@ -12,6 +12,7 @@ from Teacher.models import TeacherRanking
 # from SubjectList.models import MySubjects, Course
 from .models import MyUser, PersonalProfile, AcademicProfile
 from django.dispatch import receiver
+from datetime import timedelta, date
 
 
 @receiver(post_save,sender=MyUser)
@@ -23,8 +24,8 @@ def create_profile(sender, instance, created, **kwargs):
             AcademicProfile.objects.create(user=instance)
             sub = Subscriptions.objects.all().last()
             RateLimiter.objects.create(user=instance, tokens=100, speech=0, image=0)
-            
-            MySubscription.objects.create(user=instance, type=sub )
+            expiry = date.today() - timedelta(days=1)
+            MySubscription.objects.create(user=instance, type=sub, expiry=expiry )
 
         elif instance.role == 'Teacher':
             TeacherRanking.objects.create(user=instance)
