@@ -7,6 +7,8 @@ import uuid
 # from ElasticEmail.api import emails_api
 # from ElasticEmail.model.email_message_data import EmailMessageData
 # from ElasticEmail.model.email_recipient import EmailRecipient
+from django.db.models import Q
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -318,7 +320,8 @@ class Learning(LoginRequiredMixin, IsStudent, TemplateView):
 
         try:
             # Display subjects by Grade
-            subjects = Subject.objects.filter(grade=grade, name__icontains=['Mathematics','Science'], status=True)
+            subjects = Subject.objects.filter(grade=grade, status='1')
+            
             if not subjects:
                 messages.warning(self.request, 'We could not find Subjects matching your query!!')
                 raise Subject.DoesNotExist
