@@ -126,7 +126,7 @@
           <br>
           <p style="font-size: 24px;font-family:cursive !important ;color: rgba(89, 12, 134, 0.607);">Welcome to Mwalimu Private, your trusted e-learning platform offering tailored content for primary and junior secondary students. Explore interactive lessons in line with the CBC curriculum, covering a wide range of subjects to enhance your learning experience.</p>
           {% if user.is_authenticated %}
-          <a class="btn btn-outline-secondary" href="{% url 'student-home' %}" style="text-decoration:double;">E-Learning</a>
+          <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;">E-Learning</a>
           {% else %}
           <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;">Get Started</a>
           <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;">Login</a>
@@ -156,7 +156,7 @@
                                  success. </p>
                                  <br>
                                  {% if user.is_authenticated %}
-                                 <a class="btn btn-outline-secondary" href="{% url 'student-home' %}" style="text-decoration:double;">E-Learning</a>
+                                 <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;">E-Learning</a>
                                  {% else %}
                                  <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;">Get Started</a>
                                  <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;">Login</a>
