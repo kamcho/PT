@@ -24,6 +24,7 @@ class Subject(models.Model):
     topics = models.PositiveIntegerField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     abbreviation = models.CharField(max_length=10, default='DEF')
+    status = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'subjectlist_subject'  # Custom table name

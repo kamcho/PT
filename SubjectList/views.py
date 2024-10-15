@@ -318,7 +318,7 @@ class Learning(LoginRequiredMixin, IsStudent, TemplateView):
 
         try:
             # Display subjects by Grade
-            subjects = Subject.objects.filter(grade=grade)
+            subjects = Subject.objects.filter(grade=grade, name__icontains=['Mathematics','Science'], status=True)
             if not subjects:
                 messages.warning(self.request, 'We could not find Subjects matching your query!!')
                 raise Subject.DoesNotExist
