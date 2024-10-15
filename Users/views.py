@@ -484,6 +484,7 @@ def rout(request):
         if role == 'Guardian':
             return redirect('guardian-home')
         elif role == 'Student':
+            print('uuuid')
             return redirect('student-home')
         elif role == 'Teacher':
             return redirect('teachers-home')
