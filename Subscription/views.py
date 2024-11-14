@@ -86,7 +86,41 @@ class Pay(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
 
 
+class SpecificPay(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'Subscription/specific.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs) 
+        if self.request.user.role == 'Student':
+            context['template'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['template'] = 'Guardian/baseg.html'
+       
+        context['subscription'] = Subscriptions.objects.get(amount=self.kwargs['id'])
+        context['subscriptions'] = Subscriptions.objects.all().order_by('amount')
+        
+
+        return context 
+
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            amount = self.request.POST.get('amount')
+            phone = self.request.POST.get('phone')
+            subscription = self.get_context_data().get('subscription')
+            user = self.request.user.id
+            
+            if amount != '0':
+                
+                response = initiate_payment(phone, user, amount)
+                if response.status_code == 200:
+                    messages.success(self.request, 'Enter M-Pesa pin to complete payment')
+                else:
+                    messages.error(self.request, 'An error occurred. Kindly try again!')
+            return redirect(self.request.get_full_path())
+        
+    def test_func(self):
+        roles = ['Student']
+        return self.request.user.role in roles
 
 
 def initiate_payment(phone, user, total):

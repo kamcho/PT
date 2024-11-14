@@ -220,12 +220,19 @@ class AccountInquiries(models.Model):
         db_table = 'subjectlist_accountinquiries'  # Custom table name
         managed = False
 
-
+class AIFiles(models.Model):
+    file = models.FileField(upload_to='media/')
+    def __str__(self):
+        return str(self.file)
+    class Meta:
+        db_table = 'subjectlist_aifiles'  # Custom table name
+        managed = False
 class Prompt(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     quiz = models.TextField(max_length=500)
+    file = models.ManyToManyField(AIFiles,  blank=True)
 
     def __str__(self):
         return str(self.quiz)
@@ -238,7 +245,7 @@ class Completion(models.Model):
     prompt = models.ForeignKey(Prompt, on_delete=models.CASCADE)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     response = models.TextField(max_length=1500)
-
+    file = models.ManyToManyField(AIFiles,  blank=True)
     def __str__(self):
         return str(self.prompt.user)
     

@@ -1,0 +1,65 @@
+{% extends template %}
+
+{% block content %}
+
+<br><br><br><br>
+<div class="container two" >
+    <form method="post">
+        {% csrf_token %}
+        {% if not user.personalprofile.phone %}
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="0712345678" required>
+        </div>
+           
+
+
+        {% else %}
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phone" name="phone"
+                    value="{{ user.personalprofile.phone }}" placeholder="{{ user.personalprofile.phone }}" required>
+            </div>
+        {% endif %}
+       
+
+            <br>
+            <div>
+                <select class="form-select" aria-label="Default select example" id="subscription" name="subscription" required>
+             
+                    <option value="{{ subscription.type }}">{{ subscription.type }} ({{ subscription.amount }} )</option>
+ 
+                </select>
+            </div>
+            <br>
+
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="amount" value="{{ subscription.amount }}" name="amount" placeholder="0 Ksh" readonly required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" onclick="validateForm()">Pay</button>
+    </form>
+
+    <div style="width: 70%;margin: 0 auto;">
+        <div>
+        <h6>M-Pesa</h6>
+        <p>1. Go to lipa na m-pesa</p>
+        <p>2. select paybil</p>
+        <p>3. Enter <strong style="color: cornflowerblue;">4161900</strong> as paybill number</p>
+        <p>4. Enter <strong style="color: cornflowerblue;">{{ user.id }}</strong> as account number</p>
+        <p>5. Enter amount of <strong style="color: coral;">{{ subscription.amount }}</strong> </p>
+            <!-- <div style="color: coral;padding-left: 20px;">
+                <strong>Silver 150 ksh</strong><br>
+                <strong>Gold 350 ksh</strong><br>
+                <strong>Platinum 750 ksh</strong>
+            </div> -->
+            <br>
+        <p>6. Enter m-pesa pin</p>
+    </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

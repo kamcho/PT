@@ -37,9 +37,16 @@
             <br>
             <div>
                 <select class="form-select" aria-label="Default select example" id="subscription" name="subscription" required>
-                    {% for obj in subscriptions %}
-                      <option value="{{ obj.type }}">{{ obj.type }} ({{ obj.validity }} Month-s )</option>
-                    {% endfor %}
+                    <optgroup label="Grade 4-6">
+                        {% for obj in subscriptions %}
+                        <option value="{{ obj.type }}">{{ obj.type }} ({{ obj.amount }} )</option>
+                        {% endfor %}
+                    </optgroup> 
+                    <optgroup label="AI Only">
+                        {% for obj in subscriptions %}
+                        <option value="{{ obj.type }}">{{ obj.type }} ({{ obj.amount }} )</option>
+                        {% endfor %}
+                    </optgroup> 
                     
                 </select>
             </div>
@@ -61,11 +68,11 @@
         <p>3. Enter <strong style="color: cornflowerblue;">4161900</strong> as paybill number</p>
         <p>4. Enter <strong style="color: cornflowerblue;">{{ user.id }}</strong> as account number</p>
         <p>5. Enter amount of the subscription you want</p>
-            <div style="color: coral;padding-left: 20px;">
+            <!-- <div style="color: coral;padding-left: 20px;">
                 <strong>Silver 150 ksh</strong><br>
                 <strong>Gold 350 ksh</strong><br>
                 <strong>Platinum 750 ksh</strong>
-            </div>
+            </div> -->
             <br>
         <p>6. Enter m-pesa pin</p>
     </div>

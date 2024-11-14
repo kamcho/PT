@@ -539,3 +539,12 @@ def topic_percentile(topic):
 def get_dev(user, topic):
     quizes = TopicalQuizes.objects.filter(subtopic__id=topic)
     return quizes.count()
+
+@register.filter
+def get_files(user, quiz):
+    print(user, quiz)
+    # Retrieve the last Prompt object filtered by user and quiz
+    files = Prompt.objects.filter(user=user, quiz=quiz).last()
+    if files:
+        return files.file.all()  # Assuming `file` is a ManyToManyField
+    return []

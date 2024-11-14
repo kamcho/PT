@@ -61,51 +61,48 @@ class RegisterView(TemplateView):
             email = request.POST.get('email').lower()
             pwd1 = request.POST.get('pwd1')
             pwd2 = request.POST.get('pwd2')
-            role = request.POST.get('role')
+            role = 'Student'
             grade = request.POST.get('grade')
             gender = request.POST.get('gender')
             code = request.POST.get('code')
 
-            if email and pwd2 and pwd1:
-                if pwd2 == pwd1:
-                    try:
-                        user = MyUser.objects.create_user(email=email, role=role, password=pwd1)
-                        user.save()
+            if email and pwd1:
+                try:
+                    user = MyUser.objects.create_user(email=email, role=role, password=pwd1)
+                    user.save()
 
-                        messages.success(request, f'Account for {email} has been created successfully.')
-                        if role == 'Student':
-                            academic_profile, created = AcademicProfile.objects.get_or_create(user=user)
-                            grade = Grade.objects.get(grade=grade)
-                            academic_profile.current_class = grade
-                            academic_profile.save()
-                            if code:
-                                try:
-                                    referer = MyUser.objects.get(id=code)
-                                    referal = Referal.objects.create(user=user, referer=referer)
-                                except:
-                                    pass
-                            
-                        profile, created = PersonalProfile.objects.get_or_create(user=user)
-                        profile.gender = gender
-                        profile.save()
-                        user = authenticate(self.request, username=email, password=pwd1)
-                        self.request.session['id'] = user.uuid
-                        self.request.session['mail'] = user.email
-                        if user is not None:
-                            # Log the user in
-                            login(self.request, user)
-                            # Redirect to a success page
-                            return redirect('edit-profile')
-                        else:
-                            return redirect('login')
+                    messages.success(request, f'Account for {email} has been created successfully.')
+                    if role == 'Student':
                         
+                        grade = Grade.objects.get(grade=grade)
+                        academic_profile = AcademicProfile.objects.get_or_create(user=user, current_class=grade)
+                        if code:
+                            try:
+                                referer = MyUser.objects.get(id=code)
+                                referal = Referal.objects.create(user=user, referer=referer)
+                            except:
+                                pass
+                        
+                    profile, created = PersonalProfile.objects.get_or_create(user=user)
+                    profile.gender = gender
+                    profile.save()
+                    user = authenticate(self.request, username=email, password=pwd1)
+                    self.request.session['id'] = user.uuid
+                    self.request.session['mail'] = user.email
+                    if user is not None:
+                        # Log the user in
+                        login(self.request, user)
+                        # Redirect to a success page
+                        return redirect('edit-profile')
+                    else:
+                        return redirect('login')
+                    
 
                             
 
-                    except IntegrityError as e:
-                        messages.error(request, str(e))
-                else:
-                    messages.error(request, 'The passwords did not match!')
+                except IntegrityError as e:
+                    messages.error(request, str(e))
+            
             else:
                 messages.error(request, 'You did not completely fill out the form.')
 
@@ -395,7 +392,8 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 context['base_html'] = 'Teacher/teachers_base.html'
             elif self.request.user.role in ['Supervisor', 'Receptionist']:
                 context['base_html'] = 'Supervisor/base.html'
-
+            else:
+                context['base_html'] = 'Users/base.html'
         except:
             context['base_html'] = 'Users/base.html'
             messages.error(self.request, 'Not logged in')
@@ -602,21 +600,21 @@ class StudentsHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             error_type = type(e).__name__
 
             # Save Log to database
-            logger.critical(
-                error_message,
-                exc_info=True,  # Include exception info in the log message
-                extra={
-                    'app_name': __name__,
-                    'url': self.request.get_full_path(),
-                    'school': settings.SCHOOL_ID,
-                    'error_type': error_type,
-                    'user': self.request.user,
-                    'level': 'Critical',
+            # logger.critical(
+            #     error_message,
+            #     exc_info=True,  # Include exception info in the log message
+            #     extra={
+            #         'app_name': __name__,
+            #         'url': self.request.get_full_path(),
+            #         'school': settings.SCHOOL_ID,
+            #         'error_type': error_type,
+            #         'user': self.request.user,
+            #         'level': 'Critical',
 
-                    'model': 'DatabaseError',
-                    # Add more custom fields as needed
-                }
-            )
+            #         'model': 'DatabaseError',
+            #         # Add more custom fields as needed
+            #     }
+            # )
 
 
         return context

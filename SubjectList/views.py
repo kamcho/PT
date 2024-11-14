@@ -21,7 +21,7 @@ from openai import OpenAI
 import openai
 
 from Exams.models import ClassTest, ClassTestStudentTest, StudentTest, TopicalQuizes
-from SubjectList.models import Completion, Prompt, RateLimiter, Subject, Subtopic, Progress, TopicExamNotifications, Topic, TopicalExamResults, Course, \
+from SubjectList.models import AIFiles, Completion, Prompt, RateLimiter, Subject, Subtopic, Progress, TopicExamNotifications, Topic, TopicalExamResults, Course, \
      AccountInquiries
 # from Teacher.models import ClassTestNotifications
 from Teacher.models import StudentList
@@ -1483,15 +1483,23 @@ class AskAi(TemplateView):
 
 def chatgpt_answer(request):
     if request.method == 'POST' :
+        
         question = request.POST.get('prompt')
 
-        image_base64 = request.POST.get('image_base64')
-        print(image_base64, 'img')
+        images = request.FILES.getlist('images[]')
+        # print(images, question)
         
         new = 'sk-proj-0FM3OGweCdZ6dIHNhWU2XeZ3b5PZ899zAeITjVnZZ59awtKMqkKi2G76v'
         old = '3fNnkN3Iir4C5bNSDT3BlbkFJwpCmyikXNKbq9w0ueFN7Tbqjnne1q6W84lYG48k8F7gDk1ji9eiDqkLogiZgJScS49mu2qU6MA'
         api_key = old + new
-        quiz = Prompt.objects.create(user=request.user, quiz=question)
+        if images:
+            quiz = Prompt.objects.create(user=request.user, quiz=question)
+            for image in images:
+                upload = AIFiles.objects.create(file=image)
+                quiz.file.add(upload)
+                print('success')
+        else:
+            quiz = Prompt.objects.create(user=request.user, quiz=question)
         prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
         
         # Call ChatGPT API to get the answer
