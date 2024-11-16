@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mwalimuprivate.com','www.mwalimuprivate.com', '127.0.0.1']
+ALLOWED_HOSTS = ['mwalimuprivate.com','www.mwalimuprivate.com', '127.0.0.1','kevin254.pythonanywhere.com']
 CSRF_TRUSTED_ORIGINS = ['https://www.mwalimuprivate.com/']
 # SITE_ID = 2
 # Application definition
