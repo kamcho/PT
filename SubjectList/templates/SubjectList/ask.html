@@ -16,29 +16,37 @@
             </div>
 
 
-            {% for chat in chats %}
-                {% if chat.type == 'completion' %}
+            {% for chat in prompts %}
+                
+            <div href="#" class="you">
+                <h6><i class="bi bi-robot"></i> you</h6>{% for file in chat.file.all %}
+                <img src="{{ file.file.url }}" alt="User File" style="max-width: 190px; margin: 5px;max-height: 200px;">
+            {% endfor %}
+                <div class="d-flex gap-2 w-100 justify-content-between">
+                <div>
+                    <p class="mb-0 opacity-75">{{ chat.quiz }}</p>
+                </div>
+                
+                </div>
+            </div>
+                    {% for completion in chat.completion_set.all %}
                     <div href="#" class="ai">
                         <h6><i class="bi bi-robot"></i> Robo AI</h6>
                         <div class="d-flex gap-2 w-100 justify-content-between">
                         <div>
-                            <p class="mb-0 opacity-75">{{ chat.content }}</p>
+                            <p class="mb-0 opacity-75">{{ completion.response }}</p>
                         </div>
-                        </div>
-                    </div>
-                {% else %}
-                    <div href="#" class="you">
-                        <h6><i class="bi bi-robot"></i> you</h6>
-                        <div class="d-flex gap-2 w-100 justify-content-between">
                         <div>
-                            <p class="mb-0 opacity-75">{{ chat.content }}</p>
+                            {% for file in chat.file.all %}
+                            <img src="{{ file.file.url }}" alt="AI File" style="max-width: 100px; margin: 5px;">
+                        {% endfor %}
                         </div>
                         </div>
                     </div>
-                {% endif %}
+                 
 
 
-
+                {% endfor %}
             {% endfor %}
         </div>
           
@@ -190,6 +198,10 @@ Array.from(fileInput.files).forEach(file => {
                 scrollTop: $('#main')[0].scrollHeight // Scroll to the bottom of #main
                 }, 'slow');
                 fileInput.value = "";
+                $(".input-group").css("height", "150px");
+                $("#chat-input-area").css("height", "60px");
+
+
                 
 
             // AJAX CALL TO SERVER

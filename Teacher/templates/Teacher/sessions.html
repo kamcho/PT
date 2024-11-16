@@ -20,6 +20,8 @@
     <!-- <a class="btn btn-primary">Schedule Session</a> -->
     <br><br>
     <ul class="list-group" style="border-radius: 10px !important;">
+      Our online class sessions are being updated and will be back shortly. For any father queries <a href="tel:+254739363883" style="text-decoration: none; color: blue;">📞 Call Support +254 739 363 883</a>
+ 
         {% for session in sessions %}
         {% if session.active %}
         <a href="{% url 'session' session.id %}">

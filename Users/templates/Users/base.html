@@ -84,8 +84,12 @@
          
           <li>
             <a class="btn btn-secondary" href="{% url 'ask-ai'   %}" style="color: white;" ><i class="bi bi-robot" style="color: white;"> </i>ROBO AI</a>
-          </li>
-<br>
+          </li><br>
+          <li>
+            <a class="btn btn-primary" href="{% url 'subscription'   %}" style="color: white;" ><i class="bi bi-cash" style="color: white;"> </i>Subscriptions</a>
+          </li><br>
+{% if user.academicprofile.is_content  %}
+
           <li>
             <div class="dropdown" >
               <button class="btn btn-outline-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
@@ -117,16 +121,9 @@
           </div>
           
           </li>
-
-         
-
-       
-
-            
-       
            
                 
-        
+     
        <li>
         <a class="nav-link" href="{% url 'exams' user.academicprofile.current_class %}" ><i class="bi bi-clipboard-check"> </i>E-Results</a>
     </li>
@@ -138,6 +135,8 @@
           <li>
             <a class="nav-link" href="{% url 'my-sessions' %}" ><i class="bi bi-display"> </i>Class Sessions</a>
         </li>
+
+        {% endif %}
         <li>
             <a class="nav-link" href="{% url 'update-profile' user.email  %}" ><i class="bi bi-person-check" > </i>Profile</a>
           </li>

@@ -180,6 +180,9 @@ class AcademicProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+    def is_content(self):
+        return self.current_class.grade in [4, 5, 6]
+
     
     class Meta:
         db_table = 'users_academicprofile'  # Custom table name

@@ -33,16 +33,19 @@
     <br>
         <div>
            <select class="form-select" id="grade" name="grade" aria-label="Default select example" >
-
-                   <option value="1" disabled>1 (coming soon)</option>
-                   <option value="2" disabled>2 (coming soon)</option>
-                   <option value="3" disabled>3 (coming soon)</option>
-                   <option value="4">4</option>
-                   <option value="5">5</option>
-                   <option value="6">6</option>
-                   <option value="7" disabled>7 (coming soon)</option>
-                   <option value="8" disabled>8 (coming soon)</option>
-
+            <optgroup label="E-Learning + AI Support">
+              <option value="4">Grade 4</option>
+                   <option value="5">Grade 5</option>
+                   <option value="6">Grade 6</option>
+                  </optgroup>
+                  <optgroup label="AI Support Only">
+                   <option value="1" >Grade  1</option>
+                   <option value="2" >Grade 2 </option>
+                   <option value="3" >Grade 3 </option>
+                   
+                   <option value="7" >Grade 7 </option>
+                   <option value="8" >Grade 8</option>
+            </optgroup>
 
            </select>
         </div>
@@ -66,10 +69,10 @@
         <span>Confirm password</span>
     </label> -->
     <br>
-    <label>
+    <!-- <label>
       <input class="input" type="number" name="code"  id="code" >
       <span>Referal Code</span>
-  </label>
+  </label> -->
     <button class="submit">Submit</button>
 
     <p class="signin">Already have an acount ? <a href="{% url 'login' %}">Signin</a> </p>

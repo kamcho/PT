@@ -1448,35 +1448,12 @@ class AskAi(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        prompts = Prompt.objects.filter(user=user).order_by('date')
+        prompts = Prompt.objects.filter(user=user).prefetch_related('file', 'completion_set')
+        print(prompts)
+        context['prompts'] = prompts
     
-        # Create a list to store the chat history
-        chat_history = []
 
-        # Loop through each prompt and its corresponding completion
-        for prompt in prompts:
-            # Add the prompt to the chat history
-            chat_history.append({
-                'type': 'prompt',
-                'uuid': prompt.uuid,
-                'content': prompt.quiz,
-                'date': prompt.date
-            })
-
-            # Get the completion related to the current prompt
-            completion = Completion.objects.filter(prompt=prompt).first()
-            
-            # If there is a completion, add it to the chat history
-            if completion:
-                chat_history.append({
-                    'type': 'completion',
-                    'uuid': completion.uuid,
-                    'content': completion.response,
-                    'date': completion.prompt.date
-                })
-            context['chats'] = chat_history
-
-            return context
+        return context
 
 
 
@@ -1489,17 +1466,10 @@ def chatgpt_answer(request):
         images = request.FILES.getlist('images[]')
         # print(images, question)
         
-        new = 'sk-proj-0FM3OGweCdZ6dIHNhWU2XeZ3b5PZ899zAeITjVnZZ59awtKMqkKi2G76v'
-        old = '3fNnkN3Iir4C5bNSDT3BlbkFJwpCmyikXNKbq9w0ueFN7Tbqjnne1q6W84lYG48k8F7gDk1ji9eiDqkLogiZgJScS49mu2qU6MA'
+        new = 'sk-proj-j5-e2Iz9pJuTbJTnDJzmBF8PfohCtMtmWyUWH2eBC9DiNOoyVpIJ1dbIAfEORT4lN6TAIFWyuuT3BlbkFJQKwDXNpm_2PZuh0PGdAfnv'
+        old = 'E4AWP-5g_OVqDamm7Js3HKo9K-auYJHGU2oLqukobQvM_P7csVEA'
         api_key = old + new
-        if images:
-            quiz = Prompt.objects.create(user=request.user, quiz=question)
-            for image in images:
-                upload = AIFiles.objects.create(file=image)
-                quiz.file.add(upload)
-                print('success')
-        else:
-            quiz = Prompt.objects.create(user=request.user, quiz=question)
+        
         prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
         
         # Call ChatGPT API to get the answer
@@ -1510,16 +1480,26 @@ def chatgpt_answer(request):
             messages = [{"role": "user", "content": [{"type": "text", "text": quiz.quiz}]} for quiz in prompts]
             messages.append({"role": "user", "content": [{"type": "text", "text": question}]})
 
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=messages
-            )
-            choice = response.choices[0]
             
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=messages,
+                temperature=0.7,  # Set creativity level (lower for deterministic, higher for more variety)
+                n=1
+            )
+            if images:
+                quiz = Prompt.objects.create(user=request.user, quiz=question)
+                for image in images:
+                    upload = AIFiles.objects.create(file=image)
+                    quiz.file.add(upload)
+                    print('success')
+            else:
+                quiz = Prompt.objects.create(user=request.user, quiz=question)
+                
+            choice = response.choices[0]
             
             response_ = response.choices[0].message.content
             tokens = response.usage.total_tokens
-
             rate = RateLimiter.objects.get(user=request.user)
             balance = int(rate.tokens) - int(tokens)
             rate.tokens = balance
@@ -1531,5 +1511,8 @@ def chatgpt_answer(request):
             return JsonResponse({'answer': response_})
         
         except Exception as e:
-            reason = 'We could not process your request at this time. Please try again later or contact @support'
+            # quiz = Prompt.objects.create(user=request.user, quiz=question)
+            
+            reason = 'i could not process your request at this time. Please try again later or contact @support'
+            # answer = Completion.objects.create(prompt=quiz, response=reason)
             return JsonResponse({'answer': reason})
