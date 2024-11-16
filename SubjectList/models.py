@@ -12,9 +12,9 @@ class Course(models.Model):
     def __str__(self):
         return self.name
     
-    class Meta:
-        db_table = 'subjectlist_course'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_course'  # Custom table name
+    #     managed = False
 
 
 class Subject(models.Model):
@@ -26,9 +26,9 @@ class Subject(models.Model):
     abbreviation = models.CharField(max_length=10, default='DEF')
     status = models.BooleanField(default=False)
 
-    class Meta:
-        db_table = 'subjectlist_subject'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_subject'  # Custom table name
+    #     managed = False
 
     def get_grade(self, score):
         # Define the grade ranges for each subject
@@ -102,9 +102,9 @@ class MySubjects(models.Model):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'subjectlist_mysubjects'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_mysubjects'  # Custom table name
+    #     managed = False
 
     def selected(self):
         if self.name.exists():
@@ -125,9 +125,9 @@ class Topic(models.Model):
     def __str__(self):
         return self.name + self.subject.grade
     
-    class Meta:
-        db_table = 'subjectlist_topic'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_topic'  # Custom table name
+    #     managed = False
 
 
 class Subtopic(models.Model):
@@ -141,9 +141,9 @@ class Subtopic(models.Model):
 
     def __str__(self):
         return self.name
-    class Meta:
-        db_table = 'subjectlist_subtopic'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_subtopic'  # Custom table name
+    #     managed = False
 
 class Progress(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -153,9 +153,9 @@ class Progress(models.Model):
 
     def __str__(self):
         return str(self.user)
-    class Meta:
-        db_table = 'subjectlist_progress'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_progress'  # Custom table name
+    #     managed = False
 
 class Notifications(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -167,9 +167,9 @@ class Notifications(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'subjectlist_notifications'  # Custom table name
+        # db_table = 'subjectlist_notifications'  # Custom table name
         abstract=True
-        managed = False
+        # managed = False
 
 
 class TopicExamNotifications(Notifications):
@@ -179,9 +179,9 @@ class TopicExamNotifications(Notifications):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'subjectlist_topicexamnotifications'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_topicexamnotifications'  # Custom table name
+    #     managed = False
 
 
 class TopicalExamResults(Notifications):
@@ -191,9 +191,9 @@ class TopicalExamResults(Notifications):
 
     def __str__(self):
         return str(self.user)
-    class Meta:
-        db_table = 'subjectlist_topicalexamresults'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_topicalexamresults'  # Custom table name
+    #     managed = False
     
 class PaymentNotifications(Notifications):
     amount = models.PositiveIntegerField()
@@ -203,9 +203,9 @@ class PaymentNotifications(Notifications):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'subjectlist_paymentnotifications'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_paymentnotifications'  # Custom table name
+    #     managed = False
 
 class AccountInquiries(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -216,17 +216,17 @@ class AccountInquiries(models.Model):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'subjectlist_accountinquiries'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_accountinquiries'  # Custom table name
+    #     managed = False
 
 class AIFiles(models.Model):
     file = models.FileField(upload_to='media/')
     def __str__(self):
         return str(self.file)
-    class Meta:
-        db_table = 'subjectlist_aifiles'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_aifiles'  # Custom table name
+    #     managed = False
 class Prompt(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
@@ -237,9 +237,9 @@ class Prompt(models.Model):
     def __str__(self):
         return str(self.quiz)
     
-    class Meta:
-        db_table = 'subjectlist_prompt'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_prompt'  # Custom table name
+    #     managed = False
     
 class Completion(models.Model):
     prompt = models.ForeignKey(Prompt, on_delete=models.CASCADE)
@@ -249,9 +249,9 @@ class Completion(models.Model):
     def __str__(self):
         return str(self.prompt.user)
     
-    class Meta:
-        db_table = 'subjectlist_completion'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_completion'  # Custom table name
+    #     managed = False
 
 class RateLimiter(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
@@ -262,6 +262,6 @@ class RateLimiter(models.Model):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'subjectlist_ratelimiter'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subjectlist_ratelimiter'  # Custom table name
+    #     managed = False

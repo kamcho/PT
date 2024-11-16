@@ -12,6 +12,6 @@ class MyKids(models.Model):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'guardian_mykids'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'guardian_mykids'  # Custom table name
+    #     managed = False

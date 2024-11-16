@@ -15,17 +15,17 @@ class Subscriptions(models.Model):
     def __str__(self):
         return str(self.type)
     
-    class Meta:
-        db_table = 'subscription_subscriptions'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subscription_subscriptions'  # Custom table name
+    #     managed = False
 
 class Referal(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     referer = models.ForeignKey(MyUser, related_name='referer',  on_delete=models.CASCADE)
 
-    class Meta:
-        db_table = 'subscription_referal'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subscription_referal'  # Custom table name
+    #     managed = False
 
 
 class MySubscription(models.Model):
@@ -39,9 +39,9 @@ class MySubscription(models.Model):
     def status(self):
         return self.expiry >= datetime.date.today()
     
-    class Meta:
-        db_table = 'subscription_mysubscription'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subscription_mysubscription'  # Custom table name
+    #     managed = False
 
     def active(self):
         today = datetime.date.today()
@@ -69,9 +69,9 @@ class MpesaPayments(models.Model):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'subscription_mpesapayments'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'subscription_mpesapayments'  # Custom table name
+    #     managed = False
 
 
     

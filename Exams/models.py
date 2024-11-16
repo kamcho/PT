@@ -21,9 +21,9 @@ class TopicalQuizes(models.Model):
     def __str__(self):
         return str(self.id)
     
-    class Meta:
-        db_table = 'exams_topicalquizes'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'exams_topicalquizes'  # Custom table name
+    #     managed = False
 
 
 class TopicalQuizAnswers(models.Model):
@@ -32,9 +32,9 @@ class TopicalQuizAnswers(models.Model):
     choice = models.CharField(max_length=600)
     is_correct = models.BooleanField(default=False)
 
-    class Meta:
-        db_table = 'exams_topicalquizanswers'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'exams_topicalquizanswers'  # Custom table name
+    #     managed = False
 
     def __str__(self):
         return str(self.id)
@@ -65,8 +65,8 @@ class BaseTest(models.Model):
     quiz = models.ManyToManyField(TopicalQuizes)
 
     class Meta:
-        db_table = 'exams_basetest'  # Custom table name
-        managed = False
+        # db_table = 'exams_basetest'  # Custom table name
+        # managed = False
         abstract=True
 
 
@@ -76,9 +76,9 @@ class StudentTest(BaseTest):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'exams_studenttest'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'exams_studenttest'  # Custom table name
+    #     managed = False
 
 
 def generate_uuid():
@@ -92,9 +92,9 @@ class GeneralTest(BaseTest):
     def __str__(self):
         return str(self.user)
     
-    class Meta:
-        db_table = 'exams_generaltest'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'exams_generaltest'  # Custom table name
+    #     managed = False
 
 
 
@@ -110,8 +110,8 @@ class BaseGroupTest(models.Model):
     expiry = models.DateField(null=True)
 
     class Meta:
-        db_table = 'exams_basegrouptest'  # Custom table name
-        managed = False
+        # db_table = 'exams_basegrouptest'  # Custom table name
+        # managed = False
         abstract=True
 
 
@@ -153,9 +153,9 @@ class ClassTest(BaseGroupTest):
     def __str__(self):
         return str(self.uuid)
     
-    class Meta:
-        db_table = 'exams_classtest'  # Custom table name
-        managed = False
+    # class Meta:
+    #     db_table = 'exams_classtest'  # Custom table name
+    #     managed = False
 
 
 class ClassTestStudentTest(models.Model):
@@ -173,7 +173,7 @@ class ClassTestStudentTest(models.Model):
     class Meta:
         unique_together = ('user', 'uuid')
         db_table = 'exams_classteststudenttest'  # Custom table name
-        managed = False
+        # managed = False
 
 
 class StudentsAnswers(models.Model):
@@ -191,8 +191,8 @@ class StudentsAnswers(models.Model):
 
     class Meta:
         unique_together = ('user', 'uuid')
-        db_table = 'exams_studentsanswers'  # Custom table name
-        managed = False
+        # db_table = 'exams_studentsanswers'  # Custom table name
+        # managed = False
 
 
 # class StudentsKnecAnswers(models.Model):
