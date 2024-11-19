@@ -18,7 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import DatabaseError, IntegrityError
 from django.db.models import Count
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from openai import OpenAI
 import openai
@@ -28,7 +28,7 @@ from SubjectList.models import AIFiles, Completion, Prompt, RateLimiter, Subject
      AccountInquiries
 # from Teacher.models import ClassTestNotifications
 from Teacher.models import StudentList
-from Users.models import AcademicProfile
+from Users.models import AcademicProfile, PersonalProfile
 from django.views.generic import TemplateView
 
 logger = logging.getLogger('django')
@@ -1470,17 +1470,18 @@ def chatgpt_answer(request):
             question = request.POST.get('prompt')
 
             images = request.FILES.getlist('images[]')
+             
             
             
-            SECRET_KEY = os.getenv("SECRET_KEY")
             
             prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
             # print('prompts', prompts)
             messages = []
             # Call ChatGPT API to get the answer
             
-            client = OpenAI(api_key=SECRET_KEY)
             try:
+                SECRET_KEY = os.getenv("SECRET_KEY")
+                client = OpenAI(api_key=SECRET_KEY)
                 # messages = []
                 
                 if prompts:
@@ -1493,14 +1494,19 @@ def chatgpt_answer(request):
                             print('nt')
                         messages.append({"role": "user", "content": prompt.quiz})
                 messages.reverse()
+                academia = get_object_or_404(AcademicProfile, user=request.user)
+                grade = academia.current_class.grade 
+                level = academia.current_class.level
+                profile = get_object_or_404(PersonalProfile, user=request.user)
+                name = profile.get_names()
                 messages.insert(0,{
                     "role": "system",
-                    "content": "You are a helpful assistant for a 10 year old kenyan kid. Use simple language since you are talking to a child"
+                    "content": f"You are a helpful assistant for {name} in {grade} in kenyan kid in {level}. Use simple language since you are talking to a child"
                 })
                 messages.append({"role": "user", "content": question})
 
 
-                print(messages)
+                # print(messages)
                 response = client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=messages,
@@ -1514,13 +1520,11 @@ def chatgpt_answer(request):
                         upload = AIFiles.objects.create(file=image)
                         quiz.file.add(upload)
                         
-                        print('success')
                 else:
                     quiz = Prompt.objects.create(user=request.user, quiz=question)
                 
                     
                 choice = response.choices[0]
-                print(messages)
                 response_ = response.choices[0].message.content
                 tokens = response.usage.total_tokens
                 
@@ -1539,4 +1543,4 @@ def chatgpt_answer(request):
                 
                 reason = 'i could not process your request at this time. Please try again later or contact @support'
                 # answer = Completion.objects.create(prompt=quiz, response=reason)
-                return JsonResponse({'answer': str(e)})
+                return JsonResponse({'answer': reason})
