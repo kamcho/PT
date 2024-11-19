@@ -1,4 +1,5 @@
 import logging
+import os
 import uuid
 from django.db import transaction
 
@@ -1470,16 +1471,15 @@ def chatgpt_answer(request):
 
             images = request.FILES.getlist('images[]')
             
-            new = 'sk-proj-j5-e2Iz9pJuTbJTnDJzmBF8PfohCtMtmWyUWH2eBC9DiNOoyVpIJ1dbIAfEORT4lN6TAIFWyuuT3BlbkFJQKwDXNpm_2PZuh0PGdAfnv'
-            old = 'E4AWP-5g_OVqDamm7Js3HKo9K-auYJHGU2oLqukobQvM_P7csVEA'
-            api_key = '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'
+            
+            SECRET_KEY = os.getenv("SECRET_KEY")
             
             prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
             # print('prompts', prompts)
             messages = []
             # Call ChatGPT API to get the answer
             
-            client = OpenAI(api_key=api_key)
+            client = OpenAI(api_key=SECRET_KEY)
             try:
                 # messages = []
                 
