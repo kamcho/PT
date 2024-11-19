@@ -1,5 +1,7 @@
 import logging
 import uuid
+from django.db import transaction
+
 # from ElasticEmail.model.email_content import EmailContent
 # from ElasticEmail.model.body_part import BodyPart
 # from ElasticEmail.model.body_content_type import BodyContentType
@@ -1460,59 +1462,81 @@ class AskAi(TemplateView):
 
 def chatgpt_answer(request):
     if request.method == 'POST' :
-        
-        question = request.POST.get('prompt')
+        rate = RateLimiter.objects.get(user=request.user)
+        if rate.tokens == 0:
+            return JsonResponse({'answer':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
+        else:
+            question = request.POST.get('prompt')
 
-        images = request.FILES.getlist('images[]')
-        # print(images, question)
-        
-        new = 'sk-proj-j5-e2Iz9pJuTbJTnDJzmBF8PfohCtMtmWyUWH2eBC9DiNOoyVpIJ1dbIAfEORT4lN6TAIFWyuuT3BlbkFJQKwDXNpm_2PZuh0PGdAfnv'
-        old = 'E4AWP-5g_OVqDamm7Js3HKo9K-auYJHGU2oLqukobQvM_P7csVEA'
-        api_key = old + new
-        
-        prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
-        
-        # Call ChatGPT API to get the answer
-        
-        client = OpenAI(api_key=api_key)
-
-        try:
-            messages = [{"role": "user", "content": [{"type": "text", "text": quiz.quiz}]} for quiz in prompts]
-            messages.append({"role": "user", "content": [{"type": "text", "text": question}]})
-
+            images = request.FILES.getlist('images[]')
             
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=messages,
-                temperature=0.7,  # Set creativity level (lower for deterministic, higher for more variety)
-                n=1
-            )
-            if images:
-                quiz = Prompt.objects.create(user=request.user, quiz=question)
-                for image in images:
-                    upload = AIFiles.objects.create(file=image)
-                    quiz.file.add(upload)
-                    print('success')
-            else:
-                quiz = Prompt.objects.create(user=request.user, quiz=question)
+            new = 'sk-proj-j5-e2Iz9pJuTbJTnDJzmBF8PfohCtMtmWyUWH2eBC9DiNOoyVpIJ1dbIAfEORT4lN6TAIFWyuuT3BlbkFJQKwDXNpm_2PZuh0PGdAfnv'
+            old = 'E4AWP-5g_OVqDamm7Js3HKo9K-auYJHGU2oLqukobQvM_P7csVEA'
+            api_key = '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'
+            
+            prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
+            # print('prompts', prompts)
+            messages = []
+            # Call ChatGPT API to get the answer
+            
+            client = OpenAI(api_key=api_key)
+            try:
+                # messages = []
                 
-            choice = response.choices[0]
+                if prompts:
+                    for prompt in prompts:
+                        
+                        try:
+                            completion = Completion.objects.get(prompt=prompt)
+                            messages.append({'role':'assistant', "content":completion.response})
+                        except Exception as e:
+                            print('nt')
+                        messages.append({"role": "user", "content": prompt.quiz})
+                messages.reverse()
+                messages.insert(0,{
+                    "role": "system",
+                    "content": "You are a helpful assistant for a 10 year old kenyan kid. Use simple language since you are talking to a child"
+                })
+                messages.append({"role": "user", "content": question})
+
+
+                print(messages)
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=messages,
+                    temperature=0.8,  # Set creativity level (lower for deterministic, higher for more variety)
+                    n=1
+                )
+                # print('response')
+                if images:
+                    quiz = Prompt.objects.create(user=request.user, quiz=question)
+                    for image in images:
+                        upload = AIFiles.objects.create(file=image)
+                        quiz.file.add(upload)
+                        
+                        print('success')
+                else:
+                    quiz = Prompt.objects.create(user=request.user, quiz=question)
+                
+                    
+                choice = response.choices[0]
+                print(messages)
+                response_ = response.choices[0].message.content
+                tokens = response.usage.total_tokens
+                
+                balance = int(rate.tokens) - int(tokens)
+                rate.tokens = balance
+                rate.save()
             
-            response_ = response.choices[0].message.content
-            tokens = response.usage.total_tokens
-            rate = RateLimiter.objects.get(user=request.user)
-            balance = int(rate.tokens) - int(tokens)
-            rate.tokens = balance
-            rate.save()
-            answer = Completion.objects.create(prompt=quiz, response=response_)
-            
-    
-            
-            return JsonResponse({'answer': response_})
+                answer = Completion.objects.create(prompt=quiz, response=response_)
         
-        except Exception as e:
-            # quiz = Prompt.objects.create(user=request.user, quiz=question)
+        
+                
+                return JsonResponse({'answer': response_})
             
-            reason = 'i could not process your request at this time. Please try again later or contact @support'
-            # answer = Completion.objects.create(prompt=quiz, response=reason)
-            return JsonResponse({'answer': reason})
+            except Exception as e:
+                # quiz = Prompt.objects.create(user=request.user, quiz=question)
+                
+                reason = 'i could not process your request at this time. Please try again later or contact @support'
+                # answer = Completion.objects.create(prompt=quiz, response=reason)
+                return JsonResponse({'answer': str(e)})

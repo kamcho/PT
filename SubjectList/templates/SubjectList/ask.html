@@ -1,11 +1,12 @@
 {% extends 'Users/base.html' %}
 {% load custom_filters %}
 {% block content %}
-<div id="main" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;height: 100vh;margin-top: 60px;overflow: auto;">
+<div id="main" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;margin-top: 60px;display: flex;
+    flex-direction: column;height: 92vh;">
     <br><br>
-    <div class="container chat">
+    <div class="container chat" style="overflow-y: scroll;margin-top: 30px;height: 85%;">
         
-        <div id="list-group" class="list-group w-auto">
+        <div id="list-group" class="list-group w-auto" >
             <div href="#" class="ai">
               <h6><i class="bi bi-robot"></i> Robo AI</h6>
               <div class="d-flex gap-2 w-100 justify-content-between">
@@ -19,7 +20,7 @@
             {% for chat in prompts %}
                 
             <div href="#" class="you">
-                <h6><i class="bi bi-robot"></i> you</h6>{% for file in chat.file.all %}
+                <h6><i class="bi bi-person"></i> you</h6>{% for file in chat.file.all %}
                 <img src="{{ file.file.url }}" alt="User File" style="max-width: 190px; margin: 5px;max-height: 200px;">
             {% endfor %}
                 <div class="d-flex gap-2 w-100 justify-content-between">
@@ -50,82 +51,39 @@
             {% endfor %}
         </div>
           
-        <div class="text-ceter bottom-bar">
-            <div class="input-grop mb-3" style="border: 0.1px solid rgb(229, 250, 255);border-radius: 10px;padding: 20px;position: relative;min-height: 100px;">
-            {% if user.mysubscription.status %}
-                {% if user.ratelimiter.tokens %}
-                <!-- <div style="border: 20px solid green;width: 90%;"><small id="dis" class="text-muted">Enter message</small> -->
-                    <!-- <div contenteditable="false"  id="chat-input-p" style="background-color: aqua;flex-grow: 1; margin-left: 10px; font-size: 16px;width: 90%;white-space: pre-wrap;word-wrap: break-word;overflow-wrap: break-word; border: none; outline: none; padding: 10px;">
-                        
-                   </div><br> -->
-                   <div class="form-floating">
-                    <textarea class="form-control" placeholder="Leave a comment here" id="chat-input-area"></textarea>
-                    <label for="floatingTextarea">Enter message ...</label>
-                  </div>
-        <script>// Function to auto-expand the textarea
-            $("#chat-input-area").on("input", function() {
-                // Reset the height to auto to calculate the scrollHeight
-                $(this).css("height", "auto");
-                
-                // Set the height to the scrollHeight, which is the height of the content
-                $(this).css("height", this.scrollHeight + "px");
-            });
-            </script>
-                    <input type="text" class="form-control" style="height: 60px;border-radius: 10px;padding-left: 40px;display: none;" placeholder="Message AI Assistant" id="chat-input" >
-                    <!-- <input type="file" id="image-input" accept="image/*" class="form-cntrol" style="width: 150px !important;"> -->
-                     <div style="font-size: 30px;position: absolut;left: 20px;bottom: 0px;" id="image-icon"><i class="bi bi-images" style="color: bue;"></i></div>
-                     <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
-<script>
-    // Enable contenteditable when any place inside .input-grop is clicked
-$(".input-grop").click(function() {
-    // Enable editing on the #chat-input-p div
-    // $("#chat-input-area").attr("contenteditable", "true");
-  
-    $("#chat-input-area").focus();
-    // $("#gpt-button").prop("disabled", false);
-    // Optionally, hide the "Enter message" text (small element)
-    // $("#dis").hide();
-});
-
-</script>
-<script>
-    // Check for changes in the contenteditable div
-$("#chat-input-area").on("input", function() {
-    var content = $(this).val();  // Get the text content of the div and trim any leading/trailing spaces
-
-    // Enable the button if the content is not empty
-    if (content.length > 0) {
-        $("#gpt-button").prop("disabled", false);
-    } else {
-        $("#gpt-button").prop("disabled", true);
-    }
-});
-
-</script>
-<script>
-    // Get references to the icon and file input
-    const imageIcon = document.getElementById("image-icon");
-    const fileInput = document.getElementById("file-input");
-
-    // When the icon is clicked, trigger the file input
-    imageIcon.addEventListener("click", function() {
-        fileInput.click();
-    });
-</script>
-                    <button type="button" id="gpt-button" class="btn btn-primary" style="border-radius: 10px;position: absolute;right: 30px;top: 30px;" disabled><i class="bi bi-send">Ask</i></button>
-                <!-- </div> -->
-                {% else %}
-                    <input type="text" class="form-control" placeholder="You have finished your allocated tokens. Contact support for assistance!" id="chat-input" disabled>
-                    <button type="button" id="gpt-button" class="btn btn-primary" style="border-radius: 10px;" disabled>Ask AI</button>
-                {% endif %}
-            {% else %}
-                    <input type="text" class="form-control" placeholder="Subscribe to speak to ROBOAI" id="chat-input" disabled>
-                    <button type="button" id="gpt-button" class="btn btn-primary" style="border-radius: 10px;" disabled>Ask AI</button>
-            {% endif %}
-                
-            </div>
-        </div>
+       
     </div>
+
+    <div class="bottom-bar" style="height: 15%;z-index: 1;width:90%;" >
+        <div class="input-grop mb-3" style="border: 0px solid rgb(229, 250, 255);border-radius: 10px;padding: 20px;position: relative;min-height: 100px;">
+        {% if user.mysubscription.status %}
+            {% if user.ratelimiter.tokens %}
+            <!-- <div style="border: 20px solid green;width: 90%;"><small id="dis" class="text-muted">Enter message</small> -->
+                <!-- <div contenteditable="false"  id="chat-input-p" style="background-color: aqua;flex-grow: 1; margin-left: 10px; font-size: 16px;width: 90%;white-space: pre-wrap;word-wrap: break-word;overflow-wrap: break-word; border: none; outline: none; padding: 10px;">
+                    
+               </div><br> -->
+               <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave a comment here" id="chat-input-area"></textarea>
+                <label for="floatingTextarea">Enter message ...</label>
+              </div>
+                <input type="text" class="form-control" style="height: 60px;border-radius: 10px;padding-left: 40px;display: none;" placeholder="Message AI Assistant" id="chat-input" >
+                <!-- <input type="file" id="image-input" accept="image/*" class="form-cntrol" style="width: 150px !important;"> -->
+                 <!-- <div style="font-size: 30px;position: absolut;left: 20px;bottom: 0px;" id="image-icon"><i class="bi bi-images" style="color: bue;"></i></div> -->
+                 <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
+                 
+                <button type="button" id="gpt-button" class="btn btn-primary" style="border-radius: 10px;position: absolute;right: 30px;top: 30px;" disabled><i class="bi bi-send">Ask</i></button>
+            <!-- </div> -->
+            {% else %}
+                <input type="text" class="form-control" placeholder="You have finished your allocated tokens. Contact support for assistance!" id="chat-input" disabled>
+                <button type="button" id="gpt-button" class="btn btn-primary" style="border-radius: 10px;" disabled>Ask AI</button>
+            {% endif %}
+        {% else %}
+                <input type="text" class="form-control" placeholder="Subscribe to speak to ROBOAI" id="chat-input" disabled>
+                <button type="button" id="gpt-button" class="btn btn-primary" style="border-radius: 10px;" disabled>Ask AI</button>
+        {% endif %}
+            
+        </div>
+      </div>
 </div>
 
  <script>
@@ -194,8 +152,8 @@ Array.from(fileInput.files).forEach(file => {
     }
 });
 
-            $('#main').animate({
-                scrollTop: $('#main')[0].scrollHeight // Scroll to the bottom of #main
+            $('.chat').animate({
+                scrollTop: $('.chat')[0].scrollHeight // Scroll to the bottom of #main
                 }, 'slow');
                 fileInput.value = "";
                 $(".input-group").css("height", "150px");
@@ -236,8 +194,8 @@ Array.from(fileInput.files).forEach(file => {
                     $("#list-group").append(html_ai_response);
 
                     // Scroll to bottom
-                    $('#main').animate({
-                        scrollTop: $('#main')[0].scrollHeight // Scroll to the bottom of #main
+                    $('.chat').animate({
+                        scrollTop: $('.chat')[0].scrollHeight // Scroll to the bottom of #main
                         }, 'slow');
                     
                 },
@@ -249,9 +207,62 @@ Array.from(fileInput.files).forEach(file => {
             // Clear input field after submitting
             $("#chat-input-area").val('');
             $("#gpt-button").prop("disabled", true);
-            $("#main").css("height", "100vh");
+            // $("#main").css("height", "100vh");
         });
     });
 </script> 
+<script>window.onload = function() {
+    var mainDiv = document.querySelector('.chat');
+    mainDiv.scrollTop = mainDiv.scrollHeight;
+};
 
+</script>
+
+<script>// Function to auto-expand the textarea
+    $("#chat-input-area").on("input", function() {
+        // Reset the height to auto to calculate the scrollHeight
+        $(this).css("height", "auto");
+        $('.bottom-bar').css("height",'auto');
+        // Set the height to the scrollHeight, which is the height of the content
+        $(this).css("height", this.scrollHeight + "px");
+    });
+    </script>
+
+<script>
+// Enable contenteditable when any place inside .input-grop is clicked
+$(".input-grop").click(function() {
+// Enable editing on the #chat-input-p div
+// $("#chat-input-area").attr("contenteditable", "true");
+
+$("#chat-input-area").focus();
+// $("#gpt-button").prop("disabled", false);
+// Optionally, hide the "Enter message" text (small element)
+// $("#dis").hide();
+});
+
+</script>
+<script>
+// Check for changes in the contenteditable div
+$("#chat-input-area").on("input", function() {
+var content = $(this).val();  // Get the text content of the div and trim any leading/trailing spaces
+
+// Enable the button if the content is not empty
+if (content.length > 0) {
+$("#gpt-button").prop("disabled", false);
+} else {
+$("#gpt-button").prop("disabled", true);
+}
+});
+
+</script>
+<script>
+// Get references to the icon and file input
+const imageIcon = document.getElementById("image-icon");
+const fileInput = document.getElementById("file-input");
+
+// When the icon is clicked, trigger the file input
+imageIcon.addEventListener("click", function() {
+fileInput.click();
+});
+</script>
 {% endblock %}

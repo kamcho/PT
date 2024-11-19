@@ -144,16 +144,16 @@
     margin-bottom: 150px;
   }
   .bottom-bar{
-    position: fixed;
+    position: absolute;
     /* background-color: #132743; */
-    bottom: 20px;
+    bottom: 30px;background-color: brown;
     left: 50%; /* You can adjust this value to horizontally center the div */
     transform: translateX(-50%);
     /* Additional styling for the div */
     padding: 10px;
-    
+    background-color:black;
     width: 80%;
-    color: coral !important;
+    color: rgb(92, 80, 255) !important;
     text-decoration: none;
   }
   .ai{
