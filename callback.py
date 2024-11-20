@@ -4,6 +4,7 @@ import requests
 
 
 url = "https://www.mwalimuprivate.com/Subscriptions/process-payments"
+# url = "http://127.0.0.1:8000/Subscriptions/process-payments"
 import urllib.request
 
 def call_url():

@@ -192,6 +192,7 @@ def processPayments(request):
                         sub.expiry = expiry
                         sub.type = subscriptions
                         sub.save()
+                        print('im here')
                         obj = RateLimiter.objects.get(user__id=account)
                         token_data = {
                             'Silver':8500,
@@ -200,10 +201,10 @@ def processPayments(request):
                             'Basic':8500,
                             'Advanced':17000,
                             'Premium':25000,
-                            'Start':177,
+                            'Starter':177,
                         }
                         token = token_data[subscriptions.type]
-                        print(token)
+                        print('my tokens',token)
                         obj.tokens = token
                         obj.image = 0
                         obj.speech = 0
