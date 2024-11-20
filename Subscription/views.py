@@ -194,9 +194,13 @@ def processPayments(request):
                         sub.save()
                         obj = RateLimiter.objects.get(user__id=account)
                         token_data = {
-                            'Silver':100,
-                            'Gold':8500,
-                            'Platinum':18000,
+                            'Silver':8500,
+                            'Gold':17000,
+                            'Platinum':25000,
+                            'Basic':8500,
+                            'Advanced':17000,
+                            'Premium':25000,
+                            'Start':177,
                         }
                         token = token_data[subscriptions.type]
                         print(token)
