@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from requests.auth import HTTPBasicAuth
 from django.utils import timezone
 import requests
+import pytz
 
 # from Subscription.models import MySubscription, Subscriptions
 
@@ -77,10 +78,19 @@ def register_url():
 
 
 def parse_date():
-    today = datetime.now()
-    yesterday = today - timedelta(minutes=300)
-    start = yesterday.strftime("%Y-%m-%d %H:%M:%S")
-    now = today.strftime("%Y-%m-%d %H:%M:%S")
+    # Define the Kenyan timezone
+    kenya_timezone = pytz.timezone("Africa/Nairobi")
+    
+    # Get the current time in the Kenyan timezone
+    now_kenya = datetime.now(pytz.utc).astimezone(kenya_timezone)
+    
+    # Calculate time 5 hours (300 minutes) earlier
+    five_hours_ago = now_kenya - timedelta(minutes=300)
+    
+    # Format the dates
+    start = five_hours_ago.strftime("%Y-%m-%d %H:%M:%S")
+    now = now_kenya.strftime("%Y-%m-%d %H:%M:%S")
+    
     return start, now
 
 

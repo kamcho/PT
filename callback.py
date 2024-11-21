@@ -3,7 +3,7 @@ import time
 import requests
 
 
-url = "https://www.mwalimuprivate.com/Subscriptions/process-payments"
+url = "https://www.mwalimuprivate.com/Subscriptions/process-payments/"
 # url = "http://127.0.0.1:8000/Subscriptions/process-payments"
 import urllib.request
 
@@ -30,6 +30,6 @@ while True:
             # Add other necessary headers here
         }
     request = urllib.request.Request(url, headers=headers)
-    dt = urllib.request.urlopen(request, timeout=10)
+    dt = urllib.request.urlopen(request, timeout=30)
     print(dt.status)
     time.sleep(15)  
