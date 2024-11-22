@@ -23,7 +23,7 @@ def create_profile(sender, instance, created, **kwargs):
         if instance.role == 'Student':
             # AcademicProfile.objects.create(user=instance)
             sub = Subscriptions.objects.all().last()
-            RateLimiter.objects.create(user=instance, tokens=100, speech=0, image=0)
+            RateLimiter.objects.create(user=instance, tokens=750, speech=0, image=0)
             expiry = date.today()
             MySubscription.objects.create(user=instance, type=sub, expiry=expiry )
 
