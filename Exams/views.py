@@ -396,7 +396,10 @@ class StudentTestLobby(LoginRequiredMixin, IsStudent, TemplateView):
             topic_name = self.kwargs['topic']
             test_id = kwargs['uuid']
             user = self.request.user
-
+            if 'index' in self.request.session:
+                del self.request.session['index']
+            if 'test_mode' in self.request.session:
+                del self.request.session['test_mode']
             # Retrieve the topic based on the 'pk' parameter from the URL
             topics = Topic.objects.get(id=topic_name)
             test = StudentTest.objects.filter(user=user, uuid=test_id)
@@ -459,7 +462,10 @@ class StudentTestLobby(LoginRequiredMixin, IsStudent, TemplateView):
             user = request.user
             test_uuid = kwargs['uuid']
             topic_name = kwargs['topic']
-
+            if 'index' in self.request.session:
+                del self.request.session['index']
+            if 'test_mode' in self.request.session:
+                del self.request.session['test_mode']
             try:
                 # Retrieve the topic based on the 'pk' parameter from the URL
                 topic = Topic.objects.get(id=topic_name)

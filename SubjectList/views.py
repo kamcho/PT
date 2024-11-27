@@ -1136,7 +1136,10 @@ class AssignmentDetail(LoginRequiredMixin, IsStudent, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(AssignmentDetail, self).get_context_data(**kwargs)  # Include 'request' as an argument here
         test_uuid_str = self.kwargs.get('uuid')
-
+        if 'index' in self.request.session:
+                del self.request.session['index']
+        if 'test_mode' in self.request.session:
+            del self.request.session['test_mode']
         try:
             test_uuid = uuid.UUID(test_uuid_str)  # Convert the string to a UUID object
         except ValueError:
@@ -1206,7 +1209,10 @@ class AssignmentDetail(LoginRequiredMixin, IsStudent, TemplateView):
         if request.method == "POST":
             user = request.user
             test_uuid = self.kwargs['uuid']  # Assuming you have 'uuid' in your URL kwargs
-
+            if 'index' in self.request.session:
+                del self.request.session['index']
+            if 'test_mode' in self.request.session:
+                del self.request.session['test_mode']
             try:
                 # Get class test instance from cache
                 class_test = self.get_context_data().get('assignment')
