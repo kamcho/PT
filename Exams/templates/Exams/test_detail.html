@@ -72,7 +72,7 @@
             {% for quiz in undone %}
 
                         <p>Quiz {{ quiz.quiz }}</p>
-                            <small style="color:green;padding-left:15px;">Answer - {{ quiz.quiz|get_correct_choice }}</small>
+                            <small style="color:green;padding-left:15px;">Answer - {{ quiz.id|get_correct_choice }}</small>
 
 
             {% endfor %}
