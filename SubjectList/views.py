@@ -1536,14 +1536,16 @@ def chatgpt_answer(request):
                             ]
                     print(images[0])
                     messages.append({"role": "user", "content":datas })
+                    model = "gpt-4o"
                 else:
+                    model = "gpt-3.5-turbo"
                     messages.append({"role": "user", "content": question})
                 
 
 
                 # print(messages)
                 response = client.chat.completions.create(
-                    model="gpt-4o",
+                    model=model,
                     messages=messages,
                     temperature=0.8,  # Set creativity level (lower for deterministic, higher for more variety)
                     n=1
