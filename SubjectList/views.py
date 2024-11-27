@@ -1525,7 +1525,7 @@ def chatgpt_answer(request):
                             {
                                 "type": "image_url",
                                 "image_url": {
-                                "url": f"https://www.mwalimuprivate.com/media/media/{url}"
+                                "url": f"https://www.mwalimuprivate.com{url}"
                                 }
                             }
                             ]
