@@ -1470,7 +1470,7 @@ def chatgpt_answer(request):
             question = request.POST.get('prompt')
 
             images = request.FILES.getlist('images[]')
-             
+           
             
             
             
@@ -1481,8 +1481,10 @@ def chatgpt_answer(request):
             
             try:
                 SECRET_KEY = os.getenv("SECRET_KEY")
+                # print(SECRET_KEY)
+                # SECRET_KEY = 
                 client = OpenAI(api_key=SECRET_KEY)
-                # messages = []
+                messages = []
                 
                 if prompts:
                     for prompt in prompts:
@@ -1492,6 +1494,7 @@ def chatgpt_answer(request):
                             messages.append({'role':'assistant', "content":completion.response})
                         except Exception as e:
                             print('nt')
+                            
                         messages.append({"role": "user", "content": prompt.quiz})
                 messages.reverse()
                 academia = get_object_or_404(AcademicProfile, user=request.user)
@@ -1503,7 +1506,34 @@ def chatgpt_answer(request):
                     "role": "system",
                     "content": f"You are a helpful assistant for {name} in {grade} in kenyan kid in {level}. Use simple language since you are talking to a child"
                 })
-                messages.append({"role": "user", "content": question})
+                if images:
+                    quiz = Prompt.objects.create(user=request.user, quiz=question)
+                    # for image in images:
+                    upload = AIFiles.objects.create(file=images[0])
+                    quiz.file.add(upload)
+                    url = upload.file.url
+                    print(url, 'myurl')
+                        
+                else:
+                    quiz = Prompt.objects.create(user=request.user, quiz=question)
+                if images:
+                    datas = [
+                            {
+                                "type": "text",
+                                "text": question
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                "url": f"https://www.mwalimuprivate.com/media/media/{url}"
+                                }
+                            }
+                            ]
+                    print(images[0])
+                    messages.append({"role": "user", "content":datas })
+                else:
+                    messages.append({"role": "user", "content": question})
+                
 
 
                 # print(messages)
@@ -1514,14 +1544,7 @@ def chatgpt_answer(request):
                     n=1
                 )
                 # print('response')
-                if images:
-                    quiz = Prompt.objects.create(user=request.user, quiz=question)
-                    for image in images:
-                        upload = AIFiles.objects.create(file=image)
-                        quiz.file.add(upload)
-                        
-                else:
-                    quiz = Prompt.objects.create(user=request.user, quiz=question)
+                
                 
                     
                 choice = response.choices[0]
@@ -1543,4 +1566,4 @@ def chatgpt_answer(request):
                 
                 reason = 'i could not process your request at this time. Please try again later or contact @support'
                 # answer = Completion.objects.create(prompt=quiz, response=reason)
-                return JsonResponse({'answer': reason})
+                return JsonResponse({'answer': str(e)})
