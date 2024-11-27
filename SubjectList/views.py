@@ -1,3 +1,4 @@
+import base64
 import logging
 import os
 import uuid
@@ -1511,9 +1512,13 @@ def chatgpt_answer(request):
                     # for image in images:
                     upload = AIFiles.objects.create(file=images[0])
                     quiz.file.add(upload)
-                    url = upload.file.url
-                    print(url, 'myurl')
-                        
+                    with open(upload.file.path, "rb") as image_file:
+    # Read the image as bytes and encode it to base64
+                        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+
+                    # Create the base64 image URL format
+                    data_url = f"data:image/{upload.file.name.split('.')[-1]};base64,{encoded_string}"
+                                            
                 else:
                     quiz = Prompt.objects.create(user=request.user, quiz=question)
                 if images:
@@ -1525,7 +1530,7 @@ def chatgpt_answer(request):
                             {
                                 "type": "image_url",
                                 "image_url": {
-                                "url": f"https://www.mwalimuprivate.com{url}"
+                                "url": data_url
                                 }
                             }
                             ]
