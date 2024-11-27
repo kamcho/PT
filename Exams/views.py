@@ -316,9 +316,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
             else:
                 messages.error(self.request, 'Invalid URL. Please do not edit the url')
 
-        except ValueError:
-            # Handle invalid UUID format
-            messages.error(self.request, 'Invalid UUID format. Please do not edit the url !!.')
+        
 
         except ObjectDoesNotExist as e:
             messages.error(self.request, 'We could not find the test!. please contact @support')
@@ -363,6 +361,9 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
 
                 }
             )
+        except Exception as e:
+            # Handle invalid UUID format
+            messages.error(self.request, 'Invalid Test. This test was not completed and cannot be revised!')
         # Set the base HTML template based on user role
         if self.request.user.role == 'Guardian':
             context['base_html'] = 'Guardian/baseg.html'
