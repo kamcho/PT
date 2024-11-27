@@ -486,6 +486,8 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
         """
         context = super().get_context_data(**kwargs)
         try:
+            if 'index' in self.request.session:
+                del self.request.session['index']
             subtopic = self.kwargs.get('subtopic')
             subtopic = Subtopic.objects.get(id=subtopic)
             context['subtopic'] = subtopic
@@ -514,6 +516,8 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             user = request.user
+            if 'index' in self.request.session:
+                del self.request.session['index']
             duration = self.get_context_data().get('time')
             test_size = self.get_context_data().get('size')
             subtopic = self.get_context_data().get('subtopic')
