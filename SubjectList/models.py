@@ -123,7 +123,7 @@ class Topic(models.Model):
     time = models.PositiveIntegerField()
 
     def __str__(self):
-        return self.name + self.subject.grade
+        return self.name 
     
     # class Meta:
     #     db_table = 'subjectlist_topic'  # Custom table name
