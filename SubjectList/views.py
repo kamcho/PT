@@ -1571,4 +1571,4 @@ def chatgpt_answer(request):
                 
                 reason = 'i could not process your request at this time. Please try again later or contact @support'
                 # answer = Completion.objects.create(prompt=quiz, response=reason)
-                return JsonResponse({'answer': str(e)})
+                return JsonResponse({'answer': reason})
