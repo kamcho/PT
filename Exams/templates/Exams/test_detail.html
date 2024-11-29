@@ -97,7 +97,8 @@ height: auto;z-index: 999999;" id="e-container">
                     url: "{% url 'get_explanation' %}",  // Adjust this URL based on your actual Django URL for fetching explanations
                     type: "GET",
                     data: {
-                        'quiz_id': quizId,  // Pass the quiz ID to the view
+                        'quiz_id': quizId,
+                        'user':"{{ user }}"  // Pass the quiz ID to the view
                     },
                     success: function(response){
                         // Append the explanation inside a div or card with same ID as the button

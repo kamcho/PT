@@ -255,62 +255,63 @@ class ExamSubjectDetail(LoginRequiredMixin, IsStudent, TemplateView):
 
 def get_explanation(request):
     quiz_id = request.GET.get('quiz_id')
+    user = request.GET.get('user')
     quiz_id= quiz_id.replace("quiz-", "")
     
     try:
         explanation = Explanation.objects.get(quiz__uuid=quiz_id)
     except:
-        if request.method == 'POST' :
-            rate = RateLimiter.objects.get(user=request.user)
-            if rate.tokens == 0:
-                return JsonResponse({'answer':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
-            else:
-                question = request.POST.get('prompt')
-                
-                try:
-                    SECRET_KEY = os.getenv("SECRET_KEY")
-                    # print(SECRET_KEY)
-                    # SECRET_KEY = 
-                    client = OpenAI(api_key=SECRET_KEY)
-                    messages = []
-             
-             
-                    messages.insert(0,{
-                        "role": "system",
-                        "content": f"You are a helpful assistant for a kenyan kid in . Use simple language since you are talking to a child"
-                    })
-                    
-              
-                    model = "gpt-4o"
-                    messages.append({"role": "user", "content": question})
-                    
-
-
-                    # print(messages)
-                    response = client.chat.completions.create(
-                        model=model,
-                        messages=messages,
-                        temperature=0.8,  # Set creativity level (lower for deterministic, higher for more variety)
-                        n=1
-                    )
-                              
-                    choice = response.choices[0]
-                    response_ = response.choices[0].message.content
-                    tokens = response.usage.total_tokens
-                    
-                    balance = int(rate.tokens) - int(tokens)
-                    rate.tokens = balance
-                    rate.save()
-
+        
+        rate = RateLimiter.objects.get(user=user)
+        if rate.tokens == 0:
+            return JsonResponse({'answer':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
+        else:
+            question = request.POST.get('prompt')
             
-                    return JsonResponse({'explanation': response_})
+            try:
+                SECRET_KEY = os.getenv("SECRET_KEY")
+                # print(SECRET_KEY)
+                # SECRET_KEY = 
+                client = OpenAI(api_key=SECRET_KEY)
+                messages = []
+            
+            
+                messages.insert(0,{
+                    "role": "system",
+                    "content": f"You are a helpful assistant for a kenyan kid in . Use simple language since you are talking to a child"
+                })
                 
-                except Exception as e:
-                    # quiz = Prompt.objects.create(user=request.user, quiz=question)
-                    
-                    reason = 'i could not process your request at this time. Please try again later or contact @support'
-                    # answer = Completion.objects.create(prompt=quiz, response=reason)
-                    return JsonResponse({'answer': reason})
+            
+                model = "gpt-4o"
+                messages.append({"role": "user", "content": question})
+                
+
+
+                # print(messages)
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=0.8,  # Set creativity level (lower for deterministic, higher for more variety)
+                    n=1
+                )
+                            
+                choice = response.choices[0]
+                response_ = response.choices[0].message.content
+                tokens = response.usage.total_tokens
+                
+                balance = int(rate.tokens) - int(tokens)
+                rate.tokens = balance
+                rate.save()
+                explainer = Explanation.objects.create(quiz__id=quiz_id, explanation=response_)
+        
+                return JsonResponse({'explanation': response_, 'quiz':question})
+            
+            except Exception as e:
+                # quiz = Prompt.objects.create(user=request.user, quiz=question)
+                
+                reason = 'i could not process your request at this time. Please try again later or contact @support'
+                # answer = Completion.objects.create(prompt=quiz, response=reason)
+                return JsonResponse({'explanation': reason})
 
 
     
