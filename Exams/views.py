@@ -266,7 +266,7 @@ def get_explanation(request):
         rate = RateLimiter.objects.get(user__email=user)
         print(rate, 'rate', 'rate')
         if rate.tokens == 0:
-            print('here')
+            # print('here')
             return JsonResponse({'explanation':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
         else:
             print('new')
