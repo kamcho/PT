@@ -108,7 +108,7 @@ class RegisterView(TemplateView):
                             
 
                 except IntegrityError as e:
-                    messages.error(request, str(e))
+                    messages.error(request, 'A user with this email already exists!')
             
             else:
                 messages.error(request, 'You did not completely fill out the form.')
