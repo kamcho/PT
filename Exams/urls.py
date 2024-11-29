@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import Exams, ExamTopicView,  ExamSubjectDetail, TestDetail,\
     StudentTestLobby, Tests, Finish, SetTest, GeneralTestLobby
-
+from . import views
 urlpatterns = [
 
     path('<str:grade>/', Exams.as_view(), name='exams'),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('<str:instance>/<str:uuid>/Quiz/', Tests.as_view(), name='tests'),
     path('<str:instance>/<str:uuid>/Finish/', Finish.as_view(), name='finish'),
     path('<str:mail>/<str:subject>/set-test/', SetTest.as_view(), name='set-test'),
+    path('get_explanation', views.get_explanation, name='get_explanation')
    
    
 

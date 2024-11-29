@@ -40,6 +40,15 @@ class TopicalQuizAnswers(models.Model):
         return str(self.id)
 
 
+
+
+class Explanation(models.Model):
+    quiz = models.ForeignKey(TopicalQuizes, on_delete=models.CASCADE)
+    explanation = models.TextField(max_length=10000)
+
+    def __str__(self):
+        return str(self.quiz)
+
 class UniqueUUIDField(models.UUIDField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('default', uuid.uuid4)

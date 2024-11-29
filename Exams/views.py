@@ -1,18 +1,21 @@
 import datetime
 import logging
+import os
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import DatabaseError, IntegrityError
-from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from openai import OpenAI
 from Guardian.views import IsGuardian
 
 from SubjectList.views import IsStudent
 from .models import *
 from django.views.generic import TemplateView
-from SubjectList.models import TopicalExamResults, TopicExamNotifications
+from SubjectList.models import RateLimiter, TopicalExamResults, TopicExamNotifications
 
 logger = logging.getLogger('django')
 
@@ -250,7 +253,68 @@ class ExamSubjectDetail(LoginRequiredMixin, IsStudent, TemplateView):
         return context
 
 
+def get_explanation(request):
+    quiz_id = request.GET.get('quiz_id')
+    quiz_id= quiz_id.replace("quiz-", "")
+    
+    try:
+        explanation = Explanation.objects.get(quiz__uuid=quiz_id)
+    except:
+        if request.method == 'POST' :
+            rate = RateLimiter.objects.get(user=request.user)
+            if rate.tokens == 0:
+                return JsonResponse({'answer':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
+            else:
+                question = request.POST.get('prompt')
+                
+                try:
+                    SECRET_KEY = os.getenv("SECRET_KEY")
+                    # print(SECRET_KEY)
+                    # SECRET_KEY = 
+                    client = OpenAI(api_key=SECRET_KEY)
+                    messages = []
+             
+             
+                    messages.insert(0,{
+                        "role": "system",
+                        "content": f"You are a helpful assistant for a kenyan kid in . Use simple language since you are talking to a child"
+                    })
+                    
+              
+                    model = "gpt-4o"
+                    messages.append({"role": "user", "content": question})
+                    
 
+
+                    # print(messages)
+                    response = client.chat.completions.create(
+                        model=model,
+                        messages=messages,
+                        temperature=0.8,  # Set creativity level (lower for deterministic, higher for more variety)
+                        n=1
+                    )
+                              
+                    choice = response.choices[0]
+                    response_ = response.choices[0].message.content
+                    tokens = response.usage.total_tokens
+                    
+                    balance = int(rate.tokens) - int(tokens)
+                    rate.tokens = balance
+                    rate.save()
+
+            
+                    return JsonResponse({'explanation': response_})
+                
+                except Exception as e:
+                    # quiz = Prompt.objects.create(user=request.user, quiz=question)
+                    
+                    reason = 'i could not process your request at this time. Please try again later or contact @support'
+                    # answer = Completion.objects.create(prompt=quiz, response=reason)
+                    return JsonResponse({'answer': reason})
+
+
+    
+    return JsonResponse({'explanation': explanation.explanation, 'quiz':explanation.quiz })
 
 class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
     template_name = 'Exams/test_detail.html'
