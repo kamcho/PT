@@ -259,7 +259,8 @@ def get_explanation(request):
     quiz_id= quiz_id.replace("quiz-", "")
     print(user, user, 'ueser')
     try:
-        explanation = Explanation.objects.get(quiz__uuid=quiz_id)
+        question = TopicalQuizes.objects.get(id=quiz_id)
+        explanation = Explanation.objects.get(quiz=question)
     except:
         
         rate = RateLimiter.objects.get(user__email=user)
@@ -272,7 +273,7 @@ def get_explanation(request):
             question = TopicalQuizes.objects.get(id=quiz_id)
             print(question)
             try:
-                SECRET_KEY = os.getenv("SECRET_KEY")
+                SECRET_KEY = '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'
                 # print(SECRET_KEY)
                 # SECRET_KEY = 
                 client = OpenAI(api_key=SECRET_KEY)
@@ -286,7 +287,7 @@ def get_explanation(request):
                 
             
                 model = "gpt-4o"
-                messages.append({"role": "user", "content": question})
+                messages.append({"role": "user", "content": question.quiz})
                 
 
 
@@ -305,16 +306,16 @@ def get_explanation(request):
                 balance = int(rate.tokens) - int(tokens)
                 rate.tokens = balance
                 rate.save()
-                explainer = Explanation.objects.create(quiz__id=quiz_id, explanation=response_)
+                explainer = Explanation.objects.create(quiz=question, explanation=response_)
         
-                return JsonResponse({'explanation': response_, 'quiz':question})
+                return JsonResponse({'explanation': response_, 'quiz':question.quiz})
             
             except Exception as e:
                 # quiz = Prompt.objects.create(user=request.user, quiz=question)
                 
                 reason = 'i could not process your request at this time. Please try again later or contact @support'
                 # answer = Completion.objects.create(prompt=quiz, response=reason)
-                return JsonResponse({'explanation': reason})
+                return JsonResponse({'explanation': str(e)})
 
 
     
