@@ -316,7 +316,7 @@ def get_explanation(request):
                 
                 reason = 'i could not process your request at this time. Please try again later or contact @support'
                 # answer = Completion.objects.create(prompt=quiz, response=reason)
-                return JsonResponse({'explanation': str(e)})
+                return JsonResponse({'explanation': reason})
 
 
     
