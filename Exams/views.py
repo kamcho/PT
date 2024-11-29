@@ -273,7 +273,7 @@ def get_explanation(request):
             question = TopicalQuizes.objects.get(id=quiz_id)
             print(question)
             try:
-                SECRET_KEY = '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'
+                SECRET_KEY = os.getenv("SECRET_KEY")
                 # print(SECRET_KEY)
                 # SECRET_KEY = 
                 client = OpenAI(api_key=SECRET_KEY)
