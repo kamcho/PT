@@ -188,10 +188,10 @@ class RefererHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         referals = Referal.objects.filter(referer=user)
-        # payments = ReferalPayments.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or 0
-        # context['sum'] = payments
-        # payments = Bonuses.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or 0
-        # context['bonuses'] = bonuses
+        payments = ReferalPayments.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or 0
+        context['sum'] = payments
+        bonuses = Bonuses.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or 0
+        context['bonuses'] = bonuses
         context['count'] = referals.count()
         context['referals'] = referals
 
