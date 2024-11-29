@@ -32,7 +32,8 @@
 
 
         <div>
-           <select class="form-select" id="grade" name="grade" aria-label="Default select example" disabled >
+           <select class="form-select" id="grade" name="grade" aria-label="Default select example" style="display: none;" required >
+            <option></option>
             <optgroup label="E-Learning + AI Support">
               <option value="4">Grade 4</option>
                    <option value="5">Grade 5</option>
@@ -84,13 +85,13 @@
 
 <script>
   function enableGrade() {
-    document.getElementById("grade").disabled = false;
+    document.getElementById("grade").style.display = "block";
     document.getElementById("code2").style.display = "block";
     document.getElementById("code").style.display = "block";
   }
 
   function disableGrade() {
-    document.getElementById("grade").disabled = true;
+    document.getElementById("grade").style.display = "none";
     document.getElementById("code").style.display = "none";
     document.getElementById("code2").style.display = "none";
   }
