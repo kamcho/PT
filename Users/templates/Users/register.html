@@ -32,7 +32,7 @@
 
 
         <div>
-           <select class="form-select" id="grade" name="grade" aria-label="Default select example" style="display: none;" required >
+           <select class="form-select" id="grade" name="grade" aria-label="Default select example" style="display: none;" required>
             <option></option>
             <optgroup label="E-Learning + AI Support">
               <option value="4">Grade 4</option>
@@ -91,7 +91,7 @@
   }
 
   function disableGrade() {
-    document.getElementById("grade").style.display = "none";
+    document.getElementById("grade").removeAttribute("required");
     document.getElementById("code").style.display = "none";
     document.getElementById("code2").style.display = "none";
   }
