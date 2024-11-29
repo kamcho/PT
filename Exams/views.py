@@ -261,6 +261,7 @@ def get_explanation(request):
     try:
         question = TopicalQuizes.objects.get(id=quiz_id)
         explanation = Explanation.objects.get(quiz=question)
+        return JsonResponse({'explanation': explanation.explanation, 'quiz':explanation.quiz })
     except:
         
         rate = RateLimiter.objects.get(user__email=user)
@@ -319,7 +320,7 @@ def get_explanation(request):
 
 
     
-    return JsonResponse({'explanation': explanation.explanation, 'quiz':explanation.quiz })
+    
 
 class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
     template_name = 'Exams/test_detail.html'
