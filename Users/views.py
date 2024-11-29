@@ -61,7 +61,7 @@ class RegisterView(TemplateView):
             email = request.POST.get('email').lower()
             pwd1 = request.POST.get('pwd1')
             pwd2 = request.POST.get('pwd2')
-            role = 'Student'
+            role = request.POST.get('role')
             grade = request.POST.get('grade')
             gender = request.POST.get('gender')
             code = request.POST.get('code')
@@ -81,7 +81,8 @@ class RegisterView(TemplateView):
                                 referer = MyUser.objects.get(id=code)
                                 referal = Referal.objects.create(user=user, referer=referer)
                             except:
-                                pass
+                                messages.error(self.request, 'Invalid referal code')
+                                
                         
                     profile, created = PersonalProfile.objects.get_or_create(user=user)
                     profile.gender = gender
@@ -93,7 +94,11 @@ class RegisterView(TemplateView):
                         # Log the user in
                         login(self.request, user)
                         # Redirect to a success page
-                        return redirect('edit-profile')
+                        if user.role == 'Referer' :
+                           
+                            return redirect('referals')
+                        else:
+                            return redirect('edit-profile')
                     else:
                         return redirect('login')
                     
@@ -172,6 +177,20 @@ class Login(TemplateView):
                 return redirect(self.request.get_full_path())
 
 
+
+class RefererHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+
+    template_name = "Users/referer.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        referals = Referal.objects.filter(referer=self.request.user)
+        context['count'] = referals.count()
+        context['referals'] = referals
+
+        return context
+    def test_func(self):
+        return self.request.user.role == 'Referer'
 class MyProfile(LoginRequiredMixin, TemplateView):
     """
         view and manipulate a user's profile.
@@ -340,7 +359,7 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
 
             # If a user has not updated their profile redirect them to profile editing page
          
-            if f_name == '':
+            if f_name == '' and role != 'Referer':
                 return redirect('edit-profile')
             else:
                 if role == 'Student':
@@ -351,8 +370,8 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
                     return redirect('teachers-home')
                 elif role in ['Supervisor', 'Finance']:
                     return redirect('supervisor-home')
-                elif role == 'Receptionist':
-                    return redirect('students-view')
+                elif role == 'Referer':
+                    return redirect('referals')
                 
                 
                 else:
@@ -485,8 +504,8 @@ def rout(request):
             return redirect('student-home')
         elif role == 'Teacher':
             return redirect('teachers-home')
-        elif role == 'Partner':
-            return redirect('partner-home')
+        elif role == 'Referer':
+            return redirect('referals')
         elif role in ['Finance', 'Supervisor']:
             return redirect('supervisor-home')
         else:

@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  <title>Mwalimu Private</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" name="description" content="Discover Mwalimu Private, Kenya's top e-learning platform
+                                               tailored for the CBC curriculum. Access expert-led courses,
+                                                track progress, and enhance learning with personalized education.
+                                                 Enroll today for a flexible, CBC-compliant learning experience!">
+  
+
+
+
+  <!-- <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <link  rel="stylesheet" type="text/css" href="{% static 'Users/styles.css' %}">
+  <link  rel="stylesheet" type="text/css" href="{% static 'SubjectList/SubjectLiist.css' %}">
+<link  rel="stylesheet" type="text/css" href="{% static 'Guardian/Guardian.css' %}">
+  
+  <link  rel="stylesheet" type="text/css" href="{% static 'Supervisor/Supervisor.css' %}">
+  <link  rel="stylesheet" type="text/css" href="{% static 'Teacher/teacher.css' %}">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+
+  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+
+  <meta name="google-site-verification" content="vd6s18YS9mfPMMoH5srkND_VurceXLA1D6g2eAWtIEE" />
+  <link rel="icon" href="{% static 'Users/favicon.png'  %}">
+</head>
+<header>
+  <link rel="icon" href="{% static 'Users/favicon.png'  %}">
+</header>
+
+
+<body >
+
+
+
+
+    <nav class="navbar navbar-dark fixed-top" id="top-bar" style="background-color:rgba(29, 25, 46, .8);">
+      <div class="container-fluid">
+        <h6 class="zara"  href="#" style="text-decoration: none !important;">Mwalimu Private</h6>
+        <button class="navbar-toggler" type="button" name="nav-toggler" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">.
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
+       
+
+          <li>
+              <a class="nav-link" href="{% url 'home' %}" ><i class="bi bi-house" > </i>Home</a>
+          </li>
+          <li>
+            <a class="nav-link" href="{% url 'rout' %}" ><i class="bi bi-ui-checks" > </i>Portal</a>
+        </li>
+        
+
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    
+    {% if messages %}
+
+
+    <div class="text-center" style="position:relative;margin-top:55px;">
+      {% for message in messages %}
+        {% if message.tags ==  'error' %}
+          <h6 class="alert alert-danger">{{ message }}</h6>
+        {% elif message.tags == 'info' %}
+            <h6 class="alert alert-info">{{ message }}</h6>
+        {% elif message.tags == 'success' %}
+            <h6 class="alert alert-success">{{ message }}</h6>
+        {% elif message.tags == 'warning' %}
+            <h6 class="alert alert-warning">{{ message }}</h6>
+  
+  
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+ 
+
+
+
+
+
+<br><br><br>
+<div class="container" >
+    <div class="row">
+        <div class="col-sm-4 mb-3 mb-sm-0">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Referals</h5>
+              <p class="card-text">The number of referals you made that have registered to our platform.</p>
+              <a href="#" class="btn btn-primary">Total {{ count }}</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 mb-3 mb-sm-0">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Earnings</h5>
+                <p class="card-text">Amount that has been paid up to you after referals have subscribed.</p>
+                <a href="#" class="btn btn-primary">Total 4 675</a>
+              </div>
+            </div>
+          </div>
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Bonuses</h5>
+              <p class="card-text">Amount paid to you as bonuses for reaching your referal target.</p>
+              <a href="#" class="btn btn-primary">Totals 1 080</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th><h6>Id</h6></th>
+            <th><h6>Referal</h6></th>
+            <th><h6>Gender</h6></th>
+            <th><h6>Date</h6></th>
+          </tr>
+        </thead>
+    <br>
+    <br>
+        <tbody>
+        {% for referal in referals %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a >{{ referal.user }}</a></td>
+            <td>{{ referal.user.gender }}</td>
+            <td>{{ referal.user.date }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+</div>
+
+    
+   
+
+
+
+
+</body>

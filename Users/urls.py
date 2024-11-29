@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import  Home, RegisterView, MyProfile, StudentsHome, LoginRedirect, FinishSetup, Login, StaticViewSitemap, Success, VerifyAccount
+from .views import  Home, RefererHome, RegisterView, MyProfile, StudentsHome, LoginRedirect, FinishSetup, Login, StaticViewSitemap, Success, VerifyAccount
 from django.contrib.sitemaps.views import sitemap
 
 from Users import views
@@ -13,6 +13,7 @@ urlpatterns = [
 
     path('Sign-Up/', RegisterView.as_view(), name='register'),
     path('success', Success.as_view(), name='success'),
+    path('Referals/', RefererHome.as_view(), name='referals'),
     path('Verify/<str:id>', VerifyAccount.as_view(), name='verify'),
     path('Profile/<str:email>', MyProfile.as_view(), name='update-profile'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
