@@ -8,5 +8,5 @@ admin.site.register(StudentTest)
 admin.site.register(StudentsAnswers)
 admin.site.register(ClassTest)
 admin.site.register(ClassTestStudentTest)
-
+admin.site.register(Explanation)
 admin.site.register(GeneralTest)
