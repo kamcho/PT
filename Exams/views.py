@@ -260,8 +260,8 @@ def get_explanation(request):
     print(user, user, 'ueser')
     try:
         question = TopicalQuizes.objects.get(id=quiz_id)
-        explanation = Explanation.objects.get(quiz=question)
-        return JsonResponse({'explanation': explanation.explanation, 'quiz':explanation.quiz })
+        explanation = Explanation.objects.filter(quiz=question).first()
+        return JsonResponse({'explanation': explanation.explanation, 'quiz':question.quiz })
     except:
         
         rate = RateLimiter.objects.get(user__email=user)
