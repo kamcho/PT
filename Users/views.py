@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.db.models import Sum
+
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,7 +12,7 @@ from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import TemplateView
 from SubjectList.models import Progress, Topic
-from Subscription.models import Referal
+from Subscription.models import Bonuses, Referal, ReferalPayments
 from Supervisor.models import Inquire, Updates
 from Users.models import PersonalProfile, MyUser, AcademicProfile
 from django.contrib.sitemaps import Sitemap
@@ -184,9 +186,15 @@ class RefererHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        referals = Referal.objects.filter(referer=self.request.user)
+        user = self.request.user
+        referals = Referal.objects.filter(referer=user)
+        # payments = ReferalPayments.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or 0
+        # context['sum'] = payments
+        # payments = Bonuses.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or 0
+        # context['bonuses'] = bonuses
         context['count'] = referals.count()
         context['referals'] = referals
+
 
         return context
     def test_func(self):

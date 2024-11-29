@@ -14,6 +14,7 @@ from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, Cla
 from SubjectList.models import *
 
 
+from Subscription.models import MpesaPayments
 from Teacher.models import StudentList, TeacherRanking
 from Users.models import MyUser
 
@@ -473,7 +474,28 @@ def get_class_overall_ranking(class_id, grade, term):
     else:
         return 'Not Found'
 
+@register.simple_tag
+def check_payment(user):
 
+    return MpesaPayments.objects.filter(user=user).exists()
+
+@register.filter
+def hide_email_percentage(value, percentage=40):
+    """This filter hides a given percentage of the characters before @gmail.com with asterisks."""
+    if isinstance(value, str) and '@gmail.com' in value:
+        username, domain = value.split('@', 1)
+        
+        # Calculate the number of characters to hide based on the percentage
+        num_chars_to_hide = math.floor(len(username) * (percentage / 100))
+        print(username)
+        # Hide the calculated number of characters
+        visible_part = username[:len(username) - num_chars_to_hide]  # Keep the visible part of the username
+        hidden_part = '*' * num_chars_to_hide  # Replace the hidden part with asterisks
+        
+        # Reassemble the email with the hidden part
+        return visible_part + hidden_part + '@' + domain
+    
+    return value
 @register.simple_tag
 def is_class_teacher(user):
     class_id = SchoolClass.objects.filter(class_teacher=user).values_list('class_name')

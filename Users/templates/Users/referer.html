@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
   
@@ -116,7 +116,7 @@
               <div class="card-body">
                 <h5 class="card-title">Earnings</h5>
                 <p class="card-text">Amount that has been paid up to you after referals have subscribed.</p>
-                <a href="#" class="btn btn-primary">Total 4 675</a>
+                <a href="#" class="btn btn-primary">Total {{ sum }}</a>
               </div>
             </div>
           </div>
@@ -125,7 +125,7 @@
             <div class="card-body">
               <h5 class="card-title">Bonuses</h5>
               <p class="card-text">Amount paid to you as bonuses for reaching your referal target.</p>
-              <a href="#" class="btn btn-primary">Totals 1 080</a>
+              <a href="#" class="btn btn-primary">Totals {{ bonuses }}</a>
             </div>
           </div>
         </div>
@@ -139,6 +139,7 @@
             <th><h6>Referal</h6></th>
             <th><h6>Gender</h6></th>
             <th><h6>Date</h6></th>
+            <th><h6>Has Subscribed</h6></th>
           </tr>
         </thead>
     <br>
@@ -147,9 +148,19 @@
         {% for referal in referals %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td><a >{{ referal.user }}</a></td>
-            <td>{{ referal.user.gender }}</td>
+            <td><a >{{ referal.user.email|hide_email_percentage:40 }}</a></td>
+            <td>{{ referal.user.personalprofile.gender }}</td>
             <td>{{ referal.user.date }}</td>
+
+            {% check_payment referal.user as has_payment %}
+
+{% if has_payment %}
+<td><i class="bi bi-check" style="color: gold;font-size: 30px;"></i></td>
+{% else %}
+<td><i class="bi bi-x" style="color: crimson;font-size: 30px;"></i></td>
+{% endif %}
+         
+
           </tr>
         {% endfor %}
         </tbody>

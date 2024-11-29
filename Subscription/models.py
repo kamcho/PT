@@ -53,6 +53,20 @@ class MySubscription(models.Model):
             return self.user.role
 
 
+class ReferalPayments(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    student = models.ForeignKey(MyUser,related_name='student', on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.user)
+
+class Bonuses(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    def __str__(self):
+        return str(self.user)
 
 class MpesaPayments(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
