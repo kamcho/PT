@@ -257,17 +257,20 @@ def get_explanation(request):
     quiz_id = request.GET.get('quiz_id')
     user = request.GET.get('user')
     quiz_id= quiz_id.replace("quiz-", "")
-    
+    print(user, user, 'ueser')
     try:
         explanation = Explanation.objects.get(quiz__uuid=quiz_id)
     except:
         
-        rate = RateLimiter.objects.get(user=user)
+        rate = RateLimiter.objects.get(user__email=user)
+        print(rate, 'rate', 'rate')
         if rate.tokens == 0:
-            return JsonResponse({'answer':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
+            print('here')
+            return JsonResponse({'explanation':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
         else:
-            question = request.POST.get('prompt')
-            
+            print('new')
+            question = TopicalQuizes.objects.get(id=quiz_id)
+            print(question)
             try:
                 SECRET_KEY = os.getenv("SECRET_KEY")
                 # print(SECRET_KEY)
