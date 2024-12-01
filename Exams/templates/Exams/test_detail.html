@@ -39,7 +39,7 @@ height: auto;z-index: 999999;" id="e-container">
             {% for quiz in quizzes %}
                 <div style="position: relative;" id="quiz-{{ quiz.quiz.id }}">
                     {% if quiz.is_correct == False %}
-                        <div style="color:crimson;" id="{{ quiz.quiz.id }}" style="border: 2px solid #dac139;padding: 10px;border-radius: 10px;">
+                        <div style="color:crimson;" id="{{ quiz.quiz.id }}" style="border: 2px solid crimson;padding: 10px;border-radius: 10px;">
                             {% if quiz.quiz.file %}
                                 <div class="file-container">
                                     <img src="{{ quiz.quiz.file.url }}" width="100" height="100" class="quiz-file">
@@ -53,7 +53,7 @@ height: auto;z-index: 999999;" id="e-container">
                             
                             <!-- Button to explain AI -->
                             <button class="btn btn-secondary" style="position: absolute; top: 10px; right: 20px;" id="quiz-{{ quiz.quiz.id }}">Explain AI</button>
-                            <hr>
+                         
                         </div>
                     {% else %}
                         <div id="{{ quiz.quiz.id }}" style="border: 2px solid cornflowerblue;padding: 10px;border-radius: 10px;">
@@ -107,8 +107,8 @@ height: auto;z-index: 999999;" id="e-container">
                         var question = document.querySelector('#question');
                         document.querySelector('#e-container').style.display = 'block';
                         document.querySelector('#container').style.opacity = '0.3';
-                        paragraph.innerHTML = '<strong>'+ response.explanation +' <em>HTML</em> content.</strong>';
-                        question.innerHTML = '<strong>'+ response.quiz +' <em>HTML</em> content.</strong>';
+                        paragraph.innerHTML = '<strong>'+ response.explanation +'.</strong>';
+                        question.innerHTML = '<strong>'+ response.quiz +'.</strong>';
                         // $("#cardtext").append('<div class="explanation"><h6>Explanation:</h6><p>' + response.explanation + '</p></div>');
                     },
                     error: function(xhr, status, error){

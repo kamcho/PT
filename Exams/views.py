@@ -272,7 +272,9 @@ def get_explanation(request):
         else:
             print('new')
             question = TopicalQuizes.objects.get(id=quiz_id)
-            print(question)
+            choices = TopicalQuizAnswers.objects.filter(quiz=question)
+            correct = choices.get(is_correct=True)
+            wrong = choices.filter(is_correct=False)
             try:
                 SECRET_KEY = os.getenv("SECRET_KEY")
                 # print(SECRET_KEY)
@@ -288,8 +290,8 @@ def get_explanation(request):
                 
             
                 model = "gpt-4o"
-                messages.append({"role": "user", "content": question.quiz})
-                
+                messages.append({"role": "user", "content": f"Explain this Question : {question.quiz} ; Choices:{[choice.choice for choice in choices]} Correct choice : {correct.choice}  "})
+                print(messages, 'djkld')
 
 
                 # print(messages)
