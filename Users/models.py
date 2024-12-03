@@ -59,7 +59,7 @@ class MyUser(AbstractBaseUser):
     base_role = Role.Student
     email = models.EmailField(unique=True)
     uuid = models.CharField(max_length=100, default=uuid.uuid4, unique=True, editable=True)   
-    # date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.now)
     role = models.CharField(max_length=15, choices=Role.choices, default=base_role)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
