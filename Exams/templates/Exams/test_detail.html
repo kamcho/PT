@@ -3,11 +3,15 @@
 {% load static %}
 
 {% block content %}
-<div style="display: none;  position: absolute;
+
+    <div class="container">
+        <div  style="display: none;  position: absolute;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%); /* Offset by 50% of its own width/height */
-width: 80%;
+width: 93%;
+text-align: center;
+max-width: 800px;
 height: auto;z-index: 999999;max-height: 95vh;overflow-y: scroll;margin-top: 50px;" id="e-container">
 <div class="card text-white bg-dark mb-3" style="min-width: 250px;" id="explainer">
     <a class="closer btn btn-danger" style="position: absolute;top: 30px; right: 30px;"><i class="bi bi-x" style="font-size: 28px;color: white;"></i></a>
@@ -21,7 +25,6 @@ height: auto;z-index: 999999;max-height: 95vh;overflow-y: scroll;margin-top: 50p
     </div>
   </div>
 </div>
-    <div class="container">
         {% if not marks %}
         {% else %}
         <br><br><br>
