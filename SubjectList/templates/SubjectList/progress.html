@@ -31,10 +31,10 @@
 
 
 
-        {% for prog in subject %}
+        {% for prog in subject %}<a href="{% url 'syllabus' prog.subject__id %}">
         <div class="subject-select-card">
 
-            <a href="{% url 'syllabus' prog.subject__id %}"><h6 class="p-txt"><i class="bi bi-bookmark-plus"></i> {{ prog.subject__name }}</h6></a>
+            <h6 class="p-txt"><i class="bi bi-bookmark-plus"></i> {{ prog.subject__name }}</h6>
 
     <br>
             <div class="kid-in-card">
@@ -50,7 +50,7 @@
 
 
         </div>
-
+      </a>
         {% endfor %}
     </div>
 
