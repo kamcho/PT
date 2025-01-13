@@ -9,16 +9,16 @@
 <br>
 <div class="">
   {% if not syllabus %}
-
+<div class="container">
   <br>
-<h5 style="color: coral;">This test cannot be taken now. Kindly proceed to the next topic !</h6>
+<h5 style="color: coral;">This subject cannot be viewed now as the subject is under review. Kindly be patient as we handle the issue</h6>
 <div style="padding: 40px;">
     <h5> Possible Reasons</h5>
     <p>1. The subtopic is under review in compliance with CBC,</p>
     <p>2. There is not enough test questions due to the nature of the subtopic,</p>
     <p>3. K.I.C.D has removed the substrand from the {{ subtopic.subject }} Grade {{ subtopic.subject.grade }} course.</p>
 </div>
-
+</div>
   {% else %}
   <div class="container " style="text-decoration:none !important;">
     <h6 class="dashed-heading">{{ subject.subject }} Grade - {{ subject.subject.grade }}</h6>
