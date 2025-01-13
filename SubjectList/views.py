@@ -1049,7 +1049,8 @@ class Syllabus(LoginRequiredMixin, TemplateView):
 
             if not topics:
                 # Display a message if no topics are found
-                messages.success(self.request, 'We could not find results matching your query!!')
+                # messages.success(self.request, 'We could not find results matching your query!!')
+                pass
             else:
                 # Add data to context
                 context['subject'] = topics.last()
