@@ -8,15 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Using package from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@weavy/dropin-js@18.0.1/dist/weavy.js" crossorigin="anonymous"></script>
-<script>
-  const access_token = "{{ request.session.access_token }}";
-  // url to your Weavy environment
-  Weavy.url = "https://ced0667cb8b14d76ba02bf7764860ddc.weavy.io";
-  // token factory that returns the access_token for your demo user
-  Weavy.tokenFactory = async () => access_token;
-</script><link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><!-- Include NProgress CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dekko&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
@@ -195,13 +191,21 @@
 
 
 
-
+    <script>
+      NProgress.start(); // Start the progress bar
+      window.onload = function () {
+        NProgress.done(); // Complete the progress bar when page loads
+      };
+    </script>
+    
 
 
 <div class="main-body">
 
+  
         {% block content %}
-
+   
+        
 
         {% endblock %}
     </div>
