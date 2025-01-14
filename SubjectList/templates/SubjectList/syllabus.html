@@ -59,7 +59,7 @@
     <div>
       {% for subtopic in coverage.topic.all %}
       <div style="display:flex;width:80%;padding-left:30px;">
-        <small style="color:purple;flex: 1;"><a href="{% url 'subtopic-info' subtopic.id %}">{{ subtopic }}</a></small>
+        <small style="color:purple;flex: 1;"><a href="{% url 'subtopic-info' subtopic.id %}">{{ forloop.counter }}.  {{ subtopic }}</a></small>
         <input type="checkbox" style="margin-left: 0 auto;" disabled>
       </div>
       {% endfor %}
