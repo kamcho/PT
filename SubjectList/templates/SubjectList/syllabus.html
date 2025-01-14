@@ -34,18 +34,18 @@
     </div>
     <div>
       {% for subtopic in coverage.topic.all %}
-      {% if user|subtopic_in_progress:subtopic %}
+        {% if user|subtopic_in_progress:subtopic %}
 
-      <div style="display:flex;width:80%;padding-left:30px;">
-        <small style="color:purple ;flex: 1;"><a href="{% url 'subtopic-info' subtopic.id %}">{{ subtopic }}</a></small>
-        <i class="bi bi-check-all" style="margin-left: 0 auto;color:purple;font-size:20px;"></i>
-      </div>
+        <div style="display:flex;width:80%;padding-left:30px;">
+          <small style="color:purple ;flex: 1;"><a href="{% url 'subtopic-info' subtopic.id %}">{{ forloop.counter }}. {{ subtopic }}</a></small>
+          <i class="bi bi-check-all" style="margin-left: 0 auto;color:purple;font-size:20px;"></i>
+        </div>
 
-      {% else %}
-      <div style="display:flex;width:80%;padding-left:30px;">
-        <small style="color:purple;flex: 1;"><a href="{% url 'subtopic-info'  subtopic.id %}">{{ subtopic }}</a></small>
-        <input type="checkbox" style="margin-left: 0 auto;" disabled>
-      </div>
+        {% else %}
+          <div style="display:flex;width:80%;padding-left:30px;">
+            <small style="color:purple;flex: 1;"><a href="{% url 'subtopic-info'  subtopic.id %}">{{ forloop.counter }}. {{ subtopic }}</a></small>
+            <input type="checkbox" style="margin-left: 0 auto;" disabled>
+          </div>
       {% endif %}
 
       {% endfor %}
