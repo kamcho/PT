@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from SubjectList.models import RateLimiter
 from Subscription.models import MySubscription, Subscriptions
 from Supervisor.models import QuestionCount
-from Teacher.models import TeacherRanking
+from Teacher.models import TeacherProfile, TeacherRanking
 
 
 # from SubjectList.models import MySubjects, Course
@@ -30,6 +30,7 @@ def create_profile(sender, instance, created, **kwargs):
         elif instance.role == 'Teacher':
             TeacherRanking.objects.create(user=instance)
             QuestionCount.objects.create(user=instance)
+            TeacherProfile.objects.get_or_create(user=instance)
         tor = datetime.now().strftime('%D:/%m %H:%M')
         send_mail(f'New User {tor} ', f'{instance.email}', 'njokevin9@gmail.com', ['kevingitundu@gmail.com',], fail_silently=True)
             
