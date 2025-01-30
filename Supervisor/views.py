@@ -66,44 +66,44 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context['parents'] = users.filter(role='Guardian').count()
         context['student_lst'] = users.filter(role='Student')[:10]
         
-        grade_4_data = get_marks_distribution_data(4, 'Term 1', '2024')
-        grade_5_data = get_marks_distribution_data(5, 'Term 1', '2024')
-        grade_6_data = get_marks_distribution_data(6, 'Term 1', '2024')
+#         grade_4_data = get_marks_distribution_data(4, 'Term 1', '2024')
+#         grade_5_data = get_marks_distribution_data(5, 'Term 1', '2024')
+#         grade_6_data = get_marks_distribution_data(6, 'Term 1', '2024')
 
-# Preparing data for the bar chart
-        labels = list(grade_5_data.keys())
-        datasets = [
-            {
-                'label': 'Grade 4',
-                'data': [grade_4_data.get(label, 0) for label in labels],
-                'backgroundColor': 'rgba(0, 0, 0, 0.5)',
-                'borderColor': 'rgba(0, 0, 0, 0.5)',
-                'borderWidth': 2.5,
-            },
-            {
-                'label': 'Grade 5',
-                'data': [grade_5_data.get(label, 0) for label in labels],
-                'backgroundColor': 'rgba(85, 133, 181)',
-                'borderColor': 'rgba(85, 133, 181)',
-                'borderWidth': 2.5,
-            },
-            {
-                'label': 'Grade 6',
-                'data': [grade_6_data.get(label, 0) for label in labels],
-                'backgroundColor': 'rgba(255, 181, 181)',
-                'borderColor': 'rgba(255, 181, 181)',
-                'borderWidth': 2.5,
-            }
-        ]
+# # Preparing data for the bar chart
+#         labels = list(grade_5_data.keys())
+#         datasets = [
+#             {
+#                 'label': 'Grade 4',
+#                 'data': [grade_4_data.get(label, 0) for label in labels],
+#                 'backgroundColor': 'rgba(0, 0, 0, 0.5)',
+#                 'borderColor': 'rgba(0, 0, 0, 0.5)',
+#                 'borderWidth': 2.5,
+#             },
+#             {
+#                 'label': 'Grade 5',
+#                 'data': [grade_5_data.get(label, 0) for label in labels],
+#                 'backgroundColor': 'rgba(85, 133, 181)',
+#                 'borderColor': 'rgba(85, 133, 181)',
+#                 'borderWidth': 2.5,
+#             },
+#             {
+#                 'label': 'Grade 6',
+#                 'data': [grade_6_data.get(label, 0) for label in labels],
+#                 'backgroundColor': 'rgba(255, 181, 181)',
+#                 'borderColor': 'rgba(255, 181, 181)',
+#                 'borderWidth': 2.5,
+#             }
+#         ]
 
-        # Convert data to JSON for passing to the template
-        chart_data = {
-            'labels': labels,
-            'datasets': datasets,
-        }
-        current_term = CurrentTerm.objects.filter().last()
-        context['current_term'] = current_term
-        context['chart_data'] = chart_data
+#         # Convert data to JSON for passing to the template
+#         chart_data = {
+#             'labels': labels,
+#             'datasets': datasets,
+#         }
+        # current_term = CurrentTerm.objects.filter().last()
+        # context['current_term'] = current_term
+        # context['chart_data'] = chart_data
         
         
         return context

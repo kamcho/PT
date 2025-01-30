@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['mwalimuprivate.com','www.mwalimuprivate.com', '127.0.0.1','kevin254.pythonanywhere.com']
 CSRF_TRUSTED_ORIGINS = ['https://www.mwalimuprivate.com/']
@@ -111,24 +111,24 @@ DATABASES = {
     #     'NAME': BASE_DIR / "mydatabase.sqlite3",
     # }
 
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'kevin254$default',      # Database name
-        'USER': 'kevin254',  # Your MySQL username
-        'PASSWORD': '141778215aA!',  # Your MySQL password
-        'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
-        'PORT': '3306',       # MySQL default port
-        'CONN_MAX_AGE': 0,
-    }, 
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'backup',  # Replace with your local database name
-    #     'USER': 'root',                # Default XAMPP MySQL user is 'root'
-    #     'PASSWORD': '',                # XAMPP default MySQL root user has no password (leave blank) unless you've set one
-    #     'HOST': '127.0.0.1',           # Use '127.0.0.1' or 'localhost' for local MySQL
-    #     'PORT': '3306',                # MySQL default port
-    #     'CONN_MAX_AGE': 0,             # Close connection after each request
-    # }
+    #     'NAME': 'kevin254$default',      # Database name
+    #     'USER': 'kevin254',  # Your MySQL username
+    #     'PASSWORD': '141778215aA!',  # Your MySQL password
+    #     'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
+    #     'PORT': '3306',       # MySQL default port
+    #     'CONN_MAX_AGE': 0,
+    # }, 
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'backup',  # Replace with your local database name
+        'USER': 'root',                # Default XAMPP MySQL user is 'root'
+        'PASSWORD': '',                # XAMPP default MySQL root user has no password (leave blank) unless you've set one
+        'HOST': '127.0.0.1',           # Use '127.0.0.1' or 'localhost' for local MySQL
+        'PORT': '3306',                # MySQL default port
+        'CONN_MAX_AGE': 0,             # Close connection after each request
+    },
 }
 
 

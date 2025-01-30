@@ -22,6 +22,7 @@ urlpatterns = [
     path('My-Classes/', ClassesView.as_view(), name='my-classes'),
     path('Create-Question/', CreateQuestion.as_view(), name='create-questions'),
     path('load_topics/', views.load_topic, name='load-topics'),
+    path('select_topics/', views.select_topic, name='select-topics'),
     path('load_subtopics/', views.load_subtopics, name='load-subtopics'),
     path('Add-Answers/', AddAnswerSelection.as_view(), name='add-answer'),
     path('Save-Question/', SaveQuiz.as_view(), name='save-quiz'),

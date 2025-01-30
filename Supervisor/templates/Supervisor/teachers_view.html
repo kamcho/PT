@@ -30,7 +30,7 @@
           
             {% for user in users %}
             <tr>
-              <td><a href="{% url 'teacher-id' user.id %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.surname }} {{ user.personalprofile.l_name }}</h6></a></td>  
+              <td><a href="{% url 'teacher-id' user.id %}"><h6>{{ user.personalprofile.get_names }}</h6></a></td>  
              
               <td>
                 {% for subject in user.teacherprofile.subject.all %}  

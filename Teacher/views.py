@@ -781,6 +781,25 @@ def load_topic(request):
     topic_options = [{'id': topic.id, 'name': topic.name} for topic in topics]
     return JsonResponse(topic_options, safe=False)
 
+def select_topic(request):
+    """
+    function to get topics by subject id
+    :param request:
+    :return:
+    """
+    subject_id = request.GET.get('subject_id')  # get subject id from Post
+    user = request.GET.get('tch')
+    print('new', subject_id, 'user',user)
+
+    # topics = Topic.objects.filter(subject=subject_id)  # get all topics from this subject
+    # print(topics, '\n\n\n')
+    excluded = Topic.objects.filter(quizassignment__isnull=False).values_list('id', flat=True).distinct()
+
+    topics_option = Topic.objects.filter(subject_id=subject_id).exclude(id__in=excluded)
+    print(excluded)
+    topics_list = [{'id': topic.id, 'name': topic.name} for topic in topics_option]
+
+    return JsonResponse(topics_list, safe=False)
 
 def load_subtopics(request):
     """
@@ -1524,15 +1543,33 @@ class TeachersProfile(LoginRequiredMixin, TemplateView):
     def get_context_data(self,*args, **kwargs):
         context = super().get_context_data(**kwargs)
         id = self.kwargs['id']
-        context['teacher'] = MyUser.objects.get(id=id)
+        teacher = MyUser.objects.get(id=id)
+        context['teacher'] = teacher
         role = self.request.user.role
+        subjects, object = TeacherProfile.objects.get_or_create(user=teacher)
+        context['subjects'] = subjects.subject.all()
         if role == 'Teacher':
             context['template'] = 'Teacher/teachers_base.html'
         elif role == 'Guardian':
             context['template'] = 'Guardian/baseg.html'
-        else:
+        elif role == 'Student':
             context['template'] = 'Users/base.html'
+        else:
+            
+            context['template'] = 'Supervisor/base.html'
         return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            topics = self.request.POST.getlist('topics')
+            teacher = self.get_context_data().get('teacher')
+            selected, obj = QuizAssignment.objects.get_or_create(user=teacher) 
+            print(selected)
+            # topics = Topic.objects.filter(id__in=topics)
+            print(topics)
+            selected.topic.add(*topics)
+            messages.success(self.request, 'Success')
+            return redirect(self.request.get_full_path())
     
 class Link(LoginRequiredMixin, TemplateView):
     template_name = 'Teacher/link.html'

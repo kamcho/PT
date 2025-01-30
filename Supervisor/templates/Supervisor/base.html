@@ -83,16 +83,12 @@
               </li>
               
                 <li>
-                  <a class="nav-link" href="{% url 'incidents' %}">
+                  <a class="nav-link" href="">
                     <i class="bi bi-plus" style=""> </i>Discipline
                   </a>
                 </li>
                
-                <li>
-                  <a class="nav-link" href="{% url 'exam-mode' %}">
-                    <i class="bi bi-pen" > </i>Exam Mode
-                  </a>
-                </li>
+             
                 
                 
                
@@ -103,46 +99,12 @@
               
           
             
-            <li>
-              <a class="nav-link" href="{% url 'finance' %}">
-                <i class="bi bi-cash" style=""> </i>Finance
-              </a>
-            </li>
+           
             <li>
               <a class="nav-link" href="{% url 'subject-view' 4   %}" ><i class="bi bi-graph-up-arrow" > </i>Analytics</a>
             </li>
             {% elif user.role == 'Finance' %}
-            <li>
-              <a class="nav-link" href="{% url 'finance' %}">
-                <i class="bi bi-house" style=""> </i>Home
-              </a>
-            </li>
-
-            <li>
-              <a class="nav-link" href="{% url 'processed-fee-payments' %}">
-                <i class="bi bi-cash" style=""> </i>Fee Payments
-              </a>
-            </li>
-            <li>
-              <a class="nav-link" href="{% url 'salary-payment' %}">
-                <i class="bi bi-credit-card" style=""> </i>Salaries
-              </a>
-            </li>
-            <li>
-              <a class="nav-link" href="{% url 'invoices' %}">
-                <i class="bi bi-clipboard" style=""> </i>Invoices
-              </a>
-            </li>
-            <li>
-              <a class="nav-link" href="{% url 'school-fees-balances' %}">
-                <i class="bi bi-clipboard" style=""> </i>Fee Balances
-              </a>
-            </li>
-            <li>
-              <a class="nav-link" href="{% url 'fees-home' %}">
-                <i class="bi bi-gear" style=""> </i>Fee Settings
-              </a>
-            </li>
+          
             
             {% endif %}
                

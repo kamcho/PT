@@ -17,6 +17,7 @@ class TopicalQuizes(models.Model):
     subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     quiz = models.TextField(max_length=500)
+    is_approved = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.id)
