@@ -6,6 +6,46 @@
     font-family: Nunito !important;
 }
 
+.achievements{
+  display: grid;
+  grid-template-columns: repeat(4, .6fr);
+  column-gap: 30px;
+  padding: 60px;
+  width: 99%;
+  margin: 0 auto;
+  /* row-gap: 40px !important; */
+}
+.achieve-card{
+/* width: 80%; */
+width:90%;
+max-width: 450px;
+border-radius: 20px;
+overflow-y: hidden;
+
+}
+@media (max-width: 1150px) {
+  .achievements{
+    grid-template-columns: repeat(2, .6fr);
+    row-gap: 40px;
+  }
+  .achieve-card{
+    margin: 0 auto;
+    width: 97%;
+  }
+  .achievements .achieve-card:nth-child(3) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+@media (max-width: 767px) {
+
+
+  .achievements{
+    display: inline;
+    /* margin: 0 auto !important; */
+   
+  }
+}
 
 
 .intro{
@@ -144,16 +184,16 @@
     margin-bottom: 150px;
   }
   .bottom-bar{
-    position: fixed;
+    position: absolute;
     /* background-color: #132743; */
-    bottom: 20px;
+    bottom: 30px;background-color: brown;
     left: 50%; /* You can adjust this value to horizontally center the div */
     transform: translateX(-50%);
     /* Additional styling for the div */
     padding: 10px;
-    
+    background-color:black;
     width: 80%;
-    color: coral !important;
+    color: rgb(92, 80, 255) !important;
     text-decoration: none;
   }
   .ai{
@@ -566,6 +606,8 @@ border-radius:10px ;
   }
   .two{
     display: grid; grid-template-columns: repeat(2,.6fr);
+    width: 90%;
+    margin: 0 auto;
   }
   .three{
     width: 99%;
@@ -608,7 +650,47 @@ border-radius:10px ;
     padding:30px;
 
 }
+a{
+  text-decoration: none !important;
+  color: white !important;
+}
+.footer {
+  /* position: absolute; */
+  bottom: 0;
+  z-index: 1000;
+  /* max-width: 1280px; */
+  width: 100%;
+  background: #09122C !important;
+  /* border-radius: 6px; */
+  color: white;
+  /* height: 300px; */
+}
+.footer-column{
+  display: grid;
+  grid-template-columns:auto auto auto;
+  column-gap: 30px;
+ 
+}
+.uri ul{
+  display: inline;
+  margin-top: 110px;
+  list-style:georgian ;
+}
+@media (max-width: 940px) {
 
+  .footer-column{
+    grid-template-columns: 60% 40%;
+  }
+  }
+  @media (max-width: 700px) {
+    .footer-column{
+      display: inline;
+    }
+    .uri, .contacts{
+      display: none;
+    }
+  
+  }
 table th{
     font-weight: bolder;
     font-size: 28px !important;

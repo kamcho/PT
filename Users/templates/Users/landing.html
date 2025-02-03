@@ -12,7 +12,7 @@
                                                 track progress, and enhance learning with personalized education.
                                                  Enroll today for a flexible, CBC-compliant learning experience!">
   
-
+                                                 <link href="https://fonts.googleapis.com/css2?family=Dekko&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 <!-- Using package from CDN -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/@weavy/dropin-js@18.0.1/dist/weavy.js" crossorigin="anonymous"></script>
 <script>
@@ -34,7 +34,8 @@
   <link  rel="stylesheet" type="text/css" href="{% static 'Teacher/teacher.css' %}">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script> -->
 
   <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
@@ -49,7 +50,7 @@
 
 
 
-    <nav class="navbar navbar-dark fixed-top" id="top-bar" style="background-color:rgba(29, 25, 46, .8);">
+    <!-- <nav class="navbar navbar-dark fixed-top" id="top-bar" style="background-color:rgba(29, 25, 46, .8);">
       <div class="container-fluid">
         <h6 class="zara"  href="#" style="text-decoration: none !important;">Mwalimu Private</h6>
         <button class="navbar-toggler" type="button" name="nav-toggler" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">.
@@ -87,7 +88,7 @@
           </div>
         </div>
       </div>
-    </nav>
+    </nav> -->
 
     
     {% if messages %}
@@ -110,66 +111,141 @@
     </div>
   {% endif %}
   <!-- <img src="{% static 'Users/kids.webp' %}" class="img-fluid" alt="..."> -->
-<div>
-  <img src="{% static 'Users/the.png' %}" alt="nofile" style="width: 100%;height: auto;">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm" style="background-color: rgb(7, 2, 31) !important; color: white !important; position: sticky; top: 0; z-index: 1000;">
+    <div class="container">
+      <!-- Brand -->
+      <a class="navbar-brand" href="#" style="margin-left: -50px;">Mwalimu Private</a>
+      
+      <!-- Toggler for responsive menu -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <!-- Links and buttons -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Center Links -->
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#" style="color: white;font-size: 22px;font-weight: bolder;">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: white;font-size: 22px;font-weight: bolder;">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: white;font-size: 22px;font-weight: bolder;">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: white;font-size: 22px;font-weight: bolder;">Contact</a>
+          </li>
+        </ul>
+        <!-- Right Buttons -->
+        <div class="d-flex">
+          <a href="#" class="btn btn-outline-secondary btn-custom" style="color: white;font-size: 22px;font-weight: bolder;">Login</a>
+          <a href="#" class="btn btn-dark btn-custom" style="margin-left: 20px;color: white;font-size: 22px;font-weight: bolder;">Register</a>
+        </div>
+      </div>
+    </div>
+</nav>
+
+<div class="main-holder">
+  
+ <div class="main-section">
+  
+  <div style="padding: 60px;max-width: 850px;">
+    <div style=""><i class="bi bi-snow"></i> Zara</div>
+    <h3 class="main-header">E-LEARNING + AI</h3>
+    <h3  class="sub-header">Mwalimu Private</h3>
+    <small class="" style="width: 100px !important;">
+      Yourch child's number #1 best online e-learning platform. Come and be part of Kenyas best edutech community !
+    </small>
+       <br><br>
+       {% if user.is_authenticated %}
+          <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;color: white;border-radius: 20px;border-color: rgb(255, 255, 255);">E-Learning</a>
+        {% else %}
+          <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;">Get Started</a>
+          <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;">Login</a>
+        {% endif %}
+        <br><br>
+        <div style="color: rgb(57, 194, 29);">
+          <h6><i class="bi bi-phone"> </i>+254 739 363 886</h6>
+          <h6><i class="bi bi-whatsapp"> </i>+254 739 363 886</h6>
+        </div>
+  </div>
+ 
+  <div style="" class="main-image">
+      <img src="{% static 'Users/mainbg.webp' %}" style="width: 450px;object-fit: contain;border-radius: 130px 10px 120px 45px;">
+  </div>
+
+ </div>
 </div>
 
 
 
-<div class="" style="padding-top: 9px; margin: 0%;">
-    
-    <br><br>
-    <!-- <div class="cotainer"  >
-        
-        <div style="padding: 30px;">
-          <h5 style="font-family: cursive !important;color: coral;">Mwalimu Private</h5>
-          <br>
-          <p style="font-size: 24px;font-family:cursive !important ;color: rgba(89, 12, 134, 0.607);">Welcome to Mwalimu Private, your trusted e-learning platform offering tailored content for primary and junior secondary students. Explore interactive lessons in line with the CBC curriculum, covering a wide range of subjects to enhance your learning experience.</p>
-          {% if user.is_authenticated %}
-          <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;">E-Learning</a>
-          {% else %}
-          <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;">Get Started</a>
-          <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;">Login</a>
-          {% endif %}
-        </div>
-        
-         <img  alt="{% static 'Users/hom.png' %}" height="60%"   style="width: 40%; height: auto;padding-left: 40px;" >         
-    </div> -->
+<div class="achievements" >
+  <div style="background-color: #ECFDF5 !important;padding: 30px;margin-top: 20px;" class="achieve-card">
+    <h6><i class="bi bi-calendar-check"> </i>Learners + Educators</h6><hr>
+    Mwalimu Private connects educators, learners, and parents to enhance learning through seamless collaboration and support.
+   
+  </div>
+  <div class="achieve-card" style="margin-top: 20px; background-color: black;color: white;padding: 30px;">
+    <h6><i class="bi bi-robot"> </i>AI Assistant</h6><hr>
+    Mwalimu Private features AI-powered support to teach students, assist with assignments, and enhance learning efficiency.
+      
+  </div>
+  <div class="achieve-card" style="background-color: #ECFDF5;padding: 30px;margin-top: 20px;">
+    <h6><i class="bi bi-journal-check"> </i>Online Exams</h6><hr>
+    Mwalimu Private offers online exams with instant marking and immediate results, making assessments faster and more efficient.
+  </div>
+  <div class="achieve-card" style="margin-top: 20px; background-color: black;color: white;padding: 30px;">
+    <h6><i class="bi bi-graph-up"> </i>Progress Tracking</h6><hr>
+    Mwalimu Private includes progress tracking to help identify a child's strengths and weaknesses, ensuring effective learner management and personalized growth.
+  </div>
+</div>
+
 <br><br>
-    <div id="about">
+    <div id="about" style="background-color: rgba(243, 239, 239, .3);">
+      <br><br>
       <h5 class="text-center">About Us</h5>
       <br>
   
-      <div class="two">
-          <div style="padding: 30px;">
+      <div class="main-about" style="width: 100% !important;">
+          <!-- <div style="padding: 30px;">
               <img src="{% static 'Users/gpt.webp' %}" alt="{% static 'Users/lower.jpg' %}" width="90%"  style="object-fit: cover;"  >
-          </div>
-          <div style="width: 90%;padding: 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          </div> -->
+          <div style="width: 95%;padding: 30px;margin:0 auto;">
               <h5 style="color: rgba(89, 12, 134, 0.507);">Who Is Mwalimu Private ?</h5>
-              <p style="font-size: 20px;">Mwalimu Private is a revolutionary e-learning platform designed to connect learners with
-                 educators in order to improve their grades. With a user-friendly 
-                 interface and a wide range of academic resources, Mwalimu Private aims to make learning
-                  more accessible and engaging for students of all ages.
-                               Whether a student is struggling with a particular subject or simply wants to enhance
-                                their academic performance, Mwalimu Private is the ultimate destination for achieving
-                                 success. </p>
+              <p style="font-size: 20px;">Mwalimu Private is a cutting-edge e-learning platform designed to connect learners with educators and improve academic performance. With an easy-to-use interface and a variety of academic resources, it provides students of all ages with the tools they need to succeed—whether they’re struggling in a subject or aiming to excel further. Mwalimu Private makes learning accessible, engaging, and effective for all. </p>
                                  <br>
-                                 {% if user.is_authenticated %}
-                                 <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;">E-Learning</a>
+                                 <!-- {% if user.is_authenticated %}
+                                 <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;color: rgb(0, 0, 0) !important;">E-Learning</a>
                                  {% else %}
-                                 <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;">Get Started</a>
-                                 <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;">Login</a>
-                                 {% endif %}
+                                 <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;color: white !important;">Get Started</a>
+                                 <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;color: white !important;">Login</a>
+                                 {% endif %} -->
           </div>
-      </div>
+
+          <div class="about-section">
+            <div class="about-card">
+              <h6>Private Tutoring</h6><hr>
+              Mwalimu Private offers personalized private tutoring to provide focused, one-on-one learning experiences for students.
+            </div>
+            <div class="about-card">
+              <h6>Institution Edutech</h6><hr>
+              Mwalimu Private provides e-learning solutions to educational institutions, enhancing learning experiences through digital platforms and tools.
+            </div>
+          
+           
+
+          </div>
+      </div><br>
   </div><br><br>
-<div style="background-color:" >
+<div style="background-color:rgb(255, 254, 254)" >
     <br><br>
-    <h5 class="text-center" style="color: coral;">Our Curricular</h5>
+    <h5 class="text-center" style="color: rgb(2, 1, 1);">Our Curricular</h5>
     <br>
-    <div class="event-view" style="text-align: center ;column-gap: 20px; color: rgb(19, 19, 19);padding: 20px;margin: 20px auto;background-color: white;" >
-        <div class="event-card" style="color: white;height: 450px;padding: 0 !important;margin: 0;background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);">
-            <img src="{% static 'Users/mug.webp' %}" alt="{% static 'Users/lower.jpg' %}" style="width: 100%;height: 60%;object-fit: cover;">
+    <div class="event-view" style="text-align: center;row-gap: 30px ;column-gap: 20px; color: rgb(19, 19, 19);padding: 20px;margin: 0 auto;background-color: white !important;height: auto;" >
+        <div class="achieve-card" style="color: rgb(15, 12, 12);height: 250px;padding: 0 !important;margin: 10px auto;background-color: aliceblue;">
+            <!-- <img src="{% static 'Users/mug.webp' %}" alt="{% static 'Users/lower.jpg' %}" style="width: 100%;height: 60%;object-fit: cover;"> -->
             <br><br>
             
             <h5>CBC Compliance</h5>
@@ -177,14 +253,14 @@
             <h6 style="padding: 10px;">We offer comprehensive learning content for lower primary, upper primary, and junior secondary levels, tailored to meet your educational needs.</h6>
             
         </div>
-        <div class="event-card" style="height: 450px;padding: 0 !important;margin: 0;">
-            <img src="{% static 'Users/jj.png' %}" alt="{% static 'Users/home.png' %}" style="width: 100%;height: 60%;object-fit: cover;">
+        <div class="achieve-card" style="height: 250px;padding: 0 !important;margin: 10px auto;background-color: aliceblue;">
+            <!-- <img src="{% static 'Users/jj.png' %}" alt="{% static 'Users/home.png' %}" style="width: 100%;height: 60%;object-fit: cover;"> -->
             <br><br>
             <h5>Aptitude & IQ</h5>
         
             <h6 style="padding: 10px;">We offer both aptitude and IQ tests to assess specific skills and overall intellectual ability, helping you identify strengths and potential</h6>        </div>
-        <div class="event-card" style="height: 450px;padding: 0 !important;margin: 0;background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);color: white;">
-            <img src="{% static 'Users/lib.webp' %}" alt="{% static 'Users/lower.jpg' %}" style="width: 100%;height: 60%;object-fit: cover;">
+        <div class="achieve-card" style="height: 250px;padding: 0 !important;margin: 10px auto;background-color: aliceblue;color: rgb(7, 6, 6);">
+            <!-- <img src="{% static 'Users/lib.webp' %}" alt="{% static 'Users/lower.jpg' %}" style="width: 100%;height: 60%;object-fit: cover;"> -->
             <br><br>
             <h5>IT Competency</h5>
             <h6 style="padding: 10px;">We offer IT classes covering the basics of computer introduction, networks, and programming, designed to build a solid foundation for beginners.</h6></div>
@@ -195,14 +271,14 @@
     </div>
 </div>
 
-<br><br>
-<h5 class="text-center" style="color: coral;">Subscriptions</h5><br>
+<div style="background-color: rgba(243, 239, 239, .3) !important"><br><br>
+  <h5 class="text-center" style="color: rgb(20, 19, 18);">Subscriptions</h5>
 <subscription><div><br>
   <div class="text-center">
-    <h5 class="btn btn-secondary">Grade 3 - 6</h5>
+    <!-- <h5 class="btn btn-secondary">Grade 3 - 6</h5> -->
   </div>
   
-  <div class="three">
+  <div class="three" style="">
     <a href="{% url 'specific-pay' '185' %}">
       <div class="sub-card">
         <h5>Silver</h5>
@@ -251,77 +327,22 @@
 
 
 
-<br><br>
-
-<subscription >
-  <div style="background-color: rgb(26, 43, 43);">
-    <br>
-  <div class="text-center">
-    <h5 class="btn btn-primary"> AI Only</h5>
-  </div>
-  <div class="three">
-    <a href="{% url 'specific-pay' '150' %}">
-      <div class="sub-card">
-        <h5>Basic</h5>
-        <h6><i class="bi bi-"></i> AI Assistant <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Tokens 8 500 <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Image Upload <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-robot"></i> Image Generation <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6>
-        <!-- <h6><i class="bi bi-"></i> Personal Tutor <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6> -->
-        <!-- <h6><i class="bi bi-"></i> 30 Days <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6> -->
-        <br>
-        <h2>Ks 150</h2>
-      </div>
-    </a>
-    <a href="{% url 'specific-pay' '300' %}">
-      <div class="sub-card">
-        <h5>Advanced</h5>
-        <h6><i class="bi bi-"></i> AI Assistant <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Tokens 17 000  <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Image Upload <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-robot"></i> Image Generation <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6>
-        <!-- <h6><i class="bi bi-"></i> Personal Tutor <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6> -->
-        <!-- <h6><i class="bi bi-"></i> Online Contests <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6> -->
-        <br>
-        <h2 style="color: cornflowerblue;">Ks 300</h2>
-      </div>
-    </a>
-
-    <a href="{% url 'specific-pay' '500' %}">
-      <div class="sub-card">
-        <h5>Premium</h5>
-
-        <h6><i class="bi bi-"></i> AI Assistant <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Tokens 25 000<i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Image Generation<i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-robot"></i> Image Upload <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <!-- <h6><i class="bi bi-"></i> Personal Tutor <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6> -->
-        <!-- <h6><i class="bi bi-"></i> Online Contests <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6> -->
-        <br>
-        <h2 style="color: coral;">Ks 500</h2>
-      </div>
-    </a>
-
-
-  </div></div>
-</subscription>
-
+</div>
 <br><br><br><br>
-<div id="contact">
-    <h5 class="text-center">Contact Us</h5>
+<!-- <div style="background-color: black;color: white;opacity: .95;">
+  <div id="contact" style="width: 80%;margin: 0 auto;"><br><br>
+    <h5 class="text-center" >Contact Us</h5>
     <br>
 
-    <div class="two" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);">
+    <div class="two" style="">
         <div style="padding: 30px;color: white;" >
             <h6><i class="bi bi-phone"></i> Phone +254 739 363 883</h6>
-            <!-- <h6><i class="bi bi-envelope"></i> excel@gmail.com</h6> -->
              <br>
             <h6><i class="bi bi-whatsapp"></i> <a style="color: white;" href="https://wa.me/+254739363883?text=Hello%20,%20I%20would%20like%20to%20know%20more%20about%20your%20E-Learning%20platform%20." target="_blank">Message us WhatsApp +254 739 363 883</a>
             </h6>
             <br>  
             <h6><i class="bi bi-facebook"></i> Mwalimu Private</h6>
-            <!-- <h6><i class="bi bi-tiktok"></i> @ExcelSchools</h6> -->
-            <!-- <h6><i class="bi bi-instagram"></i> @ExcelSchools</h6> -->
+       
         </div>
         <div style="padding: 30px;">
             <div class="accordion container" id="changePhoneNumberAccordion" >
@@ -365,60 +386,49 @@
         </div>
     </div>
 
-    <!-- <div class="updaes">
-        <h5 style="color: cornflowerblue;text-align: center;font-family: cursive;">Events and Announcements</h5>
-
-        <div class="updates-info">
-          
-          <div class="accordion" id="accordionExample">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                  Title {{ latest.title }}
-                </button>
-              </h2>
-              <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                  <strong>{{ latest.date }}.</strong> {{ latest.description }}
-                  <br><br>
-                  {% if latest.file %}
-                        <a href="{{ latest.file.url }}" download><i class="bi bi-cloud-arrow-down" style="font-size: 15px;color: cornflowerblue;"> Download File</i> </a>
-                        {% endif %}
-                </div>
-              </div>
-            </div>
-            {% for update in updates %}
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ update.id }}" aria-expanded="false" aria-controls="collapse{{ update.id }}">
-                        {{ update.title }}
-                    </button>
-                </h2>
-                <div id="collapse{{ update.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <strong>{{ update.date }}.</strong> {{ update.description }}
-                        <br><br>
-                        {% if update.file %}
-                        <a href="{{ update.file.url }}" download><i class="bi bi-cloud-arrow-down" style="font-size: 15px;color: cornflowerblue;"> Download File</i> </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-
-          
-          </div>
-          
-        </div>
-      </div> -->
+   
 </div>
+</div> -->
 
     </div>
 
     
    
 
-
+    <section class="footer">
+ 
+      <div class="footer-column" style="margin-top: -60px;">
+       <div class="company" style="margin-top: 80px;">
+     
+         <div style="padding-left: 30px; max-width: 500px;">
+          <h5 style="font-size: 24px !important;font-weight: bolder;">Mwalimu Private</h5>
+         <p st>Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur aut possimus voluptates animi ex libero,
+            similique officia quae tempora sequi pariatur voluptas minus, est dolore odio nihil eos voluptatum deleniti.
+           </p>
+         </div>
+       </div>
+       <div class="uri" style="margin-top: 80px;">
+         <h5  style="font-size: 24px !important;font-weight: bolder;">Quick Links</h5>
+         <div style="padding-left: 30px;">
+           <ul >
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+             <li>Portal</li>
+             <li></li>
+           </ul>
+         </div>
+       </div>
+       <div class="contacts" style="margin-top: 80px;">
+         <h5 style="font-size: 24px !important;font-weight: bolder;">Our Contacts</h5>
+         <h6><i class="bi bi-phone"> </i>+254 739 363 883</h6>
+         <h6><i class="bi bi-facebook"> </i>Mwalimu Private</h6>
+         <h6><a style="color: white !important;" href="https://wa.me/254739363883?text=Hello%20I%20am%20interested%20in%20your%20services" target="_blank"><i class="bi bi-whatsapp"> </i>+254 739 363 883</a></h6>
+       </div>
+      </div>
+      <br><br>
+      <a href="tel:+254742134431" style="color: white !important; "><h6 class="text-center text-muted">developed by Crimsons Analytics</h6></a>
+     </section>
 
 
 </body>
