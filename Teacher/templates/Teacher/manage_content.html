@@ -15,7 +15,7 @@
     </form>
 
     <div class="file-shower">
-        <h3>{{ content.title }}</h3>
+        <h3>{{ content.title }} <a href="{{ content.file.url }}" download>Download File</a></h3>
         
         {% if content.file.url|slice:'-4:' == ".mp4" %}
             <!-- Display Video -->
@@ -36,7 +36,7 @@
             <!-- For other file types, provide a download link -->
             <a href="{{ content.file.url }}" download>Download File</a>
         {% endif %}
-        <a href="{{ content.file.url }}" download>Download File</a>
+        
     </div>
 
 
