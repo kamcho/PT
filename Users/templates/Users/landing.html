@@ -162,11 +162,11 @@
        {% if user.is_authenticated %}
           <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;color: white;border-radius: 20px;border-color: rgb(255, 255, 255);">E-Learning</a>
         {% else %}
-          <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;">Get Started</a>
-          <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;">Login</a>
+          <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;z-index: 10000;">Get Started</a>
+          <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;z-index: 100000;">Login</a>
         {% endif %}
         <br><br>
-        <div style="color: rgb(57, 194, 29);">
+        <div style="color: rgb(57, 194, 29);z-index: 1000000;">
           <h6><i class="bi bi-phone"> </i>+254 739 363 886</h6>
           <h6><i class="bi bi-whatsapp"> </i>+254 739 363 886</h6>
         </div>
