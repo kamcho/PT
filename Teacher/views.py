@@ -1652,6 +1652,6 @@ class AddContent(TemplateView):
                 content = MyContent.objects.create(user=request.user, file=file, title=title, subtopic=subtopic)
                 return redirect('manage-content', content.id)
             except Exception as e:
-                messages.error(self.request, 'An error occured, Content not uploaded!')
+                messages.error(self.request, str(e))
                 return redirect(self.request.get_full_path())
             
