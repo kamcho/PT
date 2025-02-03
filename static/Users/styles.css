@@ -5,6 +5,30 @@
     margin: 0;
     font-family: Nunito !important;
 }
+.main-holder{
+  background-color: rgb(7, 2, 31) !important;
+  color: white;
+  overflow-y: hidden;
+}
+.main-section{
+  width: 90%;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 60% 40%;
+}
+.main-header{
+  font-size: 50px;
+  font-weight: bolder;
+  font-family: Nunito !important;
+}
+.sub-header{
+  font-size: 40px;
+  font-weight: bolder;
+  color: cornflowerblue;
+}
+/* p {
+  font-size: 2vw;
+} */
 
 .achievements{
   display: grid;
@@ -23,10 +47,51 @@ border-radius: 20px;
 overflow-y: hidden;
 
 }
+.main-about{
+  display: grid;
+  grid-template-columns: repeat(2, .6fr);
+}
+.about-section{
+  display: grid;
+  grid-template-columns: repeat(2, .6fr);
+  overflow-y: scroll;
+}
+.about-card{
+  background-color: #ffffff;max-height: 300px;padding: 30px;width: 90%;border-radius: 20px;overflow: hidden;
+}
+@media (max-width: 1350px) {
+  .main-section{
+    width: 98%;
+  }
+  .main-header{
+    font-size: 40px;
+  }
+  .achievements{
+    grid-template-columns: repeat(3, .6fr);
+  }
+}
+
+
 @media (max-width: 1150px) {
   .achievements{
     grid-template-columns: repeat(2, .6fr);
     row-gap: 40px;
+  }
+  .about-section{
+    display: inline-block;
+
+  }
+  .about-card{
+    margin-top: 20px;
+  }
+  .main-section{
+    width: 100%;
+  }
+  .main-header{
+    font-size: 35px;
+  }
+  .sub-header{
+    font-size: 30px;
   }
   .achieve-card{
     margin: 0 auto;
@@ -37,6 +102,49 @@ overflow-y: hidden;
     margin-right: auto;
   }
 }
+@media (max-width: 1115px) {
+  .main-section{
+    grid-template-columns: 50% 50%;
+  }
+}
+@media (max-width: 992px) {
+  .main-section{
+    display: inline;
+    margin: 0 auto;
+    
+  }
+
+  .main-holder::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 82%;
+    background-image:  url("/static/Users/mainbg.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.09; /* Lower opacity of the image */
+    z-index: 1;
+}
+  .main-image{
+    display: none;
+  }
+}
+@media (max-width: 850px) {
+  .main-about{
+    display: inline;
+  }
+  .about-section{
+    display: grid;
+    grid-template-columns: repeat(2, .6fr);
+    margin-left:30px;
+    margin-top: -40px;
+
+  }
+
+}
 @media (max-width: 767px) {
 
 
@@ -46,7 +154,29 @@ overflow-y: hidden;
    
   }
 }
+@media (max-width: 650px) {
+  .achieve-card{
+    width: 80%;
+    max-width: 400px;
 
+  }
+  .main-header{
+    font-size: 30px;
+  }
+  .sub-header{
+    font-size: 25px;
+  }
+  .about-section{
+    display: inline;
+    width: 90%;
+    bottom: 30px !important;
+  }
+  .about-card{
+    margin: 10px auto;
+    margin-top: -50px;
+    
+  }
+}
 
 .intro{
   width: 500px;
@@ -663,6 +793,7 @@ a{
   background: #09122C !important;
   /* border-radius: 6px; */
   color: white;
+  overflow-x: hidden;
   /* height: 300px; */
 }
 .footer-column{
@@ -686,8 +817,11 @@ a{
     .footer-column{
       display: inline;
     }
-    .uri, .contacts{
+    .uri{
       display: none;
+    }
+    .contacts{
+      margin-left: 40px;
     }
   
   }
