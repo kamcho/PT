@@ -1,0 +1,31 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+<div class="container">
+    <br><br><br>
+    <a class="btn btn-secondary " href="{% url 'add-content' subject %}"><i class="bi bi-plus"> </i>Add Content</a>
+    {% for content in contents %}
+
+    <a href="{% url 'manage-content' content.id %}">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="flush-headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                  {{ content.title }}
+                </button>
+              </h2>
+            
+            </div>
+         
+            
+          </div>
+    </a>
+  <br>
+
+
+    {% endfor %}
+
+</div>
+{% endblock %}

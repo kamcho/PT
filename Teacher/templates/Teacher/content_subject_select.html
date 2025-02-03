@@ -1,0 +1,29 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br>
+  <div style="width: 90%;max-width: 600px;margin: 0 auto;">
+    {% for subject in user.teacherprofile.subject.all %}
+    <a href="{% url 'subject-content' subject.id %}">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="flush-headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                  {{ subject.name }}
+                </button>
+              </h2>
+            
+            </div>
+         
+            
+          </div>
+    </a>
+  <br>
+      {% endfor %}
+  </div>
+      
+</div>
+
+{% endblock %}

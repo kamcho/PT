@@ -4,7 +4,7 @@ from django.db import models
 import uuid
 # from Exams.models import  ClassTest
 # from Exams.models import TopicalQuizes
-from SubjectList.models import Subject, Topic, Notifications
+from SubjectList.models import Subject, Subtopic, Topic, Notifications
 from Users.models import MyUser
 
 
@@ -75,11 +75,13 @@ class SessionBooking(models.Model):
         else:
             return False
 
-# class ClassTestNotifications(Notifications):
-#     test = models.ForeignKey(ClassTest, on_delete=models.CASCADE)
-#     class_id = models.ForeignKey(StudentList, on_delete=models.CASCADE)
-#     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-#     topic = models.ForeignKey(Topic, blank=True, null=True, on_delete=models.CASCADE)
+class MyContent(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='content/')
+    date = models.DateField(auto_created=True)
+    title = models.CharField(max_length=150)
+    is_approved = models.BooleanField(default=False)
 
-#     def __str__(self):
-#         return str(self.test)
+    def __str__(self):
+        return str(self.user)

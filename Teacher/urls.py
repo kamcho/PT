@@ -36,9 +36,14 @@ urlpatterns = [
 
     path('BookSession/<str:id>', BookSession.as_view(), name='book-session'),
     path('Sessions/<str:id>', SessionId.as_view(), name='session'),
+
     path('MySessions/', MySessions.as_view(), name='my-sessions'),
 
     path('ViewTeachersProfile/<str:id>', TeachersProfile.as_view(), name='teacher-id'),
-    path('Link/<str:student>/<str:teacher>/', Link.as_view(), name='link')
+    path('Link/<str:student>/<str:teacher>/', Link.as_view(), name='link'),
+    path('MyContent/', ContentSubjectSelect.as_view(), name='content-subject-select'),
+    path('<str:id>/Contents/', SubjectContent.as_view(), name='subject-content'),
+    path('ManageContent/<str:id>/', ManageContent.as_view(), name='manage-content'),
+    path('<str:id>/AddContent/', AddContent.as_view(), name='add-content'), 
 
 ]

@@ -1,5 +1,6 @@
 import datetime
 import logging
+import random
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -1592,3 +1593,65 @@ class Link(LoginRequiredMixin, TemplateView):
             profile.students.add(student)
             messages.success(self.request, 'Success!')
             return redirect(self.request.get_full_path())
+
+
+class ContentSubjectSelect(TemplateView):
+    template_name='Teacher/content_subject_select.html'
+
+class SubjectContent(TemplateView):
+    template_name='Teacher/subject_content.html'
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        id = self.kwargs['id']
+        context['subject'] = id
+        context['contents'] = MyContent.objects.filter(subtopic__subject__id=id)
+        return context
+    
+class ManageContent(TemplateView):
+    template_name='Teacher/manage_content.html'
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        id = self.kwargs['id']
+        context['command'] = random.randint(10000, 99458)
+        context['content'] = MyContent.objects.get(id=id)
+        return context
+    
+    def post(self, request, **kwargs):
+        if self.request.method == "POST":
+            command = self.get_context_data().get('command')
+            content = self.get_context_data().get('content')
+            txt = self.request.POST.get('command')
+            if command == txt:
+                content.delete()
+                messages.success(self.request, 'Content was deleted')
+                return redirect('subject-content', content.subtopic.subject.id)
+            else:
+                messages.error(self.request, 'Invalid number')
+                return redirect(self.request.get_full_path())
+
+class AddContent(TemplateView):
+    template_name = 'Teacher/add_content.html'
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        id = self.kwargs['id']
+        context['subject'] = Subject.objects.get(id=id)
+        context['subtopics'] = Subtopic.objects.filter(subject__id=id)
+        return context
+    
+    def post(self, request, **kwargs):
+        if self.request.method == "POST":
+            try:
+                subtopics = self.get_context_data().get('subtopics')
+                subtopic = self.request.POST.get('subtopic')
+                file = self.request.FILES.get('file')
+                title = self.request.POST.get('title')
+                subtopic = subtopics.objects.get(id=subtopic)
+                content = MyContent.objects.create(user=request.user, file=file, title=title, subtopic=subtopic)
+                return redirect('manage-content', content.id)
+            except:
+                messages.error(self.request, 'An error occured, content was not created')
+                return redirect(self.request.get_full_path())
+            

@@ -1,0 +1,23 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<br><br><br><br>
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        <select class="form-select">
+            {% for subtopic in subtopics %}
+                <option value="{{ subtopic.id }}">{{ subtopic.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input class="form-control" type="text" name="title">
+        <br>
+        <input name="file" type="file" class="form-control">
+    </form>
+
+
+
+</div>
+{% endblock %}
