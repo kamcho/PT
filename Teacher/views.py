@@ -1613,9 +1613,12 @@ class ManageContent(TemplateView):
 
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
-        id = self.kwargs['id']
-        context['command'] = random.randint(10000, 99458)
-        context['content'] = MyContent.objects.get(id=id)
+        try:
+            id = self.kwargs['id']
+            context['command'] = random.randint(10000, 99458)
+            context['content'] = MyContent.objects.get(id=id)
+        except Exception as e:
+            messages.error(self.request, str(e))
         return context
     
     def post(self, request, **kwargs):
