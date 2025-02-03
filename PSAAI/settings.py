@@ -241,7 +241,7 @@ ASGI_APPLICATION = "PSAAI.asgi.application"
 
 
 # settings.py
-DATA_UPLOAD_MAX_MEMORY_SIZE = 105 * 1024 * 1024  # 25 MB (adjust as needed)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10500 * 1024 * 1024  # 25 MB (adjust as needed)
 
 # MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 # ACCOUNT_USER_MODEL_USERNAME_FIELD = None
