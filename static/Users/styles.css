@@ -111,7 +111,7 @@ overflow-y: hidden;
   .main-section{
     display: inline;
     margin: 0 auto;
-    
+    z-index: 10;
   }
 
   .main-holder::before {
@@ -126,7 +126,8 @@ overflow-y: hidden;
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.09; /* Lower opacity of the image */
-    z-index: 1;
+    /* z-index: 1; */
+    pointer-events: none;
 }
   .main-image{
     display: none;
