@@ -1648,10 +1648,10 @@ class AddContent(TemplateView):
                 subtopic = self.request.POST.get('subtopic')
                 file = self.request.FILES.get('file')
                 title = self.request.POST.get('title')
-                subtopic = subtopics.objects.get(id=subtopic)
+                subtopic = subtopics.get(id=subtopic)
                 content = MyContent.objects.create(user=request.user, file=file, title=title, subtopic=subtopic)
                 return redirect('manage-content', content.id)
             except Exception as e:
-                messages.error(self.request, str(e))
+                messages.error(self.request, 'An error occured, Content not uploaded!')
                 return redirect(self.request.get_full_path())
             
