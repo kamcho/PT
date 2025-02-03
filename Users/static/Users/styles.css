@@ -126,7 +126,7 @@ overflow-y: hidden;
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.09; /* Lower opacity of the image */
-    z-index: 1;
+    z-index: -1;
 }
   .main-image{
     display: none;
