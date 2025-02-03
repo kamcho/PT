@@ -111,16 +111,24 @@ DATABASES = {
     #     'NAME': BASE_DIR / "mydatabase.sqlite3",
     # }
 
-
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backup',  # Replace with your local database name
-        'USER': 'root',                # Default XAMPP MySQL user is 'root'
-        'PASSWORD': '',                # XAMPP default MySQL root user has no password (leave blank) unless you've set one
-        'HOST': '127.0.0.1',           # Use '127.0.0.1' or 'localhost' for local MySQL
-        'PORT': '3306',                # MySQL default port
-        'CONN_MAX_AGE': 0,             # Close connection after each request
-    }
+        'NAME': 'kevin254$default',      # Database name
+        'USER': 'kevin254',  # Your MySQL username
+        'PASSWORD': '141778215aA!',  # Your MySQL password
+        'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
+        'PORT': '3306',       # MySQL default port
+        'CONN_MAX_AGE': 0,
+    }, 
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'backup',  # Replace with your local database name
+    #     'USER': 'root',                # Default XAMPP MySQL user is 'root'
+    #     'PASSWORD': '',                # XAMPP default MySQL root user has no password (leave blank) unless you've set one
+    #     'HOST': '127.0.0.1',           # Use '127.0.0.1' or 'localhost' for local MySQL
+    #     'PORT': '3306',                # MySQL default port
+    #     'CONN_MAX_AGE': 0,             # Close connection after each request
+    # }
 }
 
 

@@ -51,6 +51,7 @@
         </button>
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
           <div class="offcanvas-header">
+            {% if user.is_authenticated %}
             {% if user.mysubscription.status %}
             <!-- <small>Subscription</small> -->
               <a class="nav-link" href="{% url 'subscription' %}">
@@ -64,6 +65,7 @@
               <i class="bi bi-cash" style="color: crimson;"></i>
               <small style="color: crimson;">Subscription Expired</small>
            </a>
+            {% endif %}
             {% endif %}
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
