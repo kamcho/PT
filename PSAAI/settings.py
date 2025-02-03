@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'Support',
     'django.contrib.sitemaps',
-    # 'storages',
+    'storages',
 
 ]
 # SOCIALACCOUNT_PROVIDERS = {
