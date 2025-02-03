@@ -17,7 +17,25 @@
     <div class="file-shower">
         <h3>{{ content.title }}</h3>
         
-      
+        {% if content.file.url|slice:'-4:' == ".mp4" %}
+            <!-- Display Video -->
+            <video controls width="90%">
+                <source src="{{ content.file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+        {% elif content.file.url|slice:'-4:' == ".pdf" %}
+            <!-- Display PDF -->
+            <iframe src="{{ content.file.url }}" width="90%" height="500px"></iframe>
+
+        {% elif content.file.url|slice:'-4:' == ".doc" or content.file.url|lower|slice:'-5:' == ".docx" %}
+            <!-- Display DOC/DOCX -->
+            <iframe src="https://docs.google.com/gview?url={{ content.file.url }}&embedded=true" width="90%" height="500px"></iframe>
+
+        {% else %}
+            <!-- For other file types, provide a download link -->
+            <a href="{{ content.file.url }}" download>Download File</a>
+        {% endif %}
     </div>
 
 
