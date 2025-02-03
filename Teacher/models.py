@@ -79,7 +79,7 @@ class MyContent(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
     file = models.FileField(upload_to='content/')
-    date = models.DateField(auto_now==True)
+    date = models.DateField(auto_now=True)
     title = models.CharField(max_length=150)
     is_approved = models.BooleanField(default=False)
 
