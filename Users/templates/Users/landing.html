@@ -126,28 +126,28 @@
         <!-- Center Links -->
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="#" style="color: white;font-size: 22px;font-weight: bolder;">Home</a>
+            <a class="nav-link" aria-current="page" href="#home" style="color: white !important;font-size: 22px;font-weight: bolder;">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" style="color: white;font-size: 22px;font-weight: bolder;">About Us</a>
+            <a class="nav-link" href="#about" style="color: white !important;font-size: 22px;font-weight: bolder;">About Us</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" style="color: white;font-size: 22px;font-weight: bolder;">Services</a>
+            <a class="nav-link" href="#services" style="color: white !important;font-size: 22px;font-weight: bolder;">Services</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" style="color: white;font-size: 22px;font-weight: bolder;">Contact</a>
+            <a class="nav-link" href="#footer" style="color: white !important;font-size: 22px;font-weight: bolder;">Contact</a>
           </li>
         </ul>
         <!-- Right Buttons -->
         <div class="d-flex">
-          <a href="#" class="btn btn-outline-secondary btn-custom" style="color: white;font-size: 22px;font-weight: bolder;">Login</a>
-          <a href="#" class="btn btn-dark btn-custom" style="margin-left: 20px;color: white;font-size: 22px;font-weight: bolder;">Register</a>
+          <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-custom" style="color: white;font-size: 22px;font-weight: bolder;">Login</a>
+          <a href="{% url 'register' %}" class="btn btn-dark btn-custom" style="margin-left: 20px;color: white;font-size: 22px;font-weight: bolder;">Register</a>
         </div>
       </div>
     </div>
 </nav>
 
-<div class="main-holder">
+<div class="main-holder" id="home">
   
  <div class="main-section">
   
@@ -181,7 +181,7 @@
 
 
 
-<div class="achievements" >
+<div class="achievements" id="services">
   <div style="background-color: #ECFDF5 !important;padding: 30px;margin-top: 20px;" class="achieve-card">
     <h6><i class="bi bi-calendar-check"> </i>Learners + Educators</h6><hr>
     Mwalimu Private connects educators, learners, and parents to enhance learning through seamless collaboration and support.
@@ -395,7 +395,7 @@
     
    
 
-    <section class="footer">
+    <section class="footer" id="footer">
  
       <div class="footer-column" style="margin-top: -60px;">
        <div class="company" style="margin-top: 80px;">
@@ -413,8 +413,8 @@
            <ul >
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact Us</a></li>
-             <li>Portal</li>
+            <!-- <li><a href="#contact">Contact Us</a></li> -->
+             <li><a href="{% url 'rout' %}">Portal</a></li>
              <li></li>
            </ul>
          </div>

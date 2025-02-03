@@ -23,6 +23,6 @@ urlpatterns = [
     path('login-Redirect/', LoginRedirect.as_view(), name='redirect'),
     path('Profile-Set-Up/', FinishSetup.as_view(), name='edit-profile'),
     path('Login/', Login.as_view(), name='login'),
-    path('Logout/', auth_views.LogoutView.as_view(template_name='Users/logout.html'), name='logout'),
+    path('Logout/', auth_views.LogoutView.as_view(template_name='Users/logout.html',next_page='/'), name='logout'),
 
 ]

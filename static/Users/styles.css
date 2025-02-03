@@ -634,7 +634,9 @@ nav{
     background-color:rgba(29, 25, 46, .8);
 
 }
-
+.nav-link{
+  color: #000000 !important;
+}
 .vertical-bar{
     position: fixed;
     width: 150px;
