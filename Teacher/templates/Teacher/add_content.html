@@ -6,7 +6,7 @@
 <div class="container">
     <form method="post">
         {% csrf_token %}
-        <select class="form-select">
+        <select class="form-select" name="subtopic">
             {% for subtopic in subtopics %}
                 <option value="{{ subtopic.id }}">{{ subtopic.name }}</option>
             {% endfor %}
