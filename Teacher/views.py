@@ -1651,7 +1651,7 @@ class AddContent(TemplateView):
                 subtopic = subtopics.objects.get(id=subtopic)
                 content = MyContent.objects.create(user=request.user, file=file, title=title, subtopic=subtopic)
                 return redirect('manage-content', content.id)
-            except:
-                messages.error(self.request, 'An error occured, content was not created')
+            except Exception as e:
+                messages.error(self.request, str(e))
                 return redirect(self.request.get_full_path())
             
