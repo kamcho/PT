@@ -48,13 +48,19 @@
             </div>
             {% endfor %}
             <br>
-            <button id="nextButton" class="btn btn-info" disabled>NEXT</button>
+            <button id="nextButton" class="btn btn-info" onclick="disableButton()" disabled>NEXT</button>
         </form>
     </div>
     {% endif %}
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  
 
+    function disableButton() {
+        document.getElementById("nextButton").disabled = true;
+    }
+</script>
 
 <script>
     function startTimer(duration, display) {
