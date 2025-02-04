@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.db.models import Sum
-
+from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -160,6 +160,11 @@ class VerifyAccount(TemplateView):
 
 class Login(TemplateView):
     template_name = 'Users/login.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        logout(self.request)
+        return context
 
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':

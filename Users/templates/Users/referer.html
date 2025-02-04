@@ -157,7 +157,7 @@
         {% for referal in referals %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td><a >{{ referal.user.email|hide_email_percentage:40 }}</a></td>
+            <td>{{ referal.user.email|hide_email_percentage:40 }}</td>
             <td>{{ referal.user.personalprofile.gender }}</td>
             <td>{{ referal.user.date }}</td>
 
