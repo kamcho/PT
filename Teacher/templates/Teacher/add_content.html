@@ -85,7 +85,7 @@
             type: "POST",
             data: formData,
             processData: false,
-            contentType: false,
+            contentType: false,timeout: 600000,
             beforeSend: function () {
                 // Start progress bar
                 $("#progressBar").width("0%");
