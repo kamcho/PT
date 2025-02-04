@@ -134,6 +134,22 @@
           <li class="nav-item">
             <a class="nav-link" href="#services" style="color: white !important;font-size: 22px;font-weight: bolder;">Services</a>
           </li>
+          <li id="downloadApp">
+            <a class="nav-link" href="/static/Users/app-release.apk" download>
+                <i class="bi bi-google-play"></i> Download APP
+            </a>
+        </li><script>
+          function isWebView() {
+              var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+              
+              // Detect Android WebView
+              return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
+          }
+      
+          if (isWebView()) {
+              document.getElementById("downloadApp").style.display = "none";
+          }
+      </script>
           <li class="nav-item">
             <a class="nav-link" href="#footer" style="color: white !important;font-size: 22px;font-weight: bolder;">Contact</a>
           </li>
@@ -356,10 +372,11 @@
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
             <li id="downloadApp">
-              <a class="nav-link" href="/static/Users/app-release.apk" download>
+              <a  href="/static/Users/app-release.apk" download>
                   <i class="bi bi-google-play"></i> Download APP
               </a>
-          </li><script>
+          </li>
+          <script>
             function isWebView() {
                 var userAgent = navigator.userAgent || navigator.vendor || window.opera;
                 
@@ -372,7 +389,7 @@
             }
         </script>
              <li><a href="{% url 'rout' %}">Portal</a></li>
-             <li></li>
+           
            </ul>
          </div>
        </div>
