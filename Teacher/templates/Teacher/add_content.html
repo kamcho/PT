@@ -3,72 +3,141 @@
 
 
 <br><br><br><br>
-<div class="container" >
-    <form id="upload-form" method="post" enctype="multipart/form-data">
+<div class="container" style="width: 95%;max-width: 600px;margin: 0 auto;">
+
+    <form method="post" enctype="multipart/form-data" id="form">
         {% csrf_token %}
-        
-        <select class="form-select" name="subtopic">
+        <select class="form-select" name="subtopic" required>
+            <option></option>
             {% for subtopic in subtopics %}
                 <option value="{{ subtopic.id }}">{{ subtopic.name }}</option>
             {% endfor %}
         </select>
         <br>
-        
-        <input class="form-control" type="text" name="title" placeholder="Enter Title">
+        <input class="form-control" type="text" name="title" required>
         <br>
-        
-        <input name="file" type="file" class="form-control" id="file">
+        <input name="file" type="file" class="form-control" required>
         <br>
-        
-        <button class="btn btn-primary" type="submit">Upload</button>
-        
-        <!-- Progress Bar -->
-        <div class="progress mt-3" style="display: none;">
-            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
-                 role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            </div>
-        </div>
-        
-        <p id="upload-status" class="mt-2 text-success"></p>
+        <button type="submit" class="btn btn-primary" id="uploadBtn">Upload</button>
     </form>
     
+    <div id="progressWrapper" style="display: none;">
+        <div id="progressBar" class="progress-bar" role="progressbar"></div>
+        <span id="progressText">0% uploaded</span>
+    </div>
+    
+    <div style="width: 80%;margin: 0 auto;" class="justify-content-center"><div id="spinner" class="spinner-border text-success" style="display: none;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div></div>
+    
+    <div id="warning" style="display: none; color: green;">
+        <p>Please do not reload or close the page. Your content is being saved.</p>
+    </div>
+    
+    <style>#progressWrapper {
+        /* width: 100%; */
+        padding: 10px;
+        /* position: fixed; */
+        /* top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); */
+        z-index: 9999;
+        /* background-color: rgba(0, 0, 0, 0.2); */
+    }
+    
+    #progressBar {
+        width: 0%;
+        height: 20px;
+        background-color: #4caf50;
+        text-align: center;
+    }
+    
+    .spinner-border {
+        margin: 20px;
+    }
+    
+    #warning {
+       
+        font-weight: bold;
+    }
+    </style>
+    
+    
+<script>
+    $(document).ready(function () {
+    // When the upload button is clicked
+    $("#uploadBtn").click(function (e) {
+        // Prevent default form submission
+        e.preventDefault();
+        
+        // Disable the page and show progress bar
+        $("#form").css("opacity", "0.2");
+        $("#progressWrapper").show();
+        $("#uploadBtn").css("display", "none");
+        // Show warning about page reload
+        
 
-        <script>
-            document.getElementById("upload-form").addEventListener("submit", function(event) {
-                event.preventDefault();  // Prevent default form submission
-                
-                let formData = new FormData(this);
-                let xhr = new XMLHttpRequest();
-                
-                xhr.open("POST", window.location.href, true);
-                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        
-                // Show progress bar
-                document.querySelector(".progress").style.display = "block";
-                
-                // Track progress
-                xhr.upload.addEventListener("progress", function(e) {
-                    if (e.lengthComputable) {
-                        let percent = Math.round((e.loaded / e.total) * 100);
-                        document.getElementById("progress-bar").style.width = percent + "%";
-                        document.getElementById("progress-bar").setAttribute("aria-valuenow", percent);
+        // Form data
+        var formData = new FormData($("form")[0]);
+
+        $.ajax({
+            url: "", // Use the same URL or the one that processes the form
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                // Start progress bar
+                $("#progressBar").width("0%");
+                $("#progressText").text("0% uploaded");
+            },
+            xhr: function () {
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function (evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = (evt.loaded / evt.total) * 100;
+                        $("#progressBar").width(percentComplete + "%");
+                        $("#progressText").text(Math.round(percentComplete) + "% uploaded");
+
+                        // Show the spinner only when progress reaches 100%
+                        if (percentComplete === 100) {
+                            // Hide the progress bar and text
+                            $("#progressWrapper").hide();
+
+                            // Show the spinner
+                            $("#spinner").show();
+
+                            $("#warning").show();
+                        }
                     }
-                });
-        
-                // When upload is complete
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        document.getElementById("upload-status").textContent = "Upload Successful!";
-                        document.getElementById("progress-bar").classList.add("bg-success");
-                    } else {
-                        document.getElementById("upload-status").textContent = "Upload Failed. Try Again.";
-                        document.getElementById("progress-bar").classList.add("bg-danger");
-                    }
-                };
-        
-                xhr.send(formData);
-            });
-        </script>
+                }, false);
+                return xhr;
+            },
+            success: function (response) {
+                if (response.status === "success") {
+                    
+                    window.location.href = "/manage-content/" + response.content_id + "/"; // Redirect after verification
+                    
+                } else {
+                    alert("Upload failed: " + response.message);
+                    $("body").css("opacity", "1");
+                    $("#progressWrapper").hide();
+                }
+            },
+            error: function (xhr) {
+                alert("Error uploading file: " + xhr.responseText);
+                $("body").css("opacity", "1");
+                $("#progressWrapper").hide();
+            }
+        });
+    });
+
+   
+});
+
+</script>
+    
+    
         
 
 

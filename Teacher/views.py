@@ -1634,27 +1634,45 @@ class ManageContent(TemplateView):
                 messages.error(self.request, 'Invalid number')
                 return redirect(self.request.get_full_path())
 
+from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.contrib import messages
+
 class AddContent(TemplateView):
-    template_name = 'Teacher/add_content.html'
+    template_name = "Teacher/add_content.html"
 
     def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        id = self.kwargs['id']
-        context['subject'] = Subject.objects.get(id=id)
-        context['subtopics'] = Subtopic.objects.filter(subject__id=id)
+        context = super().get_context_data(**kwargs)
+        id = self.kwargs["id"]
+        context["subject"] = Subject.objects.get(id=id)
+        context["subtopics"] = Subtopic.objects.filter(subject__id=id)
         return context
-    
+
     def post(self, request, **kwargs):
-        if self.request.method == "POST":
+        if request.method == "POST":
             try:
-                subtopics = self.get_context_data().get('subtopics')
-                subtopic = self.request.POST.get('subtopic')
-                file = self.request.FILES.get('file')
-                title = self.request.POST.get('title')
-                subtopic = subtopics.get(id=subtopic)
-                content = MyContent.objects.create(user=request.user, file=file, title=title, subtopic=subtopic)
-                return redirect('manage-content', content.id)
+                subtopics = self.get_context_data().get("subtopics")
+                subtopic_id = request.POST.get("subtopic")
+                file = request.FILES.get("file")
+                title = request.POST.get("title")
+
+                # Ensure subtopic exists
+                subtopic = subtopics.get(id=subtopic_id)
+
+                # Create content object
+                content = MyContent.objects.create(
+                    user=request.user, file=file, title=title, subtopic=subtopic
+                )
+
+                # Return JSON response if it's an AJAX request
+                if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                    return JsonResponse({"status": "success", "content_id": content.id})
+
+                # Otherwise, redirect normally
+                return redirect("manage-content", content.id)
+
             except Exception as e:
                 messages.error(self.request, str(e))
+                if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                    return JsonResponse({"status": "error", "message": str(e)}, status=400)
                 return redirect(self.request.get_full_path())
-            
