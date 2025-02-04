@@ -3,8 +3,8 @@
 
 
 <br><br><br><br>
-<div class="container">
-    <form method="post">
+<div class="container" >
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <select class="form-select" name="subtopic">
             {% for subtopic in subtopics %}
@@ -14,9 +14,49 @@
         <br>
         <input class="form-control" type="text" name="title">
         <br>
-        <input name="file" type="file" class="form-control">
+        <input name="file" type="file" class="form-control" id="file" accept=".pdf,.doc,.docx,.mp4,.avi,.mov">
+
         <br>
         <button class="btn btn-primary">Upload</button>
+
+
+        <script>
+            document.getElementById("upload-form").addEventListener("submit", function(event) {
+                event.preventDefault();  // Prevent default form submission
+                
+                let formData = new FormData(this);
+                let xhr = new XMLHttpRequest();
+                
+                xhr.open("POST", window.location.href, true);
+                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        
+                // Show progress bar
+                document.querySelector(".progress").style.display = "block";
+                
+                // Track progress
+                xhr.upload.addEventListener("progress", function(e) {
+                    if (e.lengthComputable) {
+                        let percent = Math.round((e.loaded / e.total) * 100);
+                        document.getElementById("progress-bar").style.width = percent + "%";
+                        document.getElementById("progress-bar").setAttribute("aria-valuenow", percent);
+                    }
+                });
+        
+                // When upload is complete
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        document.getElementById("upload-status").textContent = "Upload Successful!";
+                        document.getElementById("progress-bar").classList.add("bg-success");
+                    } else {
+                        document.getElementById("upload-status").textContent = "Upload Failed. Try Again.";
+                        document.getElementById("progress-bar").classList.add("bg-danger");
+                    }
+                };
+        
+                xhr.send(formData);
+            });
+        </script>
+        
     </form>
 
 
