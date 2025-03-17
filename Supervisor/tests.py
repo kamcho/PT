@@ -1,4 +1,7 @@
 import itertools
+# courses = Course.objects.using('default2').all()
+        # for course in courses:
+        #     cs = Course.objects.create(name=course.name, discipline=course.discipline, abbreviation=course.abbreviation)
 # def add_quiz():
 #     quizes = TopicalQuizes.objects.using('default2').all()
 
