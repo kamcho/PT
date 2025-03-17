@@ -59,28 +59,8 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        subjects = Subject.objects.all()
-        topics = Topic.objects.using('default2').all()
-        subtopics = Subtopic.objects.using('default2').all()
-        # for topic in topics:
-        #     subject = subjects.get(name=topic.subject.name, grade=topic.subject.grade)
-        #     sub = Topic.objects.create(id=topic.id, subject=subject, name=topic.name, order=topic.order, topics_count=topic.topics_count, test_size=topic.test_size, time=topic.time)
-        # for subtopic in subtopics:
-        #     topic = Topic.objects.get(id=subtopic.topic.id)
-        #     subject = Subject.objects.get(name=subtopic.subject.name, grade=subtopic.subject.grade)
-        #     su = Subtopic.objects.create(name=subtopic.name, subject=subject, topic=topic, id=subtopic.id, order=subtopic.order)
-
-        quizes = TopicalQuizes.objects.using('default2').all()
-
-        for quiz in quizes:
-            answers = TopicalQuizAnswers.objects.using('default2').filter(quiz=quiz)
-            # subject = Subject.objects.get(name=quiz.subject, grade=quiz.subject.grade)
-            subtopic = Subtopic.objects.get(name=quiz.subtopic.name, subject__grade=quiz.subject.grade)
-            quiz = TopicalQuizes.objects.create(id=quiz.id, subject=subtopic.subject, subtopic=subtopic, topic=subtopic.topic,quiz=quiz)
-            for answer in answers:
-                answe = TopicalQuizAnswers.objects.create(uuid=answer.uuid, quiz=quiz, choice=answer.choice, is_correct=answer.is_correct)
-
-
+        
+        
 
 
         students = Students.objects.filter(school=self.request.user.school)

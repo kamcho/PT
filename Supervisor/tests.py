@@ -12,6 +12,16 @@ import itertools
 #         quiz = TopicalQuizes.objects.create(id=quiz.id, subject=subtopic.subject, subtopic=subtopic, topic=subtopic.topic,quiz=quiz)
 #         for answer in answers:
 #             answe = TopicalQuizAnswers.objects.create(uuid=answer.uuid, quiz=quiz, choice=answer.choice, is_correct=answer.is_correct)
+# subjects = Subject.objects.all()
+#         topics = Topic.objects.using('default2').all()
+#         subtopics = Subtopic.objects.using('default2').all()
+        # for topic in topics:
+        #     subject = subjects.get(name=topic.subject.name, grade=topic.subject.grade)
+        #     sub = Topic.objects.create(id=topic.id, subject=subject, name=topic.name, order=topic.order, topics_count=topic.topics_count, test_size=topic.test_size, time=topic.time)
+        # for subtopic in subtopics:
+        #     topic = Topic.objects.get(id=subtopic.topic.id)
+        #     subject = Subject.objects.get(name=subtopic.subject.name, grade=subtopic.subject.grade)
+        #     su = Subtopic.objects.create(name=subtopic.name, subject=subject, topic=topic, id=subtopic.id, order=subtopic.order)
 
 def add_subject():
     subjects = Subject.objects.all()
