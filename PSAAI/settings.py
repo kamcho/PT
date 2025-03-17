@@ -115,7 +115,7 @@ DATABASES = {
         'NAME': BASE_DIR / "mydatabase.sqlite3",
     },
 
-    'default': {
+    'default2': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'kevin254$erp',      # Database name
         'USER': 'kevin254',  # Your MySQL username

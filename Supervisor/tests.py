@@ -1,6 +1,5 @@
 import itertools
 # def add_quiz():
-#     quizes = TopicalQuizes.objects.all().delete()
 #     quizes = TopicalQuizes.objects.using('default2').all()
 
 #     for quiz in quizes:
@@ -10,6 +9,15 @@ import itertools
 #         quiz = TopicalQuizes.objects.create(id=quiz.id, subject=subtopic.subject, subtopic=subtopic, topic=subtopic.topic,quiz=quiz)
 #         for answer in answers:
 #             answe = TopicalQuizAnswers.objects.create(uuid=answer.uuid, quiz=quiz, choice=answer.choice, is_correct=answer.is_correct)
+
+def add_subject():
+    subjects = Subject.objects.all()
+    courses = Course.objects.all()
+    for course in courses:
+        cs = Course.objects.using('default2').create(name=course.name, discipline=course.discipline, abbreviation=course.abbreviation)
+    for subject in subjects:
+        sub = Subject.objects.using('default2').create() 
+
 def generate_timetable(teachers, classes, time_slots):
     timetable = {}
 
