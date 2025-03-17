@@ -115,15 +115,15 @@ DATABASES = {
         'NAME': BASE_DIR / "mydatabase.sqlite3",
     },
 
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'kevin254$default',      # Database name
-    #     'USER': 'kevin254',  # Your MySQL username
-    #     'PASSWORD': '141778215aA!',  # Your MySQL password
-    #     'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
-    #     'PORT': '3306',       # MySQL default port
-    #     'CONN_MAX_AGE': 0,
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'kevin254$erp',      # Database name
+        'USER': 'kevin254',  # Your MySQL username
+        'PASSWORD': '141778215aA!',  # Your MySQL password
+        'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
+        'PORT': '3306',       # MySQL default port
+        'CONN_MAX_AGE': 0,
+    }
    # , 
     'default2': {
         'ENGINE': 'django.db.backends.mysql',
