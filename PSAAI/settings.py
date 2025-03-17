@@ -125,15 +125,15 @@ DATABASES = {
         'CONN_MAX_AGE': 0,
     }
    # , 
-    'default2': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backup',  # Replace with your local database name
-        'USER': 'root',                # Default XAMPP MySQL user is 'root'
-        'PASSWORD': '',               # XAMPP default MySQL root user has no password (leave blank) unless you've set one
-        'HOST': '127.0.0.1',           # Use '127.0.0.1' or 'localhost' for local MySQL
-        'PORT': '3306',                # MySQL default port
-        'CONN_MAX_AGE': 0,             # Close connection after each request
-    }
+    # 'default2': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'backup',  # Replace with your local database name
+    #     'USER': 'root',                # Default XAMPP MySQL user is 'root'
+    #     'PASSWORD': '',               # XAMPP default MySQL root user has no password (leave blank) unless you've set one
+    #     'HOST': '127.0.0.1',           # Use '127.0.0.1' or 'localhost' for local MySQL
+    #     'PORT': '3306',                # MySQL default port
+    #     'CONN_MAX_AGE': 0,             # Close connection after each request
+    # }
 }
 
 
