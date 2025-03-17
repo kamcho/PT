@@ -59,12 +59,16 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        subjects = Subject.objects.using('default2').all()
-        courses = Course.objects.all()
-
-        for subject in subjects:
-            course = courses.get(name=subject.course.name)
-            sub = Subject.objects.create(course=course, grade=subject.grade, name=subject.name, topics=subject.topics, abbreviation=subject.abbreviation, status=subject.status)
+        subjects = Subject.objects.all()
+        topics = Topic.objects.using('default2').all()
+        subtopics = Subtopic.objects.using('default2').all()
+        for topic in topics:
+            subject = subjects.get(name=subject.name, grade=subject.grade)
+            sub = Topic.objects.create(id=topic.id, subject=topic.subject, name=topic.name, order=topic.order, topics_count=topic.topics_count, test_size=topic.test_size, time=topic.time)
+        for subtopic in subtopics:
+            topic = Topic.objects.get(name=subtopic.topic.name, subject=subtopic.subject)
+            subject = Subject.objects.get(name=subtopic.subject.name, grade=subtopic.subject.grade)
+            su = Subtopic.objects.create(name=subtopic.name, subject=subject, topic=topic, id=subtopic.id, order=subtopic.order)
         students = Students.objects.filter(school=self.request.user.school)
         guardians = MyKids.objects.filter(kids__in=students).distinct()
         print(guardians)
