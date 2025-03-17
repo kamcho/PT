@@ -62,11 +62,10 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         subjects = Subject.objects.all()
         topics = Topic.objects.using('default2').all()
         subtopics = Subtopic.objects.using('default2').all()
-        for topic in topics:
-            subject = subjects.get(name=topic.subject.name, grade=topic.subject.grade)
-            sub = Topic.objects.create(id=topic.id, subject=subject, name=topic.name, order=topic.order, topics_count=topic.topics_count, test_size=topic.test_size, time=topic.time)
+       
+       Topic.objects.create(id=topic.id, subject=subject, name=topic.name, order=topic.order, topics_count=topic.topics_count, test_size=topic.test_size, time=topic.time)
         for subtopic in subtopics:
-            topic = Topic.objects.get(name=subtopic.topic.name, subject=subtopic.subject)
+            topic = Topic.objects.get(id=subtopic.topic.id)
             subject = Subject.objects.get(name=subtopic.subject.name, grade=subtopic.subject.grade)
             su = Subtopic.objects.create(name=subtopic.name, subject=subject, topic=topic, id=subtopic.id, order=subtopic.order)
         students = Students.objects.filter(school=self.request.user.school)
