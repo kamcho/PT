@@ -109,7 +109,7 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             {
                 'label': 'Grade 6',
                 'data': [grade_6_data.get(label, 0) for label in labels],
-                'backgroundColor': 'rgba(255, 181, 181)',
+                'backgroundColor': 'rgba(2, 181, 231)',
                 'borderColor': 'rgba(255, 181, 181)',
                 'borderWidth': 2.5,
             },
@@ -123,14 +123,14 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
              {
                 'label': 'Grade 8',
                 'data': [grade_8_data.get(label, 0) for label in labels],
-                'backgroundColor': 'rgba(255, 181, 181)',
+                'backgroundColor': 'rgba(55, 181, 181)',
                 'borderColor': 'rgba(255, 181, 181)',
                 'borderWidth': 2.5,
             },
              {
                 'label': 'Grade 9',
                 'data': [grade_9_data.get(label, 0) for label in labels],
-                'backgroundColor': 'rgba(255, 181, 181)',
+                'backgroundColor': 'rgba(255, 11, 181)',
                 'borderColor': 'rgba(255, 181, 181)',
                 'borderWidth': 2.5,
             }
@@ -189,14 +189,14 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                  {
                     'label': 'Grade 7',
                     'data': [grade_7_data.get(label, 0) for label in labels],
-                    'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                    'backgroundColor': 'rgba(255, 122, 2, 0.8)',
                     'borderColor': 'rgba(255, 2, 2, 1)',
                     'borderWidth': 4,
                 },
                 {
                     'label': 'Grade 8',
                     'data': [grade_8_data.get(label, 0) for label in labels],
-                    'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                    'backgroundColor': 'rgba(55, 212, 2, 0.8)',
                     'borderColor': 'rgba(255, 2, 2, 1)',
                     'borderWidth': 4,
                 }
@@ -204,7 +204,7 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 {
                     'label': 'Grade 9',
                     'data': [grade_9_data.get(label, 0) for label in labels],
-                    'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                    'backgroundColor': 'rgba(25, 12, 252, 0.8)',
                     'borderColor': 'rgba(255, 2, 2, 1)',
                     'borderWidth': 4,
                 }
@@ -916,34 +916,38 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
         
         id = self.kwargs['id']
         try:
-            user  = Students.objects.get(adm_no=id)
-            grade = self.request.session.get('grade', user.academicprofile.current_class.grade)
-            scores = Exam.objects.filter(user__id=id, subject__grade=grade) 
+            student  = Students.objects.get(adm_no=id)
+            grade = self.request.session.get('grade', student.academicprofile.current_class.grade)
+            term = self.request.session.get('term','Term 1')
+            print(self.request.user.role)
+            scores = Exam.objects.filter(user__adm_no=id, subject__grade=grade, term__term=term) 
             if scores:
-                term1 = scores.filter(term__term='Term 1')
-                term2 = scores.filter(term__term='Term 2')
-                term3 = scores.filter(term__term='Term 3')
-                context['term1'] = term1
-                context['term2'] = term2
-                context['term3'] = term3
+                opener = scores.filter(period='OPENER')
+                mid = scores.filter(period='MID')
+                end = scores.filter(period='END')
+                context['opener'] = opener
+                context['mid'] = mid
+                context['end'] = end
                 context['scores'] = scores
+                context['term'] = term
             context['grade'] = grade
+            context['student']  = student
         except:
             messages.error(self.request, 'We could not find a student matching your query !')
-        if self.request.user.role == 'Student':
+        if self.request.user.role == 'Guardian':
             # get the current logged in user(learner) current grade and associated Subjects
-            context['base_html'] = 'Users/base.html'
-        elif self.request.user.role == 'Guardian':
             context['base_html'] = 'Guardian/baseg.html'
+        
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
-        elif self.request.user.role in ['Supervisor',  'Receptionist']:
+        elif self.request.user.role == 'Supervisor':
             context['base_html'] = 'Supervisor/base.html'
+        print(self.request.user.role)
         
 
         
         
-        context['user'] = user
+        context['user'] = student
         return context
     
     # def test_func(self):
@@ -952,9 +956,12 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
     def post(self, *args, **kwargs):
       
         if self.request.method == 'POST':
-            selected = self.request.POST.get('select')
-           
+            selected = self.request.POST.get('grade')
+            term = self.request.POST.get('term') 
+            print(term)
             self.request.session['grade'] = selected
+            self.request.session['term'] = term
+
 
             return redirect(self.request.get_full_path())
 

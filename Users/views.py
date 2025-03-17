@@ -396,7 +396,7 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
 
 def finish_profile_setup(user, f_name, l_name, surname, phone):
  
-    profile = PersonalProfile.objects.get(user=user)
+    profile, obj = PersonalProfile.objects.get_or_create(user=user)
     profile.f_name = f_name
     profile.l_name = l_name
     if phone:
@@ -491,8 +491,11 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                     return redirect('guardian-home')
                 elif request.user.role == 'Teacher':
                     return redirect('teachers-home')
-                elif request.user.role in ['Supervisor', 'Finance']:
+                elif request.user.role == 'Supervisor':
                     return redirect('supervisor-home')
+                elif request.user.role == 'Finance':
+                    
+                    return redirect('finance')
                 elif request.user.role == 'Receptionist':
                     
                     return redirect('students-view')

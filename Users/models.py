@@ -58,7 +58,9 @@ class MyUser(AbstractBaseUser):
         Student = "Student"
         Teacher = "Teacher"
         ADMIN = "Admin"
+        Finance = "Finance"
         Guardian = "Guardian"
+        Receptionist = "Receptionist"
         Supervisor = "Supervisor"
         Referer = "Referer"
         Supplier = "Supplier"
@@ -103,7 +105,30 @@ class Supplier(MyUser):
     class Meta:
         proxy = True
 
+class ReceptionistManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        result = super().get_queryset(*args, **kwargs)
+        return result.filter(role=MyUser.Role.Receptionist)
 
+
+class Receptionist(MyUser):
+    base_role = MyUser.Role.Receptionist
+    partner = ReceptionistManager()
+
+    class Meta:
+        proxy = True
+class FinanceManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        result = super().get_queryset(*args, **kwargs)
+        return result.filter(role=MyUser.Role.Finance)
+
+
+class Finance(MyUser):
+    base_role = MyUser.Role.Finance
+    partner = FinanceManager()
+
+    class Meta:
+        proxy = True
 
 class TeacherManager(BaseUserManager):
     def get_queryset(self,*args,**kwargs):

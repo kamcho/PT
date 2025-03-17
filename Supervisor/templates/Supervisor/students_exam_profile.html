@@ -6,40 +6,50 @@
 <div class="">
 <div class="container">
   <br><br><br>
-    <form method="post" style="color: white;">
+    <form method="post" style="color: rgb(26, 24, 24) !important;width: 90%;max-width: 400px;justify-self: end;">
         {% csrf_token %}
-        <div class="dropdown" >
-            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Grade {{ grade }}
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><button value="4" name="select" class="dropdown-item">4</button></li>
-                <li><button value="5" name="select" class="dropdown-item">5</button></li>
-                <li><button value="6" name="select" class="dropdown-item">6</button></li>
-                <li><button value="7" name="select" class="dropdown-item">7</button></li>
-            </ul>
+        <div class="input-group" >
+            <select name="grade" class="form-select" required>
+              <option></option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+            </select>
+            <select name="term" class="form-select" required>
+              <option></option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+              
+            </select>
+            <button class="btn btn-secondary">Submit</button>
         </div>
     </form>
 
 </div>
 
-<div class="container" style="color: white;">
+<div class="container" style="color: rgb(3, 3, 3);">
     <br>
-    <h5>{{ user.studentprofile.get_names }}</h5>
-    <p>Grade {{ user.academicprofile.current_class.grade }} {{ user.academicprofile.current_class|title }}</p>
+    <h5>{{ student.studentprofile.get_names }}</h5>
+    <p>Grade {{ student.academicprofile.current_class.grade }} {{ student.academicprofile.current_class|title }}</p>
 </div>
 
 <div class="container form-view">
     <br>
-    <h5>Grade {{ grade }} Term 1</h5>
-    {% if term1 %}
+    <h5>Grade {{ grade }} {{ term }} Opener</h5>
+    {% if opener %}
     <div class="accordion" id="accordionTerm1">
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTerm1"
                     aria-expanded="true" aria-controls="collapseTerm1">
-                    Term Average {% get_user_term_average user grade 'Term 1' %}
+                    Term Average {% get_user_term_average user grade term 'OPENER' %}
                 </button>
             </h2>
             <div id="collapseTerm1" class="accordion-collapse collapse show">
@@ -58,7 +68,7 @@
                             <tr>
                               <td><a href=""><h6>{{ score.subject }}</h6></a></td>
                               <td>{{ score.score }}</td>
-                              <td>{{ score.grade }}</td>
+                              <td>{{ score.get_grade }}</td>
                             </tr>
                           {% endfor %}
                         </tbody>
@@ -75,12 +85,12 @@
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapseTerm1Unavailable" aria-expanded="false"
                     aria-controls="collapseTerm1Unavailable">
-                    Grade {{ grade }} Term 1 results are not available.
+                    Grade {{ grade }} {{term}} Opener results are not available.
                 </button>
             </h2>
             <div id="collapseTerm1Unavailable" class="accordion-collapse collapse">
                 <div class="accordion-body">
-                    <strong>We could not find marks for {{ grade }} Term 1</strong>
+                    <strong>We could not find marks for {{ grade }} {{term}}</strong>
                 </div>
             </div>
         </div>
@@ -90,15 +100,15 @@
 <br><br>
 
 <div class="container form-view" >
-  <h5 style="text-align: left !important;">Grade {{ grade }} Term 2</h5>
+  <h5 style="text-align: left !important;">Grade {{ grade }} {{term}} Mid Term</h5>
   <br>
-  {% if term2 %}
+  {% if mid %}
   <div class="accordion" id="accordionTerm2" style="width: 99% !important;">
       <div class="accordion-item">
           <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                   data-bs-target="#collapseTerm2" aria-expanded="false" aria-controls="collapseTerm2">
-                  Term 2 Average {% get_user_term_average user grade 'Term 2' %}
+                  Term 2 Average {% get_user_term_average user grade  term 'MID' %}
               </button>
           </h2>
           <div id="collapseTerm2" class="accordion-collapse collapse">
@@ -113,11 +123,11 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for score in term2 %}
+                        {% for score in mid %}
                           <tr>
                             <td><a href=""><h6>{{ score.subject }}</h6></a></td>
                             <td>{{ score.score }}</td>
-                            <td>{{ score.grade }}</td>
+                            <td>{{ score.get_grade }}</td>
                           </tr>
                         {% endfor %}
                       </tbody>
@@ -134,12 +144,12 @@
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                   data-bs-target="#collapseTerm2Unavailable" aria-expanded="false"
                   aria-controls="collapseTerm2Unavailable">
-                  Grade {{ grade }} Term 2 results are not available.
+                  Grade {{ grade }} {{ term }} Mid Term results are not available.
               </button>
           </h2>
           <div id="collapseTerm2Unavailable" class="accordion-collapse collapse">
               <div class="accordion-body">
-                  <strong>We could not find marks for {{ grade }} Term 2</strong>
+                  <strong>We could not find marks for {{ grade }} {{term}} Mid Term</strong>
               </div>
           </div>
       </div>
@@ -149,10 +159,10 @@
 <br><br>
 
 <div class="container form-view" style="background-color: white;">
-  <h5>Grade {{ grade }} Term 3</h5>
+  <h5>Grade {{ grade }} {{ term }} End Term</h5>
   <br>
-  {% if term3 %}
-  <h6>Term Average {% get_user_term_average user grade 'Term 3' %}</h6>
+  {% if end %}
+  <h6>Term Average {% get_user_term_average user grade term 'END' %}</h6>
  
     <table class="table">
       <thead>
@@ -163,11 +173,11 @@
         </tr>
       </thead>
       <tbody>
-        {% for score in term3 %}
+        {% for score in end %}
           <tr>
             <td><a href=""><h6>{{ score.subject }}</h6></a></td>
             <td>{{ score.score }}</td>
-            <td>{{ score.grade }}</td>
+            <td>{{ score.get_grade }}</td>
           </tr>
         {% endfor %}
       </tbody>
@@ -179,12 +189,12 @@
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                   data-bs-target="#collapseTerm3Unavailable" aria-expanded="false"
                   aria-controls="collapseTerm3Unavailable">
-                  Grade {{ grade }} Term 3 results are not available.
+                  Grade {{ grade }} {{ term }} End Term results are not available.
               </button>
           </h2>
           <div id="collapseTerm3Unavailable" class="accordion-collapse collapse">
               <div class="accordion-body">
-                  <strong>We could not find marks for {{ grade }} Term 3</strong>
+                  <strong>We could not find marks for {{ grade }} {{ term }} End Term</strong>
               </div>
           </div>
       </div>

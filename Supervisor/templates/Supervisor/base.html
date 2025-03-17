@@ -52,7 +52,23 @@
         </div>
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
-
+            <script>
+              function isWebView() {
+                  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                  
+                  // Detect Android WebView
+                  return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
+              }
+          
+              if (isWebView()) {
+                  document.getElementById("downloadApp").style.display = "none";
+              }
+          </script>
+          <li id="downloadApp">
+            <a class="nav-link" href="/static/Users/app-release.apk" download>
+                <i class="bi bi-google-play"></i> Download APP
+            </a>
+        </li>
             {% if user.is_authenticated %}
             
               {% if request.user.role == 'Supervisor' %}
@@ -87,25 +103,33 @@
                     <i class="bi bi-plus" style=""> </i>Discipline
                   </a>
                 </li>
-               
-             
-                
-                
-               
-                
-                
-            
-  
-              
-          
-            
-           
+                          
             <li>
               <a class="nav-link" href="{% url 'subject-view' 4   %}" ><i class="bi bi-graph-up-arrow" > </i>Analytics</a>
             </li>
             {% elif user.role == 'Finance' %}
-          
             
+            <li>
+              <a class="nav-link" href="{% url 'finance' %}">
+                <i class="bi bi-house" > </i>Home
+              </a>
+            </li>
+          
+            <li>
+              <a class="nav-link" href="{% url 'processed-fee-payments' %}">
+                <i class="bi bi-cash" > </i>Fee Payments
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" href="{% url 'students-view' %}">
+                <i class="bi bi-currency-exchange" > </i>Add Fee Payments
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" href="{% url 'expenses' %}">
+                <i class="bi bi-wallet" > </i>Expenses
+              </a>
+            </li>
             {% endif %}
                
                 <li>

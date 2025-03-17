@@ -517,8 +517,8 @@ def get_stream_overall_average(class_id, grade, term):
         return 'Not Found'
 
 @register.simple_tag
-def get_user_term_average(user, grade, term):
-    scores = Exam.objects.filter(user=user, subject__grade=grade, term__term=term)
+def get_user_term_average(user, grade, term, period):
+    scores = Exam.objects.filter(user=user, subject__grade=grade, term__term=term, period=period)
     print(scores.explain())
     total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
 

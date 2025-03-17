@@ -144,7 +144,7 @@
 <div style="width: 95%;margin: 60px auto;position: relative;">
     <h6 style="padding: 20px;" class="text-center">Perfomance <strong style="color: hotpink;">Analytics</strong></h6>
     <form method="post">{% csrf_token %}
-    <div style="position:  absolute;top: 30px;right: 40px;width: 400px;" class="input-group">
+    <div style="justify-content: center;justify-items: center;justify-self: end;width: 400px;" class="input-group">
     <select class="form-select" aria-label="Default select example" name="grade"  required>
         <option value="" selected>Select Grade</option>
         {% for grade in grades %}
@@ -177,13 +177,14 @@
 
       <div id="def" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 350px)); gap: 10px; width: 100%; margin: 0 auto; justify-content: center;">
         {% for subject in student.mysubjects.name.all %}
+        <a href="{% url 'students-exam-profile' student.adm_no %}">
         <div style="background-color: rgb(4, 3, 20); border-radius: 10px; padding: 30px; margin-top: 40px; color: white;">
             <h6 class="text-center">{{ subject.name }}</h6>
             
             <!-- Canvas for one graph per subject -->
             <canvas id="chart-{{ forloop.counter }}"></canvas>
         </div>
-    
+    </a>
         <!-- Prepare dynamic data for the chart -->
         <script>
             document.addEventListener("DOMContentLoaded", function() {

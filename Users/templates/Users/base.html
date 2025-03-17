@@ -47,122 +47,49 @@
         </button>
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
           <div class="offcanvas-header">
-            {% if user.is_authenticated %}
-            {% if user.mysubscription.status %}
-            <!-- <small>Subscription</small> -->
-              <a class="nav-link" href="{% url 'subscription' %}">
-               
-                 <i class="bi bi-cash"></i>
-              <small>Subscription Active</small>
-              </a>
-            {% else %}
-            <a class="nav-link" href="{% url 'subscription' %}">
-               
-              <i class="bi bi-cash" style="color: crimson;"></i>
-              <small style="color: crimson;">Subscription Expired</small>
-           </a>
-            {% endif %}
-            {% endif %}
+           
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
-             
+              <script>
+                function isWebView() {
+                    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                    
+                    // Detect Android WebView
+                    return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
+                }
+            
+                if (isWebView()) {
+                    document.getElementById("downloadApp").style.display = "none";
+                }
+            </script>
+            <li id="downloadApp">
+              <a class="nav-link" href="/static/Users/app-release.apk" download>
+                  <i class="bi bi-google-play"></i> Download APP
+              </a>
+          </li>
               {% if user.is_authenticated %}
        
 
-              <li id="downloadApp">
-                <a class="nav-link" href="/static/Users/app-release.apk" download>
-                    <i class="bi bi-google-play"></i> Download APP
-                </a>
-            </li><script>
-              function isWebView() {
-                  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                  
-                  // Detect Android WebView
-                  return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
-              }
-          
-              if (isWebView()) {
-                  document.getElementById("downloadApp").style.display = "none";
-              }
-          </script>
-          <li>
-              <a class="nav-link" href="{% url 'student-home' %}" ><i class="bi bi-ui-checks" > </i>Home</a>
-          </li>
+              
+        
          
-          <li>
-            <a class="btn btn-secondary" href="{% url 'ask-ai'   %}" style="color: white;" ><i class="bi bi-robot" style="color: white;"> </i>ROBO AI</a>
-          </li><br>
-          <li>
-            <a class="btn btn-dark" href="{% url 'learn' students.academicprofile.current_class %}" style="color: white;" ><i class="bi bi-book" style="color: white;"> </i>Subjects</a>
-          </li><br>
-          <li>
-            <a class="btn btn-primary" href="{% url 'subscription'   %}" style="color: white;" ><i class="bi bi-cash" style="color: white;"> </i>Subscriptions</a>
-          </li><br>
-{% if user.academicprofile.is_content  %}
-
-          <li>
-            <div class="dropdown" >
-              <button class="btn btn-outline-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
-                  data-bs-toggle="dropdown" aria-expanded="false">
-                  Online Tests
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="padding: 10px;">
-                  <li><a class="nav-link" href="{% url 'pending-tests' %}">
-                    New Tests
-              {% with user|get_tests_count:user as count %}
-              {% if count %}
-              <sup class="badge rounded-pill bg-danger">
-                {{ count }}+
-              </sup>
-              {% endif %}
-              {% endwith %}
-                  </a></li>
-                  <li><a class="nav-link" href="{% url 'assignments' %}">Assignments
-                    {% with user|get_assignments:user as count %}
-                    {% if count %}
-                    <sup class="badge rounded-pill bg-danger">
-                      {{ count }}+
-                    </sup>
-                    {% endif %}
-                    {% endwith %}</a></li>
-                  <!-- <li><a class="nav-link" href="{% url 'guardians-view' %}">Parents</a></li> -->
-                  
-              </ul>
-          </div>
+  
           
-          </li>
            
                 
      
-       <li>
-        <a class="nav-link" href="{% url 'exams' user.academicprofile.current_class %}" ><i class="bi bi-clipboard-check"> </i>E-Results</a>
-    </li>
-        <li>
-            <a class="nav-link" href="{% url 'progress'  user.academicprofile.current_class %}"><i class="bi bi-clipboard2-pulse" style=""> </i>Progress</a>
-          </li>
       
-
-          <li>
-            <a class="nav-link" href="{% url 'my-sessions' %}" ><i class="bi bi-display"> </i>Class Sessions</a>
-        </li>
-
-        {% endif %}
         <li>
-            <a class="nav-link" href="{% url 'update-profile' user.email  %}" ><i class="bi bi-person-check" > </i>Profile</a>
+            <a class="nav-link" href="{% url 'update-profile' user.id  %}" ><i class="bi bi-person-check" > </i>Profile</a>
           </li>
         
           <!-- <li>
             <a class="nav-link" href="{% url 'teachers-view'   %}" ><i class="bi bi-people" > </i>Teachers</a>
           </li> -->
 
-          <li>
-            <a class="nav-link" href="{% url 'contact' %}">
-             
-               <i class="bi bi-headphones"></i> Support
-               </a>
-             </li>
+        
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}" ><i class="bi bi-box-arrow-left" > </i>Sign out</a>
