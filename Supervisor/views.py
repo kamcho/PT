@@ -64,7 +64,7 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
         for subject in subjects:
             course = courses.get(name=subject.course.name)
-            sub = Subject.objects.create(course=course, grade=subject.grade, name=subject.name, topic=subject.topics, abbreviation=subject.abbreviation, status=subject.status)
+            sub = Subject.objects.create(course=course, grade=subject.grade, name=subject.name, topics=subject.topics, abbreviation=subject.abbreviation, status=subject.status)
         students = Students.objects.filter(school=self.request.user.school)
         guardians = MyKids.objects.filter(kids__in=students).distinct()
         print(guardians)
