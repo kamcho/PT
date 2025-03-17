@@ -6,9 +6,9 @@
 <br>
 <br><br>
 <br>
-  <div class="container dropdown">
+  <div class="container dropdown" style="margin: 0 auto;max-width: 700px;">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        Grade
+        Grade {{ grade }}
       </button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
         <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '4' email %}">4</a></li>
@@ -20,7 +20,7 @@
 <br>
   <div>
 
-<div class="container syllabus" style="text-decoration:none !important;">
+<div class="container syllabus" style="text-decoration:none !important;margin: 0 auto;max-width: 700px;" style="">
 {% for coverage in syllabus %}
 
 
@@ -30,8 +30,8 @@
           <input type="checkbox" style="margin-left: 0 auto;" checked>
       </div>
         <div>
-           {% for subtopic in coverage.topic.all %}
-                {% if  email|guardian_subtopic_view:subtopic %}
+           {% for subtopic in email|guardians_subtopic_view:coverage.id %}
+                {% if  email|guardian_subtopic_view:subtopic.id %}
 
                     <div style="display:flex;width:60%;padding-left:30px;">
                         <small style="color:purple ;flex: 1;"><a href="{% url 'media' coverage subtopic  %}">{{ subtopic }}</a></small>

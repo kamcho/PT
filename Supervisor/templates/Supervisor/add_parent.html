@@ -1,0 +1,149 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<br><br><br>
+<style>
+    .guardian-section {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-control {
+        margin-bottom: 15px;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+
+<div class="container" style="max-width: 600px; margin: auto;">
+    <h4 class="text-center mb-4">Add Parent/Guardian Details for <strong style="color: cornflowerblue;">{{ student }}</strong></h4>
+
+    <form id="guardianForm">
+        <!-- Guardian 1 -->
+        <div class="guardian-section">
+            <h5>Guardian #1</h5>
+            <div class="input-group">
+                <input class="form-control" id="guardian1_id" placeholder="Enter ID number" type="number">
+                <button type="button" class="btn btn-primary verify-btn" data-guardian="1">Verify</button>
+            </div>
+            <div id="guardian1_details" class="hidden mt-3">
+                <input class="form-control" id="guardian1_name" placeholder="Full Name" type="text">
+                <input class="form-control" id="guardian1_phone" placeholder="Phone" type="text">
+                <select class="form-control" id="guardian1_gender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Guardian 2 -->
+        <div class="guardian-section">
+            <h5>Guardian #2</h5>
+            <div class="input-group">
+                <input class="form-control" id="guardian2_id" placeholder="Enter ID number" type="number">
+                <button type="button" class="btn btn-primary verify-btn" data-guardian="2">Verify</button>
+            </div>
+            <div id="guardian2_details" class="hidden mt-3">
+                <input class="form-control" id="guardian2_name" placeholder="Full Name" type="text">
+                <input class="form-control" id="guardian2_phone" placeholder="Phone" type="text">
+                <select class="form-control" id="guardian2_gender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="button" id="submitGuardian" class="btn btn-success w-100">Submit</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.verify-btn').click(function() {
+            let guardianNum = $(this).data('guardian');
+            let adm = '{{ student.adm_no }}'
+            let idInput = $('#guardian' + guardianNum + '_id');
+            let detailsDiv = $('#guardian' + guardianNum + '_details');
+            let nameInput = $('#guardian' + guardianNum + '_name');
+            let phoneInput = $('#guardian' + guardianNum + '_phone');
+            let genderSelect = $('#guardian' + guardianNum + '_gender');
+            let verifyButton = $(this);
+
+            let guardianId = idInput.val().trim();
+            if (guardianId !== "") {
+                $.ajax({
+                    url: '{% url "get-guardian" %}', // Django view to search guardian
+                    type: 'GET',
+                    data: { 'id_number': guardianId },
+                    success: function(response) {
+                        if (response.exists) {
+                            alert('Guardian found!');
+
+                            // Populate fields and make them read-only
+                            nameInput.val(response.name).prop('readonly', true);
+                            phoneInput.val(response.phone).prop('readonly', true);
+                            genderSelect.val(response.gender).prop('disabled', true);
+
+                            // Show details and hide verify button
+                            detailsDiv.removeClass('hidden').show();
+                            verifyButton.hide();
+                        } else {
+                            alert('Guardian not found, please enter details.');
+
+                            // Clear and enable fields for new guardian
+                            nameInput.val('').prop('readonly', false);
+                            phoneInput.val('').prop('readonly', false);
+                            genderSelect.prop('disabled', false);
+
+                            // Show details section for input
+                            detailsDiv.removeClass('hidden').show();
+                        }
+                    }
+                });
+            }
+        });
+
+        // Submit Form via AJAX
+        $('#submitGuardian').click(function() {
+            let data = {
+                student_id: '{{ student.id }}',
+                guardians: []
+            };
+
+            for (let i = 1; i <= 2; i++) {
+                let guardianId = $('#guardian' + i + '_id').val().trim();
+                if (guardianId !== "") {
+                    data.guardians.push({
+                        id_number: guardianId,
+                        full_name: $('#guardian' + i + '_name').val().trim(),
+                        phone: $('#guardian' + i + '_phone').val().trim(),
+                        gender: $('#guardian' + i + '_gender').val()
+                    });
+                }
+            }
+
+            $.ajax({
+                url: '',  // Django view to handle POST request
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                success: function(response) {
+                    window.location.href = response.redirect_url;
+                },
+                error: function(xhr) {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

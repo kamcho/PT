@@ -2,68 +2,174 @@
 {% block content %}
 
 
+<style>
+  /* Default styles for PC */
+  .sub {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    margin-top: 40px;
+    gap: 40px;
+    justify-content: center;
+    width: 98%;
+    padding: 50px;
+  }
 
-<div class="subject-select-content-container">
-        {% if user.questioncount.count|add:'0' < 20 %}
-<div id="alert" class="container" style="position: relative;;background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);position: absolute;margin: 100px auto;padding: 50px; width: 90%;height: 80vh;z-index: 99999;">
-    <button class="btn btn-secondary" style="position: absolute;top: 20px;right: 20px;" onclick="disable()"><i class="b bi-x"></i></button>
-    <h5 style="color: coral;font-size: 23px;"> Alert </h5>
-    <p style="color: cornflowerblue;font-size: 20px;">In our aim to make account approval absolutely free, you are required
-        to submit atleast 10 question on each 2 topics as assigned from your dashboard.Once submitted
-        we will review the questions approve your account and add a star to your rating.
-         NB You cannot be assigned learners unless you complete this step !!!
-    </p>
-    <small style="color: coral;">Questions Remaining  {{ user.questioncount.count|add:'-20' }}</small>
-  
-  </div>
-{% endif %}
-<br><br><br>
+  .subs {
+    background-color: rgb(12, 13, 34);
+    border-radius: 30px;
+    min-height: 300px;
+    max-height: 400px;
+    padding: 40px;
+    overflow-y: scroll;
+    color: white;
+  }
 
-<div class="subjects-select-view">
+  /* Nav-link styles */
+  .nav-link {
+    color: rgb(0, 0, 0) !important;
+  }
 
-<a href="{% url 'my-classes' %}">
-        <div class="subject-select-card">
+  /* Media query for Tablets (max-width: 900px) */
+  @media (max-width: 900px) {
+    .sub {
+      display: grid;
+      grid-template-columns: 1fr; /* Stack the columns for tablet view */
+      margin-top: 40px;
+      gap: 20px;
+      padding: 30px;
+    }
 
-                <h6><i class="bi bi-houses">  </i>My Classes</h6>
-                <br>
-                <div class="card-in-card">
-<!--                    {% for class in classes %}-->
-<!--                        <small><i class="bi bi-house"></i> {{ class.class_id }}</small>-->
-<!--                    {% endfor %}-->
-                    <small>View the classes you teach. Remember to always update your classes upon changes.</small>
-                </div>
+    .subs {
+      margin-top: 20px;
+      padding: 30px;
+      max-height: 350px; /* Adjust height for smaller screens */
+    }
+  }
 
-        </div>
-        </a>
+  /* Media query for Phones (max-width: 600px) */
+  @media (max-width: 600px) {
+    .sub {
+      display: grid;
+      grid-template-columns: 1fr; /* Stack the columns for mobile view */
+      margin-top: 60px;
+      gap: 15px;
+      padding: 20px;
+    }
 
-        <a href="{% url 'content-subject-select' %}">
-        <div class="subject-select-card">
-                <h6><i class="bi bi-spellcheck">  </i>My Content</h6>
-                <br>
-                <div class="card-in-card">
-                        <small>View add, manage and update contents you have created. You can also view
-                        the students viewership from here.</small>
-                </div>
-        </div>
+    .subs {
+      margin-top: 20px;
+      padding: 20px;
+      max-height: 300px; /* Adjust height for mobile screens */
+    }
 
-        </a>
+    .pae {
+      margin: 50px auto; /* Adjust container margin for mobile */
+    }
 
-        <a  style="opacity: .4;">
-        <div class="subject-select-card">
-                <h6><i class="bi bi-graph-up">  </i>Analytics</h6>
-                <br>
-                <div class="card-in-card">
-                        <small>Your perfomance analytics are currently not available.</small>
-                </div>
-        </div>
+    /* Ensure the personal details are easily readable on small screens */
+    #dets {
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    #child {
+      margin: 0 auto;
+      grid-template-columns: 1fr; /* Stack the class cards for mobile view */
+      gap: 20px;
+    }
+
+    .c-card {
+      width: 90%;
+      height: auto;
+      padding: 10px;
+      border-radius: 15px;
+    }
+  }
+
+  /* Media query for larger screens (PC/Tablet) */
+  @media (min-width: 901px) {
+    .sub {
+      padding: 50px;
+      margin-top: 40px;
+    }
+
+    .subs {
+      max-height: 400px; /* Ensure consistent height for larger screens */
+    }
+
+    .c-card {
+      max-width: 300px;
+    }
+  }
+</style>
+
+
+<div class="pae" style="width: 98%;margin: 100px auto;">
+      
+        
+        <div style="background-color: #eeedf1;border-radius: 50px;width: 95%;max-width: 1100px;top: 150px;margin: 0 auto;">
+            <div style="background-color: rgb(12, 13, 34);height: 200px;width: 100%;border-radius: 50px 50px 100px 100px;">
+              {% if not classes %}
+              <h6 style="color: crimson;text-align: center;padding-top: 30px;"><i class="bi bi-info">You have not been allocated any classes yet! </i></h6>
+
+              {% endif %}
+            </div>    
+
+            {% if classes %}
+        <div id="child" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 340px)); margin: -100px auto; row-gap: 40px;  justify-content: center; width: 95%;justify-self: center;padding-left: 10px;">
+                {% for class in classes %}
+                <a href="{% url 'class-profile' class.class_id.class_id %}"style="text-decoration: none;color: white;">
+                    <div class="c-card" style="width: 95%; background-color: rgb(53, 53, 88); height: 300px; border-radius: 20px; max-width: 300px; position: relative;">
+                        <div style="background-color: #E5D9F2; height: 100px; border-radius: 10px; position: absolute; top: -30px; width: 80%; left: 50%; transform: translateX(-50%);">
+                                
+                                <div style="display: flex; justify-content: center; align-items: center; height: 100%;color: black;">
+                                        <h6 >{{ class.subject.name }}</h6>
+                                </div>
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                                <div>
+                            <h6 class="btn btn-primary"><i class="bi bi-layers"></i> {{ class.class_id.grade }} {{ class.class_id.name }}</h6>
+                        </div>
+                        </div>
+                    </div>
                 </a>
+                {% endfor %}
+            </div><br><br>
+            {% endif %}
+            <div class="sub">
+                <div id="subs" style="background-color: rgb(12, 13, 34);border-radius: 30px;min-height: 300px;max-height: 400px;padding: 40px;overflow-y: scroll;overflow: scroll;">
 
+        {% if not subjects %}
+            <h6 class="alert alert-dark">You have not selected any subjects <a href="{% url 'subjects-selection' %}" style="color: coral;">Select Here</a></h6>
+        {% else %}
+            
+        <select class="form-select form-select-lg mb-3" aria-label="Large select example">
+                <option selected>My Subjects</option>
+               
+              </select>
 
-
-
-
-
-
+            {% for subject in subjects %}
+                <div style="display: grid;grid-template-columns: repeat(3, .6fr);padding: 10px;color:rgb(253, 253, 253);gap: 10px;">
+                        <p class="badge bg-info" style="width: 40px;">{{ forloop.counter }}</p>
+                        <p class="badge bg-secondary" style="color:rgb(253, 253, 253);">{{ subject }}</p>
+                        <p class="badge bg-primary">{{ subject.discipline }}</p>
+                
+    
+    
+                </div>
+             {% endfor %}
+            {% endif %}
+          
+                </div>
+                <div id="dets" style="background-color: rgb(12, 13, 34);border-radius: 30px;min-height: 300px;max-height: 400px;padding: 40px;color: white;">
+                        <h5>Personal Details</h5>
+                        <h6>{{ user.personalprofile.get_names|title }}</h6>
+                        <p>{{ user.personalprofile.phone }}</p>
+                        <p>{{ user.personalprofile.location }}</p>
+                                        </div>
+            </div>
+        </div>
+       
 </div>
 
 
@@ -72,7 +178,13 @@
 
 
 
-</div>
+
+
+
+
+
+
+
 
 
 

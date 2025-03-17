@@ -1,18 +1,20 @@
 import logging
 from datetime import datetime
+from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.db.models import Count
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, \
     GeneralTest
 from Guardian.models import MyKids
 from SubjectList.models import Progress, Topic, Subject
-from Users.models import MyUser, PersonalProfile, AcademicProfile
+from Supervisor.models import Updates
+from Users.models import MyUser, PersonalProfile, AcademicProfile, Students
 
 logger = logging.getLogger('django')
 
@@ -25,7 +27,67 @@ class IsGuardian(UserPassesTestMixin):
         else:
             return False
     
+class Messages(LoginRequiredMixin, TemplateView):
+    template_name = 'Guardian/messages.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        if self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+            my_kids = MyKids.objects.get(user = user)  # get linked kids account
+            mykids = my_kids.kids.all()
+            context['updates'] = Updates.objects.filter(Q(user__in=mykids)|Q(school__in=mykids.values_list('school')))
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+            context['updates'] = Updates.objects.filter(school=user.school)
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
+            context['updates'] = Updates.objects.filter(created_by=user)
+
+           
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            filters = self.request.POST.get('filters')
+            base_html = self.get_context_data().get('base_html')
+            updates = self.get_context_data().get('updates')
+            if filters == '1':
+                updates = updates.filter(is_read=False)
+            elif filters == '2':
+                updates = updates.filter(is_read=True)
+            elif filters == '3':
+                updates = updates.filter(ministry='MOE')
+            elif filters == '4':
+                updates = updates.filter(ministry='School')
+            context = {
+                'base_html':base_html,
+                'updates':updates
+            }
+            return render(self.request, self.template_name, context)
+    
+class Message(LoginRequiredMixin, TemplateView):
+    template_name = 'Guardian/message.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        id = self.kwargs['id']
+        if self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+            my_kids = MyKids.objects.get(user = user)  # get linked kids account
+            mykids = my_kids.kids.all()
+            context['update'] = Updates.objects.get(id=id)
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+            context['update'] = Updates.objects.get(school=user.school, id=id)
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
+            context['update'] = Updates.objects.get(created_by=user, id=id)
+
+            
+        return context   
 class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
     """
         Guardians Home Page
@@ -38,7 +100,9 @@ class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
         try:
             # Get learners linked to logged in guardian
             my_kids = MyKids.objects.get(user = user)  # get linked kids account
-            print(MyKids.kids, 'iamas')
+            mykids = my_kids.kids.all()
+            context['updates'] = Updates.objects.filter(Q(user__in=mykids)|Q(school__in=mykids.values_list('school')))
+            
             if not my_kids.kids.all():
                 messages.error(self.request, f'We could not find any students linked to you.')
             else:
@@ -47,7 +111,7 @@ class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
             pass
         except Exception as e:
             # Handle any exceptions
-            messages.error(self.request, 'An exception occurred were fixing it')
+            messages.error(self.request, str(e))
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
@@ -131,9 +195,19 @@ class TaskSelection(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         try:
             email = self.kwargs['email']
             context['email'] = email  # Get a students email from url
-            academic_profile = MyUser.objects.get(email=email)
-            context['grade'] = academic_profile.academicprofile.current_class.grade
+            grade = self.kwargs['grade']
+    
+            # Get students progress
+            subject = Progress.objects.filter(user__adm_no=email, subject__grade=grade).values('user','subject__name','subject__id',
+                                                                                               'subject__topics').annotate(
+                topic_count=Count('topic', distinct=True))
 
+
+            context['subject'] = subject
+            context['grade'] = grade
+
+        except Exception as e:
+            messages.error(self.request, 'An error occurred when processing your request. Please try again later')
 
 
         except AcademicProfile.DoesNotExist as e:
@@ -200,19 +274,18 @@ class TaskSelection(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
         # Check if the user has a 'Guardian' or 'Teacher' role
         if user.role == 'Guardian':
-            email = MyUser.objects.get(email=email)
-
+            print('here', email)
+            student = Students.objects.get(adm_no=email)
+            print('adm _n',email)
 
             # Attempt to get the student's profile using the provided email
             try:
-                student = MyKids.objects.get(kids=email)
+                student = MyKids.objects.get(kids=student, user=self.request.user)
+                print('my objjd', student)
                 return True
             except Exception:
                 return False
 
-            # Ensure the student is associated with the logged-in user
-            if student.ref_id == user.uuid:
-                return True
         elif user.role in ['Teacher', 'Supervisor']:
             return True
         
@@ -231,13 +304,13 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         user = self.kwargs['email']
         grade = self.kwargs['grade']
         context['child'] = user
-        user = MyUser.objects.get(email=user)
+        user = Students.objects.get(adm_no=user)
 
         try:
             # Lists to store subject IDs
             subject_ids = []
 
-            # Retrieve student test data
+            # Retrieve student test data/
             student_tests = StudentTest.objects.filter(user=user, subject__grade=grade)
             topical_subject_counts = student_tests.values('subject__id')
             topical_tests = topical_subject_counts.order_by('subject__id')
@@ -329,12 +402,12 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            email = MyUser.objects.get(email=email)
+            email = Students.objects.get(adm_no=email)
 
 
             # Attempt to get the student's profile using the provided email
             try:
-                student = MyKids.objects.get(kids=email)
+                student = MyKids.objects.get(kids=email, user=user)
                 return True
             except Exception:
                 return False
@@ -356,13 +429,17 @@ class KidExamTopicView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         subject_id = self.kwargs['subject']
 
         try:
-            subject = StudentTest.objects.filter(user__email=user, subject__id=subject_id) \
+            subject = StudentTest.objects.filter(user__adm_no=user, subject__id=subject_id) \
                 .values('topic__name', 'subject__grade').order_by('topic').distinct()
+            context['grade'] = Subject.objects.get(id=subject_id)
             context['subject'] = subject
-            class_test = ClassTestStudentTest.objects.filter(user__email=user, test__subject__id=subject_id).exclude(
+            context['student'] = Students.objects.get(adm_no=user)
+            class_test = ClassTestStudentTest.objects.filter(user__adm_no=user, test__subject__id=subject_id).exclude(
                 uuid='c2f49d23-41eb-457a-a147-8e132751774c')
             context['class_tests'] = class_test
             context['subject_name'] = subject_id
+            if not subject or class_test:
+                messages.error(self.request, 'This student has not taken any tests on this subject !')
 
 
         except Exception as e:
@@ -401,7 +478,7 @@ class KidExamTopicView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Check if the user has a 'Guardian' or 'Teacher' role
         if user.role == 'Guardian':
 
-            email = MyUser.objects.get(email=email)
+            email = Students.objects.get(adm_no=email)
 
 
             # Attempt to get the student's profile using the provided email
@@ -426,7 +503,7 @@ class KidExamSubjectDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView
         subject = self.kwargs['subject']
         topic = self.kwargs['topic']
         user = self.kwargs['email']
-        user = MyUser.objects.get(email=user)
+        user = Students.objects.get(adm_no=user)
         try:
             subject = StudentTest.objects.filter(user=user, subject__id=subject, topic__name=topic)
             print(subject)
@@ -470,7 +547,7 @@ class KidExamSubjectDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            email = MyUser.objects.get(email=email)
+            email = Students.objects.get(adm_no=email)
 
 
             # Attempt to get the student's profile using the provided email
@@ -556,7 +633,7 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         user = self.kwargs['email']
         test = str(self.kwargs['uuid'])
         instance = self.kwargs['instance']
-        user = MyUser.objects.filter(email=user).first()
+        user = Students.objects.get(adm_no=user)
 
         try:
             if instance == 'Topical':
@@ -614,7 +691,7 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            email = MyUser.objects.get(email=email)
+            email = Students.objects.get(adm_no=email)
 
 
             # Attempt to get the student's profile using the provided email
@@ -642,7 +719,7 @@ class LearnerProgress(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         grade = self.kwargs['grade']
         try:
             # Get students progress
-            subject = Progress.objects.filter(user__email=email, subject__grade=grade).values('subject__name',
+            subject = Progress.objects.filter(user__adm_no=email, subject__grade=grade).values('subject__name',
                                                                                                'subject__topics').annotate(
                 topic_count=Count('topic', distinct=True))
 
@@ -682,17 +759,17 @@ class LearnerProgress(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def test_func(self):
         email = self.kwargs.get('email')
         user = self.request.user
-
+        print(email)
         # Check if the user has a 'Guardian' or 'Teacher' role
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            email = MyUser.objects.get(email=email)
-
+            email = Students.objects.get(adm_no=email)
+            print(email, 'fghjkd')
 
             # Attempt to get the student's profile using the provided email
             try:
-                student = MyKids.objects.get(kids=email)
+                student = MyKids.objects.get(kids=email, user=user)
                 return True
             except Exception:
                 return False
@@ -716,12 +793,12 @@ class LearnerSyllabus(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            email = MyUser.objects.get(email=email)
+            email = Students.objects.get(adm_no=email)
 
 
             # Attempt to get the student's profile using the provided email
             try:
-                student = MyKids.objects.get(kids=email)
+                student = MyKids.objects.get(kids=email, user=user)
                 return True
             except Exception:
                 return False

@@ -6,7 +6,7 @@
 
 <div class="container">
   {% if user.role == 'Supervisor' %}
-    <a href="{% url 'create-user' %}"><button class="btn btn-primary">Add Guardian</button></a>
+    <a href="{% url 'create-staff' %}"><button class="btn btn-primary">Add User</button></a>
   {% endif %}
  
 
@@ -15,7 +15,7 @@
     <form method="post">
       {% csrf_token %}
       <div class="input-group mb-3">
-          <input type="text" class="form-control" name="search" placeholder="search by name, email or admission" aria-label="Recipient's username" aria-describedby="button-addon2">
+          <input type="text" class="form-control" name="search" placeholder="search by name, id_number or phone" aria-label="Recipient's username" aria-describedby="button-addon2">
           
           <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
       </div>
@@ -25,8 +25,9 @@
     <table class="table">
         <thead>
           <tr>
+            <th><h6>Id</h6></th>
             <th><h6>User</h6></th>
-            <th><h6>E-Mail</h6></th>
+            <th><h6>Account Number</h6></th>
             <th><h6>Phone</h6></th>
             <th><h6>Status</h6></th>
             <!-- <th><h6>Add Fee</h6></th> -->
@@ -37,20 +38,18 @@
             {% for user in users %}
             
             <tr>
-              {% if user.is_active %}
-                {% if user.personalprofile.f_name %}
-                    <td><a href="{% url 'guardian-view' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
-                {% else %}
-                    <td><a href="{% url 'guardian-view' user %}"><h6>{{ user }}</h6></a></td>
-                {% endif %}
-              <td>{{ user }}</td>
-              <td>{{ user.personalprofile.phone }} </td>
+              <td>{{ forloop.counter }}</td>
+              {% if user.user.is_active %}
+                
+                    <td><a href="{% url 'guardian-view' user %}"><h6>{{ user.user.personalprofile.get_names|title }}</h6></a></td>
+              <td>{{ user.user }}</td>
+              <td>{{ user.user.personalprofile.phone }} </td>
               
                 <td style="color: cornflowerblue;">Active</td>
               {% else %}
-              <td><a href="{% url 'guardian-view' user %}" style="color: crimson;"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
-              <td style="color: crimson;">{{ user }}</td>
-              <td style="color: crimson;">{{ user.personalprofile.phone }} </td>
+              <td><a href="{% url 'guardian-view' user %}" style="color: crimson;"><h6>{{ user.user.personalprofile.get_names|title}}</h6></a></td>
+              <td style="color: crimson;">{{ user.user }}</td>
+              <td style="color: crimson;">{{ user.user.personalprofile.phone }} </td>
                 <td style="color: crimson;">Disabled</td>
               {% endif %}
               <!-- <td><a href="{% url 'add-fee-payment' user %}"><i class="bi bi-cash"></i></a></td> -->

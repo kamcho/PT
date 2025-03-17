@@ -75,12 +75,11 @@
 }
 .user-card{
     width:90%;
-    height:150px;
+    height:200px;
     margin: 0 auto;
     font-family: cursive;
-    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
-    background-color:rgba(29, 25, 46, .8) !important;
-    color: white;
+    background-color:#090e25;
+    color: rgb(255, 255, 255);
     padding:20px;
     border-radius: 10px !important;
     position: relative;
@@ -131,13 +130,28 @@
 .insight{
     width: 90%;
     margin: 0 auto;
-    box-shadow: 2px 4px 20px 5px rgba(41, 39, 39, 0.09);
-    background-color:rgba(29, 25, 46, .8) !important;
+    background-color:rgba(10, 9, 15, 1) !important;
     border-width: 4px;
     height: 650px;
     
     
 }
+
+
+
+.home{
+    /* From Uiverse.io by kandalgaonkarshubham */ 
+    width: 90%;
+    margin: 0 auto;
+    /* background-color:rgba(10, 9, 15, 1) !important; */
+    border-width: 4px;
+    height: auto;
+    width: 90%;
+    
+    background-color: #132743;
+  }
+  
+
 .expenses{
     display: grid;
     grid-template-columns: 65% 32%;

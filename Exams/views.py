@@ -686,18 +686,22 @@ def get_test_instance(user, instance, test_id):
         raise Exception
 
 
-class Tests(LoginRequiredMixin, IsStudent, TemplateView):
+class Tests(LoginRequiredMixin, IsGuardian, TemplateView):
     template_name = 'Exams/tests.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(Tests, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         test_mode = self.request.session.get('test_mode', None)
+        user = Students.objects.get(adm_no=self.kwargs['adm_no'])
+        print(user)
+        context['student'] = user
         if test_mode:
             test_id = kwargs['uuid']
             instance = self.kwargs['instance']
 
-            user = self.request.user
+            
             question_index = self.request.session.get('index', 0)
+            
             try:
                 questions, instance_type = get_test_instance(user=user, instance=instance, test_id=test_id)
                 context['test'] = questions
@@ -705,7 +709,6 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                 context['instance_type'] = instance_type
                 if questions:
                     test_size = questions.quiz.all().count()
-                    print(test_size)
                     self.request.session['test_size'] = test_size
                     self.request.session['instance_type'] = instance_type
 
@@ -719,7 +722,6 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                         
                         choices = TopicalQuizAnswers.objects.filter(quiz=current_question).order_by('?')
                         correct_choice = choices.filter(is_correct=True)
-                        print(choices.count())
                         if int(choices.count()) != 4 or correct_choice is None:
                             messages.error(self.request, 'This test is not complete try it later')
                             context['invalidate'] = True
@@ -789,14 +791,19 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
             test_mode = self.request.session.get('test_mode', None)
             if test_mode:
                 try:
+                    print('here')
                     test_size = request.session.get('test_size')
-                    user = request.user
+                    print('here2')
+                    user = Students.objects.get(adm_no=self.kwargs['adm_no'])
+
+                    print('here')
                     instance = self.kwargs['instance']
                     test_id = kwargs['uuid']
                     selection = request.POST.get('choice')  # Get the selected choice ID from the POST data
                     question_index = request.session.get('index', 0)
                     # test = self.get_context_data().get('test')
                     # instance_type = self.get_context_data().get('instance_type')
+                    print('here')
                     test, instance_type = get_test_instance(user, instance, test_id)
 
                     
@@ -834,7 +841,7 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                             del request.session['index']
                             del request.session['test_mode']
 
-                        return redirect('finish', instance, test_id)
+                        return redirect('finish', self.kwargs['adm_no'] ,instance, test_id)
 
                     else:
 
@@ -866,7 +873,7 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                     messages.error(self.request, 'Invalid UUID or Test format !! Do not edit the url.')
 
                 except Exception as e:
-                    messages.error(self.request, f'An exception occurred. please try again later as we fix this issues !')
+                    messages.error(self.request, str(e))
                     error_message = str(e)  # Get the error message as a string
                     error_type = type(e).__name__
 
@@ -885,13 +892,13 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                         }
                     )
 
-                messages.error(self.request, 'Invalid test configurations')
-            return redirect('students-home')
+                # messages.error(self.request, str(e))
+            return redirect('guardian-home')
         return redirect(self.request.get_full_path())
 
 
 
-class Finish(LoginRequiredMixin, IsStudent, TemplateView):
+class Finish(LoginRequiredMixin, IsGuardian, TemplateView):
     template_name = 'Exams/finish.html'
 
     def get_context_data(self, **kwargs):
@@ -900,13 +907,12 @@ class Finish(LoginRequiredMixin, IsStudent, TemplateView):
         # topic = self.kwargs['pk']
         instance = self.kwargs['instance']
 
-        user = self.request.user
+        user = Students.objects.get(adm_no=self.kwargs['adm_no'])
+        context['student'] = user
         context['test_uuid'] = test_id
         try:
             test, instance_type = get_test_instance(user, instance, test_id)
-            print(test, instance_type)
-            message = f'Congratulations on completing your test. The results' \
-                      ' are out, click the button below to view the results. '
+           
             if instance_type in ['ClassTests', 'StudentTest', 'GeneralTest']:
                 # try:
 
@@ -919,11 +925,7 @@ class Finish(LoginRequiredMixin, IsStudent, TemplateView):
 
 
                 if instance_type == 'ClassTests':
-                    about = f'The results for {test.teacher} assignment is out.'
-                    print(about)
-                    notifications = TopicalExamResults.objects.create(user=user, test=test.uuid, about=about,
-                                                                      message=message, subject=test.subject,
-                                                                      notification_type='class-results')
+                    
                     marks = ClassTestStudentTest.objects.get(user=user, test=test_id)
                     context['score'] = marks.marks
                     context['test'] = marks
@@ -931,11 +933,7 @@ class Finish(LoginRequiredMixin, IsStudent, TemplateView):
                     context['instance'] = instance
 
                 elif instance == 'GeneralTest':
-                    about = f'The results  are out.'
-                    notifications = TopicalExamResults.objects.create(user=user, test=test.uuid, about=about,
-                                                                      message=message, subject=test.subject,
-                                                                      notification_type='general-results',
-                                                                      )
+                  
                     context['score'] = test.marks
 
                     context['test'] = test
@@ -944,11 +942,7 @@ class Finish(LoginRequiredMixin, IsStudent, TemplateView):
                 else:
                     topic = test.topic
                     print(test)
-                    about = f'The results for {topic} are out.'
-                    notifications = TopicalExamResults.objects.create(user=user, test=test.uuid, about=about,
-                                                                      message=message, subject=test.subject,
-                                                                      notification_type='topical-results',
-                                                                      topic=topic)
+                    
                     context['score'] = test.marks
 
                     context['test'] = test

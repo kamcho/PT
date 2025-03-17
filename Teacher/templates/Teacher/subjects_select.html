@@ -3,7 +3,7 @@
 
 
 
-<div class="container">
+<div class="container" style="width: 90%;max-width: 800px;margin: 0 auto;">
     <br><br><br>
 
     <table class="table">
@@ -13,7 +13,7 @@
         <thead>
           <tr class="purple">
             <th><h6>Subject</h6></th>
-            <th><h6>Grade</h6></th>
+            <th><h6>Discipline</h6></th>
 
             <th><h6>Action</h6></th>
 
@@ -29,13 +29,13 @@
               <td ><a href=""><h6 style="color:purple;">{{ subject }}</h6></a></td>
 
 
-              <td><span class="badge bg-info text-light">{{ subject.grade }}</span></td>
+              <td><span class="badge bg-info text-light">{{ subject.discipline }}</span></td>
               <td>
                   <form method="post">
                       {% csrf_token %}
                       <input style="display:none;" name="del_name" value="{{ class.class_id }}">
                       <input style="display:none;" name="del_subject" value="{{ class.subject }}">
-                    <button type="submit" class="btn btn-danger" name="purge"  value="{{ subject.id }}" disabled>Delete</button>
+                    <button type="submit" class="btn btn-danger" name="purge"  value="{{ subject.id }}" >Delete</button>
                 </form>
               </td>
 
@@ -63,65 +63,22 @@
 
 
 
-{% if teaching_profile.subject.count < 2 %}
+{% if teaching_profile.subject.count < 5 %}
       <form method="POST">
           {% csrf_token %}
 
            <br>
           <h6>Add The subjects You Teach.</h6>
+          {% for subject in courses %}
+            <div class="form-check">
+              <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
+              <label class="form-check-label" for="{{ subject.id }}">
+                  {{ subject }}
+              </label>
+            </div>
+          {% endfor %}
 
-            <p>Grade 4</p>
-              {% for subject in grade4 %}
-                <div class="form-check">
-                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
-                  <label class="form-check-label" for="{{ subject.id }}">
-                      {{ subject }}
-                  </label>
-                </div>
-              {% endfor %}
-                <br>
-                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
-                <br>
               <br>
-          <p>Grade 5</p>
-              {% for subject in grade5 %}
-                <div class="form-check">
-                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
-                  <label class="form-check-label" for="{{ subject.id }}">
-                      {{ subject }}
-                  </label>
-                </div>
-              {% endfor %}
-              <br>
-          <br>
-                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
-                <br>
-              <br>
-          <p>Grade 6</p>
-              {% for subject in grade6 %}
-                <div class="form-check">
-                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
-                  <label class="form-check-label" for="{{ subject.id }}">
-                      {{ subject }}
-                  </label>
-                </div>
-              {% endfor %}
-              <br>
-          <br>
-                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
-                <br>
-              <br>
-          <p>Grade 7</p>
-              {% for subject in grade7 %}
-                <div class="form-check">
-                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
-                  <label class="form-check-label" for="{{ subject.id }}">
-                      {{ subject }}
-                  </label>
-                </div>
-              {% endfor %}
-              <br>
-          <br>
                     <button type="submit" class="btn btn-warning" name="profile">Add</button>
                 <br>
               <br>

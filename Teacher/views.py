@@ -10,8 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from Exams.models import ClassTest, TopicalQuizes, TopicalQuizAnswers, StudentsAnswers, ClassTestStudentTest
-from SubjectList.models import Topic, Subtopic
-from Supervisor.models import QuestionCount, QuizAssignment
+from SubjectList.models import Course, Topic, Subtopic
 from Users.models import AcademicProfile
 from .models import *
 from django.views.generic import TemplateView
@@ -34,7 +33,18 @@ class TeacherView(IsTeacher, TemplateView):
     """
     template_name = 'Teacher/teachers_home.html'
 
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+    
+        # Get teachers classes
+        my_class = MyClass.objects.filter(user=user)
+        # count = QuestionCount.objects.get(user=user).count
+        # context['count'] = count
+        teaching_profile = TeacherProfile.objects.get(user=user)
+        context['subjects'] = teaching_profile.subject.all()
+        context['classes'] = my_class
+        return context
 class ClassesView(IsTeacher, LoginRequiredMixin, TemplateView):
     """
         view teachers classes
@@ -46,13 +56,13 @@ class ClassesView(IsTeacher, LoginRequiredMixin, TemplateView):
         user = self.request.user
         try:
             # Get teachers classes
-            my_class = StudentList.objects.filter(user=user)
-            count = QuestionCount.objects.get(user=user).count
-            context['count'] = count
+            my_class = MyClass.objects.filter(user=user)
+            # count = QuestionCount.objects.get(user=user).count
+            # context['count'] = count
 
             context['classes'] = my_class
             if not my_class:
-                messages.warning(self.request, 'You have not been assigned any students yet!. If you have students you teach you can add them to the system!')
+                messages.warning(self.request, 'You have not been assigned any class yet!.')
         except Exception as e:
             messages.error(self.request, 'An error occurred when processing your request. Please try again later')
 
@@ -776,7 +786,7 @@ def load_topic(request):
 
     # topics = Topic.objects.filter(subject=subject_id)  # get all topics from this subject
     # print(topics, '\n\n\n')
-    topics = QuizAssignment.objects.get(user__email=user).topic.all()
+    topics = Topic.objects.filter(subject__id=subject_id)
     print(topics)
     print(topics, 'topics')
     topic_options = [{'id': topic.id, 'name': topic.name} for topic in topics]
@@ -828,18 +838,14 @@ class CreateQuestion(IsTeacher, LoginRequiredMixin, TemplateView):
             # Handle question creation request from teachers
             try:
                 # get teachers profile
-                subjects = QuizAssignment.objects.get(user=user)
-                ids = subjects.topic.all().values('topic__subject__id')
-                empt = []
-                for i in ids:
-                    i = i['topic__subject__id']
-                    empt.append(i)
-                    
-                subjects = Subject.objects.filter(id__in=empt)
-                context['subjects'] = subjects
+                subjects = MyClass.objects.filter(user=user)
+                ids = subjects.values('subject__name', 'subject__grade', 'subject__id')
+                
+            
+                context['subjects'] = ids
 
-            except ObjectDoesNotExist:
-                messages.error(self.request, 'You have not been assigned any Topic! Contact @support')
+            except Exception as e:
+                messages.error(self.request,str(e))
 
 
 
@@ -1166,13 +1172,9 @@ class DashBoard(IsTeacher, LoginRequiredMixin, TemplateView):
                     class_id = request.POST.get('class_id')
 
                     subject = Subject.objects.get(id=subject)  # get subject by id
-                    class_id = SchoolClass.objects.get(class_id=class_id)  # get class by name
-                    my_class = StudentList.objects.filter(user=user, subject=subject, class_id=class_id)
-                    if not my_class:
-                        # Create new student list if none is found
-                        s_list = StudentList.objects.create(user=user, subject=subject, class_id=class_id)
-                        messages.info(request, f'Successfully added {class_id} to Watch List')
-
+                    class_id = Classes.objects.get(class_id=class_id)  # get class by name
+                    my_class = Classes.objects.filter(user=user, subject=subject, class_id=class_id)
+                    
 
                 elif 'delete' in request.POST:
                     # Handle POST requests to delete classes from teaching profile
@@ -1257,17 +1259,13 @@ class SubjectSelect(IsTeacher, LoginRequiredMixin, TemplateView):
             subjects = Subject.objects.all()  # get all subjects
 
             # group subjects by grade
-            grade4 = subjects.filter(grade=4).exclude(id__in=subject_ids)
-            grade5 = subjects.filter(grade=5).exclude(id__in=subject_ids)
-            grade6 = subjects.filter(grade=6).exclude(id__in=subject_ids)
-            grade7 = subjects.filter(grade=7).exclude(id__in=subject_ids)
-
+           
+           
+           
             # populate context data
             context['subjects'] = subject_ids
-            context['grade4'] = grade4
-            context['grade5'] = grade5
-            context['grade6'] = grade6
-            context['grade7'] = grade7
+            context['courses'] = Course.objects.all()
+           
             context['teaching_profile'] = teaching_profile
 
         except Exception as e:
@@ -1297,8 +1295,8 @@ class SubjectSelect(IsTeacher, LoginRequiredMixin, TemplateView):
         if self.request.method == "POST":
             user = self.request.user
             subject = self.request.POST.getlist('subjects')
-            if len(subject) > 2:
-                messages.error(self.request, 'You can only select 2 subjects!')
+            if len(subject) > 4:
+                messages.error(self.request, 'You can only select 4 subjects!')
                 return redirect(self.request.get_full_path())
             else:
                 try:
@@ -1308,7 +1306,7 @@ class SubjectSelect(IsTeacher, LoginRequiredMixin, TemplateView):
                         
                         print('processing')
                         # get subject instance of selected subjects
-                        subject_instance = Subject.objects.filter(id__in=subject)
+                        subject_instance = Course.objects.filter(id__in=subject)
                         # get teaching profile from cache
                         teaching_profile = self.get_context_data().get('teaching_profile')
                         print(teaching_profile)
@@ -1564,12 +1562,18 @@ class TeachersProfile(LoginRequiredMixin, TemplateView):
         if self.request.method == 'POST':
             topics = self.request.POST.getlist('topics')
             teacher = self.get_context_data().get('teacher')
-            selected, obj = QuizAssignment.objects.get_or_create(user=teacher) 
-            print(selected)
-            # topics = Topic.objects.filter(id__in=topics)
-            print(topics)
-            selected.topic.add(*topics)
-            messages.success(self.request, 'Success')
+            if 'archive' in self.request.POST:
+                teacher.is_active='0'
+                teacher.save()
+                messages.success(self.request, "Teacher's account deactivated")
+            elif 'delete' in self.request.POST:
+                teacher.delete()
+                messages.success(self.request, "Teacher's account deleted")
+                return redirect('supervisor-home')
+            else:
+                teacher.is_active='1'
+                teacher.save()
+                messages.success(self.request, "Teacher's account restored")
             return redirect(self.request.get_full_path())
     
 class Link(LoginRequiredMixin, TemplateView):

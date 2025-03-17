@@ -2,15 +2,14 @@ from django.utils import timezone
 import uuid as uuid
 from django.db import models
 import uuid
-# from Exams.models import  ClassTest
 # from Exams.models import TopicalQuizes
-from SubjectList.models import Subject, Subtopic, Topic, Notifications
-from Users.models import MyUser
+from SubjectList.models import Course, Subject, Subtopic, Topic, Notifications
+from Users.models import Classes, MyUser
 
 
 class TeacherProfile(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
-    subject = models.ManyToManyField(Subject)
+    subject = models.ManyToManyField(Course)
 
     def subjects_for_grade(self, grade):
         return self.subject.filter(grade=grade)
@@ -22,26 +21,13 @@ class TeacherProfile(models.Model):
     #     db_table = 'teacher_teacherprofile'  # Custom table name
     #     managed = False
 
-class TeacherRanking(models.Model):
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
-    rank = models.PositiveIntegerField(default=1)
-    
-
-    def __str__(self):
-        return str(self.user)
-    
-    # class Meta:
-    #     db_table = 'teacher_teacherranking'  # Custom table name
-    #     managed = False
-    
+ 
 
     
-
-    
-class StudentList(models.Model):
+class MyClass(models.Model):
     user = models.ForeignKey(MyUser, related_name='teacher_user', on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    students = models.ManyToManyField(MyUser, related_name='students')
+    class_id = models.ForeignKey(Classes, on_delete=models.CASCADE)
 
     # class Meta:
     #     db_table = 'teacher_studentlist'  # Custom table name
@@ -52,13 +38,14 @@ class StudentList(models.Model):
     def __str__(self):
         return str(self.user)
 
+
 class SessionBooking(models.Model):
     link = models.CharField(max_length=500, null=True)
     mode = models.CharField(max_length=100, default='Virtual')
     created = models.DateField(auto_now=True)
     teacher = models.ForeignKey(MyUser, related_name='teacher',  on_delete=models.CASCADE)
     date = models.DateTimeField()
-    students = models.ManyToManyField(MyUser)
+    class_id = models.ForeignKey(Classes, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     about = models.TextField(max_length=500)
 
@@ -75,13 +62,9 @@ class SessionBooking(models.Model):
         else:
             return False
 
-class MyContent(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
-    file = models.FileField(upload_to='content/')
-    date = models.DateField(auto_now=True)
-    title = models.CharField(max_length=150)
-    is_approved = models.BooleanField(default=False)
+class QuestionCount(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
+    quiz = models.ManyToManyField("Exams.TopicalQuizes")
 
     def __str__(self):
         return str(self.user)

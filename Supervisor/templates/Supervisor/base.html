@@ -36,9 +36,9 @@
 
 <body>
 
-  <nav class="navbar navbar-dark fixed-top" id="top-bar" style="background-color:rgba(29, 25, 46, .8);">
+  <nav class="navbar navbar-dark fixed-top" id="to-bar" style="background-color:rgba(29, 25, 46, .8);">
     <div class="container-fluid">
-      <a class="navbar-brand" style="color:white;" href="#">St. Mary`s Girls</a>
+      <a class="navbar-brand" style="color:white;" href="#"> {% if user.is_authenticated %} {{ user.school.display }}  {% else %} Mwalimu Private {% endif %}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
         aria-controls="offcanvasNavbar">
         <span class="navbar-toggler-icon"></span>

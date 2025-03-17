@@ -1,0 +1,42 @@
+{% extends 'Supervisor/base.html' %}
+
+{% block content %}
+
+<div class="container" style="width: 90%; margin: 70px auto; max-width: 700px; background-color: #121212; padding: 30px; border-radius: 10px; color: white;">
+    
+    <a class="btn btn-primary mb-3" href="{% url 'expenses' %}">Expenses</a>
+    {% if expense %}
+    <h4 class="text-center mb-4">Manage Expense</h4>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="name" value="{{ expense.title }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="mode" class="form-label">Mode</label>
+            <select class="form-select" id="mode" name="mode" required>
+                <option value="{{ expense.mode }}" selected>{{ expense.mode }}</option>
+                <option value="CASH">CASH</option>
+                <option value="M-PESA">M-PESA</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" class="form-control" id="amount" name="amount" value="{{ expense.amount }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="5" required>{{ expense.description }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" disabled>Update</button>
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

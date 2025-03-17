@@ -1,0 +1,66 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+<br><br>
+<div class="container mt-5" style="width: 90%;margin: 20px auto;max-width: 800px;">
+    {% if student %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>Student Fee Payment</h4>
+        <button class="btn btn-primary">Balance: {{ profile.balance }}</button>
+    </div>
+    
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" value="{{ student.studentprofile.get_names|title }}" readonly>
+        <span class="input-group-text">@</span>
+        <select class="form-select">
+            <option selected>{{ student }}</option>
+        </select>
+    </div>
+
+  
+    
+      
+    
+    <div id="bankFields" class="mb-3" style="display: none;">
+        <label class="form-label">Bank Transaction Details</label>
+        <input type="text" class="form-control" placeholder="Enter Bank Transaction Details">
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Transaction ID</label>
+                <input type="text" class="form-control" name="receipt" placeholder="QHST674YSH" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Amount</label>
+                <input type="number" class="form-control" name="amount" placeholder="5300" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Payment Mode</label>
+                <select class="form-select" name="mode" required>
+                   <option></option>
+                   {% for account in accounts %}
+                       <option  value="{{ account.id }}">{{ account }} | {{ account.account }}</option>
+                   {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" name="date" required>
+            </div>
+            <div class="" id="phone">
+                <label class="form-label">Phone</label>
+                <input type="number" class="form-control" name="phone" >
+            </div>
+           
+            <div class="col-md-12">
+                <button class="btn btn-secondary w-100">Save</button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

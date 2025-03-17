@@ -4,13 +4,13 @@ from SubjectList.views import AskAi, CreateCourse, Learning, ManageCourse, Manag
 from .import views
 urlpatterns = [
 
-    path('Grade-<str:grade>/Subjects/', Learning.as_view(), name='learn'),
+    path('<str:adm_no>/Grade-<str:grade>/Subjects/', Learning.as_view(), name='learn'),
     path('E-Learning/<str:topic> /<str:subtopic>/<str:media>/Study', Read.as_view(), name='read'),
     path('Assignments/', Assignment.as_view(), name='assignments'),
     path('<str:uuid>/Assignment-Lobby', AssignmentDetail.as_view(), name='assignment-lobby'),
     path('Save/<str:topic> /<str:subtopic>/Save-Progress/', Finish.as_view(), name='save-progress'),
-    path('<str:subject_id>/Syllabus-Coverage/', Syllabus.as_view(), name='syllabus'),
-    path('<str:subtopic>/Objectives/', SubtopicInfo.as_view(), name='subtopic-info'),
+    path('<str:adm_no>/<str:subject_id>/Syllabus-Coverage/', Syllabus.as_view(), name='syllabus'),
+    path('<str:adm_no>/<str:subtopic>/Objectives/', SubtopicInfo.as_view(), name='subtopic-info'),
     
     path('<str:topic>/<str:subtopic>/Media-Select/', MediaSelect.as_view(), name='media' ),
     path('Notifications/', Messages.as_view(), name='notifications'),
@@ -22,7 +22,7 @@ urlpatterns = [
     path('Subject/<str:id>/Manage/', ManageSubject.as_view(), name='manage-subject'),
     path('Topic/<str:id>/Manage/', ManageTopic.as_view(), name='manage-topic'),
     path('SubTopic/<str:id>/Manage/', ManageSubTopic.as_view(), name='manage-subtopic'),
-    path('AskAI/', AskAi.as_view(), name='ask-ai'),
+    path('AskAI/<str:adm_no>/', AskAi.as_view(), name='ask-ai'),
     path('answer/', views.chatgpt_answer, name='answer')
 
 

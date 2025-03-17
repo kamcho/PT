@@ -3,10 +3,8 @@
 {% load custom_filters %}
 
 {% block content %}
-<br><br><br><br><br>
 
-
-<div class="bg-gradient">
+<div class="bg-gradint">
     
     <div class="container">
     <br><br><br>
@@ -14,7 +12,7 @@
     <div style="color: white;">
         <h5>{{ subject.name }} {{ subject.grade }}</h5>
         <a class="btn btn-dark" style="color: white;" href="{% url 'questions' subject.id %}">View Questions</a>
-        <a class="btn btn-secondary" href="{% url 'topic-review' subject.id %}">filters</a>
+        <!-- <a class="btn btn-secondary" href="{% url 'topic-review' subject.id %}">filters</a> -->
     </div>
     </div>
     <br>

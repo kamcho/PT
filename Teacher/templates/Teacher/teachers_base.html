@@ -41,7 +41,7 @@
 
   <nav class="navbar navbar-dark fixed-top" id="top-bar">
     <div class="container-fluid">
-      <a class="navbar-brand" style="color:white;" href="#">PSA</a>
+      <a class="navbar-brand" style="color:white;" href="#">{% if user.is_authenticated %} {{ user.school.display }}  {% else %} Mwalimu Private {% endif %}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
         aria-controls="offcanvasNavbar">
         <span class="navbar-toggler-icon"></span>
@@ -62,13 +62,18 @@
             <li>
               <a class="nav-link" href="{% url 'teachers-home' %}"><i class="bi bi-ui-checks" style=""> </i>Portal</a>
             </li>
-
+            <li>
+              <a class="nav-link" href="{% url 'classes' %}">
+                <i class="bi bi-bank" style=""> </i>Classes
+              </a>
+            </li>
+<!-- 
             <li>
 
               <a class="nav-link" href="{% url 'my-classes' %}" style="color:black !important;"><i
                   class="bi bi-easel"> </i> My Classes</a>
 
-            </li>
+            </li> -->
             
             <li>
 

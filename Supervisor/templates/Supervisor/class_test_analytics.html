@@ -5,7 +5,7 @@
 
 <br><br>
 {% block content %}
-<div class="bg-gradient">
+<div class="b">
     <br><br><br>
   
     
@@ -24,6 +24,15 @@
         
         
               </select>
+              <select class="form-select" aria-label="Default select example" name="period" required>
+                <option value="{{ period }}" selected>{{ period }}</option>
+                <option value="OPENER">OPENER</option>
+                <option value="MID">MID TERM</option>
+                <option value="END Term">END TERM</option>
+                
+        
+        
+              </select>
             <button class="btn btn-dark" type="submit">SET</button>
         </div>
     </form>
@@ -33,13 +42,13 @@
         
         <div class="admi-2">
             <h6 class="text-center"><button type="button" class="btn btn-primary">
-                {{ class }} <span class="btn btn-secondary">{{ class.school }}</span>
+                {{ class.grade }} {{ class }} <span class="btn btn-secondary"></span>
               </button>  </h6>
             <br><br>
             <div style="width: 96%;margin: 0px auto;height: 400px;background-color: white;">
                 <canvas id="myChart{{ forloop.counter }}" ></canvas>
             </div>
-            {% get_class_perfomance class.class_id year term as chart_data %}
+            {% get_class_perfomance class.class_id year term period as chart_data %}
             <script>
                 var labels = {{ chart_data.labels|safe }};
                 var datasets = {{ chart_data.datasets|safe }};
@@ -85,14 +94,14 @@
 <div style="background-color:rgba(29, 25, 46, .8);width: 95%;margin: 0 auto;">
     <br>
         <h6 class="text-center" style="color: white;">
-            Grade {{ class.grade }}</h6>
+            Grade {{ class.grade }} Stream</h6>
             <br>
        
         <div class="admi\n-2" style="color: white;">
             <div style="width: 95%;margin: auto auto;background-color: white; max-height: 500px;" >
                 <canvas id="myChart" ></canvas>
             </div>
-            {% get_schools_grap class.grade year term as chart_datas %}
+            {% get_schools_grap class.grade year term period as chart_datas %}
             <script>
                 var labels = {{ chart_datas.labels|safe }};
                 var datasets = {{ chart_datas.datasets|safe }};

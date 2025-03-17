@@ -702,6 +702,8 @@ border-radius:10px ;
     margin:40px auto; */
     position: absolute;
     width: 100%;
+    max-width: 100%;
+    overflow-x: scroll;
     
    
 
@@ -891,7 +893,7 @@ tr:nth-child(even) {
 }
 .data-card{
   width: 99%;
-  background-color: #524a79;
+  background-color: #0a032c;
   color: white;
   margin:  30px auto;
   height: 450px;

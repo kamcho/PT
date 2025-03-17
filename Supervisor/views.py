@@ -1,5 +1,8 @@
 import datetime
+import json
+import random
 from django.contrib.auth import authenticate, login
+from django.db.models import F, ExpressionWrapper, IntegerField, Case, When
 
 
 from django.contrib.auth.hashers import make_password
@@ -7,29 +10,35 @@ from django.contrib.auth.hashers import make_password
 from itertools import groupby
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib import messages
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
 
 # Create your views here.
+from django.urls import reverse
+from django.views import View
 from django.views.generic import TemplateView
 
 from Analytics.views import check_role
 # from Finance.models import MpesaPayouts
+from Discipline.models import StudentDisciplineScore
+from Finance.models import FeeMigrations
 from Guardian.models import MyKids
-from Supervisor.models import FileModel, Updates
-from Teacher.models import StudentList
-from Users.models import AcademicProfile, MyUser, PersonalProfile
-from Exams.models import ClassTest, ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes
-from SubjectList.models import Subject, Subtopic, Course, Topic
+from Supervisor.models import ExamMode, FileModel, Updates
+from Teacher.models import MyClass
+from Term.models import CurrentTerm, Exam, Terms
+from Users.models import AcademicProfile, Classes, MyUser, PersonalProfile, StudentProfile, Students, StudentsFeeAccount
+from Exams.models import ClassTest, ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizAnswers, TopicalQuizes
+from SubjectList.models import MySubjects, Subject, Subtopic, Course, Topic
 
-def get_marks_distribution_data(grade, term, year):
+def get_marks_distribution_data(grade, term, year, school, period):
     # Replace 'YourGradeModelField' with the actual field name representing the grade in your SchoolClass model
-    grade_results = Exam.objects.filter(term__term=term,term__year=year, user__academicprofile__current_class__grade=grade).values('user__id').annotate(
+    grade_results = Exam.objects.filter(term__term=term,term__year=year, user__academicprofile__current_class__grade=grade, user__school=school, period=period).values('user__id').annotate(
         total_marks=Sum('score')
     ).order_by('total_marks')
 
@@ -50,60 +59,88 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # user = self.request.user
-
-        users = MyUser.objects.all()
+        
+        students = Students.objects.filter(school=self.request.user.school)
+        guardians = MyKids.objects.filter(kids__in=students).distinct()
+        print(guardians)
+        users = MyUser.objects.filter(school=self.request.user.school)
         val = users.filter(role='Student', personalprofile__gender='Male').count()
-        context['users'] = users.count()
-        context['males'] = users.filter(role='Student', personalprofile__gender='Male').count()
-        context['females'] = users.filter(role='Student', personalprofile__gender='Female').count()
-
+        context['users'] = students.count() + users.count() + guardians.count()
+        context['males'] = students.filter(studentprofile__gender='Male').count()
+        context['females'] = students.filter( studentprofile__gender='Female').count()
+        
         context['t_males'] = users.filter(role='Teacher', personalprofile__gender='Male').count()
         context['t_females'] = users.filter(role='Teacher', personalprofile__gender='Female').count()
-        context['g_males'] = users.filter(role='Guardian', personalprofile__gender='Male').count()
-        context['g_females'] = users.filter(role='Guardian', personalprofile__gender='Female').count()
-        context['students'] = users.filter(role='Student').count()
+        context['g_males'] = guardians.filter( user__personalprofile__gender='Male').count()
+        context['g_females'] = guardians.filter( user__personalprofile__gender='Female').count()
+        context['students'] = students.count()
         context['teachers'] = users.filter(role='Teacher').count()
-        context['parents'] = users.filter(role='Guardian').count()
+        context['parents'] = guardians.count()
         context['student_lst'] = users.filter(role='Student')[:10]
-        
-#         grade_4_data = get_marks_distribution_data(4, 'Term 1', '2024')
-#         grade_5_data = get_marks_distribution_data(5, 'Term 1', '2024')
-#         grade_6_data = get_marks_distribution_data(6, 'Term 1', '2024')
+        school = self.request.user.school
+        period = 'MID'
+        grade_4_data = get_marks_distribution_data(4, 'Term 1', '2025', school, period)
+        grade_5_data = get_marks_distribution_data(5, 'Term 1', '2025', school, period)
+        grade_6_data = get_marks_distribution_data(6, 'Term 1', '2025', school, period)
+        grade_7_data = get_marks_distribution_data(7, 'Term 1', '2025', school, period)
+        grade_8_data = get_marks_distribution_data(8, 'Term 1', '2025', school, period)
+        grade_9_data = get_marks_distribution_data(9, 'Term 1', '2025', school, period)
 
-# # Preparing data for the bar chart
-#         labels = list(grade_5_data.keys())
-#         datasets = [
-#             {
-#                 'label': 'Grade 4',
-#                 'data': [grade_4_data.get(label, 0) for label in labels],
-#                 'backgroundColor': 'rgba(0, 0, 0, 0.5)',
-#                 'borderColor': 'rgba(0, 0, 0, 0.5)',
-#                 'borderWidth': 2.5,
-#             },
-#             {
-#                 'label': 'Grade 5',
-#                 'data': [grade_5_data.get(label, 0) for label in labels],
-#                 'backgroundColor': 'rgba(85, 133, 181)',
-#                 'borderColor': 'rgba(85, 133, 181)',
-#                 'borderWidth': 2.5,
-#             },
-#             {
-#                 'label': 'Grade 6',
-#                 'data': [grade_6_data.get(label, 0) for label in labels],
-#                 'backgroundColor': 'rgba(255, 181, 181)',
-#                 'borderColor': 'rgba(255, 181, 181)',
-#                 'borderWidth': 2.5,
-#             }
-#         ]
+# Preparing data for the bar chart
+        labels = list(grade_5_data.keys())
+        datasets = [
+            {
+                'label': 'Grade 4',
+                'data': [grade_4_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(0, 0, 0, 0.5)',
+                'borderColor': 'rgba(0, 0, 0, 0.5)',
+                'borderWidth': 2.5,
+            },
+            {
+                'label': 'Grade 5',
+                'data': [grade_5_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(85, 133, 181)',
+                'borderColor': 'rgba(85, 133, 181)',
+                'borderWidth': 2.5,
+            },
+            {
+                'label': 'Grade 6',
+                'data': [grade_6_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(255, 181, 181)',
+                'borderColor': 'rgba(255, 181, 181)',
+                'borderWidth': 2.5,
+            },
+             {
+                'label': 'Grade 7',
+                'data': [grade_7_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(255, 181, 181)',
+                'borderColor': 'rgba(255, 181, 181)',
+                'borderWidth': 2.5,
+            },
+             {
+                'label': 'Grade 8',
+                'data': [grade_8_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(255, 181, 181)',
+                'borderColor': 'rgba(255, 181, 181)',
+                'borderWidth': 2.5,
+            },
+             {
+                'label': 'Grade 9',
+                'data': [grade_9_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(255, 181, 181)',
+                'borderColor': 'rgba(255, 181, 181)',
+                'borderWidth': 2.5,
+            }
+        ]
 
-#         # Convert data to JSON for passing to the template
-#         chart_data = {
-#             'labels': labels,
-#             'datasets': datasets,
-#         }
-        # current_term = CurrentTerm.objects.filter().last()
-        # context['current_term'] = current_term
-        # context['chart_data'] = chart_data
+        # Convert data to JSON for passing to the template
+        chart_data = {
+            'labels': labels,
+            'datasets': datasets,
+        }
+        current_term = CurrentTerm.objects.filter().last()
+        context['current_term'] = current_term
+        context['chart_data'] = chart_data
         
         
         return context
@@ -112,12 +149,15 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if self.request.method == 'POST':
             term = self.request.POST.get('term')
             year = self.request.POST.get('year')
+            period = self.request.POST.get('period')
             user = self.request.user
-
-            grade_4_data = get_marks_distribution_data(4, term, year)
-            grade_5_data = get_marks_distribution_data(5, term, year)
-            grade_6_data = get_marks_distribution_data(6, term, year)
-
+            school = user.school
+            grade_4_data = get_marks_distribution_data(4, term, year, school, period)
+            grade_5_data = get_marks_distribution_data(5, term, year, school, period)
+            grade_6_data = get_marks_distribution_data(6, term, year, school, period)
+            grade_7_data = get_marks_distribution_data(7, term, year, school, period)
+            grade_8_data = get_marks_distribution_data(8, term, year, school, period)
+            grade_9_data = get_marks_distribution_data(9, term, year, school, period)
     # Preparing data for the bar chart
             labels = list(grade_6_data.keys())
             datasets = [
@@ -139,6 +179,28 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 {
                     'label': 'Grade 6',
                     'data': [grade_6_data.get(label, 0) for label in labels],
+                    'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                    'borderColor': 'rgba(255, 2, 2, 1)',
+                    'borderWidth': 4,
+                },
+                 {
+                    'label': 'Grade 7',
+                    'data': [grade_7_data.get(label, 0) for label in labels],
+                    'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                    'borderColor': 'rgba(255, 2, 2, 1)',
+                    'borderWidth': 4,
+                },
+                {
+                    'label': 'Grade 8',
+                    'data': [grade_8_data.get(label, 0) for label in labels],
+                    'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                    'borderColor': 'rgba(255, 2, 2, 1)',
+                    'borderWidth': 4,
+                }
+                ,
+                {
+                    'label': 'Grade 9',
+                    'data': [grade_9_data.get(label, 0) for label in labels],
                     'backgroundColor': 'rgba(255, 2, 2, 0.8)',
                     'borderColor': 'rgba(255, 2, 2, 1)',
                     'borderWidth': 4,
@@ -177,7 +239,7 @@ class ClassTestAnalytics(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         class_id= self.kwargs['class_id']
         try:
-            class_ins = SchoolClass.objects.get(class_id=class_id)
+            class_ins = Classes.objects.get(class_id=class_id)
         except:
             messages.error(self.request, 'Invalid class id')
         
@@ -193,11 +255,12 @@ class ClassTestAnalytics(LoginRequiredMixin, TemplateView):
 
        
         current_term = CurrentTerm.objects.filter().last()
-        context['classes'] = SchoolClass.objects.filter(grade=class_ins.grade)
+        context['classes'] = Classes.objects.filter(grade=class_ins.grade)
         context['class'] = class_ins
         context['current_term'] = current_term
         context['term'] = 'Term 1'
-        context['year'] = 2024
+        context['year'] = 2025
+        context['period'] = 'MID'
 
 
         return context
@@ -206,13 +269,14 @@ class ClassTestAnalytics(LoginRequiredMixin, TemplateView):
         if self.request.method == 'POST':
             term = self.request.POST.get('term')
             year = self.request.POST.get('year')
-
+            period = self.request.POST.get('period')
             context = {
                 'classes':self.get_context_data().get('classes'),
                 'class':self.get_context_data().get('class'),
                 'term':term,
                 'year':year,
-                'base_html':self.get_context_data().get('base_html')
+                'base_html':self.get_context_data().get('base_html'),
+                'period':period
             }
             return render(self.request, self.template_name, context)
 
@@ -244,8 +308,9 @@ class CreateUser(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
-        classes = SchoolClass.objects.all()
+        classes = Classes.objects.filter(school=self.request.user.school)
         context['classes'] = classes
+        context['adm_no'] = random.randint(10000, 99999999)
         return context
     def test_func(self):
         return self.request.user.role == 'Supervisor'
@@ -253,62 +318,222 @@ class CreateUser(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             try:
-                email = request.POST.get('email')
                 f_name = request.POST.get('f_name')
                 l_name = request.POST.get('l_name')
                 surname = request.POST.get('surname')
-                role = request.POST.get('role')
                 gender = request.POST.get('gender')
+                boarding = request.POST.get('boarding')
                 fee = request.POST.get('fee')
-                print(role,f_name)
-                if role == 'Student':
-                    class_id = request.POST.get('class')
-                    user = MyUser.objects.create(email=email, role=role, password=make_password(email))
-                    profile = PersonalProfile.objects.get(user=user)
-                    print(class_id, '\n\n\n\n\n\n')
-                    class_id = SchoolClass.objects.get(class_id=class_id)
-                    profile.f_name = f_name
-                    profile.l_name = l_name
-                    profile.surname = surname
-                    profile.gender = gender
-                    profile.save()
-                    academia = AcademicProfile.objects.get(user=user)
-                    academia.current_class = class_id
-                    class_id.class_size = class_id.class_size + 1
-                    class_id.save()
-                    academia.save()
-                    created, fee_profile = StudentsFeeAccount.objects.get_or_create(user=user)
-                    created.balance = fee
-                    created.save()
+                class_id = request.POST.get('class')
+                adm_no = self.get_context_data().get('adm_no')
+                user = Students.objects.create(adm_no=adm_no, school=self.request.user.school)
+                profile, obj = StudentProfile.objects.get_or_create(user=user)
+                class_id = Classes.objects.get(class_id=class_id)
+                profile.f_name = f_name
+                profile.l_name = l_name
+                profile.surname = surname
+                profile.gender = gender
+                profile.is_boarder = boarding
+                profile.save()
+                academia,obj = AcademicProfile.objects.get_or_create(user=user, current_class=class_id)
+                
+                created = StudentsFeeAccount.objects.create(user=user, balance=fee)
+        
 
-                    return redirect('students-profile', email)
+                return redirect('add-parent', user.id)
             
-                else:
-                    user = MyUser.objects.create(email=email, role=role, password=make_password(email))
-                    profile = PersonalProfile.objects.get(user=user)
-                    profile.f_name = f_name
-                    profile.l_name = l_name
-                    profile.surname = surname
-                    profile.gender = gender
-                    profile.save()
-                    if role == 'Guardian':
-                        return redirect('guardian-view', email)
-                    else:
-                        return redirect('teachers-profile', email)
-            except IntegrityError as e:
-               messages.error(self.request, str(e)) 
+                
+           
             except Exception as e:
-                messages.error(self.request, f'{str(e)}eWe could not save the user. Contact @support')
+                messages.error(self.request, f'We could not save the student. Contact @support')
 
             return redirect(request.get_full_path())
 
+def search_students(request):
+    query = request.GET.get('query', '')
+    roles = Students.objects.filter(adm_no__icontains=query).values('adm_no', 'id', 'studentprofile__f_name', 'studentprofile__l_name', 'studentprofile__surname')
+    return JsonResponse({'students': list(roles)})
+class CreateStaff(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'Supervisor/create_staff.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        classes = Classes.objects.filter(school=self.request.user.school)
+        context['classes'] = classes
+        # context
+        return context
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            try:
+                f_name = request.POST.get('f_name')
+                l_name = request.POST.get('l_name')
+                surname = request.POST.get('surname')
+                gender = request.POST.get('gender')
+                number = request.POST.get('id_number')
+                phone = request.POST.get('phone')
+                role = request.POST.get('role')
+                
+
+                if role == 'Guardian':
+                    user = MyUser.objects.create(id_number=number,role=role, password=make_password(phone))
+                else:
+                    user = MyUser.objects.create(id_number=number,role=role,school=self.request.user.school, password=make_password(phone))
+                profile, obj = PersonalProfile.objects.get_or_create(user=user)
+                
+                profile.f_name = f_name
+                profile.l_name = l_name
+                profile.surname = surname
+                profile.gender = gender
+                profile.phone = phone
+                profile.save()
+
+                if role == 'Guardian':
+                    selected_admission_numbers = request.POST.get('selected_admission_numbers', '')
+    # Split the string into a list of admission numbers
+                    selected_admission_numbers_list = selected_admission_numbers.split(',')
+                    print(selected_admission_numbers_list)
+                    my_kids, obj = MyKids.objects.get_or_create(user=user)
+                    stds = Students.objects.filter(adm_no__in=selected_admission_numbers_list)
+                    my_kids.kids.add(*stds)
+                
+                messages.success(self.request, 'Success!')
+
+                return redirect(self.request.get_full_path())
+            
+                
+           
+            except Exception as e:
+                messages.error(self.request, str(e))
+
+            return redirect(request.get_full_path())
+
+class StudentSubjectSelect(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'Supervisor/add_student_subjects.html'
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        if self.request.user.role == 'Teacher':
+            # get the current logged in user(learner) current grade and associated Subjects
+            context['base_html'] = 'Users/base.html'
+       
+        elif self.request.user.role in ['Supervisor', 'Finance', 'Receptionist']:
+            context['base_html'] = 'Supervisor/base.html'
+        
+        adm = self.kwargs['adm_no']
+        profile = AcademicProfile.objects.get(user__adm_no=adm)
+        context['student'] = profile
+        context['subjects'] = Subject.objects.filter(grade=profile.current_class.grade)
+
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            try:
+                user = self.get_context_data().get('student')
+                subjects = self.get_context_data().get('subjects')
+                profile, obj = MySubjects.objects.get_or_create(user=user.user)
+                subject_ids = self.request.POST.getlist('subjects')
+                subjects = subjects.filter(id__in=subject_ids)
+                profile.name.clear()
+                profile.name.add(*subjects)
+                messages.success(self.request, 'Subjects added successfully !')
+
+                return redirect('students-profile', user.user.adm_no)
+            except:
+                messages.error(self.request, 'OOOps that didn`t work !!')
+                return redirect(self.request.get_full_path())
+
+class AddParent(LoginRequiredMixin, UserPassesTestMixin,TemplateView):
+    template_name = 'Supervisor/add_parent.html'
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        id = self.kwargs['id']
+        student = Students.objects.get(id=id)
+        context['student'] = student
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)  # Parse JSON data
+            student= self.get_context_data().get('student')
+            guardians = data.get("guardians", [])
+            print(guardians)
+            
+            # Fetch the student
+            if not student:
+                return JsonResponse({"error": "Student not found"}, status=400)
+
+            # Process each guardian
+            for guardian_data in guardians:
+                print(guardian_data)
+                id_number = guardian_data.get("id_number")
+                full_name = guardian_data.get("full_name")
+                phone = guardian_data.get("phone")
+                gender = guardian_data.get("gender")
+                try:
+                    MyUser.objects.get(id_number=id_number)
+                # Check if guardian exists
+                except:
+
+                    guardian = MyUser.objects.create(id_number=id_number, role='Guardian', password=make_password(phone))
+                    profile, obj = PersonalProfile.objects.get_or_create(user=guardian)
+                    full_name = guardian_data.get("full_name", "").strip()
+
+# Split the full name into parts
+                    name_parts = full_name.split()
+
+                    # Assign values based on the number of parts
+                    f_name = name_parts[0] if len(name_parts) > 0 else ""
+                    l_name = name_parts[1] if len(name_parts) > 1 else ""
+                    surname = name_parts[2] if len(name_parts) > 2 else ""
+                    profile.f_name = f_name
+                    profile.phone = phone
+                    profile.l_name = l_name
+                    profile.surname = surname
+                    profile.gender = gender
+                    profile.save()
+                    profilio, obj = MyKids.objects.get_or_create(user=guardian)
+                    profilio.kids.add(student)
+                # If guardian already exists but details are different, update them
+            print(student.adm_no, 'mhd s d \n\n\n')
+            return JsonResponse({"redirect_url": reverse('students-profile', args=[student.adm_no])})
 
 
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({"error": str(e)}, status=500)
+    
+  # Assuming MyUser stores guardian details
+
+class SearchGuardianView(View):
+    def get(self, request):
+        id_number = request.GET.get('id_number')
+        
+        try:
+            guardian = MyUser.objects.get(id_number=id_number, role='Guardian')
+            return JsonResponse({
+                'exists': True,
+                'name': " ".join((guardian.personalprofile.f_name, guardian.personalprofile.l_name, guardian.personalprofile.surname)),
+
+                'phone': guardian.personalprofile.phone,
+                'gender': guardian.personalprofile.gender
+            })
+        except MyUser.DoesNotExist:
+            return JsonResponse({'exists': False})
 
 class LinkStudent(LoginRequiredMixin,  UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/link.html'
-
+    
     def test_func(self):
         return self.request.user.role == 'Supervisor'
     
@@ -367,7 +592,7 @@ class StudentsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         user = self.request.user
         
         try:            
-            users = MyUser.objects.filter(role='Student')[:15]
+            users = Students.objects.filter(academicprofile__current_class__school=user.school).order_by('?')[:15]
             
 
 
@@ -386,8 +611,8 @@ class StudentsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             params = self.request.POST.get('search')
                             
             if params:
-                users = MyUser.objects.filter(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
-                                                | Q(personalprofile__surname__contains=params) | Q(email__contains=params), role='Student')
+                users = Students.objects.filter(Q(studentprofile__f_name__contains=params) | Q(studentprofile__l_name__contains=params)
+                                                | Q(studentprofile__surname__contains=params) | Q(adm_no__contains=params), school=self.request.user.school)
                 context = {'users':users}
                 if not users:
                     messages.info(self.request, 'We could not find results matching your query !')
@@ -408,9 +633,10 @@ class TeachersView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
         try:
             
-            users  = MyUser.objects.filter(role='Teacher')
+            users  = MyUser.objects.filter(role='Teacher', school=user.school)
             context['users'] = users
         
         except Exception:
@@ -439,8 +665,9 @@ class GuardianListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            
-            users  = MyUser.objects.filter(role='Guardian')
+            students = Students.objects.filter(school=self.request.user.school)
+            users  = MyKids.objects.filter(kids__in=students).distinct()
+            print(users)
             context['users'] = users
         
         except Exception:
@@ -451,10 +678,10 @@ class GuardianListView(LoginRequiredMixin, TemplateView):
         if request.method == 'POST':
 
             params = request.POST.get('search')
-           
+            query = self.get_context_data().get('users')
             if params:
-                users = MyUser.objects.filter(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
-                                                | Q(personalprofile__surname__contains=params) | Q(email__contains=params), role='Guardian')
+                users = query.filter(Q(user__personalprofile__f_name__contains=params) | Q(user__id_number__icontains=params) | Q(user__personalprofile__l_name__contains=params)
+                                                | Q(user__personalprofile__surname__contains=params) | Q(user__personalprofile__phone__contains=params))
                 context = {'users':users}
                 return render(self.request, self.template_name, context)
             else:
@@ -502,7 +729,7 @@ class GuardianView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         email = self.kwargs['email']
         try:
-            context['guardian'] = MyUser.objects.get(email=email)
+            context['guardian'] = MyUser.objects.get(id_number=email)
         except MyUser.DoesNotExist:
             messages.error(self.request, 'User does not exist !!')
         
@@ -511,22 +738,35 @@ class GuardianView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class StudentProfile(LoginRequiredMixin, TemplateView):
+class StudentsProfile(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/students_profile.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         email = self.kwargs['email']
+        # students = Students.objects.all()
+       
         try:
-            user  = MyUser.objects.get(id=email)
-            grade = user.academicprofile.current_class
+            context['term'] = 'Term 1'
+            
+            user  = Students.objects.get(adm_no=email)
+            grade = user.academicprofile.current_class.grade
+            context['grade'] =  grade
+            grades = list(range(1, int(grade) + 1))
+            context['grades'] = ['PG', 'PP1', 'PP2'] + grades
+            print(grade)
             guardians = MyKids.objects.filter(kids=user)
             context['guardians'] = guardians
             subjects = Subject.objects.filter(grade=grade)
             context['subjects'] = subjects
             context['student'] = user
-        except:
-            messages.error(self.request, 'We could not find a user matching your query !')
+            mysubjects, obj = MySubjects.objects.get_or_create(user=user)
+            context['mysubjects'] = mysubjects.name.all()
+            excluded = mysubjects.name.values_list('id', flat=True)
+            print(mysubjects.name.values_list('id', flat=True))
+            context['foregone'] = subjects.exclude(id__in=excluded)
+        except Exception as e:
+            messages.error(self.request, f'We could not find a user matching your query ! {str(e)}')
         if self.request.user.role == 'Student':
             # get the current logged in user(learner) current grade and associated Subjects
             context['base_html'] = 'Users/base.html'
@@ -538,6 +778,30 @@ class StudentProfile(LoginRequiredMixin, TemplateView):
             context['base_html'] = 'Supervisor/base.html'
         return context
     
+    def post(self, request, *args, **kwargs):
+        grade  = self.request.POST.get('grade')
+        term = self.request.POST.get('term')
+        grades = self.get_context_data().get('grades')
+        guardians = self.get_context_data().get('guardians')
+        subjects = self.get_context_data().get('subjects')
+        mysubjects = self.get_context_data().get('mysubjets')
+        foregone = self.get_context_data().get('foregone')
+        base_html = self.get_context_data().get('base_html')
+        student = self.get_context_data().get('student')
+        context = {
+            'grade':grade,
+            'grades':grades,
+            'term':term,
+            'guardians':guardians,
+            'subjects':subjects,
+            'mysubjects':mysubjects,
+            'student':student,
+            'foregone':foregone,
+            'base_html':base_html,
+            'def':'def'
+        }
+
+        return render(self.request, self.template_name, context)
 
 
     
@@ -548,19 +812,24 @@ class ManageStudent(UserPassesTestMixin, LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs) 
         try:
             email = self.kwargs['email']
-            student = MyUser.objects.get(adm_no=email)
-            classes = SchoolClass.objects.all()
+            student = Students.objects.get(adm_no=email)
+            classes = Classes.objects.filter(school=self.request.user.school)
             context['classes'] = classes
             context['student'] = student
-        except MyUser.DoesNotExist:
-            messages.error(self.request, 'We could not find a user matching your query!')
+        except Students.DoesNotExist:
+            email = self.kwargs['email']
+            student = MyUser.objects.get(id_number=email)
+            
+            context['student'] = student
+        except Exception as e:
+            messages.error(self.request, str(e))
 
         return context
     
     def post(self, request, **kwargs):
         if request.method == 'POST':
             email = request.POST.get('email')
-            # adm = request.POST.get('adm_no')
+            phone = request.POST.get('phone')
             student = self.get_context_data().get('student')
             f_name = request.POST.get('f_name')
             l_name = request.POST.get('l_name')
@@ -569,43 +838,45 @@ class ManageStudent(UserPassesTestMixin, LoginRequiredMixin, TemplateView):
 
             gender = request.POST.get('gender')
             try:
+                profile = self.get_context_data().get('student')
                 if 'update' in request.POST:
-                    adm = self.kwargs['email']
-                    profile = PersonalProfile.objects.get(user=student)
-                    st = MyUser.objects.get(adm_no=adm)
-                    st.email = email
-                    st.save()
-                    if profile.user.role == 'Student':
-                        class_id = SchoolClass.objects.get(class_id=class_id)
+                    if phone:
+                        adm = self.kwargs['email']
+                        
+                        profile.personalprofile.f_name = f_name
+                        profile.personalprofile.surname = l_name
+                        profile.personalprofile.surname = surname
+                        
+                    else:
+                        class_id = Classes.objects.get(class_id=class_id)
                         acd_profile = AcademicProfile.objects.get(user=student)
                         acd_profile.current_class = class_id
                         acd_profile.save()
-                    profile.f_name = f_name
-                    profile.l_name = l_name
-                    profile.surname = surname
-                    profile.gender = gender
-                    profile.save()
+                        profile.studentprofile.f_name = f_name
+                        profile.studentprofile.l_name = l_name
+                        profile.studentprofile.surname = surname
+                        profile.studentprofile.gender = gender
+                        profile.studentprofile.save()
                     messages.info(self.request, 'Update was successfull.')
                     
 
                     return redirect(request.get_full_path())
                 elif 'delete' in request.POST:
-                    user = MyUser.objects.get(email=email)
-                    user.is_active = False
-                    user.save()
-                    messages.info(request, f'You have succesfully archived {user.personalprofile.get_names()} from Students Database')
+                    profile.is_active = False
+                    profile.save()
+                    messages.info(request, f'You have succesfully archived a user')
                     return redirect(self.request.get_full_path())
 
                 elif 'purge' in request.POST:
-                    user = MyUser.objects.get(email=email)
                     messages.info(request, f'You have succesfully Deleted {user.personalprofile.get_names()} from Students Database')
-                    user.delete()
+                    profile.is_active = False
+                    profile.save()
                     return redirect('supervisor-home')
                 else:
-                    user = MyUser.objects.get(email=email)
-                    user.is_active = True
-                    user.save()
-                    messages.success(request, f'You have succesfully restored {email} and all acount related data')
+                    
+                    profile.is_active = True
+                    profile.save()
+                    messages.success(request, f'You have succesfully restored a user')
                     return redirect(self.request.get_full_path())
             except Exception as e:
                 messages.error(self.request, str(e))
@@ -637,20 +908,23 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/students_exam_profile.html'
 
     def get_context_data(self, **kwargs):
-        context = super(StudentExamProfile, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['base_html'] = check_role(self.request.user)
-        print(check_role(self.request.user))
-        email = self.kwargs['email']
+        
+        id = self.kwargs['id']
         try:
-            user  = MyUser.objects.get(email=email)
-            grade = self.request.session.get('grade', 4)
-            scores = Exam.objects.filter(user__email=email, subject__grade=grade) 
-            term1 = scores.filter(term__term='Term 1')
-            term2 = scores.filter(term__term='Term 2')
-            term3 = scores.filter(term__term='Term 3')
-            context['term1'] = term1
-            context['term2'] = term2
-            context['term3'] = term3
+            user  = Students.objects.get(adm_no=id)
+            grade = self.request.session.get('grade', user.academicprofile.current_class.grade)
+            scores = Exam.objects.filter(user__id=id, subject__grade=grade) 
+            if scores:
+                term1 = scores.filter(term__term='Term 1')
+                term2 = scores.filter(term__term='Term 2')
+                term3 = scores.filter(term__term='Term 3')
+                context['term1'] = term1
+                context['term2'] = term2
+                context['term3'] = term3
+                context['scores'] = scores
+            context['grade'] = grade
         except:
             messages.error(self.request, 'We could not find a student matching your query !')
         if self.request.user.role == 'Student':
@@ -664,8 +938,8 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
             context['base_html'] = 'Supervisor/base.html'
         
 
-        context['scores'] = scores
-        context['grade'] = grade
+        
+        
         context['user'] = user
         return context
     
@@ -799,7 +1073,7 @@ class CreateClass(TemplateView, LoginRequiredMixin):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         
-        context['teachers'] = MyUser.objects.filter(role='Teacher')
+        context['teachers'] = MyUser.objects.filter(role='Teacher', school=user.school)
 
         return context
     
@@ -811,7 +1085,7 @@ class CreateClass(TemplateView, LoginRequiredMixin):
             class_teacher = self.request.POST.get('teacher')
             class_teacher = self.get_context_data().get('teachers').get(email=class_teacher)
             try:
-                school_class = SchoolClass.objects.create(class_name=class_name, grade=grade, class_size=class_size,
+                school_class = Classes.objects.create(class_name=class_name, grade=grade, class_size=class_size,
                                                            class_teacher=class_teacher)
                 
                 messages.success(self.request, f'{class_name} Has Been Added To Classes')
@@ -830,7 +1104,7 @@ class ClassesView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         
         user = self.request.user
-        classes = SchoolClass.objects.all().order_by('grade')
+        classes = Classes.objects.filter(school=user.school).order_by('grade')
 
         if user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
@@ -847,7 +1121,7 @@ class ClassesView(LoginRequiredMixin, TemplateView):
         if self.request.method == 'POST':
             
             grade = self.request.POST.get('grade')
-            classes = SchoolClass.objects.filter(Q(grade=grade))
+            classes = Classes.objects.filter(Q(grade=grade))
 
             context = {
                 'classes':classes,
@@ -865,9 +1139,10 @@ class ClassList(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         class_id = self.kwargs['class_id']
-        class_ins = SchoolClass.objects.get(class_id=class_id)
+        class_ins = Classes.objects.get(class_id=class_id)
         context['class'] = class_ins
-        students = AcademicProfile.objects.filter(current_class=class_ins)
+        
+        students = Students.objects.filter(academicprofile__current_class=class_ins)
         context['students'] = students
 
 
@@ -878,24 +1153,66 @@ class ClassDetail(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         class_id = self.kwargs['class_id']
-        class_id = SchoolClass.objects.get(class_id=class_id)
-        context['class'] = class_id
-        
-        
-        subjects = Subject.objects.filter(grade=class_id.grade)
-        context['subjects'] = subjects
-        year = class_id.grade
-            # print(subjects)
-        term = CurrentTerm.objects.filter().first()
-        if not term:
-            term = Terms.objects.last()
-        context['term'] = term
-        context['grade'] = year
+        context['period'] = self.request.session.get('period', 'MID')
+        try:
+            class_id = Classes.objects.get(class_id=class_id)
+            context['class'] = class_id
+            subjects = Subject.objects.filter(grade=class_id.grade)
+            context['subjects'] = subjects
+            year = class_id.grade
+                # print(subjects)
+            term = CurrentTerm.objects.filter().first()
+            if not term:
+                term = Terms.objects.last()
+            context['term'] = term
+            context['grade'] = year
+        except:
+            grade = 4
+            user = self.request.user
+    #          user = models.ForeignKey(Students, on_delete=models.CASCADE)
+            # subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+            # term = models.ForeignKey(Terms, on_delete=models.CASCADE)
+            # score = models.PositiveIntegerField()
+            # # points = models.PositiveIntegerField(max_length=10, default=6)
+            # grade = models.CharField(max_length=100)
+            # period = models.CharField(max_length=100)
+            students = Students.objects.all()
+            term = Terms.objects.get(id=1)
+            # for gd in range(3):
+            #     subjects = Subject.objects.filter(grade=grade)
+                
+            #     stds = students.filter(academicprofile__current_class__grade=grade)
+            #     for std in stds:
+            #         for sub in subjects:
+            #             Exam.objects.create(user=std, subject=sub,term=term, score=random.randint(27, 100), grade=grade, period='MID')
+            #     grade=grade+1
+
+            # # for clas in range(9):
+            #     for std in range(30):
+            #         class1 = Classes.objects.get(grade=grade, name='Yellow', school=user.school)
+            #         try:
+            #             st = Students.objects.create(adm_no=random.randint(12345678, 99999999), school=user.school)
+            #             acad = AcademicProfile.objects.create(user=st, current_class=class1)
+                       
+            #         except:
+            #             st = Students.objects.create(adm_no=random.randint(12345678, 99999999), school=user.school)
+            #             AcademicProfile.objects.create(user=st, current_class=class1)
+            #         try:
+            #             class2 = Classes.objects.get(grade=grade, name='Red', school=user.school)
+            #             st = Students.objects.create(adm_no=random.randint(12345678, 99999999), school=user.school)
+            #             AcademicProfile.objects.create(user=st, current_class=class2)
+            #         except:
+            #             class2 = Classes.objects.get(grade=grade, name='Red', school=user.school)
+            #             st = Students.objects.create(adm_no=random.randint(12345678, 99999999), school=user.school)
+            #             AcademicProfile.objects.create(user=st, current_class=class2)
+                
+            #     grade = grade+1
 
         if self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
         elif self.request.user.role in ['Supervisor']:
             context['base_html'] = 'Supervisor/base.html'
+    
         
         
         return context
@@ -904,6 +1221,7 @@ class ClassDetail(LoginRequiredMixin, TemplateView):
         if request.method == 'POST':
             year = request.POST.get('year')
             term = request.POST.get('term')
+            period = request.POST.get('period')
             subjects = Subject.objects.filter(grade=year)
             if self.request.user.role == 'Teacher':
                 base_html = 'Teacher/teachers_base.html'
@@ -916,6 +1234,7 @@ class ClassDetail(LoginRequiredMixin, TemplateView):
                 'subjects':subjects,
                 'class':self.get_context_data().get('class'),
                 'base_html':base_html,
+                'period':period
             }
 
 
@@ -931,7 +1250,8 @@ class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         class_id = self.kwargs['class_id']
         try:
-            class_instance = SchoolClass.objects.get(class_id=class_id)
+            context['period'] = 'MID'
+            class_instance = Classes.objects.get(class_id=class_id)
             grade = class_instance.grade
             term = 'Term 1'
             stream = self.request.session.get('stream', False)
@@ -946,7 +1266,7 @@ class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
             scores = (
             Exam.objects
             .filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term)
-            .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname')  # Group by the user
+            .values('user__studentprofile__f_name', 'user__adm_no', 'user__studentprofile__l_name', 'user__studentprofile__surname')  # Group by the user
             .annotate(total_score=Sum('score'))
             .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
                 )
@@ -977,7 +1297,7 @@ class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
             context['term'] = term
             context['grade'] = grade
         except Exception as e:
-            messages.error(self.request, 'An error occured. Please contact @support')
+            messages.error(self.request, str(e))
 
             
         return context
@@ -990,17 +1310,19 @@ class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
             grade = request.POST.get('year')
             term = request.POST.get('term')
             stream = request.POST.get('stream')
+            period = self.request.POST.get('period')
             print(f'stream {stream}')
-            current_class = SchoolClass.objects.get(class_id=self.kwargs['class_id'])
+            user = self.request.user
+            current_class = Classes.objects.get(class_id=self.kwargs['class_id'])
             if stream == 'stream':
 
            
-                class_id = SchoolClass.objects.filter(grade=current_class.grade)
+                class_id = Classes.objects.filter(grade=current_class.grade, school=user.school)
                 class_id = class_id.values_list('class_id')
                 scores = (
                     Exam.objects
-                    .filter(Q(user__academicprofile__current_class__class_id__in=class_id), Q(subject__grade=grade), Q(term__term=term))
-                    .values('user__personalprofile__f_name', 'user__email','user__personalprofile__l_name', 'user__personalprofile__surname', 'user__academicprofile__current_class__class_name')  # Group by the user
+                    .filter(Q(user__academicprofile__current_class__class_id__in=class_id), Q(subject__grade=grade), Q(term__term=term), period=period)
+                    .values('user__studentprofile__f_name','user__studentprofile__l_name','user__studentprofile__surname', 'user__adm_no', 'user__academicprofile__current_class__name')  # Group by the user
                     .annotate(total_score=Sum('score'))
                     .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
                 )
@@ -1013,8 +1335,8 @@ class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
                 class_id = current_class
                 scores = (
                 Exam.objects
-                .filter(Q(user__academicprofile__current_class__class_id=class_id.class_id), Q(subject__grade=grade), Q(term__term=term))
-                .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname', 'user__academicprofile__current_class__class_name')  # Group by the user
+                .filter(Q(user__academicprofile__current_class__class_id=class_id.class_id), Q(subject__grade=grade), Q(term__term=term), period=period)
+                .values('user__studentprofile__f_name','user__studentprofile__l_name','user__studentprofile__surname', 'user__adm_no', 'user__academicprofile__current_class__name')  # Group by the user
                 .annotate(total_score=Sum('score'))
                 .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
             )
@@ -1071,10 +1393,10 @@ class PrintReport(LoginRequiredMixin, TemplateView):
         rank = self.kwargs['rank']
         grade = self.kwargs['grade']
         term = self.kwargs['term']
-        results = Exam.objects.filter(user__email=email, subject__grade=grade, term__term=term)
+        results = Exam.objects.filter(user__adm_no=email, subject__grade=grade, term__term=term)
         context['results'] = results
         context['rank'] = rank
-        context['student'] = MyUser.objects.get(email=email)
+        context['student'] = Students.objects.get(adm_no=email)
 
         return context
     
@@ -1083,25 +1405,100 @@ class ClassSubjectDetail(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        class_id = self.kwargs['class_id']
-        class_name = SchoolClass.objects.get(class_id=class_id)
-        subject = self.kwargs['subject']
-        term = self.kwargs['term']
+        
         try:
-            term = Terms.objects.get(id=self.kwargs['term'])
-        except:
-            term = Terms.objects.filter(term=self.kwargs['term']).last()
-        context['term'] = term
-        scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term).order_by('-score')
-        context['tests'] = scores
-        context['class'] = class_name
-        if not scores:
-            messages.info(self.request, f'{ class_name.class_name } { term } results not found!')
+            class_id = self.kwargs['class_id']
+            subject = self.kwargs['subject']
+            term = self.kwargs['term']
+            class_name = Classes.objects.get(class_id=class_id)
+            subs = Topic.objects.filter(subject__id=subject).order_by('order')
+            context['topics'] = subs
+            period = self.request.session.get('period', 'MID')
+            try:    
+                context['current'] = MyClass.objects.get(subject__id=subject, class_id__class_id=class_id)
+                print('yes')
+            except:
+                print('no')
+            context['teachers'] = MyUser.objects.filter(role="Teacher", school=self.request.user.school)
+            context['class'] = class_name
+            # Get the class and term objects or handle 404 errors
+            
+            term_instance = Terms.objects.get(id=term)
+
+            
+            context['term'] = term_instance
+
+            # Check if exam data exists for the given class, subject, and term
+            context['exam'] = MyClass.objects.filter(subject__id=subject).exists()
+
+            # Retrieve the exam scores based on the filters
+            scores = Exam.objects.filter(
+                user__academicprofile__current_class__class_id=class_id,
+                subject__id=subject,
+                term__term=term_instance, period=period
+            ).order_by('-score')
+
+            context['tests'] = scores
+            if not scores:
+                messages.info(self.request, f'{class_name.grade} {class_name.name} {term_instance} {period} results not found!')
+        except Exception as e:
+            # messages.error(self.request, f'We could not find exams matching your query! {str(e)}:{term} ' )
+            pass
+
+    # Determine the base HTML depending on user role
         if self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
         elif self.request.user.role in ['Supervisor']:
             context['base_html'] = 'Supervisor/base.html'
+
+        # Handle no scores scenario
+        
+
         return context
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            if 'appoint' in self.request.POST:
+                new = self.request.POST.get('new')
+                
+                current = self.get_context_data().get('current')
+                teacher = MyUser.objects.get(id_number=new)
+
+                if current:
+                    current.delete()
+                class_id = self.kwargs['class_id']
+                subject = self.kwargs['subject']
+                claas = Classes.objects.get(class_id=class_id)
+                subject = Subject.objects.get(id=subject)
+                obj = MyClass.objects.create(user=teacher, subject=subject, class_id=claas)
+                messages.success(self.request, 'Operation successful!')
+
+                return redirect(self.request.get_full_path())
+            else:
+                period = self.request.POST.get('period')
+                grade = self.request.POST.get('year')
+                subject = self.kwargs['subject']
+                term = self.request.POST.get('term')
+                class_id = self.kwargs['class_id']
+                class_instance = self.get_context_data().get('class')
+
+                # Check if the grade does not match the current class grade
+                if int(grade) != int(class_instance.grade):
+                    current_year = datetime.datetime.now().year
+                    selected = current_year - int(grade)
+                else:
+                    selected = datetime.datetime.now().year
+
+                self.request.session['period'] = period
+                try:
+                    # Try to get the term based on the selected year
+                    term_instance = Terms.objects.get(term=term, year=selected)
+                    term = term_instance.id
+                except Terms.DoesNotExist:
+                    term = 100000
+
+            return redirect('class-subject-detail', class_id=class_id, subject=subject, term=term)
+
+
 class TestTaskView(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/test_type_select.html'
 
@@ -1135,8 +1532,8 @@ class ManageClassTeacher(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        classes = SchoolClass.objects.all()
-        teachers = MyUser.objects.filter(role='Teacher')
+        classes = Classes.objects.filter(school=user.school)
+        teachers = MyUser.objects.filter(role='Teacher', school=user.school)
         context['classes'] = classes
         context['teachers'] = teachers
 
@@ -1147,10 +1544,10 @@ class ManageClassTeacher(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             class_id = self.request.POST.get('class')
             teacher = self.request.POST.get('user')
             teacher = MyUser.objects.get(email=teacher)
-            class_instance = SchoolClass.objects.get(class_id=class_id)
+            class_instance = Classes.objects.get(class_id=class_id)
             class_instance.class_teacher = teacher
             class_instance.save()
-            messages.success(self.request, f'{teacher} is now class teacher of {class_instance.class_name}')
+            messages.success(self.request, f'{teacher} is now class teacher of {class_instance.name}')
 
             return redirect(self.request.get_full_path())
 
@@ -1165,7 +1562,7 @@ class Promote(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        classes = SchoolClass.objects.all()
+        classes = Classes.objects.all()
         context['classes'] = classes
 
         return context
@@ -1212,48 +1609,48 @@ class MigrateFees(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context['all'] = MyUser.objects.filter(role='Student')
         context['students'] = profiles.count()
         context['balances'] = profiles.aggregate(totals=Sum('balance'))['totals']
-
+        context['grades'] = ['pg','pp1','pp2',1,2,3,4,5,6,7,8,9  ]
         term = CurrentTerm.objects.all().first()
-        if term:
-            try:
-                migration = FeeMigrations.objects.get(term=term.term)
-                messages.error(self.request, 'You already made fee migrations for this term. @contact support!')
-                context['error'] = True
-                
-            except :
-                pass
-        else:
-            messages.info(self.request, 'You have not specified the current term!')
-            context['error'] = True
+            
+       
 
         return context
 
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
             term = CurrentTerm.objects.all().first()
-            try:
-                migration = FeeMigrations.objects.create(term=term.term, increment=0, current_balance=0, new_balances=0)
-            except IntegrityError:
-                messages.error(self.request, 'You already made fee migrations for this term. @contact support!')
-                return redirect(self.request.get_full_path())
-            structures = TermFeeStructure.objects.filter(term__term=term)
-            if 'migrate' in self.request.POST:
+            grade = self.request.POST.get('grade')
+            boarding = self.request.POST.get('boarding')
+            gender = self.request.POST.get('gender')
+            amount = self.request.POST.get('amount')
+            user = self.request.user
+            pwd = self.request.POST.get('pwd')
+            user = authenticate(username=user.id_number, password=pwd)
 
-                fee_profiles = StudentsFeeAccount.objects.filter(user__is_active=True)
-                
-                for profile in fee_profiles:
-                    
-                    try:
-                        grade = profile.user.academicprofile.current_class.grade # type: ignore
-                        debit = int(structures.get(grade=grade).amount)
-                        new_balance = profile.balance + debit    
-                        profile.balance = new_balance
-                        profile.save()
-                    
-                    except:
-                        pass
-                messages.success(self.request, '100% fee migration')
+            # Check if the authentication was successful
+            if user is not None:
+                try:
+                    migration = FeeMigrations.objects.get(school=user.school,term=term.term, grade=grade, boarding=boarding, gender__in=[gender,"all"])
+                    boarding = 'Boarders' if boarding == 1 else 'Dayscholars'
 
+                    messages.error(self.request, f'Migrations for grade {grade},  {term},  {boarding}, gender : {gender} already done !!')
+                except :
+                    migration = FeeMigrations.objects.create(school=user.school,amount=amount,term=term.term, grade=grade, boarding=boarding, gender=gender)
+                    if 'migrate' in self.request.POST:
+                        if gender == "all":
+                            fee_profiles = StudentsFeeAccount.objects.filter(user__is_active=True, user__school=user.school, user__academicprofile__current_class__grade=grade, user__studentprofile__is_boarder=boarding)
+                        else:
+                        
+                            fee_profiles = StudentsFeeAccount.objects.filter(user__is_active=True, user__school=user.school, user__academicprofile__current_class__grade=grade, user__studentprofile__is_boarder=boarding, gender__icontains=gender)
+
+                        fee_profiles.update(balance=F('balance') + (int(amount)*-1))
+                        adms = fee_profiles.values_list('user__adm_no')
+                        affected = Students.objects.filter(adm_no__in=adms )
+
+                        migration.affected.add(*affected)
+                        messages.success(self.request, '100 "%" fee migration')
+            else:
+                messages.error(self.request, 'Invalid password!')
             return redirect(self.request.get_full_path())
 
     def test_func(self):
@@ -1265,34 +1662,21 @@ class Rollback(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        profiles = StudentsFeeAccount.objects.filter(user__is_active=True)
-        context['all'] = MyUser.objects.filter(role='Student')
-        context['students'] = profiles.count()
-        context['balances'] = profiles.aggregate(totals=Sum('balance'))['totals']
+        id = self.kwargs['id']
+        context['migration'] = FeeMigrations.objects.get(id=id)
 
         return context
 
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
-            term = CurrentTerm.objects.all().first()
-            structures = TermFeeStructure.objects.filter(term__term=term)
-            if 'migrate' in self.request.POST:
-
-                fee_profiles = StudentsFeeAccount.objects.filter(user__is_active=True)
-                
-                for profile in fee_profiles:
-                    
-                    try:
-                        grade = profile.user.academicprofile.current_class.grade # type: ignore
-                        debit = int(structures.get(grade=grade).amount)
-                        new_balance = profile.balance + debit    
-                        profile.balance = new_balance
-                        profile.save()
-                    
-                    except:
-                        pass
-
-            return redirect(self.request.get_full_path())
+            lists = self.get_context_data().get('migration')
+            profiles = StudentsFeeAccount.objects.filter(user__in=lists.affected.all())
+            with transaction.atomic():  # Ensure the update happens in a transaction
+                updated_count = profiles.update(balance=F('balance') + int(lists.amount))  # Update balance
+            print(profiles.count(), (lists.amount))
+            lists.delete()
+            messages.success(self.request, 'Rollback was a success ')
+            return redirect('migrate-fees')
 
     def test_func(self):
         return self.request.user.role == 'Supervisor'
@@ -1310,8 +1694,10 @@ class CreateNotice(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             title = self.request.POST.get('title')
             description = self.request.POST.get('description')
             pdf = self.request.FILES.get('pdf')
-
-            update = Updates.objects.create(title=title, description=description, file=pdf)
+            if pdf:
+                update = Updates.objects.create(title=title, description=description, file=pdf, school=self.request.user.school, ministry='School', created_by=self.request.user)
+            else:
+                update = Updates.objects.create(title=title, description=description, school=self.request.user.school, ministry='School', created_by=self.request.user)
 
             return redirect('notice-id', update.id)
         
@@ -1575,7 +1961,7 @@ class ViewActivity(LoginRequiredMixin, TemplateView):
             
             return redirect(self.request.get_full_path())
         
-class ExamMode(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+class ExamModes(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/enable_exam_mode.html'
 
     def test_func(self):
@@ -1584,7 +1970,9 @@ class ExamMode(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        mode = CurrentTerm.objects.all().first()
+        mode = ExamMode.objects.filter(school=self.request.user.school).first()
+        if not mode:
+            mode =ExamMode.objects.create(school=self.request.user.school)
         context['mode'] = mode
 
         return context
@@ -1594,12 +1982,17 @@ class ExamMode(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             command = self.request.POST.get('action')
             mode = self.get_context_data().get('mode')
             if command == 'enable':
+                period = self.request.POST.get('period')
                 inp = True
+                mode.status = inp
+                mode.period = period
+                mode.save()
             else:
                 inp = False
+                mode.status = inp
+                mode.save()
 
-            mode.mode = inp
-            mode.save()
+            
 
 
 

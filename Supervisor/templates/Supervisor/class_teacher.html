@@ -21,7 +21,7 @@
         <div class="col-md-6">
             <select class="form-select" id="classInput" name="class" aria-label="Default select example" required>
                 {% for class in classes %}
-                    <option value="{{ class.class_id }}">{{ class }}</option>
+                    <option value="{{ class.class_id }}">{{ class.grade }} {{ class }}</option>
                 {% endfor %}
               
             </select>

@@ -9,8 +9,9 @@ from django.db.models import Count
 from django.views.generic import TemplateView
 from Exams.models import *
 from Guardian.models import MyKids
+from SubjectList.models import Course
 from Teacher.models import *
-from Users.models import PersonalProfile
+from Users.models import PersonalProfile, Students
 
 logger = logging.getLogger('django')
 
@@ -45,7 +46,7 @@ class IsStudent(UserPassesTestMixin):
         
 
 
-class OverallAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
+class OverallAnalytics(LoginRequiredMixin, TemplateView):
     """
         view students tests analysis
     """
@@ -58,9 +59,8 @@ class OverallAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
         role = self.request.user.role
         if role == 'Teacher':
             context['template'] = 'Teacher/teachers_base.html'
-        elif role == 'Student':
-            context['template'] = 'Users/base.html'
-        elif role in ['Supervisor', 'Receptionist', 'Finance']:
+     
+        elif role in ['Supervisor']:
             context['template'] = 'Supervisor/base.html'
         elif role == 'Guardian':
             context['template'] = 'Guardian/baseg.html'
@@ -70,32 +70,16 @@ class OverallAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
 
             # Fetch analytics data for the user's tests
             context['subjects']= Subject.objects.filter(grade=grade)
-
+      
+    
         except Exception as e:
             # Handle other unexpected errors
-            messages.error(self.request, 'An error occurred. We are fixing it.')
-            error_message = str(e)  # Get the error message as a string
-            error_type = type(e).__name__
-
-            logger.critical(
-                error_message,
-                exc_info=True,  # Include exception info in the log message
-                extra={
-                    'app_name': __name__,
-                    'url': self.request.get_full_path(),
-                    'school': settings.SCHOOL_ID,
-                    'error_type': error_type,
-                    'user': self.request.user,
-                    'level': 'Critical',
-                    'model': 'StudentKNECExams',
-
-                }
-            )
-
+          
+            messages.error(self.request, str(e))
         return context
 
 
-class SubjectAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
+class SubjectAnalytics(LoginRequiredMixin,  TemplateView):
     """
         View students performance on a given subject
     """
@@ -116,7 +100,7 @@ class SubjectAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
             context['template'] = 'Guardian/baseg.html'
 
         try:
-            user = MyUser.objects.get(email=user)  # get student's instance
+            user = Students.objects.get(adm_no=user)  # get student's instance
             subject = Subject.objects.get(id=subject)  # get subject
             context['name'] = subject
             subject = subject.id  # get subject id
@@ -143,7 +127,7 @@ class SubjectAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
         except Exception as e:
             # Handle any other exceptions
 
-            messages.error(self.request, 'An error occurred. Try again later as we fix the issue.')
+            messages.error(self.request, str(e))
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
@@ -191,6 +175,7 @@ class SubjectView(LoginRequiredMixin, TemplateView):
             context['template'] = 'Guardian/baseg.html'
         grade = self.kwargs['grade']
         subjects = Subject.objects.filter(grade=grade)
+        print(subjects)
         context['subjects'] = subjects
         context['base_html'] = check_role(self.request.user)
 

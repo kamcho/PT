@@ -1,0 +1,126 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Custom CSS -->
+<style>
+    .form-container {
+        background-color: #111b25;
+        padding: 2rem;
+        border-radius: 10px;
+        color: white !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+        font-weight: bold;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #ffffff;
+    }
+    .btn-custom {
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-custom:hover {
+        background-color: #138496;
+    }
+    .btn-warning {
+        transition: background-color 0.3s ease;
+    }
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+</style>
+
+<br><br><br><br>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-container">
+                <h2>Fees Management</h2>
+                <a class="btn btn-custom mb-4" href="{% url 'fees-list' %}">Manage Fees Structure</a>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Select Term</label>
+                        <select class="form-select" aria-label="Default select example" name="term" required>
+                            {% for term in terms %}
+                                <option value="{{ term.id }}">{{ term.term }} - {{ term.year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if user.school.is_mixed %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Select Gender</label>
+                        <select class="form-select" aria-label="Default select example" name="gender" required>
+                                <option value="all">All</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                        </select>
+                    </div>
+
+                    {% endif %}
+                    {% if user.school.has_boarding %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Select Learning Status</label>
+                        <select class="form-select" aria-label="Default select example" name="boarding" required>
+                                <option></option>
+                                <option value="1">Boarders</option>
+                                <option value="0">Day Scholars</option>
+                        </select>
+                    </div>
+
+                    {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label">Select Grade</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="grade" value="pg" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Play Group
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="grade" value="pp1" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              PP1
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="grade" value="pp2" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              PP2
+                            </label>
+                          </div>
+                            {% for i in "123456789" %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="grade" value="{{ i }}" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                  Grade {{ i }}
+                                </label>
+                              </div>
+                            {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control" name="amount" value="{{ term.year }}" placeholder="10,000" required>
+                    </div>
+
+                    <button class="btn btn-success" type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,27 +1,41 @@
-{% extends 'Users/base.html' %}
-{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Wave Separator</title>
+  <style>
+    .wave-separator {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
 
-{% block content %}
-<br><br><br><br>
+    .wave-path {
+      fill: none;
+      stroke: #000000;
+      stroke-width: 2;
+    }
 
-What chat room would you like to enter?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
+    .wave-path-filled {
+      fill: #e0e0e0;
+      stroke: #000000;
+      stroke-width: 2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wave Separator Example</h1>
+  <svg class="wave-separator" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
+    <path class="wave-path" d="M0,60 C240,0 400,120 560,60 C720,0 880,120 1040,60 C1200,0 1360,120 1440,60"></path>
+  </svg>
 
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.key === 'Enter') {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+  <div style="background: #f0f0f0; padding: 20px;">
+    <p>This is a section with a wave separator above it.</p>
+  </div>
 
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/Support/' + roomName + '/';
-        };
-    </script>
-
-
-
-{% endblock %}
+  <svg class="wave-separator" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
+    <path class="wave-path-filled" d="M0,60 C240,0 400,120 560,60 C720,0 880,120 1040,60 C1200,0 1360,120 1440,60 L1440,120 L0,120 Z"></path>
+  </svg>
+</body>
+</html>

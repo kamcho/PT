@@ -4,9 +4,9 @@
 
 
 {% block content %}
-<br><br><br>
 
-<div class="bg-gradient">
+
+<div class="container" style="width: 90%;max-width: 800px;margin: 0 auto;">
     <div class="container">
         <br><br><br><br>
         {% if user.role == 'Supervisor' %}
@@ -21,8 +21,8 @@
     </form>
     {% endif %}
 <br><br>
-        <div class="form-view">
-        <h5 class="text-center" style="font-size: 30px;"> <i class="bi bi-send-check" > </i> Create Notice Update</h5>
+        <div class="form-iew">
+        <h6 class="text-center" style="font-size: 30px;"> <i class="bi bi-send-check" > </i> Manage Notice Update</h6>
         <br>
         
      
@@ -45,11 +45,11 @@
                 <div class="col-md-6">
                 
                     <label for="inputField1" class="form-label">Share File ( {{ notice.file }} )</label>
-                    <input type="file" class="form-control"  name="pdf" placeholder="Addition" style="border: 3px solid cornflowerblue;" required>
+                    <input type="file" class="form-control"  name="pdf" placeholder="Addition" style="border: 3px solid cornflowerblue;" >
                 </div>
             </div>
             <br>
-            <button class="btn btn-info" style="color: white;">Save</button>        
+            <button class="btn btn-info" style="color: white;">Update</button>        
         <br>
             </form>
         </div>

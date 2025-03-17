@@ -6,8 +6,8 @@ from django.db import models
 from SubjectList.models import Topic, Subject, Subtopic
 # from Supervisor.models import KnecQuizzes, KnecQuizAnswers
 
-from Teacher.models import StudentList
-from Users.models import MyUser
+from Teacher.models import MyClass
+from Users.models import MyUser, Students
 
 
 class TopicalQuizes(models.Model):
@@ -17,7 +17,7 @@ class TopicalQuizes(models.Model):
     subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     quiz = models.TextField(max_length=500)
-    is_approved = models.BooleanField(default=False)
+    # is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id)
@@ -64,7 +64,7 @@ class BaseTest(models.Model):
         ('Retake', 'Retake'),
         ('KNEC', 'KNEC')
     )
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(Students, on_delete=models.CASCADE)
     uuid = UniqueUUIDField()
     date = models.DateTimeField(auto_now=True)
     marks = models.IntegerField(default=0)
@@ -156,7 +156,7 @@ class BaseGroupTest(models.Model):
 
 class ClassTest(BaseGroupTest):
     # MultipleObjectsReturned = None
-    class_id = models.ForeignKey(StudentList,  on_delete=models.CASCADE)
+    class_id = models.ForeignKey(MyClass,  on_delete=models.CASCADE)
     quiz = models.ManyToManyField(TopicalQuizes)
 
 
@@ -169,7 +169,7 @@ class ClassTest(BaseGroupTest):
 
 
 class ClassTestStudentTest(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(Students, on_delete=models.CASCADE)
     test = models.ForeignKey(ClassTest, on_delete=models.CASCADE)
     uuid = models.CharField(max_length=100, default=uuid.uuid4)
     date = models.DateTimeField(auto_now=True)
@@ -187,7 +187,7 @@ class ClassTestStudentTest(models.Model):
 
 
 class StudentsAnswers(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(Students, on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4)
     quiz = models.ForeignKey(TopicalQuizes, on_delete=models.CASCADE)
     selection = models.ForeignKey(TopicalQuizAnswers, on_delete=models.CASCADE)
@@ -197,7 +197,7 @@ class StudentsAnswers(models.Model):
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.quiz)
 
     class Meta:
         unique_together = ('user', 'uuid')

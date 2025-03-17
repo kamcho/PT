@@ -10,8 +10,8 @@ urlpatterns = [
     path('Test/<str:instance>/<str:uuid>/Revision/', TestDetail.as_view(), name='test-detail'),
     path('<str:topic>/<str:uuid>/Instructions', StudentTestLobby.as_view(), name='start'),
     path('<str:uuid>/General-Test', GeneralTestLobby.as_view(), name='general-test'),
-    path('<str:instance>/<str:uuid>/Quiz/', Tests.as_view(), name='tests'),
-    path('<str:instance>/<str:uuid>/Finish/', Finish.as_view(), name='finish'),
+    path('<str:adm_no>/<str:instance>/<str:uuid>/Quiz/', Tests.as_view(), name='tests'),
+    path('<str:adm_no>/<str:instance>/<str:uuid>/Finish/', Finish.as_view(), name='finish'),
     path('<str:mail>/<str:subject>/set-test/', SetTest.as_view(), name='set-test'),
     path('get_explanation', views.get_explanation, name='get_explanation')
    

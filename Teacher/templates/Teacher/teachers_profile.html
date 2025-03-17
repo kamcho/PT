@@ -4,124 +4,195 @@
 {% block content %}
 
 
-
-<div style="margin-top: 90px;padding: 60px;">
-
+<style>/* From Uiverse.io by Yaya12085 */ 
+    .card2{
+      overflow: hidden;
+      position: relative;
+      text-align: left;
+      border-radius: 0.5rem;
+      max-width: 800px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+      background-color: #281c3b;
+      color: white;
+    }
     
-<div class="two">
-    <div class="trc-pic">
-        <img class="trc-pic" src="{% static 'Users/zara.png'  %}">
+    .dismiss {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      /* background-color: #fff; */
+      color: rgb(255, 255, 255);
+      border: 2px solid #D1D5DB;
+      font-size: 1rem;
+      font-weight: 300;
+      /* width: 30px; */
+      height: 30px;
+      border-radius: 7px;
+      transition: .3s ease;
+    }
+    .date {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+     
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      color: rgb(255, 255, 255);
+      font-size: 1rem;
+      font-weight: 300;
+      height: 30px;
+      border-radius: 7px;
+      transition: .3s ease;
+    }
+    
+    .dismiss:hover {
+      background-color: #ee0d0d;
+      border: 2px solid #ee0d0d;
+      color: #fff;
+    }
+    
+    .header {
+      padding: 1.25rem 1rem 1rem 1rem;
+    }
+    
+    .image2 {
+      display: flex;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #e2feee;
+      flex-shrink: 0;
+      justify-content: center;
+      align-items: center;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 9999px;
+      animation: animate .6s linear alternate-reverse infinite;
+      transition: .6s ease;
+    }
+    
+    .image2 svg {
+      color: #0afa2a;
+      width: 2rem;
+      height: 2rem;
+    }
+    
+    .content {
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+    
+    .title2 {
+      color: cornflowerblue;
+      font-size: 20px;
+      font-weight: bolder;
+      /* line-height: 1.5rem; */
+    }
+    
+    .message {
+      margin-top: 0.5rem;
+      color: #ffffff;
+      font-size: 19px;
+      line-height: 1.25rem;
+    }
+    
+    .actions {
+      margin: 0.75rem 1rem;
+    }
+    
+    .history {
+      display: inline-flex;
+      padding: 0.5rem 1rem;
+      background-color: #1aa06d;
+      color: #ffffff;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      font-weight: 500;
+      justify-content: center;
+      width: 100%;
+      border-radius: 0.375rem;
+      border: none;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    
+    .track {
+      display: inline-flex;
+      margin-top: 0.75rem;
+      padding: 0.5rem 1rem;
+      color: #242525;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      font-weight: 500;
+      justify-content: center;
+      width: 100%;
+      border-radius: 0.375rem;
+      border: 1px solid #D1D5DB;
+      background-color: #fff;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    
+    @keyframes animate {
+      from {
+        transform: scale(1);
+      }
+    
+      to {
+        transform: scale(1.09);
+      }
+    }</style>
+  <br><br><br><br>
+  <div class="container" style="margin: 0 auto;width: 90%;max-width: 800px;">
+  
+  
+    <div class="card2"> 
+        <h5 class="dismiss" >TSC No : {{ teacher.id_number }}</h5> 
+        <h5 class="date" >Date Joined : {{ teacher.date|date:'d-m-Y' }}</h5> 
+        <div class="header"> 
+          <div class="image2">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20 7L9.00004 18L3.99994 13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+            </div> 
+            <div class="content">
+               <span class="title2"></span> 
+               <p class="message" style="font-size: 22px;">{{ teacher.personalprofile.get_names|title }} </p> 
+               <p class="message" style="font-size: 22px;">{{ teacher.personalprofile.phone }} </p>
+               <p class="message" style="font-size: 20px;">{{ teacher.personalprofile.gender }} </p>
+             <a href="{% url 'update-profile' teacher.id %}" class="btn btn-success">Edit Profile</a>
+<br><br>
+               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 200px));">
+                {% for subject in teacher.teacherprofile.subject.all %}
+                    <div >
+                      <h6 class="btn btn-outline-secondary">{{ subject }}</h6>
+                      <br>
+                      
+                    </div>
+                    
+                  {% endfor %}
 
-    </div>
-
-    <div class="io">
-        <h6 style="font-size: 22px;color: cornflowerblue;">{{ teacher.personalprofile.get_names|title }}</h6>
-        {% if user == teacher %}
-            <a href="{% url 'update-profile' user.email %}" class="btn btn-secondary">Edit Profile</a>
-        {% endif %}
-        <br><br>
-        <div>
-            <h6>BIO</h6>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex nisi voluptas maxime saepe
-                 molestiae doloremque, cumque placeat! Voluptates quasi,
-                 sapiente corporis harum vero consequuntur deleniti quos quidem unde quisquam natus.</p>
-        </div>
-
-        <subjects>
-            <h6>Subjects</h6>
-            {% for subject in teacher.teacherprofile.subject.all %}
-              <div >
-                <h6 class="btn btn-outline-secondary">{{ subject }}</h6>
-                <br>
-                
-              </div>
-              <br>
+                </div>
               
-            {% endfor %}
-        </subjects>
-        <small>Rank</small><br>
-        {% with teacher|get_stars:1 as stars %}
-            {% if stars %}
-            {% for star in stars %}
-                <i class="bi bi-star-fill" style="color: gold;"></i>
-            {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <br><br>
-        
-        <a class="btn btn-primary" href=""><i class="bi bi-heart"></i> Add as My Teacher</a>
-    </div>
-
-</div>
-<hr>
-
-
-
-
-
-{% if user.role == 'Supervisor' %}
-<form method="post">
-    {% csrf_token %}
-    <select class="form-select" id="subjectSelect" name="subject" aria-label="Default select example" required>
-        <option></option>
-        {% for subject in subjects %}
-          <option value="{{ subject.id }}">{{ subject }} - Grade ({{ subject.grade }})</option>
-        {% endfor %}
-    </select>
-    
-    
-    <br>
-    <div id="topicCheckboxContainer"></div>
-</form>
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
- $(document).ready(function() {
-    $('#subjectSelect').change(function() {
-        var subjectId = $(this).val();
-        var tchr = '{{ user.email }}';
-
-        $('#topicSelect').empty().append('<option selected>Loading...</option>');
-        $('#subtopicSelect').empty().append('<option selected>Subtopic</option>');
-
-        $.ajax({
-            url: '/Teacher/select_topics/',  // Adjust the endpoint accordingly
-            type: 'get',
-            data: { subject_id: subjectId, tch: tchr },
-            success: function(response) {
-                $('#topicSelect').empty();
-                $('#topicCheckboxContainer').empty(); // Clear previous checkboxes
-
-                if (response.length > 0) {
-                    $.each(response, function(index, topic) {
-                        // Append checkbox inputs
-                        $('#topicCheckboxContainer').append(
-                            '<div class="form-check">' +
-                            '<input class="form-check-input" type="checkbox" id="topic_' + topic.id + '" name="topics" value="' + topic.id + '" >' +
-                            '<label class="form-check-label" for="topic_' + topic.id + '">' + topic.name + '</label>' +
-                            '</div>'
-                        );
-                    });
-                    $('#topicCheckboxContainer').append(
-                            '<div class="form-check">' +'<br>'+
-                            '<button class="btn btn-primary"  name="save" >Save</button>' +
-                            '</div>'
-                        );
-                } else {
-                    $('#topicCheckboxContainer').append('<p>No topics available.</p>');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
-    });
-});
-
-</script>
-{% endif %}
-</div>
+               </div> 
+               <div class="actions">
+                {% if user.role == 'Supervisor' %}
+                <form method="post">
+                    {% csrf_token %}
+                   <div style="justify-content: end;justify-self: end;">
+                    {% if teacher.is_active %}
+                    <!-- <button class="btn btn-warning" disabled>Delete</button> -->
+                    <button class="btn btn-danger" name="archive">Deactivate</button>
+                    {% else %}
+                    <button class="btn btn-danger" name="delete">Delete</button>
+                    <button class="btn btn-primary" name="restore">Restore</button>
+                    {% endif %}
+                   </div>
+                </form>
+                {% endif %}
+                  </div> 
+                  </div> 
+                  </div>
 
 
 
@@ -129,6 +200,7 @@
 
 
 
+   
 
 
 {% endblock %}

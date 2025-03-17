@@ -20,10 +20,10 @@ from django.urls import path,include
 from django.contrib.auth import views as auth_views
 
 
-handler404 = 'Users.views.error_404'
-handler500 = 'Users.views.error_500'
-handler403 = 'Users.views.error_403'
-handler400 = 'Users.views.error_400'
+# handler404 = 'Users.views.error_404'
+# handler500 = 'Users.views.error_500'
+# handler403 = 'Users.views.error_403'
+# handler400 = 'Users.views.error_400'
 urlpatterns = [
 
     path('admin/', admin.site.urls),
@@ -36,7 +36,9 @@ urlpatterns = [
     path('Supervisor/', include('Supervisor.urls')),
     path('Logs/', include('Logs.urls')),
     path('Guardian/', include('Guardian.urls')),
- 
+    path('Finance/', include('Finance.urls')),
+    path('Discipline/', include('Discipline.urls')),
+    path('Term/', include('Term.urls')),
     path('Analytics/', include('Analytics.urls')),
     path('Teacher/', include('Teacher.urls')),
     path('password-reset/', auth_views.PasswordResetView.as_view(template_name='Users/password_reset.html'),

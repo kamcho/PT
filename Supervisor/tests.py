@@ -1,5 +1,15 @@
 import itertools
+# def add_quiz():
+#     quizes = TopicalQuizes.objects.all().delete()
+#     quizes = TopicalQuizes.objects.using('default2').all()
 
+#     for quiz in quizes:
+#         answers = TopicalQuizAnswers.objects.using('default2').filter(quiz=quiz)
+#         # subject = Subject.objects.get(name=quiz.subject, grade=quiz.subject.grade)
+#         subtopic = Subtopic.objects.get(name=quiz.subtopic.name, subject__grade=quiz.subject.grade)
+#         quiz = TopicalQuizes.objects.create(id=quiz.id, subject=subtopic.subject, subtopic=subtopic, topic=subtopic.topic,quiz=quiz)
+#         for answer in answers:
+#             answe = TopicalQuizAnswers.objects.create(uuid=answer.uuid, quiz=quiz, choice=answer.choice, is_correct=answer.is_correct)
 def generate_timetable(teachers, classes, time_slots):
     timetable = {}
 

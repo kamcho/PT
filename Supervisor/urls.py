@@ -1,21 +1,29 @@
 from django.urls import path
+
+from Supervisor.models import ExamMode
 from . views import *
 from . import *
+from . import views
+
+urlpatterns = [        path('search-guardian/', SearchGuardianView.as_view(), name='get-guardian'),
 
 
-urlpatterns = [
     path('AAdmin/', SupervisorHomeView.as_view(), name='supervisor-home'),
     path('Link/<str:adm>', LinkStudent.as_view(), name='link'),
     path('Admin-Dashboard/', SupervisorDashboard.as_view(), name='admin-dashboard'),
-    path('AddUser/', CreateUser.as_view(), name='create-user'),
+    path('AddStudent/', CreateUser.as_view(), name='create-user'),
+    path('AddStaff/', CreateStaff.as_view(), name='create-staff'),
+    path('search/', views.search_students, name='search'),
+    path('AddStudentSubjects/<str:adm_no>/', StudentSubjectSelect.as_view(), name='student-subject-select'),
+    path('AddGuardianInfo/<str:id>/', AddParent.as_view(), name='add-parent'),
     path('ArchivedUsers/', ArchivedUsers.as_view(), name='archived-users'),
     path('StudentsView/', StudentsView.as_view(), name='students-view'),
     path('TeachersView/', TeachersView.as_view(), name='teachers-view'),
-    path('StudentsProfile/<str:email>/', StudentProfile.as_view(), name='students-profile'),
+    path('StudentsProfile/<str:email>/', StudentsProfile.as_view(), name='students-profile'),
     path('ManageUser/<str:email>/', ManageStudent.as_view(), name='manage-user'),
     path('TeacherProfile/<str:email>/', TeachersProfile.as_view(), name='teachers-profile'),
     path('TeacherInfo/<str:email>/', TeachersInfo.as_view(), name='teachers-info'),
-    path('StudentsExamProfile/<str:email>/', StudentExamProfile.as_view(), name='students-exam-profile'),
+    path('StudentsExamProfile/<str:id>/', StudentExamProfile.as_view(), name='students-exam-profile'),
     path('StudentsOptions/<str:email>/', StudentTaskSelect.as_view(), name='students-task-slect'),
     path('StudentsTestView/<str:email>/', StudentTestsView.as_view(), name='students-test-view'),
     path('StudentsTestDetailView/<str:test_type>/<str:email>/<str:test_id>/Test', StudentTestDetailView.as_view(), name='students-test-detail-view'),
@@ -31,6 +39,7 @@ urlpatterns = [
    
     path('Promote-Classes/', Promote.as_view(), name='promote'),
     path('Migrate-Fees/', MigrateFees.as_view(), name='migrate-fees'),
+    path('Rollback-Migrations/<str:id>/', Rollback.as_view(), name='rollback'),
     path('SchoolAssignments', AssignmentsView.as_view(), name='school-assignments'),
 
 
@@ -44,7 +53,7 @@ urlpatterns = [
     path('Add-Files/', AddFiles.as_view(), name='add-files'),
     path('View-activities/', ViewActivities.as_view(), name='activities'),
     path('View-activity/<str:activity_id>/', ViewActivity.as_view(), name='view-activity'),
-    path('Enable-Exam-Mode', ExamMode.as_view(), name='exam-mode'),
+    path('Enable-Exam-Mode', ExamModes.as_view(), name='exam-mode'),
     path('Print-Card/<str:email>/<str:grade>/<str:term>/<str:rank>/', PrintReport.as_view(), name='print-report'),
 
     path('topicq-review/<str:subject>', TopicReview.as_view(), name='topic-review'),

@@ -17,7 +17,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'role', 'is_active')
+        fields = '__all__'
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -44,7 +44,7 @@ class AdminCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email','uuid', 'is_active','role', )
+        fields = '__all__'
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -84,7 +84,7 @@ class AdminChangeForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ( 'email', 'is_active','uuid', 'is_admin','role' )
+        fields = '__all__'
 
 
 class UserAdmin(BaseUserAdmin):
@@ -95,10 +95,10 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ( 'email', 'is_active','uuid')
+    list_display = ( 'id_number', 'is_active','school', 'role')
     list_filter = ('is_active',)
     fieldsets = (
-        (None, {'fields': ('email', 'password','role')}),
+        (None, {'fields': ('email', 'password','role','id_number', 'school')}),
 
         ('Permissions', {'fields': ('is_admin',)}),
     )
@@ -107,7 +107,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ( 'email','role', 'is_active', 'password1', 'password2'),
+            'fields': ( 'email','role', 'is_active', 'password1', 'password2','school', 'id_number'),
         }),
     )
     search_fields = ('email',)
@@ -117,9 +117,12 @@ class UserAdmin(BaseUserAdmin):
 
 # Now register the new UserAdmin...
 admin.site.register(MyUser, UserAdmin)
-admin.site.register(Grade)
-
+admin.site.register(Classes)
+admin.site.register(Schools)
+admin.site.register(Students)
+admin.site.register(Accounts)
 admin.site.register(PersonalProfile)
+admin.site.register(StudentProfile)
 admin.site.register(AcademicProfile)
 
 # admin.site.unregister(Group)

@@ -15,8 +15,9 @@ from SubjectList.models import *
 
 
 from Subscription.models import MpesaPayments
-from Teacher.models import StudentList, TeacherRanking
-from Users.models import MyUser
+from Teacher.models import MyClass
+from Term.models import Exam
+from Users.models import Classes, MyUser
 
 register = template.Library()
 logger = logging.getLogger('django')
@@ -87,6 +88,40 @@ def progress(subject_id, count):
     except Exception as e:
         print(str(e))
         return 0
+@register.filter
+
+def subject_progress(user, subject_id):
+    try:
+        print(user, 'User:', subject_id)
+        
+        # Filter Progress by user and subject
+        progress = Progress.objects.filter(user=user, subject__id=subject_id)
+        
+        # Get the total count of subtopics for the given subject
+        total_subtopics = Subtopic.objects.filter(subject__id=subject_id).count()
+        print("Total subtopics:", total_subtopics)
+
+        # Count the number of subtopics for this user in the specific subject
+        subtopic_count = progress.annotate(subtopic_count=Count('subtopic')).values('subtopic_count')
+
+        # If there are no progress records or subtopics, return 0
+        if not subtopic_count:
+            return 0
+        
+        # Since annotate() returns a queryset, you need to access the value in the result
+        completed_subtopics = subtopic_count[0]['subtopic_count']  # Access the first result
+        
+        print("Completed subtopics:", completed_subtopics)
+        
+        # Calculate the percentage of completed subtopics
+        if total_subtopics > 0:
+            return round((completed_subtopics * 100) / total_subtopics)
+        else:
+            return 0  # Avoid division by zero
+
+    except Exception as e:
+        print("Error:", str(e))
+        return 0
 
 
 @register.filter
@@ -135,8 +170,8 @@ def topic_in_progress(user, topic):
 @register.filter
 def guardian_topic_view(email, topic):
     try:
-        user = MyUser.objects.get(email=email)
-        progress = Progress.objects.filter(user=user, topic=topic)
+        # user = MyUser.objects.get(email=email)
+        progress = Progress.objects.filter(user__adm_no=email, topic=topic)
         if progress.exists():
             return True
         else:
@@ -163,8 +198,11 @@ def subtopic_in_progress(user, subtopic):
 @register.filter
 def guardian_subtopic_view(email, subtopic):
     try:
-        user = MyUser.objects.get(email=email)
-        progress = Progress.objects.filter(user=user, subtopic=subtopic)
+        print(email, subtopic)
+        # user = MyUser.objects.get(email=email)
+
+        progress = Progress.objects.filter(user__adm_no=email, subtopic__id=subtopic)
+        print(progress)
         if progress:
             return True
         else:
@@ -173,6 +211,17 @@ def guardian_subtopic_view(email, subtopic):
     except Exception as e:
         return False
 
+@register.filter
+def guardians_subtopic_view(email, topic):
+    try:
+        # user = MyUser.objects.get(email=email)
+        progress = Subtopic.objects.filter(topic__id=topic).order_by('order')
+        print(progress)
+        
+        return progress
+
+    except Exception as e:
+        return False
 
 @register.filter
 def test_is_done(user, test_uuid):
@@ -193,25 +242,26 @@ def test_is_done(user, test_uuid):
 
 @register.filter
 def get_total_test(email, subject):
-    test = StudentTest.objects.filter(user__email=email, subject__id=subject).count()
-    class_tests = ClassTestStudentTest.objects.filter(user__email=email, test__subject__id=subject).count()
-    general = GeneralTest.objects.filter(user__email=email, subject__id=subject).count()
+    print(email,subject )
+    test = StudentTest.objects.filter(user__adm_no=email, subject__id=subject).count()
+    class_tests = ClassTestStudentTest.objects.filter(user__adm_no=email, test__subject__id=subject).count()
+    general = GeneralTest.objects.filter(user__adm_no=email, subject__id=subject).count()
 
     return test + class_tests + general
 
 @register.filter
 def get_total_correct(email, subject):
-    correct = StudentsAnswers.objects.filter(user__email=email, quiz__subject__id=subject, is_correct=True).count()
+    correct = StudentsAnswers.objects.filter(user__adm_no=email, quiz__subject__id=subject, is_correct=True).count()
     return correct
 
 @register.filter
 def get_total(email, subject):
-    correct = StudentsAnswers.objects.filter(user__email=email, quiz__subject__id=subject).count()
+    correct = StudentsAnswers.objects.filter(user__adm_no=email, quiz__subject__id=subject).count()
     return correct
 @register.filter
 def get_accuracy(email, subject):
-    correct = StudentsAnswers.objects.filter(user__email=email, quiz__subject__id=subject, is_correct=True).count()
-    all = StudentsAnswers.objects.filter(user__email=email, quiz__subject__id=subject).count()
+    correct = StudentsAnswers.objects.filter(user__adm_no=email, quiz__subject__id=subject, is_correct=True).count()
+    all = StudentsAnswers.objects.filter(user__adm_no=email, quiz__subject__id=subject).count()
     try:
         perc = (correct/all)*100
         return round(perc)
@@ -290,6 +340,28 @@ def subject_analytics_size(user, subject):
 def get_subject(subject):
     subject = Subject.objects.get(id=subject)
     return subject
+@register.filter
+def get_subtopics(topic):
+    subtopics = Subtopic.objects.filter(topic=topic)
+    return subtopics
+@register.filter
+def get_expectations(subtopic, school):
+    subtopics = StudentsAnswers.objects.filter( user__school__id=school, quiz__subtopic__id=subtopic)
+       
+    count = subtopics.count()
+    correct = subtopics.filter(is_correct=1).count()
+    wrong = subtopics.filter(is_correct='0')
+    data = {
+        'EE':80,
+        'ME':50,
+        'AE':30,
+        'BE':0
+    }
+    try:
+        percent = round((correct*100)/count)
+        return percent
+    except:
+        return 'No Tests Taken'
 
 
 @register.filter
@@ -371,12 +443,12 @@ def get_correct_choice(quiz):
 
 
 @register.simple_tag
-def get_class_highest(class_id, subject, term):
+def get_class_highest(class_id, subject, term, period):
     # term = Terms.objects.get(id=21)
     # cl = SchoolClass.objects.get(class_id=class_id)
     # sb = Subject.objects.get(id=subject)
     # print(cl,subject, term.term, term.term.year)
-    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term)
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term, period=period)
     highest = scores.values('score').order_by('-score').first()
     print(highest)
     if highest:
@@ -387,8 +459,8 @@ def get_class_highest(class_id, subject, term):
     
 
 @register.simple_tag
-def get_class_lowest(class_id, subject, term):
-    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term)
+def get_class_lowest(class_id, subject, term, period):
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term, period=period)
     lowest = scores.values('score').order_by('score').first()
     if lowest:
 
@@ -397,9 +469,9 @@ def get_class_lowest(class_id, subject, term):
         return None
     
 @register.simple_tag
-def get_class_average(class_id, subject, term):
+def get_class_average(class_id, subject, term, period):
 
-    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term)
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term, period=period)
     total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
     # print(total_marks)
     
@@ -413,8 +485,8 @@ def get_class_average(class_id, subject, term):
         return None
 
 @register.simple_tag
-def get_class_overall_average(class_id, grade, term):
-    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term)
+def get_class_overall_average(class_id, grade, term, period):
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term, period=period)
     total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
 
     if total_marks:
@@ -428,8 +500,8 @@ def get_class_overall_average(class_id, grade, term):
 
 @register.simple_tag
 def get_stream_overall_average(class_id, grade, term):
-    class_id = SchoolClass.objects.get(class_id=class_id)
-    class_id = SchoolClass.objects.filter(grade=class_id.grade).values_list('class_id')
+    class_id = Classes.objects.get(class_id=class_id)
+    class_id = Classes.objects.filter(grade=class_id.grade).values_list('class_id')
 
     scores = Exam.objects.filter(user__academicprofile__current_class__class_id__in=class_id, subject__grade=grade, term__term=term)
     # print(scores)
@@ -498,7 +570,7 @@ def hide_email_percentage(value, percentage=40):
     return value
 @register.simple_tag
 def is_class_teacher(user):
-    class_id = SchoolClass.objects.filter(class_teacher=user).values_list('class_name')
+    class_id = Classes.objects.filter(class_teacher=user).values_list('class_name')
     classes = ""
     if class_id:
         for class_name in class_id:
@@ -509,12 +581,18 @@ def is_class_teacher(user):
     else:
         return " "
     
-
+@register.filter
+def abs_value(value):
+    try:
+        return abs(value)
+    except TypeError:
+        return value 
 
 
 @register.simple_tag
-def get_subject_score(user, grade, subject, term):
-    score = Exam.objects.filter(user__email=user, subject__grade=grade, subject=subject, term__term=term).first()
+def get_subject_score(user, grade, subject, term, period):
+    print(user)
+    score = Exam.objects.filter(user__adm_no=user, subject__grade=grade, subject=subject, term__term=term, period__icontains=period).first()
     # print(user,subject,term,grade)
     
     if score:
@@ -523,7 +601,7 @@ def get_subject_score(user, grade, subject, term):
 
         return score.score
     else:
-        return 'Not Found'
+        return 0
     
 @register.filter
 def get_student_latest_score(user, subject):

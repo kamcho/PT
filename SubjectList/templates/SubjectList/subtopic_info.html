@@ -1,4 +1,4 @@
-{% extends 'Users/base.html' %}
+{% extends 'Guardian/baseg.html' %}
 {% load static %}
 {% load custom_filters %}
 
@@ -37,7 +37,7 @@
 
 <br><br>
 
-{% if user.mysubscription.status %}
+<!-- % if student.mysubscription.status % -->
 <form method="post">
     {% csrf_token %}
     <strong>A test once started cannot be stopped</strong>
@@ -45,14 +45,14 @@
     <button class="btn btn-danger" style="width: 100px;">Start</button>
 
 </form>
-{% else %}
-<p>You do not have an active subscription. To take this test kindly subscribe by clicking the button below:</p>
+<!-- % else % -->
+<!-- <p>You do not have an active subscription. To take this test kindly subscribe by clicking the button below:</p>
                 <a href="{% url 'subscription' %}"><button class="btn btn-primary">Subscribe</button></a>
 
         {% endif %}
 
 
-</div>
-{% endif %}
+</div> -->
+<!--% endif % -->
 
 {% endblock %}

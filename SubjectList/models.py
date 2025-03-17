@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-from Users.models import MyUser
+from Users.models import MyUser, Students
 
 
 
@@ -92,12 +92,12 @@ class Subject(models.Model):
 
 
     def __str__(self):
-        return str(self.name) 
+        return str(self.name) + ' ' + str(self.grade)
 
 
 class MySubjects(models.Model):
-    name = models.ManyToManyField(Course, blank=True, related_name='my_subjects')
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    name = models.ManyToManyField(Subject, blank=True, related_name='my_subjects')
+    user = models.OneToOneField(Students, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.user)
@@ -140,13 +140,13 @@ class Subtopic(models.Model):
     order = models.CharField(max_length=5)
 
     def __str__(self):
-        return self.name
+        return self.name +  '' + self.subject.grade
     # class Meta:
     #     db_table = 'subjectlist_subtopic'  # Custom table name
     #     managed = False
 
 class Progress(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(Students, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     subtopic = models.ManyToManyField(Subtopic, related_name='progress_subtopic')
     topic = models.ManyToManyField(Topic, related_name='progress')
@@ -228,7 +228,7 @@ class AIFiles(models.Model):
     #     db_table = 'subjectlist_aifiles'  # Custom table name
     #     managed = False
 class Prompt(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(Students, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     quiz = models.TextField(max_length=500)
@@ -254,7 +254,7 @@ class Completion(models.Model):
     #     managed = False
 
 class RateLimiter(models.Model):
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(Students, on_delete=models.CASCADE)
     tokens = models.PositiveIntegerField()
     image = models.PositiveIntegerField()
     speech = models.PositiveIntegerField()

@@ -1,4 +1,4 @@
-{% extends 'Users/base.html' %}
+{% extends 'Guardian/baseg.html' %}
 {% load custom_filters %}
 {% block content %}
 <div id="main" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;margin-top: 60px;display: flex;
@@ -56,8 +56,8 @@
 
     <div class="bottom-bar" style="height: 15%;z-index: 1;width:90%;" >
         <div class="input-grop mb-3" style="border: 0px solid rgb(229, 250, 255);border-radius: 10px;padding: 20px;position: relative;min-height: 100px;">
-        {% if user.mysubscription.status %}
-            {% if user.ratelimiter.tokens %}
+        {% if student.mysubscription.status %}
+            {% if student.ratelimiter.tokens %}
             <!-- <div style="border: 20px solid green;width: 90%;"><small id="dis" class="text-muted">Enter message</small> -->
                 <!-- <div contenteditable="false"  id="chat-input-p" style="background-color: aqua;flex-grow: 1; margin-left: 10px; font-size: 16px;width: 90%;white-space: pre-wrap;word-wrap: break-word;overflow-wrap: break-word; border: none; outline: none; padding: 10px;">
                     
@@ -95,7 +95,7 @@
         // Ask AI button click event
         $("#gpt-button").click(function() {
             var question = $("#chat-input-area").val();
-            
+            var adm_no = '{{ adm_no }}'
             var user = '{{ user }}'
           
 
@@ -105,6 +105,7 @@
             // Append the CSRF token and other data to formData
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
             formData.append('prompt', question);
+            formData.append('adm_no', adm_no);
 
             
             for (var i = 0; i < fileInput.files.length; i++) {

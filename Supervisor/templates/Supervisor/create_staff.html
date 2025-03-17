@@ -1,0 +1,226 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<style>.custom-input-container {
+    position: relative;
+}
+
+.search-results-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    z-index: 10;
+}
+
+.search-results-container .result-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.search-results-container .result-item:hover {
+    background-color: #f0f0f0;
+}
+</style>
+<div class="">
+    <br><br>
+<div class="container" style="background-color: white;margin-top: 40px;">
+
+    <br><br>
+    <h5 style="font-family: cursive;">Create User</h5>
+    <form method="post">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-md-6">
+            
+                <label for="inputField1" class="form-label">Id/TSC Number</label>
+                <input type="text" class="form-control" id="inputField1" name="id_number"  placeholder="TSC Numbers for teachers only!!" required>
+            </div>
+            <div class="col-md-6">
+                <label for="inputField1" class="form-label">Role</label>
+                <select class="form-select" id="roleSelect" aria-label="Default select example" name="role" required>
+                    <option value="" disabled selected>Select a role</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Guardian">Guardian/Parent</option>
+                    <option value="Receptionist">Receptionist</option>
+                    <option value="Supervisor">Supervisor</option>
+                    <option value="Finance">Finance</option>
+                </select>
+            </div>
+           
+        </div>
+        <br>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="inputField2" name="f_name" placeholder="First Name" required>
+            </div>
+            <div class="col-md-6">
+                <label for="inputField3" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="inputField3" name="l_name" placeholder="Last Name" required>
+            </div>
+            
+        </div>
+        
+      
+        <div class="row mb-3">
+          
+            <div class="col-md-6">
+                <label for="inputField4" class="form-label">Surname</label>
+                <input type="text" class="form-control" id="inputField4" name="surname" placeholder="Surname" required>
+            </div>
+            <div class="col-md-6">
+                <label for="inputField1" class="form-label">Gender</label>
+                <select class="form-select"  aria-label="Default select example" name="gender" required>
+                    <option></option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
+    
+        <br>
+        
+        <div class="row mb-3">
+            <div class="col-md-6" style="display: none;" id="searchInput1">
+                <div class="custom-input-container">
+                    <input type="text" id="searchInput" placeholder="Search students by admission number..." class="form-control" name="kids">
+                    <div id="searchResults" class="search-results-container">
+                        <!-- Dynamically populated student results go here -->
+                    </div>
+                </div>
+                <input type="hidden" id="selectedAdmissionNumbers" name="selected_admission_numbers" />
+
+            </div>
+            <div class="col-md-6"  >
+                <div class="custom-input-container">
+                    <input type="number" placeholder="phone number" class="form-control" name="phone">
+                   
+                </div>
+            </div>
+                
+        <script>
+            $(document).ready(function() {
+    let selectedAdmissionNumbers = [];  // This will store selected admission numbers
+
+    // Function to render search results (students)
+    function renderResults(query) {
+        // Make AJAX request only if query is not empty
+        if (query.trim() !== '') {
+            $.ajax({
+                url: '{% url "search" %}',  // Your Django URL for searching students
+                data: { query: query },
+                success: function(data) {
+                    const resultsContainer = $('#searchResults');
+                    resultsContainer.empty(); // Clear previous results
+
+                    const students = data.students || [];  // Default to empty array if no students are returned
+
+                    students.forEach(student => {
+                        const isChecked = selectedAdmissionNumbers.includes(student.adm_no) ? 'checked' : '';
+
+                        const resultItem = `
+                            <div class="result-item">
+                                <label>
+                                    <input type="checkbox" class="student-checkbox" data-id="${student.id}" value="${student.adm_no}" ${isChecked} /> 
+                                    ${student.adm_no} ${student.studentprofile__f_name} ${student.studentprofile__surname} ${student.studentprofile__l_name}
+                                </label>
+                            </div>
+                        `;
+                        resultsContainer.append(resultItem);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching students:', error);
+                }
+            });
+        }
+    }
+
+    // Event listener for typing in the search input
+    $('#searchInput').on('input', function() {
+        const query = $(this).val();  // Get the input value
+        renderResults(query);  // Trigger the search only when there's input
+    });
+
+    // Event listener for checking checkboxes
+    $('#searchResults').on('change', '.student-checkbox', function() {
+        const admissionNumber = $(this).val();  // Get the admission number from the checkbox value
+
+        if ($(this).prop('checked')) {
+            // Add admission number to selected list
+            selectedAdmissionNumbers.push(admissionNumber);
+        } else {
+            // Remove admission number from selected list
+            selectedAdmissionNumbers = selectedAdmissionNumbers.filter(num => num !== admissionNumber);
+        }
+
+        // Update the hidden input field with selected admission numbers
+        $('#selectedAdmissionNumbers').val(selectedAdmissionNumbers.join(','));
+
+        console.log('Selected admission numbers:', selectedAdmissionNumbers);  // Show selected admission numbers in console
+    });
+});
+
+        </script>
+<script>
+    $(document).ready(function() {
+        // Initially hide the search input
+        $('#searchInput1').hide(); 
+
+        // Listen for changes on the role select dropdown
+        $('#roleSelect').on('change', function() {
+            const selectedRole = $(this).val();  // Get the selected role
+
+            if (selectedRole === 'Guardian') {
+                // Show the search input if Guardian is selected
+                $('#searchInput1').show();
+            } else {
+                // Hide the search input for all other roles
+                $('#searchInput1').hide();
+            }
+        });
+    });
+</script>
+
+           
+          
+        </div>
+        <br>
+        <div style="justify-content: end;justify-items: end;justify-self: end;">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <div>.</div>
+    </form>
+    
+    <!-- <script>
+        const roleSelect = document.getElementById('roleSelect');
+        const classInput = document.getElementById('classInput');
+    
+        // Add an event listener to the role select element
+        roleSelect.addEventListener('change', function() {
+            // Check if the selected value is "1" (Student)
+            if (roleSelect.value === 'Student') {
+                // Enable the Class input
+                classInput.removeAttribute('disabled');
+            } else {
+                // Disable the Class input
+                classInput.setAttribute('disabled', 'disabled');
+            }
+        });
+    </script> -->
+   
+
+
+</div>
+</div>
+
+
+{% endblock %}

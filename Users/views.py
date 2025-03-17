@@ -11,13 +11,13 @@ from django.http import HttpRequest
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import TemplateView
-from SubjectList.models import Progress, Topic
-from Subscription.models import Bonuses, Referal, ReferalPayments
-from Supervisor.models import Inquire, Updates
+# from SubjectList.models import Progress, Topic
+# from Subscription.models import Bonuses, Referal, ReferalPayments
+# from Supervisor.models import Inquire, Updates
 from Users.models import PersonalProfile, MyUser, AcademicProfile
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from .models import MyUser, AcademicProfile, PersonalProfile, Grade
+from .models import MyUser, AcademicProfile, PersonalProfile
 from django.contrib.auth.hashers import make_password
 import logging
 
@@ -171,6 +171,7 @@ class Login(TemplateView):
             
             username = self.request.POST.get('email')
             password = self.request.POST.get('password')
+            print(username, password)
             user = authenticate(self.request, username=username, password=password)
 
             if user is not None:
@@ -213,7 +214,7 @@ class MyProfile(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(MyProfile, self).get_context_data(**kwargs)
-        context['guardian'] = MyUser.objects.get(email=self.kwargs['email'])
+        context['guardian'] = MyUser.objects.get(id=self.kwargs['email'])
         
         # Check user's role and use appropriate base Html Template
         if self.request.user.role == 'Student':

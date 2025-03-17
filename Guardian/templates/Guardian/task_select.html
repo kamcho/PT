@@ -1,46 +1,88 @@
 
   {% extends base_html %}
-
-
-
+  {% load custom_filters %}
 
 {% block content %}
 
-<div class="bg-gradient">
-    <div class="container">
-        <br><br><br>
-            <a href="{% url 'overall-analytics' email 4 %}"><button class="btn btn-info">Analytics</button></a>
-    </div>
-
-  {% if error %}
-
-  {% else %}
-
-
-    <div class="task-select">
-
-        <div class="subject-select-card">
-          <div class="booked-class-body">
-            <h6 class="card-title">View Learning Progress</h6>
-            <p class="card-text">View {{ email }}`s learning progress.</p>
-            <a href="{% url 'learner-learning-progress' email grade %}" class="btn" style="background-color:purple;color:white;">Learning Progress</a>
-          </div>
-        </div>
-
-
-        <div class="subject-select-card">
-          <div class="booked-class-body">
-            <h6 class="card-title">View Tests Progress</h6>
-            <p class="card-text">View {{ email }}`s examination history.</p>
-            <a href="{% url 'kid-test' email grade  %}" class="btn" style="background-color:purple;color:white;">View Tests</a>
-          </div>
-        </div>
-
-
-
-
-    </div>
-
+{% if not subject %}
+<br><br><br><br>
+<div class="container dropdown" style="margin-top: 10px;min-height: 100vh;">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+  Grade  {{ grade }}
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '1' %}">1</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '2' %}">2</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '3' %}">3</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '4' %}">4</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '5' %}">5</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '6' %}">6</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '7' %}">7</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '8' %}">8</a></li>
+    <li><a class="dropdown-item" href="{% url 'task-view-select' email '9' %}">9</a></li>
+  </ul>
 </div>
+    {% else %}
+<div style="background-color: rgb(4, 3, 20);color: white;margin: 0;margin-top: -40px;">
+  
+<div class="container" style="max-width: 1900px;width: 90%;margin: 0 auto;">
+  <div ><br><br>
+    <div class="container dropdown" style="margin-top: 100px">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      Grade  {{ grade }}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '1' %}">1</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '2' %}">2</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '3' %}">3</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '4' %}">4</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '5' %}">5</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '6' %}">6</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '7' %}">7</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '8' %}">8</a></li>
+        <li><a class="dropdown-item" href="{% url 'task-view-select' email '9' %}">9</a></li>
+      </ul>
+    </div>
+
+
+
+  <div>
+<div class="subjects-select-view" style="margin-top: -20px;width: 100%;">
+
+
+
+        {% for prog in subject %}
+        <div class="subject-select-card">
+
+            <h6 class="p-txt"><i class="bi bi-bookmark-plus"></i> {{ prog.subject__name }}</h6>
+           
+    <br>
+            <div class="kid-in-card">
+                <small class="text-muted">progress</small><br>
+                <small >Topics Started  <span class="badge bg-info" style="margin-left: 30px;">{{ prog.topic_count }}</span></small>
+                <br>
+                <small >Total topics  <span class="badge bg-secondary" style="margin-left:50px;">{{ prog.subject__topics  }}</span></small>
+                <br><br>
+                {% with prog.user|subject_progress:prog.subject__id as progressive  %}
+                <div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar bg-success" style="width: '{{ progressive }}'%;background-color:purple; ">
+                 
+                    {{ progressive }}%
+                </div>
+            </div>
+            {% endwith %}
+              <div><br>
+                <a href="{% url 'learners-syllabus' prog.subject__name grade email %}" class="btn btn-secondary">Syllabus</a>
+                <a href="{% url 'subject-analysis' email prog.subject__id %}" class="btn btn-primary">Analytics</a>
+                <a href="{% url 'kid-exam-topic-id'  email prog.subject__id %}" class="btn btn-danger">Tests</a>
+              </div>
+        </div>
+      </div>
+        {% endfor %}
+    
+
 {% endif %}
+  </div>
+</div>
+</div></div>
 {% endblock %}

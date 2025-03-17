@@ -19,13 +19,13 @@
 
 
 {% else %}
-<div class="subject-select-content-continer" style="background-color: aliceblue;height: 100vh;">
+<div style="background-color: #F8F8FF;min-height: 100vh;">
 <div class="">
 
-    <div class="subjects-select-view" style="background-color: aliceblue;">
+    <div class="subjects-select-view" style="background-color: #F8F8FF;">
     {% for class in classes %}
         <div class="subject-select-card">
-            <a href="{% url 'class-task-view-select' class.id %}"><h6><i class="bi bi-bookmark"></i> {{ class.subject }} </h6></a>
+            <a href="{% url 'class-profile' class.class_id.class_id %}"><h6><i class="bi bi-bookmark"></i> {{ class.subject }} </h6></a>
             <small><i class="bi bi-gear"> </i> Grade <span class="badge bg-info text-light">{{ class.subject.grade }}</span></small>
             <br>
             <br>

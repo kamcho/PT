@@ -3,7 +3,7 @@
 {% block content %}
 
 <br><br><br><br>
-<div class="bg-gradient">
+<div class="">
 <div class="container">
   <br><br><br>
     <form method="post" style="color: white;">
@@ -26,8 +26,8 @@
 
 <div class="container" style="color: white;">
     <br>
-    <h5>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name|title }}. {{ user.personalprofile.surname|title }}</h5>
-    <p>Grade {{ user.academicprofile.current_class|title }}</p>
+    <h5>{{ user.studentprofile.get_names }}</h5>
+    <p>Grade {{ user.academicprofile.current_class.grade }} {{ user.academicprofile.current_class|title }}</p>
 </div>
 
 <div class="container form-view">

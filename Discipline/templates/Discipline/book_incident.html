@@ -1,0 +1,47 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+  
+        <div class="mb-3">
+            <span>Student</span>
+            <input type="text" class="form-control" name="adm_no" value="{{ student.adm_no }} {{ student.studentprofile.get_names }}"  placeholder="ADM NO" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+
+        <br>
+ 
+
+    {% if student %}
+    <form  method="post">
+        {% csrf_token %}
+
+
+    {% else %}
+
+    {% endif %}
+
+
+<br><br>
+
+
+
+
+
+
+  <select class="form-select" id="class-id" name="incident" aria-label="Default select example">
+    {% for incident in classes %}
+        <option value="{{ incident.id }}">{{ incident.name }}</option>
+    {% endfor %}
+
+</select>
+<br>
+
+<button class="btn btn-danger">Book</button>
+
+</form>
+
+</div>
+
+{% endblock %}

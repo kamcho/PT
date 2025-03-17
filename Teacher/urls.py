@@ -3,7 +3,6 @@ from .views import *
 from . import views
 
 
-
 urlpatterns = [
     path('Home', TeacherView.as_view(), name='teachers-home'),
     path('Dash', DashTasks.as_view(), name='dash-tasks'),

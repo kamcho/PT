@@ -1,14 +1,24 @@
-{% extends 'Users/base.html' %}
+{% extends 'Guardian/baseg.html' %}
 {% load custom_filters %}
 {% load static %}
 
 {% block content %}
 
+<style>
+    html, body {
+  height: 100%;
+  margin: 0;
+}
+    #body{
+        background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;
+        min-height: 70pc;
+        /* min-height: 100%; */
+    }
+</style>
 
 
 
-{% if not subjects %}
-<div class="subject-select-content-container">
+<div  id="body">{% if not  subjects %}
 <div class="container">
         <br>
     <form>
@@ -18,53 +28,53 @@
                 Grade {{ grade }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="{% url 'learn' 1 %}">1</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 2 %}">2</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 3 %}">3</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 4 %}">4</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 5 %}">5</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 6 %}">6</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 7 %}">7</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 8 %}">8</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 9 %}">9</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 1 %}">1</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 2 %}">2</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 3 %}">3</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 4 %}">4</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 5 %}">5</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 6 %}">6</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 7 %}">7</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 8 %}">8</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 9 %}">9</a></li>
             </ul>
         </div>
     </form>
 
 </div>
-</div>
+<!-- </div> -->
 {% else %}
-<div class="subject-select-content-container" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;">
-<div class="container">
+<div class="" >
+<div >
         <br>
-    <form>
+    <form style="margin-top: 60px;margin-left: 7pc;">
         <div class="dropdown" style="padding-left:25px;">
             <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 Grade {{ grade }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="{% url 'learn' 1 %}">1</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 2 %}">2</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 3 %}">3</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 4 %}">4</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 5 %}">5</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 6 %}">6</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 7 %}">7</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 8 %}">8</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 9 %}">9</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 1 %}">1</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 2 %}">2</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 3 %}">3</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 4 %}">4</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 5 %}">5</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 6 %}">6</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 7 %}">7</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 8 %}">8</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' adm_no 9 %}">9</a></li>
             </ul>
         </div>
     </form>
 
 </div>
     <div>
-        <div class="subjects-select-view" style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;">
+        <div class="subjects-select-view" style="margin-top: -10px;">
 
-            {% for subject in subjects %}<a href="{% url 'syllabus' subject.id  %}">
+            {% for subject in subjects %}<a href="{% url 'syllabus' student.adm_no subject.id  %}">
             <div class="subject-select-card">
                 <div class="booked-class-ody">
-                    {% with progress_topic=user|get_user_progress_topic:subject.id %}
+                    {% with progress_topic=student|get_user_progress_topic:subject.id %}
                     
                         <h5 style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{ subject }} </h5>
                    
@@ -88,7 +98,7 @@
                 </div>
                 <br>
                 <div>
-                    <p href="{% url 'syllabus' subject.id %}"><button class="btn btn-secondary">Syllabus</button></p>
+                    <p href="{% url 'syllabus' student.adm_no subject.id %}"><button class="btn btn-secondary">Syllabus</button></p>
 
                 </div>
 

@@ -3,20 +3,17 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container" style="width: 90%;max-width: 800px;margin: 0 auto;">
         <br>
         <br>
         <br>
         <div class="profile">
-            {% if user.personalprofile.f_name != '' %}
-              <p>{{ user.personalprofile.surname }}  {{ user.personalprofile.l_name }}.  {{ user.personalprofile.f_name }} <button class="btn btn-info">{{ user.role }}</button></p>
-            {% else %}
-              <p>{{ user }} <button class="btn btn-info">{{ user.role }}</button></p>
-            {% endif %}
+              <p>{{ user.personalprofile.get_names|title }} <button class="btn btn-info">{{ user.role }}</button></p>
+            
         </div>
 
 
-<button class="btn btn-outline-secondary">REFERAL CODE : {{ user.id }}</button>
+<!-- <button class="btn btn-outline-secondary">REFERAL CODE : {{ user.id }}</button> -->
 
         <div class="">
 

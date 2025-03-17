@@ -6,23 +6,31 @@
 {% block content %}
 <br>
     <br><br><br>
-    <div class="container">
+    <div class="container" style="width: 90%;margin: 0 auto;max-width: 700px;">
 
-        {% if mode.mode %}
-        To disable exam results inputs from teachers Disable exam mode.
+        {% if mode.status %}
+        Disable exam results inputs for {{ mode.period }} period Exams from teachers..
             
             <br><br>
             <form method="post">
                 {% csrf_token %}
-                
-                <button class="btn btn-warning" name="action" value="disable">Disable</button>
+                <select class="form-select" name="period" >
+                    <option selected>{{ mode.period }}</option>
+                </select><br>
+                <button class="btn btn-secondary" name="action" value="disable" style="color: white;">Disable</button>
 
             </form>
         {% else %}
-        To enable teachers to input exam results  enable exam mode
+        Enable teachers to input exam results  for students.
         <br><br>
             <form method="post">
                 {% csrf_token %}
+                <select class="form-select" name="period" required>
+                    <option></option>
+                    <option value="OPENER">Opener</option>
+                    <option value="MID">MID Term</option>
+                    <option value="END">END Term</option>
+                </select><br>
                 <button class="btn btn-primary" name="action" value="enable">Enable</button>
 
             </form>

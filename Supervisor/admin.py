@@ -3,6 +3,5 @@ from .models import *
 # Register your models here.
 
 admin.site.register(Updates)
-admin.site.register(QuestionCount)
-admin.site.register(QuizAssignment)
+admin.site.register(ExamMode)
 admin.site.register(Inquire)

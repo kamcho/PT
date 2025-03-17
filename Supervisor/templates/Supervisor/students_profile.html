@@ -1,106 +1,286 @@
 {% extends base_html %}
 {% load custom_filters %}
-
+{% load static %}
 {% block content %}
 
+<style>
+    .main-fr{
+        display: grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap: 30px;width: 95%;margin: 0 auto;overflow-x: hidden;
+    }
+</style>
+<br>
+<br>
 
-<br>
-<br>
-<br>
-<br>
-<div class="bg-gradient">
-    <br><br><br>
-<div  >
-    <div class="container">
-    {% if user.role == 'Supervisor' %}
-    <a  href="{% url 'manage-user' student.adm_no %}" class="btn btn-primary" style="color: white;">Manage Student</a>
+
+<style>
+    body{
+        background-color: #F8F8FF;
+    }
+</style>
+
+
+<br><br>
+<div style="background-color:rgb(4, 3, 20); margin-top: -43px;"><br><br>
+    {% if user.role == 'Guardian' %}
+    <div style="justify-content: end;display: flex;gap: 30px;padding-right: 70px;">
+        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}"><button style="background-color: crimson;color: white;padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-stars"> </i>Online Exams</button></a>
+       <a href="{% url 'ask-ai' student.adm_no %}"> <button style="background-color: rgb(0, 21, 207);color: white;padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-robot"> </i>AI Assistant</button></a>
+    </div><br>
     {% endif %}
-    <br>
-    
-       
-    <div class="badge bg-dark">
-        <h5 >{{ student.personalprofile.f_name|title }} {{ student.personalprofile.l_name.0|title }}. {{ student.personalprofile.surname|title }}</h5>
-        <small style="color: cornflowerblue;">{{ student.school }}</small>
-        {% if user.role == 'Student' %}
-            <a class="btn btn-info" href="{% url 'update-profile' student %}">Edit Profile</a>
-      
+<div class="main-fr">
+    <div style="background-color: #F8F8FF;border-radius: 10px;float: left;padding: 40px;">
+        <h5>Personal Info</h5><br><br>
+        <div style="display: grid;grid-template-columns: 40% 60%;">
+            <img style="width: 100px; height: 100px;border-radius: 5%;" src="{% static 'Users/child.jpg' %}">
+        <div><h6>{{ student.studentprofile.get_names|title }}</h6>
+            <h6>{{ student.adm_no }}</h6>
+            <h6>{{ student.studentprofile.gender }}</h6>
+            <h6><small style="color: cornflowerblue;">{{ student.school }}</small></h6>
+            <h6>Grade {{ student.academicprofile.current_class.grade|title }}  {{ student.academicprofile.current_class|title }}</h6></div>
+            
+        </div><br><br>
+        <div style="background-color: rgb(8, 8, 27);border-radius: 20px;align-items: center;align-items: center;padding: 20px;">
+            <div style="display: flex;margin: 0 auto;gap: 20px;width: 99%;">
+                <div style="background-color: rgb(12, 223, 40);border-radius: 30%;width: 50px;height: 50px;text-align: center;align-items: center;align-self: center;align-content: center;color: white;">Mon</div>
+                <div style="background-color: rgb(12, 223, 40);border-radius: 30%;width: 50px;height: 50px;text-align: center;align-items: center;align-self: center;align-content: center;color: white;">Tue</div>
+                <div style="background-color:rgb(12, 223, 40);border-radius: 30%;width: 50px;height: 50px;text-align: center;align-items: center;align-self: center;align-content: center;color: white;">Wed</div>
+                <div style="background-color:rgb(12, 223, 40);border-radius: 30%;width: 50px;height: 50px;text-align: center;align-items: center;align-self: center;align-content: center;color: white;">Thu</div>
+                <div style="background-color: rgb(22, 20, 20);border-radius: 30%;width: 50px;height: 50px;text-align: center;align-items: center;align-self: center;align-content: center;color: white;">Fri</div>
+                <div  class="btn btn-dark">View </div>
+            </div>
+        </div>
+    </div>
+    <div style="background-color: #F8F8FF;border-radius: 10px;padding: 30px;">
+        <h5>My Subjects</h5>
+        <br><br><h6>Selected Subjects</h6>
+        <div style="display: flex;
+        flex-wrap: wrap; /* Enables items to wrap to the next line */
+        gap: 10px;
+        ">
+        {% if mysubjects %}
+        {% for subject in mysubjects %}
+            <div style="background-color: rgb(28, 17, 73);color: rgb(27, 223, 125);padding: 5px;border-radius: 5px;">
+                <small><i class="bi bi-check"></i>{{ subject }}</small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <a href="{% url 'student-subject-select' student.adm_no %}"><h6 class="text-center" style="color: crimson;justify-content: center;"><i class="bi bi-info">You have not selected any subjects! </i></h6></a>
         {% endif %}
-    </div>
-    <br>
-   
-    
-</div>
-
-    
-    <br><br>
-    <div class="profile-card" style="margin: 0 auto;">
-        <div class="test-progress">
+        </div><br><hr>
+        <br><br>
+        {% if mysubjects %}
+        <h6 style="color: coral;">ForeGone</h6>
+        <div style="display: flex;
+        flex-wrap: wrap; /* Enables items to wrap to the next line */
+        gap: 10px;
+        ">{% for subject in foregone %}
+            <div style="background-color: rgb(28, 17, 73);color: rgb(223, 27, 92);padding: 5px;border-radius: 5px;">
+                <small><i class="bi bi-x"></i>{{ subject }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}<h6 style="color: coral;">Available Subjects</h6>
+        <div style="display: flex;
+        flex-wrap: wrap; /* Enables items to wrap to the next line */
+        gap: 10px;
+        ">
+        {% for subject in foregone %}
         
+            <div style="background-color: rgb(255, 255, 255);color: rgb(72, 19, 102);padding: 5px;border-radius: 5px;">
+                <small><i class="bi bi-x"></i>{{ subject }}</small>
+            </div>
+            {% endfor %}</div>
+        {% endif %}
+
+    </div>
+    <div style="background-color: #F8F8FF; border-radius: 10px; padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+        <h5>Fees & Discipline</h5>
+        <h6>{{ student.studentprofile.get_names|title }}</h6>
+        <br><br>
+        <a href="{% url 'student-fee-profile' student.adm_no %}">
+        <div style="border-radius: 30px ;background-color: #070F2B;color: #F8F8FF;min-height: 100px;padding: 30px;">
+            <h5>Fee Balance - {{ student.studentsfeeaccount.balance|title }}</h5>
         </div>
+    </a><br><br>
+    <a href="{% url 'students-discipline' student.adm_no %}">
+        <div style="border-radius: 30px ;background-color: #070F2B;color: #F8F8FF;min-height: 100px;padding: 30px;">
+            <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: coral;">100</strong></h5>
+        </div></a>
+        
+        <!-- <canvas id="donutChart" style="max-width: 200px;"></canvas>
+    
 
-        <div class="user-info">
-            <h6>{{ student.personalprofile.get_names|title }}</h6>
-            <p>Grade {{ student.academicprofile.current_class|title }}</p>
-            <p>Gender {{ student.personalprofile.gender }}</p>
-           
-            {% if student.is_active %}
-                <p >Status <strong style="color:green"> Active</strong></strong></p>
-            {% else %}
-                <p > Status <strong style="color:crimson"> In-Active</strong></strong></p>
-            {% endif %}
-
-            <small>Subscription</small>
-            {% if student.mysubscription.status %}
-              
-              <h5 class="btn btn-primary" id="offcanvasNavbarLabel">Active</h5>
-            {% else %}
-              <h5 class="btn btn-danger" id="offcanvasNavbarLabel">Expired</h5>
-            {% endif %}
-
-
-        </div>
+        <script>
+            const ctx = document.getElementById('donutChart').getContext('2d');
+            const donutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fees Paid', 'Fees Due'],
+                    datasets: [{
+                        data: [75, 25], // Example data, replace with actual values from Django
+                        backgroundColor: ['#36A2EB', '#FF6384'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    }
+                }
+            });
+        </script> -->
+        
     </div>
 </div>
 <br><br>
-
-<div class="two" style=" ">
-
-    
-    {% if user.role != 'Student' %}
-        <a href="{% url 'task-view-select' student %}">
-        <div class="user-card" style="height: 200px !important;">
-            <h6>E-Learning</h6>
-            <h6 >I AM Learning</h6>
-            
-            <br>
-            <p>View online learning progress and exams .
-                
-            </p>
-
-           
-  
-        </div>
-    </a>
-    {% endif %}
-
-
-
-    <a href="{% url 'subscription' %}">
-        <div class="user-card" style="height: 200px !important;">
-            <h6>Subscription</h6>
-            <br>
-            <p>View and manage your subscriptions</p>
-            
-        </div>
-    </a>
-    
-    
-
 </div>
-<br><br>
+
+<div style="width: 95%;margin: 60px auto;position: relative;">
+    <h6 style="padding: 20px;" class="text-center">Perfomance <strong style="color: hotpink;">Analytics</strong></h6>
+    <form method="post">{% csrf_token %}
+    <div style="position:  absolute;top: 30px;right: 40px;width: 400px;" class="input-group">
+    <select class="form-select" aria-label="Default select example" name="grade"  required>
+        <option value="" selected>Select Grade</option>
+        {% for grade in grades %}
+            <option value="{{grade}}">Grade {{ grade }}</option>
+        {% endfor %}
+      </select>
+      <select class="form-select" aria-label="Default select example" name="term" required>
+        <option value="" selected>Select Term</option>
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+      </select>
+      <button class="btn btn-secondary">Filter</button>
+    </div></form><br><br>
+    {% if def %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the element ID from the context variable `def`
+            var elementId = "{{ def }}";
+            
+            // Find the element using the ID and scroll to it
+            var element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    </script>
+{% endif %}
+ <!-- Make sure you have the static tag loaded -->
+
+      <div id="def" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 350px)); gap: 10px; width: 100%; margin: 0 auto; justify-content: center;">
+        {% for subject in student.mysubjects.name.all %}
+        <div style="background-color: rgb(4, 3, 20); border-radius: 10px; padding: 30px; margin-top: 40px; color: white;">
+            <h6 class="text-center">{{ subject.name }}</h6>
+            
+            <!-- Canvas for one graph per subject -->
+            <canvas id="chart-{{ forloop.counter }}"></canvas>
+        </div>
+    
+        <!-- Prepare dynamic data for the chart -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Data for the three terms: opener, mid-term, and end-term
+                var openerScore = {% get_subject_score student.adm_no grade subject.id term 'OPENER' %};
+                var midtermScore = {% get_subject_score student.adm_no grade subject.id term 'MID' %};
+                var endtermScore = {% get_subject_score student.adm_no grade subject.id term 'END' %};
+                
+                // Create the chart only if there is data available for the subject
+                var ctx = document.getElementById("chart-{{ forloop.counter }}").getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Opener', 'Mid-Term', 'End-Term'],  // The 3 labels for each term
+                        datasets: [{
+                            label: '{{ subject.name }} Scores',  // The label for the dataset
+                            data: [
+                                openerScore || 0,  // Set to 0 if no score for Opener
+                                midtermScore || 0,  // Set to 0 if no score for Mid-Term
+                                endtermScore || 0   // Set to 0 if no score for End-Term
+                            ],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',  // Color for Opener
+                                'rgba(54, 162, 235, 0.2)',  // Color for Mid-Term
+                                'rgba(75, 192, 192, 0.2)'   // Color for End-Term
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',  // Border color for Opener
+                                'rgba(54, 162, 235, 1)',  // Border color for Mid-Term
+                                'rgba(75, 192, 192, 1)'   // Border color for End-Term
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: { 
+                                beginAtZero: true  // Ensure the y-axis starts from 0
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+    {% endfor %}
+    
+    <!-- Include Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    
+    <!-- Include Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+      </div>
+      
+      <!-- Include Chart.js from CDN -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
+    
+</div>
 
 
+<div style="width: 99%;margin: 150px auto 0 auto;background-color: rgb(4, 3, 20);color: white;position: relative;"><br><br>
+    <h5 style="padding-left: 30px;" class="text-center">E-Learning, Assignments & Datalytics</h5><br><br>
+    
+    <div style=" gap: 10px; width: 100%; margin: 0 auto; justify-content: center;position: relative;">
+        <div style="padding: 30px;background-color: #F8F8FF;color: #070F2B;width: 90%;max-width: 800px;margin: 0 auto;position: relative;">
+            <a class="btn btn-dark" style="position: absolute;top: 10px;right: 30px;" href="{% url 'task-view-select' student.adm_no student.academicprofile.current_class.grade %}">View All</a>
+            <h6>E-Learning Progress</h6>
+            <select class="form-select" aria-label="Default select example">
+                <option value="" selected>Select Grade</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select><br><br>
+            {% for subject in student.mysubjects.name.all %}
+            <h6>{{ subject.name }}</h6>
+            
+            <div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar bg-success" {% with student|subject_progress:subject.id as progressive  %}
+                {% if progressive < 50 %}
+                  style="width: {{ progressive }}%;background-color:crimson "
+                {% else %}
+                  style="width: {{ progressive }}%;background-color: primary;  color:white;"
+                {% endif %}
+                  aria-valuenow="63" aria-valuemin="0" aria-valuemax="100">
+                  {{ progressive }}%
+              {% endwith %}</div>
+                
+              </div><br>
+            {% endfor %}
+        </div>
+        <br>
 
+    </div>
 </div>
 
 

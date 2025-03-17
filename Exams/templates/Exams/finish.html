@@ -1,4 +1,4 @@
-{% extends 'Users/base.html' %}
+{% extends 'Guardian/baseg.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -21,9 +21,9 @@
             You answered {{ score }} out of {{ test.test_size }} questions correctly.</p>
         <h6>You scored {{ score }} / {{ test.test_size}}.</h6>
         <br>
-        <a href="{% url 'test-detail' instance test_uuid %}"><button class="btn btn-info">Review</button></a>
+        <a href="{% url 'kid-test-revision'  instance student.adm_no test_uuid %}"><button class="btn btn-info">Review</button></a>
     {% endif %}
-        <a href="{% url 'student-home' %}"><button class="btn btn-warning">Home</button></a>
+        <a href="{% url 'guardian-home' %}"><button class="btn btn-warning">Home</button></a>
 </div>
 
 

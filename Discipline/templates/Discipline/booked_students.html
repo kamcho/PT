@@ -1,0 +1,46 @@
+{% extends template %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+  {% if user.role == 'Teacher' %}
+  <a class="btn btn-primary" href="{% url 'book-incident' %}">Book Student</a>
+  <br><br>
+  {% endif %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+         <th><h6>Student</h6></th>
+         <th><h6>Class</h6></th>
+         <th><h6>Offence</h6></th>
+        <th><h6>Points Remaining</h6></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for incident in incidents %}
+        
+            <tr>
+                
+                <td><input type="checkbox"></td>
+                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+                <td><a href="{% url 'manage-booked-incident' incident.id %}">{{ incident.user.studentprofile.get_names }}<br><small>{{ incident.user.adm_no }}</small></a></td>
+                <td>{{ incident.user.academicprofile.current_class.grade }} {{ incident.user.academicprofile.current_class }}</td>
+                <td>{{ incident.incident.name }} <span class="badge bg-secondary">{{ incident.incident.points }}</span></td>
+                <td>{{ incident.user.studentdisciplinescore.points }}</td>
+         
+              </tr>
+        
+        
+      {% endfor %}
+    </tbody>
+ </table>
+
+
+</div>
+
+{% endblock %}

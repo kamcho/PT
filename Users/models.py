@@ -7,40 +7,48 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 
-
+class Schools(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+    names = models.CharField(max_length=150)
+    display = models.CharField(max_length=100, null=True)
+    location = models.CharField(max_length=100)
+    contact = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    has_boarding = models.BooleanField(default=True)
+    is_mixed = models.BooleanField(default=False)
+    def __str__(self):
+        return str(self.names)
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, role, password=None):
+    def create_user(self, id_number, role, password=None):
         """
-        Creates and saves a User with the given email, date of
-        birth and password.
+        Creates and saves a User with the given ID number and password.
         """
+        if not id_number:
+            raise ValueError("Users must have an ID number")
 
         user = self.model(
-
-            email=email,
+            id_number=id_number,
             role=role,
-
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, id_number, password=None):
         """
-        Creates and saves a superuser with the given email, date of
-        birth and password.
+        Creates and saves a superuser with the given ID number and password.
         """
         user = self.create_user(
-
-            email=email,
+            id_number=id_number,  # ✅ Use id_number instead of id
             role='Admin',
             password=password,
-
         )
         user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True  # ✅ Ensure the superuser flag is set
         user.save(using=self._db)
         return user
 
@@ -53,56 +61,44 @@ class MyUser(AbstractBaseUser):
         Guardian = "Guardian"
         Supervisor = "Supervisor"
         Referer = "Referer"
-       
-
+        Supplier = "Supplier"
 
     base_role = Role.Student
-    email = models.EmailField(unique=True)
-    uuid = models.CharField(max_length=100, default=uuid.uuid4, unique=True, editable=True)   
-    # date = models.DateField(default=timezone.now)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    school = models.ForeignKey(Schools, null=True,blank=True, on_delete=models.CASCADE)
+    id_number = models.CharField(max_length=20, unique=True)  # ✅ Ensure unique=True
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)   
+    date = models.DateField(default=timezone.now)
     role = models.CharField(max_length=15, choices=Role.choices, default=base_role)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    objects = MyUserManager()
-    USERNAME_FIELD = 'email'
+    is_staff = models.BooleanField(default=False)  # ✅ Required for Django Admin
+    is_superuser = models.BooleanField(default=False)  # ✅ Needed for superusers
 
+    objects = MyUserManager()
+
+    USERNAME_FIELD = 'id_number'  # ✅ Django now identifies users by ID number
+    REQUIRED_FIELDS = []  # No other required fields
 
     def __str__(self):
-        return str(self.email)
-
-
+        return str(self.id_number)
 
     def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
         return True
 
     def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
         return True
 
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
-    
-    # class Meta:
-    #     db_table = 'users_myuser'  # Custom table name
-    #     managed = False
 
-
-
-class RefererManager(BaseUserManager):
+class SupplierManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         result = super().get_queryset(*args, **kwargs)
-        return result.filter(role=MyUser.Role.Referer)
+        return result.filter(role=MyUser.Role.Supplier)
 
 
-class Referer(MyUser):
-    base_role = MyUser.Role.Referer
-    partner = RefererManager()
+class Supplier(MyUser):
+    base_role = MyUser.Role.Supplier
+    partner = SupplierManager()
 
     class Meta:
         proxy = True
@@ -164,24 +160,47 @@ class Supervisor(MyUser):
     class Meta:
         proxy = True
 
-class Grade(models.Model):
-    grade= models.PositiveIntegerField(unique=True)
-    level = models.CharField(max_length=100)
+
+class Accounts(models.Model):
+    school = models.ForeignKey(Schools, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    account = models.CharField(max_length=100, null=True, blank=True)
+    is_active = models.BooleanField()
 
     def __str__(self):
-        return str(self.grade)
+        return str(self.name)
+
+class Classes(models.Model):
+    school = models.ForeignKey(Schools, on_delete=models.CASCADE)
+    class_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    grade = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+    year = models.PositiveIntegerField(default=2025)
+    is_active = models.BooleanField(default=True)
+    class_teacher = models.ForeignKey(MyUser, null=True, blank=True, on_delete=models.SET_NULL)
+    def __str__(self):
+        return str(self.name)
     
-    # class Meta:
-    #     db_table = 'users_grade'  # Custom table name
-    #     managed = False
+class Students(models.Model):
+    school = models.ForeignKey(Schools, on_delete=models.CASCADE)
+    adm_no = models.CharField(max_length=30, unique=True)
+    date = models.DateField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return str(self.adm_no)
+class StudentsFeeAccount(models.Model):
+    user = models.OneToOneField(Students, on_delete=models.CASCADE)
+    balance = models.PositiveIntegerField()
+    def __str__(self):
+        return str(self.user)
 
 class AcademicProfile(models.Model):
 
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
-    current_class = models.ForeignKey(Grade, null=True, on_delete=models.CASCADE)
-
+    user = models.OneToOneField(Students, on_delete=models.CASCADE)
+    current_class = models.ForeignKey(Classes, on_delete=models.CASCADE)
+    
     def __str__(self):
-        return self.user.email
+        return str(self.user)
     def is_content(self):
         return self.current_class.grade in [4, 5, 6]
 
@@ -193,14 +212,14 @@ class AcademicProfile(models.Model):
 class PersonalProfile(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     f_name = models.CharField(max_length=30)
+    is_boarder = models.BooleanField(default=False)
     location = models.CharField(max_length=100, blank=True)
     l_name = models.CharField(max_length=30)
     surname = models.CharField(max_length=30, blank=True)
     gender = models.CharField(max_length=10, blank=True)
-    phone = models.CharField(max_length=15, null=True)
-
+    phone = models.CharField(max_length=20, null=True)
     def __str__(self):
-        return self.user.email
+        return str(self.user)
     def get_names(self):
         first = self.f_name
         last = self.l_name
@@ -208,11 +227,40 @@ class PersonalProfile(models.Model):
         if first or last or surname:
             if last:
                 last = last[0]
-            return first.upper() + ' ' + last.upper() + '.' + ' ' + surname.upper()
+            return first.title() + ' ' + last.title() + '.' + ' ' + surname.title()
         else:
             return self.user
-        
+
+
+class StudentProfile(models.Model):
+    user = models.OneToOneField(Students, on_delete=models.CASCADE)
+    f_name = models.CharField(max_length=30)
+    is_boarder = models.BooleanField(default=False)
+    location = models.CharField(max_length=100, blank=True)
+    l_name = models.CharField(max_length=30)
+    surname = models.CharField(max_length=30, blank=True)
+    gender = models.CharField(max_length=10, blank=True)
+
+    def __str__(self):
+        return str(self.user)
+    def get_names(self):
+        first = self.f_name
+        last = self.l_name
+        surname = self.surname
+        if first or last or surname:
+            if last:
+                last = last[0]
+            return first.title() + ' ' + last.title() + '.' + ' ' + surname.title()
+        else:
+            return self.user.adm_no
     # class Meta:
     #     db_table = 'users_personalprofile'  # Custom table name
     #     managed = False
     
+class StudentsFeeAccount(models.Model):
+    user = models.OneToOneField(Students, on_delete=models.CASCADE)
+    balance = models.DecimalField(decimal_places=2, max_digits=10)
+    last_update = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return str(self.user)

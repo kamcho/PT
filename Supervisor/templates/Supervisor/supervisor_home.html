@@ -4,64 +4,113 @@
 {% block content %}
 
 
+
+
+<style>
+
+.wave-container {
+    position: absolute;
+    width: 100%;
+    top: 60px;
+    min-height: 400px;
+    height: max-content;
+    background: linear-gradient(135deg, #6e8efb, #4a6cf7);
+    overflow: hidden;
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,160 C180,220 360,220 540,160 C720,100 900,100 1080,160 C1260,220 1440,220 1620,160 L1440,320 L0,320 Z"></path></svg>') repeat-x;
+
+    animation: wave-animation 21s linear infinite;
+}
+.wave-1 {
+    animation-duration: 10s;
+    opacity: 0.3; /* Lightest opacity */
+    background-color: rgba(255, 255, 255, 0.3); /* Light color */
+}
+
+.wave-2 {
+    animation-duration: 8s;
+    opacity: 0.5; /* Medium opacity */
+    background-color: rgba(255, 255, 255, 0.5); /* Medium color */
+}
+
+.wave-3 {
+    animation-duration: 6s;
+    opacity: 0.7; /* Strongest opacity */
+    background-color: rgba(255, 255, 255, 0.7); /* Strong color */
+}
+@keyframes wave-animation {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+</style>
+
+
+<div style="position: relative !important;min-height: 480px;">
+    <div class="wave-container">
+        <div class="wave"></div>
+        <!-- <div class="wave wave-2"></div> -->
+        <!-- <div class="wave wave-3"></div> -->
+        
+        <br><br> <div class="users-view">
+            <div class="user-card">
+                All Users<br>
+                <h4 style="font-size: 50px;">{{ users }}</h4>
+    
+            </div>
+            <a class="no-style" href="{% url 'students-view' %}">
+                <div class="user-card">
+                    <i class="bi bi-people"> </i>Students<br>
+                    <h4 style="font-size: 50px;" >{{ students }}</h4>
+                    <small><i class="bi bi-gender-male"> </i>M {{ males }} | <i class="bi bi-gender-female"> </i>F {{ females }}</small>
+                    
+                </div>
+            </a>
+            <a class="no-style" href="{% url 'teachers-view' %}">
+                <div class="user-card">
+                    <i class="bi bi-display"> </i>Teachers<br>
+                    <h4 style="font-size: 50px;">{{ teachers }}</h4>
+                     <small><i class="bi bi-gender-male"> </i>M {{ t_males }} | <i class="bi bi-gender-female"> </i>F {{ t_females }}</small>
+                    
+    
+                </div>
+            </a>
+            
+            <a class="no-style" href="{% url 'guardians-view' %}">
+              <div class="user-card">
+                <i class="bi bi-people"> </i> Guardians<br>
+                <h4 style="font-size: 50px;">{{ parents }}</h4>
+                <small><i class="bi bi-gender-male"> </i>M {{ g_males }} | <i class="bi bi-gender-female"> </i>F {{ g_females }}</small>
+    
+              </div>
+            </a>
+    
+        </div>
+    </div>
+</div>
+
 <br>
 <br>
-<br>
-<br>
+
+
 
 
 <!--<h6>{{ user.role }}</h6>-->
-<div class="bg-gradient" >
+<div style="position: relative;" >
  <div class="subject-select-content-contaier" >
-    <br>
-    <br>
-    <br>
-    <br>
-  
-   
-    <div class="users-view">
-        <div class="user-card">
-            All Users<br>
-            <h4 style="font-size: 50px;">{{ users }}</h4>
-
-        </div>
-        <a class="no-style" href="{% url 'students-view' %}">
-            <div class="user-card">
-                <i class="bi bi-people"> </i>Students<br>
-                <h4 style="font-size: 50px;" >{{ students }}</h4>
-                <small><i class="bi bi-gender-male"> </i>M {{ males }} | <i class="bi bi-gender-female"> </i>F {{ females }}</small>
-                
-            </div>
-        </a>
-        <a class="no-style" href="{% url 'teachers-view' %}">
-            <div class="user-card">
-                <i class="bi bi-display"> </i>Teachers<br>
-                <h4 style="font-size: 50px;">{{ teachers }}</h4>
-                <small><i class="bi bi-gender-male"> </i>M {{ t_males }} | <i class="bi bi-gender-female"> </i>F {{ t_females }}</small>
-                
-
-            </div>
-        </a>
-        
-        <a class="no-style" href="{% url 'guardians-view' %}">
-          <div class="user-card">
-            <i class="bi bi-people"> </i> Guardians<br>
-            <h4 style="font-size: 50px;">{{ parents }}</h4>
-            <small><i class="bi bi-gender-male"> </i>M {{ g_males }} | <i class="bi bi-gender-female"> </i>F {{ g_females }}</small>
-
-          </div>
-        </a>
-
-    </div>
 
 
-<br><br>
-
-
-
-
-
-<div >
+<div class="hoe" >
 
 
     <div class="expenses">
@@ -69,18 +118,18 @@
         <div class="data-card"  style="color: white !important;z-index: 1000;">
             
             <div class="four">
-                <a href="">
+                <a href="{% url 'finance' %}">
                 <div class="service-card" style="background-color: #ffd3b6;color: #524a79;">
-                    <h6 class="text-center">Terms</h6>
-                    <p>Create and manage terms information.</p>
+                    <h6 class="text-center">Finance</h6>
+                    <p>View and manage institutions`s finances.</p>
             
             
                 </div>
             </a>
-            <a href="{% url 'create-course' %}">
+            <a href="{% url 'classes' %}">
                 <div class="service-card" style="background: #fcf8f3;color: #524a79;">
-                    <h6 class="text-center">E-Courses</h6>
-                    <p>Manage course and subjects information.</p>
+                    <h6 class="text-center">Classes</h6>
+                    <p>View and manage classes</p>
             
                 </div>
             </a>
@@ -91,7 +140,7 @@
             
                 </div>
             </a>
-            <a href="">
+            <a href="{% url 'incidents'  %}">
                 <div class="service-card" style="background-color: rgba(29, 25, 46, .8);color: white;">
                     <h6 class="text-center">Discipline</h6>
                     <h6>Create and manage Indiscipline incidents</h6>
@@ -109,9 +158,8 @@
         <div style="padding-left: 20px;color: white !important;" >
             <a href="{% url 'notices' %}" style="color: white;"><i class="bi bi-bezier2"> </i> Announcements</a>
             <hr>
-            <a href="{% url 'promote' %}" style="color: coral;"><i class="bi bi-bezier2" > </i> Promote Classes</a>
-            <hr>
-            <a href="{% url 'migrate-fees' %}" style="color: coral;"><i class="bi bi-bezier2" > </i> Migrate Fee Balances</a>
+            <a href="{% url 'exam-mode' %}" style="color: coral;"><i class="bi bi-bezier2" > </i> Enable Exam </a>
+            
             <hr>
             <a href="{% url 'create-class' %}" style="color: white;"><i class="bi bi-bezier2" > </i> Create Class</a>
             <hr>
@@ -125,7 +173,7 @@
     
 
 <br><br>
-<div  class="insight">
+<div  class="data-card" style="width: 90%;height: auto !important;">
     
     <br><br>
     <form method="post" style="width: 80%;margin: auto auto;">
@@ -139,9 +187,16 @@
                 <option value="Term 2">Term 2</option>
                 <option value="Term 3">Term 3</option>
                 
-        
-        
-              </select>
+                   </select>
+                   <select class="form-select" aria-label="Default select example" name="period" required>
+                    <option value="{{ period }}" selected>{{ period }}</option>
+                    <option value="OPENER">OPENER</option>
+                    <option value="MID">MID TERM</option>
+                    <option value="END Term">END TERM</option>
+                    
+            
+            
+                  </select>
             <button class="btn btn-dark" type="submit">SET</button>
         </div>
     </form>
@@ -158,37 +213,11 @@
   </div>
 
   
-  <br><br><br><br>
+  
 
 
 
-<div class="subjects-select-view" >
-    <a href="{% url 'subject-view' 4 %}" class="no">
 
-        <div class="subject-select-card" >
-            <h6>Analyticss</h6>
-            <img src="{% static 'Supervisor\GOLD-6487-CareerGuide-Batch04-Images-GraphCharts-01-Line.jpg' %}" style="width: 100%;height: auto;">
-        </div>
-    </a>
-    <a href="{% url 'classes' %}">
-        <div class="subject-select-card">
-        <h6>Classes</h6>
-        <img src="{% static 'Supervisor\funny-alphabet-with-kids-abcd-vector-1303233.webp' %}" style="background-repeat: no-repeat; background-position: center center; width: 100% !important;">
-    </div>
-    </a>
-    
-    <a href="{% url 'school-assignments' %}">
-        <div class="subject-select-card">
-            <!-- <img src="{% static 'Supervisor\funny-alphabet-with-kids-abcd-vector-1303233.webp' %}" style="background-repeat: no-repeat; background-position: center center;"> -->
-        <h6>Assignments</h6>
-        <p>View  class assignments results analytics.</p>
-        
-    </div>
-</a>
- 
-
-
-</div>
 
 <script>
     var labels = {{ chart_data.labels|safe }};
@@ -266,5 +295,5 @@
 </script>
 
 </div>
-</div>
+</div></div>
 {% endblock %}

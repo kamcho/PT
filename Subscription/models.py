@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import models
 
 # Create your models here.
-from Users.models import MyUser
+from Users.models import MyUser, Students
 
 
 class Subscriptions(models.Model):
@@ -29,7 +29,7 @@ class Referal(models.Model):
 
 
 class MySubscription(models.Model):
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(Students, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
     expiry = models.DateField(auto_created=True, default=datetime.date.today )
     type = models.ForeignKey(Subscriptions, to_field='type', on_delete=models.CASCADE)

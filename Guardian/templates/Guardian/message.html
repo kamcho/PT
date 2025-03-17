@@ -1,0 +1,20 @@
+
+{% extends base_html %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+<div style="width: 95%;max-width: 800px;margin: 100px auto; color: white;" >
+
+   
+    <div style="position: relative;border: 1px solid rgb(8, 32, 8);width: 90%;max-width:600px;min-height: 200px ;margin: 0 auto;overflow-y: hidden;border-radius: 10px;padding: 30px;background-color: rgb(8, 6, 27);">
+      
+        <h5 style="color: cornflowerblue;">{{ update.ministry }}</h5>
+      <h6>{{ update.title }}</h6>
+     <small style="height: 100px;overflow-y: hidden;">{{ update.description }}</small>
+     <small class="badge text-bg-secondary" style="position: absolute;bottom: 10px;right: 10px;"><span class="badge bg-secondary">{{ update.date }}</span></small>
+    </div><br>
+</div>
+
+{% endblock %}

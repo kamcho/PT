@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+import random
 import uuid
 from django.db import transaction
 
@@ -25,11 +26,12 @@ from openai import OpenAI
 import openai
 
 from Exams.models import ClassTest, ClassTestStudentTest, StudentTest, TopicalQuizes
+from Guardian.models import MyKids
 from SubjectList.models import AIFiles, Completion, Prompt, RateLimiter, Subject, Subtopic, Progress, TopicExamNotifications, Topic, TopicalExamResults, Course, \
      AccountInquiries
 # from Teacher.models import ClassTestNotifications
-from Teacher.models import StudentList
-from Users.models import AcademicProfile, PersonalProfile
+from Teacher.models import MyClass
+from Users.models import AcademicProfile, PersonalProfile, StudentProfile, Students
 from django.views.generic import TemplateView
 
 logger = logging.getLogger('django')
@@ -220,7 +222,13 @@ class IsStudent(UserPassesTestMixin):
             return self.request.user.role == 'Student'
         else:
             return False
-
+class IsMyParent(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated:
+            adm_no = self.kwargs['adm_no']
+            return MyKids.objects.filter(kids__adm_no=adm_no).exists()
+        else:
+            return False
 def send_mail(user, subject, body):
     """
 
@@ -300,7 +308,7 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
         return context
     
 
-class Learning(LoginRequiredMixin, IsStudent, TemplateView):
+class Learning(LoginRequiredMixin, IsMyParent, TemplateView):
     """
     View to display subjects by grade for learning.
     """
@@ -321,11 +329,12 @@ class Learning(LoginRequiredMixin, IsStudent, TemplateView):
         """
         context = super().get_context_data(**kwargs)
         grade = self.kwargs['grade']
+        adm = self.kwargs['adm_no']
 
         try:
-            # Display subjects by Grade
+            context['student'] = Students.objects.get(adm_no=adm)           # Display subjects by Grade
             subjects = Subject.objects.filter(grade=grade, status='1')
-            
+            print(subjects)
             if not subjects:
                 messages.warning(self.request, 'We could not find Subjects matching your query!!')
                 raise Subject.DoesNotExist
@@ -354,7 +363,7 @@ class Learning(LoginRequiredMixin, IsStudent, TemplateView):
 
         except Exception as e:
             # Handle other unexpected exceptions
-            messages.error(self.request, f'An error occurred. Please contact @support for assistance.')
+            # messages.error(self.request, f'An error occurred. Please contact @support for assistance. {str(e)}')
             context['subjects'] = None  # Set subjects to None to indicate error
             error_message = f"Grade {grade} subjects are not available"  # Get the error message as a string
             error_type = type(e).__name__
@@ -485,7 +494,18 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
             dict: A dictionary containing context data for the template.
         """
         context = super().get_context_data(**kwargs)
+        # 1. Kenyan Male English Names
+        
+            
+        
+
+
+
+
+
         try:
+            adm_no = self.kwargs['adm_no']
+            context['student'] = Students.objects.get(adm_no=adm_no)
             if 'index' in self.request.session:
                 del self.request.session['index']
             subtopic = self.kwargs.get('subtopic')
@@ -515,7 +535,7 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
     
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
-            user = request.user
+            user = self.get_context_data().get('student')
             if 'index' in self.request.session:
                 del self.request.session['index']
             duration = self.get_context_data().get('time')
@@ -543,7 +563,7 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
                 subject = subtopic.subject
                 topic = subtopic.topic
                 # Redirect to the 'tests' view with appropriate arguments
-                about = f'{subject}: {topic} test quiz is ready.'
+                about = f'{user.studentprofile.get_names().title()} {subject}: {topic} test quiz is ready.'
                 message = f'The quiz for {topic}  is now ready. This test is designed to test your understanding in this topic and all its subtopics. Once started, the quiz will finish in 15 minutes. ' \
                           'Good luck.'
 
@@ -599,7 +619,7 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
                                 messages.success(self.request, f'You have completed {topic}, Take the topical assesment test from the Exam panel.')
 
                                 # Compose email body
-                                body = f"Dear {user.personalprofile.f_name}, We are thrilled to congratulate you on " \
+                                body = f"Dear {user.studentprofile.get_names()}, We are thrilled to congratulate you on " \
                                        f"successfully completing the {topic} in {subject}! Your dedication and hard work " \
                                        f"are truly commendable, and we applaud your commitment to your studies. To " \
                                        f"further enhance your understanding and mastery of the topic, " \
@@ -715,7 +735,7 @@ class SubtopicInfo(LoginRequiredMixin, TemplateView):
                                 }
                             )
                 
-                return redirect('tests', 'Topical', test.uuid)
+                return redirect('tests', user.adm_no,'Topical', test.uuid)
             except:
                 messages.error(self.request, 'An error occured. @contact support')
                 return redirect(self.request.get_full_path())
@@ -1042,6 +1062,9 @@ class Syllabus(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         try:
+            adm_no = self.kwargs['adm_no']
+            student = Students.objects.get(adm_no=adm_no)
+            context['student'] = student
             subject_id = self.kwargs.get('subject_id')
 
             # Fetch topics for the specified subject and order them
@@ -1463,7 +1486,9 @@ class AskAi(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        prompts = Prompt.objects.filter(user=user).prefetch_related('file', 'completion_set')
+        student = Students.objects.get(adm_no=self.kwargs['adm_no'])
+        context['student'] = student
+        prompts = Prompt.objects.filter(user=student)[:5].prefetch_related('file', 'completion_set')
         print(prompts)
         context['prompts'] = prompts
     
@@ -1475,7 +1500,8 @@ class AskAi(TemplateView):
 
 def chatgpt_answer(request):
     if request.method == 'POST' :
-        rate = RateLimiter.objects.get(user=request.user)
+        adm_no = request.POST.get('adm_no')
+        rate = RateLimiter.objects.get(user__adm_no=adm_no)
         if rate.tokens == 0:
             return JsonResponse({'answer':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
         else:
@@ -1483,10 +1509,10 @@ def chatgpt_answer(request):
 
             images = request.FILES.getlist('images[]')
            
+            student = Students.objects.get(adm_no=adm_no)
             
             
-            
-            prompts = Prompt.objects.filter(user=request.user).order_by('-id')[:5]
+            prompts = Prompt.objects.filter(user=student).order_by('-id')[:5]
             # print('prompts', prompts)
             messages = []
             # Call ChatGPT API to get the answer
@@ -1509,17 +1535,17 @@ def chatgpt_answer(request):
                             
                         messages.append({"role": "user", "content": prompt.quiz})
                 messages.reverse()
-                academia = get_object_or_404(AcademicProfile, user=request.user)
+                academia = get_object_or_404(AcademicProfile, user=student)
                 grade = academia.current_class.grade 
                 level = academia.current_class.level
-                profile = get_object_or_404(PersonalProfile, user=request.user)
+                profile = get_object_or_404(StudentProfile, user=student)
                 name = profile.get_names()
                 messages.insert(0,{
                     "role": "system",
-                    "content": f"You are a helpful assistant for {name} in {grade} in kenyan kid in {level}. Use simple language since you are talking to a child"
+                    "content": f"You are a helpful assistant for a grade  {grade} named {name} . Use simple language since you are talking to a child"
                 })
                 if images:
-                    quiz = Prompt.objects.create(user=request.user, quiz=question)
+                    quiz = Prompt.objects.create(user=student, quiz=question)
                     # for image in images:
                     upload = AIFiles.objects.create(file=images[0])
                     quiz.file.add(upload)
@@ -1531,7 +1557,7 @@ def chatgpt_answer(request):
                     data_url = f"data:image/{upload.file.name.split('.')[-1]};base64,{encoded_string}"
                                             
                 else:
-                    quiz = Prompt.objects.create(user=request.user, quiz=question)
+                    quiz = Prompt.objects.create(user=student, quiz=question)
                 if images:
                     datas = [
                             {
