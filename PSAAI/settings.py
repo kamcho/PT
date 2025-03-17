@@ -117,7 +117,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'kevin254$erp',      # Database name
+        'NAME': 'kevin254$wh',      # Database name
         'USER': 'kevin254',  # Your MySQL username
         'PASSWORD': '141778215aA!',  # Your MySQL password
         'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
