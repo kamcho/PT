@@ -61,38 +61,47 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         course = Course.objects.get(name="Agriculture")
-        subject_name = "Agriculture"
+        subject_name = "Christian Religious Education"
         grade = "7"
-        abbr = 'AGRIC'
+        abbr = 'CRE'
         
         # Ensure the subject exists
         
         
         # Topics and subtopics extracted from the document
         topics_data = {
-    "Conservation of Resources": [
-        "Controlling Soil Pollution",
-        "Constructing Water Retention Structures",
-        "Conserving Food Nutrients",
-        "Growing Trees"
+    "Introduction to Christian Religious Education": [
+        "Importance of Studying Christian Religious Education"
     ],
-    "Food Production Processes": [
-        "Preparing Planting Site and Establishing Crop",
-        "Selected Crop Management Practices",
-        "Preparing Animal Products: Eggs and Honey",
-        "Cooking: Roasting and Steaming"
+    "Creation": [
+        "Accounts of Creation",
+        "Stewardship over Creation",
+        "Responsibility over Plants",
+        "Use of Natural Resources"
     ],
-    "Hygiene Practices": [
-        "Hygiene in Rearing Animals",
-        "Laundry: Loose Coloured Items"
+    "The Bible": [
+        "Functions of the Bible",
+        "Divisions of the Bible",
+        "Bible Translations",
+        "Leadership in Israel: Moses"
     ],
-    "Production Techniques": [
-        "Sewing Skills: Knitting",
-        "Constructing Framed Suspended Garden",
-        "Adding Value to Crop Produce",
-        "Making Homemade Soap"
+    "The Early Life of Jesus Christ": [
+        "Prophecies about the Messiah",
+        "The Birth and Childhood of Jesus Christ"
+    ],
+    "The Church": [
+        "Selected Forms of Worship",
+        "Role of the Church in Education and Health"
+    ],
+    "Christian Living Today": [
+        "Human Sexuality",
+        "Christian Marriage and Family",
+        "Alcohol, Drugs and Substance Abuse",
+        "Gambling",
+        "Social Media"
     ]
 }
+
 
         
         subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=1, topics=len(topics_data), abbreviation=abbr)
