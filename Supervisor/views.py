@@ -60,62 +60,7 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        course = Course.objects.get(name="Agriculture")
-        subject_name = "Christian Religious Education"
-        grade = "7"
-        abbr = 'CRE'
-        
-        # Ensure the subject exists
-        
-        
-        # Topics and subtopics extracted from the document
-        topics_data = {
-    "Introduction to Christian Religious Education": [
-        "Importance of Studying Christian Religious Education"
-    ],
-    "Creation": [
-        "Accounts of Creation",
-        "Stewardship over Creation",
-        "Responsibility over Plants",
-        "Use of Natural Resources"
-    ],
-    "The Bible": [
-        "Functions of the Bible",
-        "Divisions of the Bible",
-        "Bible Translations",
-        "Leadership in Israel: Moses"
-    ],
-    "The Early Life of Jesus Christ": [
-        "Prophecies about the Messiah",
-        "The Birth and Childhood of Jesus Christ"
-    ],
-    "The Church": [
-        "Selected Forms of Worship",
-        "Role of the Church in Education and Health"
-    ],
-    "Christian Living Today": [
-        "Human Sexuality",
-        "Christian Marriage and Family",
-        "Alcohol, Drugs and Substance Abuse",
-        "Gambling",
-        "Social Media"
-    ]
-}
-
-
-        
-        subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=1, topics=len(topics_data), abbreviation=abbr)
-        orderz = 1
-        for topic_name, subtopics in topics_data.items():
-            topic, _ = Topic.objects.get_or_create(
-                name=topic_name, subject=subject, defaults={"order": orderz, "topics_count": len(subtopics), "test_size": 10, "time": 30}
-            )
-            orderz = orderz+1
-            for order, subtopic_name in enumerate(subtopics, start=1):
-                Subtopic.objects.get_or_create(
-                    subject=subject, topic=topic, name=subtopic_name,
-                    defaults={"id": uuid.uuid4(), "file1": "studyFiles/file.pdf", "file2": "studyFiles/start.mp4", "order": str(order)}
-                )
+       
 
 
         students = Students.objects.filter(school=self.request.user.school)
