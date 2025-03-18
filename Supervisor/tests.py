@@ -22,7 +22,32 @@ import itertools
         #     topic = Topic.objects.get(id=subtopic.topic.id)
         #     subject = Subject.objects.get(name=subtopic.subject.name, grade=subtopic.subject.grade)
         #     su = Subtopic.objects.create(name=subtopic.name, subject=subject, topic=topic, id=subtopic.id, order=subtopic.order)
-
+def create_topics_and_subtopics():
+    subject_name = "Mathematics"
+    grade = "9"
+    
+    # Ensure the subject exists
+    subject, created = Subject.objects.get_or_create(name=subject_name, grade=grade, defaults={"topics": 0})
+    
+    # Topics and subtopics extracted from the document
+    topics_data = {
+        "Whole Numbers": ["Integers", "Cubes and Cube Roots"],
+        "Algebra": ["Matrices", "Equations of a Straight Line", "Linear Inequalities"],
+        "Measurements": ["Area", "Volume of Solids", "Mass, Volume, Weight and Density", "Time, Distance and Speed"],
+        "Geometry": ["Coordinates and Graphs", "Scale Drawing", "Similarity and Enlargement", "Trigonometry"],
+        "Data Handling and Probability": ["Data Interpretation (Grouped Data)", "Probability"]
+    }
+    
+    for topic_name, subtopics in topics_data.items():
+        topic, _ = Topic.objects.get_or_create(
+            name=topic_name, subject=subject, defaults={"order": 1, "topics_count": len(subtopics), "test_size": 10, "time": 30}
+        )
+        
+        for order, subtopic_name in enumerate(subtopics, start=1):
+            Subtopic.objects.get_or_create(
+                subject=subject, topic=topic, name=subtopic_name,
+                defaults={"id": uuid.uuid4(), "file1": "studyFiles/file.pdf", "file2": "studyFiles/start.mp4", "order": str(order)}
+            )
 def add_subject():
     subjects = Subject.objects.all()
     courses = Course.objects.all()
