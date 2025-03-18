@@ -934,20 +934,20 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
             context['student']  = student
         except:
             messages.error(self.request, 'We could not find a student matching your query !')
-        if self.request.user.role == 'Guardian':
-            # get the current logged in user(learner) current grade and associated Subjects
-            context['base_html'] = 'Guardian/baseg.html'
+        # if self.request.user.role == 'Guardian':
+        #     # get the current logged in user(learner) current grade and associated Subjects
+        #     context['base_html'] = 'Guardian/baseg.html'
         
-        elif self.request.user.role == 'Teacher':
-            context['base_html'] = 'Teacher/teachers_base.html'
-        elif self.request.user.role == 'Supervisor':
-            context['base_html'] = 'Supervisor/base.html'
-        print(self.request.user.role)
+        # elif self.request.user.role == 'Teacher':
+        #     context['base_html'] = 'Teacher/teachers_base.html'
+        # elif self.request.user.role == 'Supervisor':
+        #     context['base_html'] = 'Supervisor/base.html'
+        # print(self.request.user.role)
         
 
         
         
-        context['user'] = student
+        context['student'] = student
         return context
     
     # def test_func(self):
