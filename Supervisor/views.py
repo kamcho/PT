@@ -60,21 +60,32 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        course = Course.objects.get(name="Mathematics")
-        subject_name = "Mathematics"
+        course = Course.objects.get(name="Science and Technology")
+        subject_name = "Integrated Science"
         grade = "9"
         
         # Ensure the subject exists
-        subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=1, topics=5, abbreviation='MATH')
+        subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=2, topics=3, abbreviation='SCIE')
         
         # Topics and subtopics extracted from the document
         topics_data = {
-            "Whole Numbers": ["Integers", "Cubes and Cube Roots"],
-            "Algebra": ["Matrices", "Equations of a Straight Line", "Linear Inequalities"],
-            "Measurements": ["Area", "Volume of Solids", "Mass, Volume, Weight and Density", "Time, Distance and Speed"],
-            "Geometry": ["Coordinates and Graphs", "Scale Drawing", "Similarity and Enlargement", "Trigonometry"],
-            "Data Handling and Probability": ["Data Interpretation (Grouped Data)", "Probability"]
+            "Mixtures, Elements, and Compounds": [
+                "Structure of the Atom",
+                "Metals and Alloys",
+                "Water Hardness"
+            ],
+            "Living Things and Their Environment": [
+                "Nutrition in Plants",
+                "Nutrition in Animals",
+                "Reproduction in Plants",
+                "Interdependence of Life"
+            ],
+            "Force and Energy": [
+                "Curved Mirrors",
+                "Waves"
+            ]
         }
+
         
         for topic_name, subtopics in topics_data.items():
             topic, _ = Topic.objects.get_or_create(
