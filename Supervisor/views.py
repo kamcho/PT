@@ -60,53 +60,54 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        course = Course.objects.get(name="Science and Technology")
-        subject_name = "Integrated Science"
-        grade = "9"
-        subjects1 = Topic.objects.filter(subject__id=23).order_by('-id')
-        subjects2 = Topic.objects.filter(subject__id=24).order_by('-id')
-        order=1
-        for subject in subjects1:
-            subject.order = order
-            subject.save()
-            order = order + 1
-        for subject in subjects2:
-            subject.order = order
-            subject.save()
-            order = order + 1
+        course = Course.objects.get(name="Mathematics")
+        subject_name = "Mathematics"
+        grade = "8"
+        abbr = 'MATH'
+        
         # Ensure the subject exists
-        # subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=2, topics=3, abbreviation='SCIE')
+        subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=1, topics=3, abbreviation=abbr)
         
-        # # Topics and subtopics extracted from the document
-        # topics_data = {
-        #     "Mixtures, Elements, and Compounds": [
-        #         "Structure of the Atom",
-        #         "Metals and Alloys",
-        #         "Water Hardness"
-        #     ],
-        #     "Living Things and Their Environment": [
-        #         "Nutrition in Plants",
-        #         "Nutrition in Animals",
-        #         "Reproduction in Plants",
-        #         "Interdependence of Life"
-        #     ],
-        #     "Force and Energy": [
-        #         "Curved Mirrors",
-        #         "Waves"
-        #     ]
-        # }
-
-        
-        # for topic_name, subtopics in topics_data.items():
-        #     topic, _ = Topic.objects.get_or_create(
-        #         name=topic_name, subject=subject, defaults={"order": 1, "topics_count": len(subtopics), "test_size": 10, "time": 30}
-        #     )
-            
-        #     for order, subtopic_name in enumerate(subtopics, start=1):
-        #         Subtopic.objects.get_or_create(
-        #             subject=subject, topic=topic, name=subtopic_name,
-        #             defaults={"id": uuid.uuid4(), "file1": "studyFiles/file.pdf", "file2": "studyFiles/start.mp4", "order": str(order)}
-        #         )
+        # Topics and subtopics extracted from the document
+        topics_data = {
+    "Numbers": [
+        "Integers",
+        "Fractions",
+        "Decimals",
+        "Squares and Square Roots",
+        "Rates, Ratio, Proportions and Percentages"
+    ],
+    "Algebra": [
+        "Algebraic Expressions",
+        "Linear Equations"
+    ],
+    "Measurements": [
+        "Circles",
+        "Area",
+        "Money"
+    ],
+    "Geometry": [
+        "Geometrical Constructions",
+        "Coordinates and Graphs",
+        "Scale Drawing",
+        "Common Solids"
+    ],
+    "Data Handling and Probability": [
+        "Data Presentation and Interpretation",
+        "Probability"
+    ]
+}
+        orderz = 1
+        for topic_name, subtopics in topics_data.items():
+            topic, _ = Topic.objects.get_or_create(
+                name=topic_name, subject=subject, defaults={"order": orderz, "topics_count": len(subtopics), "test_size": 10, "time": 30}
+            )
+            orderz = orderz+1
+            for order, subtopic_name in enumerate(subtopics, start=1):
+                Subtopic.objects.get_or_create(
+                    subject=subject, topic=topic, name=subtopic_name,
+                    defaults={"id": uuid.uuid4(), "file1": "studyFiles/file.pdf", "file2": "studyFiles/start.mp4", "order": str(order)}
+                )
 
 
         students = Students.objects.filter(school=self.request.user.school)
