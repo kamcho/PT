@@ -60,43 +60,42 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        course = Course.objects.get(name="Mathematics")
-        subject_name = "Mathematics"
-        grade = "8"
-        abbr = 'MATH'
+        course = Course.objects.get(name="Agriculture")
+        subject_name = "Agriculture"
+        grade = "7"
+        abbr = 'AGRIC'
         
         # Ensure the subject exists
-        subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=1, topics=3, abbreviation=abbr)
+        
         
         # Topics and subtopics extracted from the document
         topics_data = {
-    "Numbers": [
-        "Integers",
-        "Fractions",
-        "Decimals",
-        "Squares and Square Roots",
-        "Rates, Ratio, Proportions and Percentages"
+    "Conservation of Resources": [
+        "Controlling Soil Pollution",
+        "Constructing Water Retention Structures",
+        "Conserving Food Nutrients",
+        "Growing Trees"
     ],
-    "Algebra": [
-        "Algebraic Expressions",
-        "Linear Equations"
+    "Food Production Processes": [
+        "Preparing Planting Site and Establishing Crop",
+        "Selected Crop Management Practices",
+        "Preparing Animal Products: Eggs and Honey",
+        "Cooking: Roasting and Steaming"
     ],
-    "Measurements": [
-        "Circles",
-        "Area",
-        "Money"
+    "Hygiene Practices": [
+        "Hygiene in Rearing Animals",
+        "Laundry: Loose Coloured Items"
     ],
-    "Geometry": [
-        "Geometrical Constructions",
-        "Coordinates and Graphs",
-        "Scale Drawing",
-        "Common Solids"
-    ],
-    "Data Handling and Probability": [
-        "Data Presentation and Interpretation",
-        "Probability"
+    "Production Techniques": [
+        "Sewing Skills: Knitting",
+        "Constructing Framed Suspended Garden",
+        "Adding Value to Crop Produce",
+        "Making Homemade Soap"
     ]
 }
+
+        
+        subject = Subject.objects.create(name=subject_name, grade=grade, course=course, order=1, topics=len(topics_data), abbreviation=abbr)
         orderz = 1
         for topic_name, subtopics in topics_data.items():
             topic, _ = Topic.objects.get_or_create(
