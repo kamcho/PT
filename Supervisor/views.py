@@ -1205,7 +1205,7 @@ class CreateClass(TemplateView, LoginRequiredMixin):
                     messages.error(self.request, str(e))
             else:
                 try:
-                    school_class = Classes.objects.create(name=class_name, grade=grade, class_size=class_size,
+                    school_class = Classes.objects.create(name=class_name, grade=grade,
                                                              school=self.request.user.school)
                     
                     messages.success(self.request, f'{class_name} Has Been Added To Classes')
