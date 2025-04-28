@@ -35,7 +35,7 @@
                     
                 </div> -->
                 <div class="col-md-6">
-                    <select class="form-select"  aria-label="Default select example" name="teacher" required>
+                    <select class="form-select"  aria-label="Default select example" name="teacher" >
                         <option></option>
                         {% for teacher in teachers %}
                             <option value="{{ teacher }}">{{ teacher.personalprofile.f_name }} {{ teacher.personalprofile.l_name }}</option>

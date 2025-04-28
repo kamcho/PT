@@ -1197,7 +1197,7 @@ class CreateClass(TemplateView, LoginRequiredMixin):
             class_teacher = self.get_context_data().get('teachers').get(email=class_teacher)
             try:
                 school_class = Classes.objects.create(class_name=class_name, grade=grade, class_size=class_size,
-                                                           class_teacher=class_teacher)
+                                                           class_teacher=class_teacher, school=self.request.user.school)
                 
                 messages.success(self.request, f'{class_name} Has Been Added To Classes')
             except Exception as e:
