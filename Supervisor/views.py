@@ -1194,7 +1194,8 @@ class CreateClass(TemplateView, LoginRequiredMixin):
             grade = self.request.POST.get('grade')
             class_size = self.request.POST.get('size')
             class_teacher = self.request.POST.get('teacher')
-            class_teacher = self.get_context_data().get('teachers').get(email=class_teacher)
+            if class_teacher:
+                class_teacher = self.get_context_data().get('teachers').get(email=class_teacher)
             try:
                 school_class = Classes.objects.create(class_name=class_name, grade=grade, class_size=class_size,
                                                            class_teacher=class_teacher, school=self.request.user.school)
