@@ -1196,13 +1196,21 @@ class CreateClass(TemplateView, LoginRequiredMixin):
             class_teacher = self.request.POST.get('teacher')
             if class_teacher:
                 class_teacher = self.get_context_data().get('teachers').get(email=class_teacher)
-            try:
-                school_class = Classes.objects.create(class_name=class_name, grade=grade, class_size=class_size,
-                                                           class_teacher=class_teacher, school=self.request.user.school)
-                
-                messages.success(self.request, f'{class_name} Has Been Added To Classes')
-            except Exception as e:
-                messages.error(self.request, str(e))
+                try:
+                    school_class = Classes.objects.create(class_name=class_name, grade=grade, class_size=class_size,
+                                                            class_teacher=class_teacher, school=self.request.user.school)
+                    
+                    messages.success(self.request, f'{class_name} Has Been Added To Classes')
+                except Exception as e:
+                    messages.error(self.request, str(e))
+            else:
+                try:
+                    school_class = Classes.objects.create(class_name=class_name, grade=grade, class_size=class_size,
+                                                             school=self.request.user.school)
+                    
+                    messages.success(self.request, f'{class_name} Has Been Added To Classes')
+                except Exception as e:
+                    messages.error(self.request, str(e))
             return redirect(self.request.get_full_path())
 
             
