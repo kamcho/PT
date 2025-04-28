@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Updates)
 admin.site.register(ExamMode)
 admin.site.register(Inquire)
+admin.site.register(Attendance)

@@ -4,7 +4,8 @@ import random
 import uuid
 from django.contrib.auth import authenticate, login
 from django.db.models import F, ExpressionWrapper, IntegerField, Case, When
-
+from itertools import chain
+from operator import attrgetter
 
 from django.contrib.auth.hashers import make_password
 
@@ -28,12 +29,12 @@ from django.views.generic import TemplateView
 from Analytics.views import check_role
 # from Finance.models import MpesaPayouts
 from Discipline.models import StudentDisciplineScore
-from Finance.models import FeeMigrations
+from Finance.models import FeeMigrations, InvoicePayments, Invoices, SupplierBalances
 from Guardian.models import MyKids
-from Supervisor.models import ExamMode, FileModel, Updates
+from Supervisor.models import Attendance, ExamMode, FileModel, Updates
 from Teacher.models import MyClass
 from Term.models import CurrentTerm, Exam, Terms
-from Users.models import AcademicProfile, Classes, MyUser, PersonalProfile, StudentProfile, Students, StudentsFeeAccount
+from Users.models import AcademicProfile, Accounts, Classes, MyUser, PersonalProfile, StudentProfile, Students, StudentsFeeAccount
 from Exams.models import ClassTest, ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizAnswers, TopicalQuizes
 from SubjectList.models import MySubjects, Subject, Subtopic, Course, Topic
 
@@ -382,6 +383,9 @@ class CreateStaff(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
                 if role == 'Guardian':
                     user = MyUser.objects.create(id_number=number,role=role, password=make_password(phone))
+                elif role == 'Supplier':
+                    number = self.request.user.school.id+number
+                    user = MyUser.objects.create(id_number=number,role=role,school=self.request.user.school, password=make_password(phone))
                 else:
                     user = MyUser.objects.create(id_number=number,role=role,school=self.request.user.school, password=make_password(phone))
                 profile, obj = PersonalProfile.objects.get_or_create(user=user)
@@ -739,8 +743,104 @@ class GuardianView(LoginRequiredMixin, TemplateView):
 
 
         return context
+def get_week_dates(given_date):
+    """
+    Given a date, return a list of dictionaries containing the dates of the same week (Monday-Sunday),
+    with the day name in uppercase.
+    """
+    # Convert string to date if necessary
+    if isinstance(given_date, str):
+        given_date = datetime.strptime(given_date, "%Y-%m-%d").date()
 
+    # Get the weekday (Monday=0, Sunday=6)
+    weekday_index = given_date.weekday()
 
+    # Find the Monday of the current week
+    monday = given_date - datetime.timedelta(days=weekday_index)
+
+    # Generate the week dates
+    week_dates = [
+        {"date": (monday + datetime.timedelta(days=i)).strftime("%Y-%m-%d"),
+         "day": (monday + datetime.timedelta(days=i)).strftime("%a").upper()}
+        for i in range(7)
+    ]
+
+    return week_dates
+
+class SchoolAttendance(LoginRequiredMixin, TemplateView):
+    template_name = 'Supervisor/attendance.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        date = datetime.date.today()
+        context['date'] = date
+        attendances = Attendance.objects.filter(date=date, class_id__school=user.school)
+
+        # Get all students in these attendance records
+        students_in_attendance = Students.objects.filter(attendance__in=attendances).distinct()
+        print(students_in_attendance, 'atteb')
+        context['students'] = students_in_attendance
+        return context
+
+class SupplierProfile(LoginRequiredMixin, TemplateView):
+    template_name = 'Supervisor/supplier_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id = self.kwargs['id']
+        context['accounts'] = Accounts.objects.filter(school=self.request.user.school) 
+        supplier = MyUser.objects.get(id=id)
+        context['supplier'] = supplier
+        invoices = Invoices.objects.filter(user__id=id)
+        payments = InvoicePayments.objects.filter(user__id=id)
+        # SupplierBalances.objects.create(user=supplier, balance=23750)
+        # Tag each item to know the type in the template
+        for invoice in invoices:
+            invoice.item_type = 'invoice'
+        
+        for payment in payments:
+            payment.item_type = 'payment'
+
+        # Combine and sort by date
+        combined = sorted(
+            chain(invoices, payments),
+            key=attrgetter('date'),
+            reverse=True  # optional: latest first
+        )
+        context['transactions'] = combined
+
+        # context['supplier'] = SupplierBalances.objects.get_or_create(user__id=id, balance=3450)
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            if True:
+                profile = self.get_context_data().get('supplier')
+                amount = self.request.POST.get('amount')
+                tid = self.request.POST.get('tid')
+                mode = self.request.POST.get('mode')
+                # date = datetime.now().strftime('%Y/%m/%d')
+                balance = profile.supplierbalances.balance - int(amount)
+                try:
+                    account = Accounts.objects.get(id=mode, school=self.request.user.school)
+                    pay = InvoicePayments.objects.create(transaction_id=tid,
+                                                      mode=account.name, amount=amount, balance=balance,
+                                                      user=profile, account=account,school=self.request.user.school)
+                    messages.success(self.request, 'Payment processed succesfully !')
+                except:
+                    if mode == 'Cash':
+                        pay = InvoicePayments.objects.create(transaction_id=tid,
+                                                      mode="Cash", amount=amount, balance=balance,
+                                                      user=profile, school=self.request.user.school)
+                    else:
+                        messages.error(self.request, 'We could not process this invoice payment !')
+
+               
+                
+                profile.supplierbalances.balance = balance
+                profile.supplierbalances.save()
+                return redirect(self.request.get_full_path())
 class StudentsProfile(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/students_profile.html'
 
@@ -748,7 +848,8 @@ class StudentsProfile(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         email = self.kwargs['email']
         # students = Students.objects.all()
-       
+        today = datetime.date.today()
+        context['days'] = get_week_dates(today)[:5]
         try:
             context['term'] = 'Term 1'
             
@@ -1150,6 +1251,16 @@ class ClassList(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         class_id = self.kwargs['class_id']
         class_ins = Classes.objects.get(class_id=class_id)
+
+        attendance_date = datetime.date.today()
+        try:
+            attendance = Attendance.objects.get(
+                class_id=class_ins,
+                date=attendance_date,
+            )
+            context['attendance'] = attendance
+        except:
+            pass
         context['class'] = class_ins
         
         students = Students.objects.filter(academicprofile__current_class=class_ins)
@@ -1157,6 +1268,23 @@ class ClassList(LoginRequiredMixin, TemplateView):
 
 
         return context
+
+    def post(self, request, **args):
+        if request.method == 'POST':
+            missing = self.request.POST.getlist('attendance') 
+            class_id = self.get_context_data().get('class')
+            attendance_date = datetime.date.today()
+            attendance, created = Attendance.objects.get_or_create(
+            class_id=class_id,
+            date=attendance_date,
+            defaults={"marked_by": self.request.user}
+        )
+            students = Students.objects.filter(adm_no__in=missing)
+            attendance.students.clear()
+            attendance.students.add(*students)
+            messages.info(self.request, f'Attendance marked! {students.count()} students were missing.')
+
+        return redirect(self.request.get_full_path())
 class ClassDetail(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/class_detail.html'
 
@@ -1420,10 +1548,12 @@ class ClassSubjectDetail(LoginRequiredMixin, TemplateView):
             class_id = self.kwargs['class_id']
             subject = self.kwargs['subject']
             term = self.kwargs['term']
+            context['csubject'] = Subject.objects.get(id=subject)
             class_name = Classes.objects.get(class_id=class_id)
             subs = Topic.objects.filter(subject__id=subject).order_by('order')
             context['topics'] = subs
-            period = self.request.session.get('period', 'MID')
+            # period = self.request.session.get('period', 'MID')
+            period = self.kwargs['period']
             try:    
                 context['current'] = MyClass.objects.get(subject__id=subject, class_id__class_id=class_id)
                 print('yes')

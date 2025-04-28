@@ -85,7 +85,7 @@ def get_expenses(year, month, school):
     upper_limit = str(get_days_in_month(year, month))
     ud = str(year) + '-' + str(month) + '-' + str(upper_limit)
     expenses = Expenses.objects.filter(date__gte=f'{year}-{month}-1', date__lte=ud, school=school)
-    payments = InvoicePayments.objects.filter(date__gte=f'{year}-{month}-1', date__lte=ud,invoice__school=school ).aggregate(amount=Sum('amount'))['amount'] or 0
+    payments = InvoicePayments.objects.filter(date__gte=f'{year}-{month}-1', date__lte=ud,school=school ).aggregate(amount=Sum('amount'))['amount'] or 0
     if expenses:
         amount = expenses.aggregate(amount=Sum('amount'))['amount'] or 0
     else:

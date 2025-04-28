@@ -60,3 +60,16 @@ class Inquire(models.Model):
     # class Meta:
     #     db_table = 'supervisor_inquire'  # Custom table name
     #     managed = False
+
+
+class Attendance(models.Model):
+    class_id = models.ForeignKey(Classes, on_delete=models.CASCADE)
+    marked_by = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    date = models.DateField()
+    students = models.ManyToManyField(Students)
+
+    class Meta:
+        unique_together = ('class_id', 'date')
+
+    def __str__(self):
+        return str(self.class_id)

@@ -20,6 +20,8 @@ urlpatterns = [        path('search-guardian/', SearchGuardianView.as_view(), na
     path('StudentsView/', StudentsView.as_view(), name='students-view'),
     path('TeachersView/', TeachersView.as_view(), name='teachers-view'),
     path('StudentsProfile/<str:email>/', StudentsProfile.as_view(), name='students-profile'),
+    path('SupplierProfile/<str:id>/', SupplierProfile.as_view(), name='supplier-profile'),
+    
     path('ManageUser/<str:email>/', ManageStudent.as_view(), name='manage-user'),
     path('TeacherProfile/<str:email>/', TeachersProfile.as_view(), name='teachers-profile'),
     path('TeacherInfo/<str:email>/', TeachersInfo.as_view(), name='teachers-info'),
@@ -29,6 +31,7 @@ urlpatterns = [        path('search-guardian/', SearchGuardianView.as_view(), na
     path('StudentsTestDetailView/<str:test_type>/<str:email>/<str:test_id>/Test', StudentTestDetailView.as_view(), name='students-test-detail-view'),
     path('CreateClass/', CreateClass.as_view(), name='create-class'),
     path('Classes/', ClassesView.as_view(), name='classes'),
+    path('Attendance/', SchoolAttendance.as_view(), name='attendance'),
     path('ClassList/<str:class_id>/', ClassList.as_view(), name='class-list'),
     path('GuardianView/<str:email>', GuardianView.as_view(), name='guardian-view'),
     path('Guardians/', GuardianListView.as_view(), name='guardians-view'),
@@ -43,7 +46,7 @@ urlpatterns = [        path('search-guardian/', SearchGuardianView.as_view(), na
     path('SchoolAssignments', AssignmentsView.as_view(), name='school-assignments'),
 
 
-    path('Classes/<str:class_id>/<str:subject>/<str:term>/Results/', ClassSubjectDetail.as_view(), name='class-subject-detail'),
+    path('Classes/<str:class_id>/<str:subject>/<str:term>/<str:period>/Results/', ClassSubjectDetail.as_view(), name='class-subject-detail'),
     path('<str:class_id>/ClassTestAnalytics/', ClassTestAnalytics.as_view(), name='class-exam-analytics'),
     path('CreateNotice/', CreateNotice.as_view(),name='create-notice'),
     path('Notices/', Notices.as_view(), name='notices'),

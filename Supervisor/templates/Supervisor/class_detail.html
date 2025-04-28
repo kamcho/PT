@@ -205,9 +205,9 @@
             {% for subject in subjects %}
             <!-- From Uiverse.io by ZstarPanda0210 --> 
             {% if term.term %}
-            <a href="{% url 'class-subject-detail' class.class_id subject.id term.term.id %}">
+            <a href="{% url 'class-subject-detail' class.class_id subject.id term.term.id period %}">
         {% else %}
-        <a href="{% url 'class-subject-detail' class.class_id subject.id term %}">
+        <a href="{% url 'class-subject-detail' class.class_id subject.id term period %}">
 
         {% endif %}
 <div class="card"> 

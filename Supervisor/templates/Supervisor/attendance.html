@@ -1,0 +1,72 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br>
+
+<div class="container">
+    <a href=""><button class="btn btn-primary">Missing Students {{ date }}</button></a>
+ 
+
+
+    <br><br>
+    <!-- <form method="post">
+      {% csrf_token %}
+      <div class="input-group mb-3">
+          <input type="text" class="form-control" name="search" placeholder="search by name, email or admission number" aria-label="Recipient's username" aria-describedby="button-addon2">
+          
+          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
+      </div>
+    </form> -->
+    <table class="table">
+        <thead>
+          <tr>
+            <th><h6>ID</h6></th>
+            <th><h6>User</h6></th>
+            <th><h6>ADM No</h6></th>
+            <th><h6>Class</h6></th>
+            <th><h6>Status</h6></th>
+           
+          </tr>
+        </thead>
+        <tbody>
+          
+            {% for user in students %}
+            
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              {% if user.is_active %}
+              <td><a href="{% url 'students-profile' user.adm_no %}"><h6>{{ user.studentprofile.get_names|title }}</h6></a></td>
+              <td>{{ user.adm_no }}</td>
+              <td>{{ user.academicprofile.current_class.grade }} {{ user.academicprofile.current_class }} </td>
+              
+                <td style="color: cornflowerblue;">Active</td>
+              {% else %}
+              <td><a href="{% url 'students-profile' user.id %}" style="color: crimson;"><h6>{{ user.student.get_names }}</h6></a></td>
+              <td style="color: crimson;">{{ user.adm_no }}</td>
+              <td style="color: crimson;">{{ user.academicprofile.current_class.grade }} {{ user.academicprofile.current_class }} </td>
+                <td style="color: crimson;">Disabled</td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+     </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

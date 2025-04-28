@@ -7,14 +7,26 @@
 <div class="container"  style="margin: 0 auto;width: 90%;max-width: 800px;margin: 2px solid grey;">
  
 
-    <h6 style="text-align: center;" class="btn btn-primary"> <i class="bi bi-layers"> </i>{{ class.grade }} - {{ class|title }}</h6>
+    
 
     <br><br>
-   
+   <form method="post">{% csrf_token %}
+    
+    <div style="justify-self: end;">
+      {% if not attendance %}
+      <button class="btn btn-primary"> <i class="bi bi-layers"> </i>{{ class.grade }} - {{ class|title }}</button>
+        <button class="btn btn-secondary" >Mark Attendance</button>
+      {% else %}
+      <h6 style="text-align: center;" class="btn btn-primary"> <i class="bi bi-layers"> </i>{{ class.grade }} - {{ class|title }}</h6>
+        <button class="btn btn-danger" >Re-Mark Attendance</button>
+      {% endif %}
+  </div><br>
     <table class="table">
         <thead>
           <tr>
+            
             <th><h6>ID</h6></th>
+            <th><small style="color: rgb(255, 217, 0) !important;font-size: 10px;width: 40px;">(Missing)</small></th>
             <th><h6>User</h6></th>
             <th><h6>ADM No</h6></th>
             <th><h6>Status</h6></th>
@@ -29,13 +41,14 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
               {% if user.is_active %}
-
+              <td><input class=""  type="checkbox" value="{{ user }}" name="attendance"></td>
               <td><a href="{% url 'students-profile' user.adm_no %}"><h6>{{ user.studentprofile.get_names }} </h6></a></td>
               <td>{{ user.adm_no }}<br><small style="text-align: center;color: cornflowerblue;">{{ user.studentprofile.gender }}</small></td>
               
                 <td style="color: cornflowerblue;">Active</td>
                 <td><a href="{% url 'book-incident' user.adm_no %}"><i class="bi bi-bookmark"> </i></a></td>
               {% else %}
+              <td><input class="form-check" type="checkbox" value="{{ user }}" name="attendance" disabled checked ></td>
               <td><a href="{% url 'students-profile' user %}" style="color: crimson;"><h6>{{ user.studentprofile.get_names }}</h6></a></td>
               <td style="color: crimson;">{{ user.adm_no }}</td>
               <td>{{ user.studentprofile.gender }} </td>
@@ -46,7 +59,7 @@
             {% endfor %}
          
         </tbody>
-     </table>
+     </table></form>
 </div>
 
 

@@ -7,7 +7,13 @@ from Users.models import Accounts, MyUser, Schools, Students
 
 
 # class StkPayments
+class SupplierBalances(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    balance = models.IntegerField()
 
+    def __str__(self):
+        return str(self.user)
+    
 class Invoices(models.Model):
     school = models.ForeignKey(Schools, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
@@ -24,19 +30,20 @@ class Invoices(models.Model):
     
 
 class InvoicePayments(models.Model):
-    date = models.DateField(auto_now=True)
+    date = models.DateTimeField(auto_now=True)
+    school = models.ForeignKey(Schools, on_delete=models.CASCADE)
     processed_at = models.CharField(max_length=100, null=True)
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
     account = models.ForeignKey(Accounts, null=True, on_delete=models.CASCADE)
     mode = models.CharField(max_length=100)
     amount = models.PositiveIntegerField()
     balance = models.PositiveIntegerField()
-    invoice = models.ForeignKey(Invoices, on_delete=models.CASCADE)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     # user_account = models.CharField(max_length=100)
     
 
     def __str__(self):
-        return str(self.invoice.user)
+        return str(self.user)
 
 
     

@@ -15,6 +15,7 @@ from SubjectList.models import *
 
 
 from Subscription.models import MpesaPayments
+from Supervisor.models import Attendance
 from Teacher.models import MyClass
 from Term.models import Exam
 from Users.models import Classes, MyUser
@@ -81,7 +82,6 @@ def divide(value, arg):
 def progress(subject_id, count):
     try:
         subtopics = Subtopic.objects.filter(subject__id=subject_id).count()
-        print(subtopics, count)
         progress = (count / subtopics) * 100
         progress = round(progress, 0)
         return progress
@@ -92,14 +92,13 @@ def progress(subject_id, count):
 
 def subject_progress(user, subject_id):
     try:
-        print(user, 'User:', subject_id)
         
         # Filter Progress by user and subject
         progress = Progress.objects.filter(user=user, subject__id=subject_id)
         
         # Get the total count of subtopics for the given subject
         total_subtopics = Subtopic.objects.filter(subject__id=subject_id).count()
-        print("Total subtopics:", total_subtopics)
+        # print("Total subtopics:", total_subtopics)
 
         # Count the number of subtopics for this user in the specific subject
         subtopic_count = progress.annotate(subtopic_count=Count('subtopic')).values('subtopic_count')
@@ -111,7 +110,6 @@ def subject_progress(user, subject_id):
         # Since annotate() returns a queryset, you need to access the value in the result
         completed_subtopics = subtopic_count[0]['subtopic_count']  # Access the first result
         
-        print("Completed subtopics:", completed_subtopics)
         
         # Calculate the percentage of completed subtopics
         if total_subtopics > 0:
@@ -120,7 +118,6 @@ def subject_progress(user, subject_id):
             return 0  # Avoid division by zero
 
     except Exception as e:
-        print("Error:", str(e))
         return 0
 
 
@@ -198,11 +195,9 @@ def subtopic_in_progress(user, subtopic):
 @register.filter
 def guardian_subtopic_view(email, subtopic):
     try:
-        print(email, subtopic)
-        # user = MyUser.objects.get(email=email)
+       
 
         progress = Progress.objects.filter(user__adm_no=email, subtopic__id=subtopic)
-        print(progress)
         if progress:
             return True
         else:
@@ -216,7 +211,6 @@ def guardians_subtopic_view(email, topic):
     try:
         # user = MyUser.objects.get(email=email)
         progress = Subtopic.objects.filter(topic__id=topic).order_by('order')
-        print(progress)
         
         return progress
 
@@ -242,7 +236,6 @@ def test_is_done(user, test_uuid):
 
 @register.filter
 def get_total_test(email, subject):
-    print(email,subject )
     test = StudentTest.objects.filter(user__adm_no=email, subject__id=subject).count()
     class_tests = ClassTestStudentTest.objects.filter(user__adm_no=email, test__subject__id=subject).count()
     general = GeneralTest.objects.filter(user__adm_no=email, subject__id=subject).count()
@@ -450,7 +443,6 @@ def get_class_highest(class_id, subject, term, period):
     # print(cl,subject, term.term, term.term.year)
     scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term, period=period)
     highest = scores.values('score').order_by('-score').first()
-    print(highest)
     if highest:
 
         return highest['score']
@@ -519,7 +511,6 @@ def get_stream_overall_average(class_id, grade, term):
 @register.simple_tag
 def get_user_term_average(user, grade, term, period):
     scores = Exam.objects.filter(user=user, subject__grade=grade, term__term=term, period=period)
-    print(scores.explain())
     total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
 
     if total_marks:
@@ -559,7 +550,6 @@ def hide_email_percentage(value, percentage=40):
         
         # Calculate the number of characters to hide based on the percentage
         num_chars_to_hide = math.floor(len(username) * (percentage / 100))
-        print(username)
         # Hide the calculated number of characters
         visible_part = username[:len(username) - num_chars_to_hide]  # Keep the visible part of the username
         hidden_part = '*' * num_chars_to_hide  # Replace the hidden part with asterisks
@@ -591,7 +581,6 @@ def abs_value(value):
 
 @register.simple_tag
 def get_subject_score(user, grade, subject, term, period):
-    print(user)
     score = Exam.objects.filter(user__adm_no=user, subject__grade=grade, subject=subject, term__term=term, period__icontains=period).first()
     # print(user,subject,term,grade)
     
@@ -642,9 +631,26 @@ def get_dev(user, topic):
 
 @register.filter
 def get_files(user, quiz):
-    print(user, quiz)
     # Retrieve the last Prompt object filtered by user and quiz
     files = Prompt.objects.filter(user=user, quiz=quiz).last()
     if files:
         return files.file.all()  # Assuming `file` is a ManyToManyField
     return []
+@register.filter
+def get_attendance(student, given_date):
+    """Check if a student was present on a given date in their class attendance record."""
+    # Ensure the date is today or in the past
+    
+
+    class_id = student.academicprofile.current_class.class_id
+
+    try:
+        # Retrieve attendance record for the given date and class
+        attendance = Attendance.objects.get(class_id__class_id=class_id, date=given_date)
+
+        # Check if the student is present
+        if attendance.students.filter(adm_no=student.adm_no).exists():
+            return 'PRESENT'  # Student is in the attendance
+        return 'ABSENT'  # Student is not in the attendance
+    except Attendance.DoesNotExist:
+        return 'N/A'

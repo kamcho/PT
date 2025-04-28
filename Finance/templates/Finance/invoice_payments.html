@@ -51,7 +51,7 @@
         <th><h6>Amount</h6></th>
         
     
-        <th><h6>Balance</h6></th>
+        <!-- <th><h6>Balance</h6></th> -->
       </tr>
     </thead>
     <tbody>
@@ -61,12 +61,12 @@
           
           <td><input type="checkbox"></td>
           <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-          <td><a href="{% url 'invoice-payment-id' invoice.id %}">{{ invoice.invoice.user.personalprofile.get_names|title }}</a></td>
+          <td><a href="{% url 'invoice-payment-id' invoice.id %}">{{ invoice.user.personalprofile.get_names|title }}</a></td>
           <td>{{ invoice.date|date:"D d M Y"  }}</td>
           <td>{{ invoice.user_account }} | <small>{{ invoice.mode }}</small>  </td>
 
           <td>{{ invoice.amount }}</td>
-          <td>{{ invoice.balance }}</td>
+          <!-- <td>{{ invoice.balance }}</td> -->
       
           
         </tr>

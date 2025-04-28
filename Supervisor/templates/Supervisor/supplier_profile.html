@@ -156,20 +156,19 @@
     <br><br>
     <!-- From Uiverse.io by Yaya12085 --> 
 <div class="card2"> 
-    <h5 class="dismiss" ># {{ invoice.id }}</h5> 
-    <h5 class="date" >Date : {{ invoice.date|date:'d-m-Y' }}</h5> 
+    <h5 class="dismiss" ># {{ supplier.id }}</h5> 
+    <h5 class="date" >Date : {{ supplier.date|date:'d-m-Y' }}</h5> 
     <div class="header"> 
       <div class="image2">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20 7L9.00004 18L3.99994 13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
         </div> 
         <div class="content">
-           <span class="title2">Invoice validated</span> 
-           <a href="{% url 'supplier-profile' invoice.user.id %}"><p class="message">{{ invoice.user.personalprofile.get_names|title }} </p> </a>
-           <small>{{ invoice.title }}</small><br>
-           <small>{{ invoice.description }}</small>
+           <span class="title2">{{ supplier.personalprofile.get_names|title }}</span> 
+           <p class="message"> {{ supplier.id_number|title }}</p> 
+           <small>{{ supplier.personalprofile.phone }}</small><br>
            </div> 
            <div class="actions">
-              <button class="history" type="button">Amount  {{ invoice.amount }}</button> 
+              <button class="history" type="button">Balance  {{ supplier.supplierbalances.balance }}</button> 
               <!-- <button class="track" type="button">Pending Balance {{ invoice.balance }}</button>  -->
               </div> 
               </div> 
@@ -177,14 +176,102 @@
 
     <br><br>
 
+    {% if user %}
 
+
+
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="">
+            <div class="">
+                <label for="inputField2" class="form-label">Mode</label>
+                <select class="form-select" id="roleSelect" aria-label="Default select example" name="mode" required onchange="toggleTransactionId()">
+                    <option selected value="">Payment Options</option>
+                    <option value="Cash">Cash</option>
+                    {% for account in accounts %}
+                        <option value="{{ account.id }}">{{ account.name }}</option>
+
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <br>
+    
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">Transaction ID</label>
+                <input type="text" class="form-control" id="transactionIdInput" name="tid" placeholder="QWERTY67HJ9" required>
+            </div>
+            
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="inputField2" name="amount" placeholder="1000" required max="{{ invoice.balance }}">
+            </div>
+        </div>
+        <br>
+        <button class="btn btn-primary" name="raw">Save</button>
+    </form>
+
+    <script>
+        // Function to hide the transaction ID input if "Cash" is selected
+        function toggleTransactionId() {
+            var paymentMode = document.getElementById("roleSelect").value;
+            var transactionIdInput = document.getElementById("transactionIdInput");
+    
+            if (paymentMode === "Cash") {
+                transactionIdInput.removeAttribute("required");
+
+                transactionIdInput.parentElement.style.display = "none"; // Hide the transaction ID field
+            } else {
+                transactionIdInput.parentElement.style.display = "block"; // Show the transaction ID field
+            }
+        }
+    
+        // Call the function initially to set the correct visibility
+        toggleTransactionId();
+    </script>
+    
+{% endif %}
 
 
 <br><br>
 
 
 
-
+<table class="table">
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+        <th><h6>Date</h6></th>
+        <th><h6>Type</h6></th>
+        <th><h6>Title / Mode</h6></th>
+        <th><h6>Amount</h6></th>
+        <th><h6>Balance</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in transactions %}
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><a><h6>{{ forloop.counter }}</h6></a></td>
+          <td>{{ item.date|date:'d-m-Y' }}</td>
+          <td>{{ item.item_type|title }}</td>
+          
+          {% if item.item_type == 'invoice' %}
+            <td>{{ item.title }}</td>
+          {% else %}
+            <td>{{ item.mode }}</td>
+          {% endif %}
+          
+          <td><p style="color: green;">{{ item.amount }}</p></td>
+          <td><p style="color: crimson;">{{ item.balance }}</p></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
 </div>
 
 {% endblock %}

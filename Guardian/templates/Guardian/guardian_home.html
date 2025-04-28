@@ -55,7 +55,7 @@
       <div style="margin-top: 40px;">
         {% for kid in kids.kids.all %}
         <a href="{% url 'students-profile' kid.adm_no %}" style="color: white;">
-          <div style="position: relative;;border: 2px solid rgb(18, 63, 18);width: 99%;border-radius: 10px;padding: 30px;background-color: rgb(8, 6, 27);box-shadow: 1px 0px 1px 10px rgba(8, 8, 34,.1);">
+          <div style="position: relative;width: 99%;border-radius: 10px;padding: 30px;background-color: rgb(8, 6, 27);box-shadow: 1px 0px 1px 10px rgba(8, 8, 34,.1);animation: glow-border 1.5s infinite alternate;">
             <small class="badge text-bg-secondary" style="position: absolute;top: 10px;right: 10px;"><span class="badge bg-success">Active</span></small>
             <div style="display: flex;">
               <img src="{% static 'Users/child.jpg' %}" style="height: 60px;width: 60px;border-radius:30% 70% 70% 30% / 30% 30% 70% 70% ;">

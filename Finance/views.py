@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 from datetime import datetime, timedelta
 from django.contrib import messages
-from Finance.models import  Expenses, InvoicePayments, Invoices, ProcessedSalaries, RawFeePayment, StudentFeePayment, TermFeeStructure
+from Finance.models import  Expenses, InvoicePayments, Invoices, ProcessedSalaries, RawFeePayment, StudentFeePayment, SupplierBalances, TermFeeStructure
 from Finance.tests import pullTransactions
 from Subscription.views import initiate_b2c_payment
 from Term.models import Terms
@@ -30,7 +30,7 @@ class FinanceHome(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         expenses = Expenses.objects.filter(school=user.school)
-        payments =InvoicePayments.objects.filter(invoice__school=user.school ).aggregate(amount=Sum('amount'))['amount'] or 0
+        payments =InvoicePayments.objects.filter(school=user.school ).aggregate(amount=Sum('amount'))['amount'] or 0
         # students = Students.objects.all()
         
         # for student in students:
@@ -133,7 +133,7 @@ class CreateInvoice(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['associates'] = MyUser.objects.filter(role='Supplier')
+        context['associates'] = MyUser.objects.filter(role='Supplier', school=self.request.user.school)
 
         return context
 
@@ -144,9 +144,14 @@ class CreateInvoice(LoginRequiredMixin, TemplateView):
             amount = self.request.POST.get('amount')
             user = self.request.POST.get('user')
             user = MyUser.objects.get(id_number=user)
+            profile = SupplierBalances.objects.get(user=user)
+            balance = profile.balance + int(amount)
             try:
                 invoice = Invoices.objects.create(title=title,school=self.request.user.school, description=description,
-                                                amount=amount, user=user, balance=amount)
+                                                amount=amount, user=user, balance=balance)
+                
+                profile.balance = balance
+                profile.save()
                 messages.success(self.request, f'Invoices for {user} created succesfully')
                 
                 return redirect('invoice-id', invoice.id)
@@ -240,8 +245,8 @@ class InvoicesListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            invoices = Invoices.objects.all().order_by('-date')
-            context['invoices'] = invoices
+            invoices = Invoices.objects.filter(school=self.request.user.school).order_by('-date')
+            context['invoices'] = invoices[:100]
             context['totals'] = invoices.aggregate(totals=Sum('amount'))['totals'] or 0
 
         except Exception:
@@ -301,52 +306,18 @@ class InvoiceDetail(LoginRequiredMixin, TemplateView):
         invoice_id = self.kwargs['id']
         try:
             invoice = Invoices.objects.get(id=invoice_id)
-            payments = InvoicePayments.objects.filter(invoice=invoice).order_by('-date')
-            context['payments'] = payments
+          
             context['invoice'] = invoice
             context['accounts'] = Accounts.objects.filter(school=self.request.user.school) 
 
         except Invoices.DoesNotExist:
             messages.error(self.request, 'We could not find an invoice with the given id. Do not edit URL')
-        except Exception:
-            messages.error(self.request, 'System error please contact @support')
+        except Exception as e:
+            messages.error(self.request, str(e))
 
         return context
     
-    def post(self, *args, **kwargs):
-        if self.request.method == 'POST':
-            if 'delete' in self.request.POST:
-                invoice = self.get_context_data().get('invoice')
-                invoice.delete()
-                messages.success(self.request, 'Object deletion was succesfull!')
-                return redirect('invoices')
-            
-                            
-            else:
-                invoice = self.get_context_data().get('invoice')
-                amount = self.request.POST.get('amount')
-                tid = self.request.POST.get('tid')
-                mode = self.request.POST.get('mode')
-                date = datetime.now().strftime('%Y/%m/%d')
-                balance = invoice.balance - int(amount)
-                try:
-                    account = Accounts.objects.get(id=mode, school=self.request.user.school)
-                    pay = InvoicePayments.objects.create(processed_at=date,transaction_id=tid,
-                                                      mode=account.name, amount=amount, balance=balance,
-                                                      invoice=invoice, account=account)
-                except:
-                    if mode == 'Cash':
-                        pay = InvoicePayments.objects.create(processed_at=date,transaction_id=tid,
-                                                      mode="Cash", amount=amount, balance=balance,
-                                                      invoice=invoice)
-                    else:
-                        messages.error(self.request, 'We could not process this invoice payment !')
-
-               
-                
-                invoice.balance = balance
-                invoice.save()
-                return redirect(self.request.get_full_path())
+    
 
 
 
@@ -1772,7 +1743,7 @@ class ExpensesView(TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         expenses = Expenses.objects.filter(school=user.school)
-        payments =InvoicePayments.objects.filter(invoice__school=user.school ).aggregate(amount=Sum('amount'))['amount'] or 0
+        payments =InvoicePayments.objects.filter(school=user.school ).aggregate(amount=Sum('amount'))['amount'] or 0
         incomes = StudentFeePayment.objects.filter(user__school=user.school)
         context['expenses'] = expenses
         context['incomes'] = incomes.aggregate(total_amount=Sum('transaction_id__amount'))['total_amount'] or 0
