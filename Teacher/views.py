@@ -41,7 +41,7 @@ class TeacherView(IsTeacher, TemplateView):
         my_class = MyClass.objects.filter(user=user)
         # count = QuestionCount.objects.get(user=user).count
         # context['count'] = count
-        teaching_profile = TeacherProfile.objects.get(user=user)
+        teaching_profile, created = TeacherProfile.objects.get_or_create(user=user)
         context['subjects'] = teaching_profile.subject.all()
         context['classes'] = my_class
         return context
