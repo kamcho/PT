@@ -1,0 +1,37 @@
+{% extends 'Supervisor/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br>
+<div class="container">
+
+
+
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row mb-3">
+            
+            <div class="col-md-6">
+                <label for="inputField1" class="form-label">Subjects</label>
+                <select class="form-select" id="roleSelect" aria-label="Default select example" name="subject" required>
+                    <option></option>
+                    {% for subject in subjects %}
+                      <option value="{{ subject.id }}">{{ subject }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+            
+                <label for="inputField1" class="form-label">data</label>
+                <textarea type="textarea" class="form-control" id="inputField1" name="data" ></textarea>
+            </div>
+        </div>
+        <button class="btn btn-warning">Save</button>
+    </form>
+</div>>
+
+
+{% endblock %}

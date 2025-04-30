@@ -1,6 +1,8 @@
+import ast
 import datetime
 import json
 import random
+import re
 import uuid
 from django.contrib.auth import authenticate, login
 from django.db.models import F, ExpressionWrapper, IntegerField, Case, When
@@ -2220,3 +2222,53 @@ class TopicReview(TemplateView):
             }
 
             return render(self.request, self.template_name, context)
+
+class AddSubjectTopics(LoginRequiredMixin,UserPassesTestMixin, TemplateView):
+    template_name = 'Supervisor/strands.html'
+    def test_func(self):
+        return self.request.user.role in ['supervisor', 'Teacher', 'Admin']
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        subjects = Subject.objects.all()
+        context['subjects'] = subjects
+        return context
+
+    def post(self, request, *args, **kwargs):
+        raw_data = request.POST.get('data', '').strip()
+
+    # Remove assignment prefix if present
+        match = re.search(r'=\s*(\{.*\})', raw_data, re.DOTALL)
+        if match:
+            raw_data = match.group(1)
+
+            try:
+                topics_data = ast.literal_eval(raw_data)
+                print("Parsed dict:", topics_data)
+            except Exception as e:
+                print("Parsing error:", e)
+                topics_data = {}
+        subject = self.request.POST.get('subject')
+        print(topics_data)
+        create_topics_and_subtopics(subject, topics_data)
+        return redirect(self.request.get_full_path())
+
+def create_topics_and_subtopics(subject, topics_data):
+        
+        
+        # Topics and subtopics extracted from the document
+        
+
+
+        subject = Subject.objects.get(id=subject)
+        orderz = 1
+        for topic_name, subtopics in topics_data.items():
+            topic, _ = Topic.objects.get_or_create(
+                name=topic_name, subject=subject, defaults={"order": orderz, "topics_count": len(subtopics), "test_size": 10, "time": 30}
+            )
+            orderz = orderz+1
+            for order, subtopic_name in enumerate(subtopics, start=1):
+                Subtopic.objects.get_or_create(
+                    subject=subject, topic=topic, name=subtopic_name,
+                    defaults={"id": uuid.uuid4(), "file1": "studyFiles/file.pdf", "file2": "studyFiles/start.mp4", "order": str(order)}
+                )
+                print('done')

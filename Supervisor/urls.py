@@ -21,7 +21,7 @@ urlpatterns = [        path('search-guardian/', SearchGuardianView.as_view(), na
     path('TeachersView/', TeachersView.as_view(), name='teachers-view'),
     path('StudentsProfile/<str:email>/', StudentsProfile.as_view(), name='students-profile'),
     path('SupplierProfile/<str:id>/', SupplierProfile.as_view(), name='supplier-profile'),
-    
+    path('AddSubjectTopics/', AddSubjectTopics.as_view(), name='addsubjecttopics'),
     path('ManageUser/<str:email>/', ManageStudent.as_view(), name='manage-user'),
     path('TeacherProfile/<str:email>/', TeachersProfile.as_view(), name='teachers-profile'),
     path('TeacherInfo/<str:email>/', TeachersInfo.as_view(), name='teachers-info'),

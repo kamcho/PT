@@ -22,8 +22,8 @@ import itertools
         #     topic = Topic.objects.get(id=subtopic.topic.id)
         #     subject = Subject.objects.get(name=subtopic.subject.name, grade=subtopic.subject.grade)
         #     su = Subtopic.objects.create(name=subtopic.name, subject=subject, topic=topic, id=subtopic.id, order=subtopic.order)
-def create_topics_and_subtopics():
-     course = Course.objects.get(name="Agriculture")
+def create_topics_and_subtopics(course, subject, topics_data):
+        course = Course.objects.get(name="Agriculture")
         subject_name = "Christian Religious Education"
         grade = "7"
         abbr = 'CRE'
