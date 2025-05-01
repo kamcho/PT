@@ -35,7 +35,8 @@
     <div>
         <div class="subjects-select-view">
 
-            {% for subject in subjects %}<a href="{% url 'subject-id-analysis' subject.id  %}">
+            {% for subject in subjects %}
+            <a href="{% url 'subject-id-analysis' subject.id  %}">
             <div class="subject-select-card">
                 <div class="booked-class-ody">
                     
@@ -62,11 +63,12 @@
                 </div>
                 <br>
                 <div>
-                    <a href="{% url 'subject-id-analysis' subject.id %}"><button class="btn btn-info">Analytics</button></a>
+                    <button class="btn btn-info">Analytics</button>
 
                 </div>
 
-            </div> </a>
+            </div>
+         </a>
             {% endfor %}
 
         </div>
