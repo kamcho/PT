@@ -138,7 +138,7 @@
 <div class="container" >
     
     
-    <a href="{% url 'class-list' class.class_id %}" class="btn btn-secondary" style="padding: 30px;">
+    <a href="{% url 'class-list' class.class_id %}" class="btn btn-secondary" >
       {{ class.grade }} {{ class|title }} Class List</a>
    
       <a class="btn btn-primary"  href="{% url 'class-exam-analytics' class.class_id %}">DATALYTICS</a>
@@ -152,7 +152,7 @@
 
  <div style="background-color: #fefeff;">
     <br>
-    <form  method="post" style="padding: 30px;">
+    <form  method="post" style="padding: 30px;width: 100%;">
         {% csrf_token %}
        <div class="input-group">
         <select class="form-select" aria-label="Default select example" name="year" required>
@@ -183,7 +183,7 @@
       
       
             </select>
-            <button class="btn btn-warning" >Filter</button>
+            <button class="btn btn-warning" >Set</button>
        </div>
         </form>
  
