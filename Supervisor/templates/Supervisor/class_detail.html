@@ -138,10 +138,10 @@
 <div class="container" >
     
     
-    <a href="{% url 'class-list' class.class_id %}" style="padding: 30px;">
-      <button type="button" class="btn btn-secondary"  >{{ class.grade }} {{ class|title }} Class List </button> </a>
+    <a href="{% url 'class-list' class.class_id %}" class="btn btn-secondary" style="padding: 30px;">
+      {{ class.grade }} {{ class|title }} Class List</a>
    
-      <a class="btn btn-primary" style="position: abolute;top: 70px;right: 110px;" href="{% url 'class-exam-analytics' class.class_id %}">DATALYTICS</a>
+      <a class="btn btn-primary"  href="{% url 'class-exam-analytics' class.class_id %}">DATALYTICS</a>
       
    
 
@@ -154,7 +154,7 @@
     <br>
     <form  method="post" style="padding: 30px;">
         {% csrf_token %}
-       <div class="input-group mb-3">
+       <div class="input-group">
         <select class="form-select" aria-label="Default select example" name="year" required>
             <option value="{{ grade }}">Grade {{ grade }}</option>
             <option value="1">Grade 1</option>
