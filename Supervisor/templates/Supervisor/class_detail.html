@@ -139,7 +139,7 @@
     
     
     <a href="{% url 'class-list' class.class_id %}" style="padding: 30px;">
-      <button type="button" class="btn btn-secondary"  style="padding-left: 20px;">{{ class.grade }} {{ class|title }} Class List </button> </a>
+      <button type="button" class="btn btn-secondary"  >{{ class.grade }} {{ class|title }} Class List </button> </a>
    
       <a class="btn btn-primary" style="position: abolute;top: 70px;right: 110px;" href="{% url 'class-exam-analytics' class.class_id %}">DATALYTICS</a>
       
@@ -168,7 +168,6 @@
     
     
           </select>  
-            <span class="input-group-text">Term</span>
             <select class="form-select" aria-label="Default select example" name="term" required>
                 <option value="{{ term }}">{{ term }}</option>
                 <option value="Term 1">1</option>
