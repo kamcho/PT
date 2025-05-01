@@ -2226,7 +2226,7 @@ class TopicReview(TemplateView):
 class AddSubjectTopics(LoginRequiredMixin,UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/strands.html'
     def test_func(self):
-        return self.request.user.role in ['supervisor', 'Teacher', 'Admin']
+        return self.request.user.role in ['Supervisor', 'Teacher', 'Admin']
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         subjects = Subject.objects.all()

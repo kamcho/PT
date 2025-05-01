@@ -110,10 +110,7 @@ WSGI_APPLICATION = 'PSAAI.wsgi.application'
 
 
 DATABASES = {
-    'default2': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "mydatabase.sqlite3",
-    },
+   
 
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -123,8 +120,11 @@ DATABASES = {
         'HOST': 'kevin254.mysql.pythonanywhere-services.com',  # Or your IP address if MySQL server is on a different host
         'PORT': '3306',       # MySQL default port
         'CONN_MAX_AGE': 0,
-    }
-  
+    },
+   'default2': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "mydatabase.sqlite3",
+    },
    # , 
     # 'default2': {
     #     'ENGINE': 'django.db.backends.mysql',
