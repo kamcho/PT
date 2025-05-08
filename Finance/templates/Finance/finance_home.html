@@ -2,214 +2,349 @@
 {% load supervisor_filters %}
 {% block content %}
 <style>
-    .main-dis{
-        display: grid;grid-template-columns: 65% 35%;column-gap: 30px;width: 90%;margin: 0 auto;margin-top: 75px;
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.main-dis {
+    display: grid;
+    grid-template-columns: 65% 35%;
+    gap: 1.5rem;
+    width: 90%;
+    margin: 2rem auto;
+}
+
+.sub-dis {
+    display: grid;
+    grid-template-columns: 65% 35%;
+    gap: 1.5rem;
+    width: 90%;
+    margin: 1.5rem auto;
+}
+
+.data-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    height: fit-content;
+}
+
+.data-card:hover {
+    border-color: var(--primary-color);
+}
+
+.progress-canvas {
+    height: 120px !important;
+    width: 120px !important;
+    margin: 0 auto;
+    position: relative;
+}
+
+.fee-card {
+    padding: 1rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.fee-card:hover {
+    background: var(--bg-card-hover);
+    border-radius: 10px;
+}
+
+.fee-card h5 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.fee-card small {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    padding: 0.3rem 0.8rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+.four {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.service-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 100%;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    background: var(--bg-card-hover);
+    border-color: var(--primary-color);
+}
+
+.service-card h6 {
+    color: var(--text-primary);
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.service-card p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.service-card i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.btn-secondary {
+    background: var(--bg-card-hover);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+hr {
+    border-color: rgba(255, 255, 255, 0.1);
+    margin: 1rem 0;
+}
+
+#panel {
+    height: fit-content;
+}
+
+#panel a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: block;
+    padding: 0.6rem 0;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+#panel a:hover {
+    color: var(--text-primary);
+    background: var(--bg-card-hover);
+    padding-left: 1rem;
+}
+
+#panel i {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+#panel h5 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 1100px) {
+    .main-dis {
+        grid-template-columns: 1fr;
+        width: 90%;
+        max-width: 900px;
+        margin: 2rem auto;
     }
-    .sub-dis{
-        display: grid;grid-template-columns: 65% 35%;column-gap: 30px;width: 90%;margin: 0 auto;margin-top: 35px;
+    
+    .data-card {
+        width: 100%;
+        margin: 1rem auto;
     }
-    .progress-canvas{
-        height: 100px !important;
-        justify-content: center;
-        justify-self: center;
+}
+
+@media (max-width: 850px) {
+    .sub-dis {
+        grid-template-columns: 1fr;
     }
-    @media (max-width:1100px) {
-        .main-dis{
-            display: inline !important;
-            width: 90%;
-            max-width: 900px !important;
-            margin: 100px auto;
-            row-gap: 30px;
-            /* margin-top: /100px; */
-        }
-        .data-card{
-            width: 90% !important;
-            max-width: 900px !important;
-            margin: 80px auto;
-        }
-        
+    
+    #panel {
+        width: 100%;
+        margin: 1rem auto;
     }
-    @media (max-width:850px) {
-        .sub-dis{
-            display: inline !important;
-        }
-        #panel{
-            width: 90% !important;
-            max-width: 900px !important;
-            margin: 0 auto;
-        }
-    }
+}
 </style>
 
 <div class="main-dis">
-            
-    <div class="data-card" id="expense"  style="color: white !important;padding: 30px;">
-        <div style="display: flex;flex-wrap: nowrap;column-gap: 10px;">
-            <small style="background-color:#ffb6b9 ;border-radius: 5px;padding: 5px;">Expense {{ totals }}</small>
-            <small style="background-color:#61c0bf ;border-radius: 5px;padding: 5px;">Income {{ incomes }}</small>
+    <div class="data-card" id="expense">
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+            <small style="background: var(--danger-color); border-radius: 5px; padding: 0.5rem 1rem;">Expense {{ totals }}</small>
+            <small style="background: var(--success-color); border-radius: 5px; padding: 0.5rem 1rem;">Income {{ incomes }}</small>
         </div>
-        <form >
         
+        <form>
             <div class="dropdown top-left">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     {{ year }}
                 </button>
-                <!-- <ul class="dropdown-menu">
-                    <li><button class="dropdown-item" name="year" value="2022">2022</button></li>
-                    <li><button class="dropdown-item" name="year" value="2023">2023</button></li>
-                    <li><button class="dropdown-item" name="year" value="2024">2024</button></li>
-                </ul> -->
             </div>
         </form>
-        <canvas id="barChart" width="500" style="z-index: 100000;height: fit-content;" height="220"></canvas>
 
+        <canvas id="barChart" width="500" height="220"></canvas>
     </div>
 
-    <div class="data-card" style="">
+    <div class="data-card">
         <button class="btn btn-secondary">Data</button>
-
         <hr>
-        <a href="{% url 'school-fees-balances' %}" style="color: white;">
-        <div class="fee-card">
-            <h5 class="text-center"><small style="background-color: #52A2EF;padding: 5px;border-radius: 10px;">Cleared</small> Fees</h5>
-            
-            <div class="progress-canvas">
-                
-                <canvas id="doughnutChart1"  height="100"></canvas>
-            </div>
-            {% with user|get_fee_balances as progress %}
-            <script>
-                var ctx1 = document.getElementById('doughnutChart1').getContext('2d');
-                var doughnutChart1 = new Chart(ctx1, {
-                    type: 'doughnut',
-                    data: {
-                    
-                        datasets: [{
-                            data: [{{ progress }}, {{ progress|add:"-100" }}],
-    
-                            backgroundColor: ['#52A2EF', '#FF6344'],
-                        }]
-                    },
-                });
-            </script>
-            {% endwith %}
-        </div>
-        </a>
-        <hr>
-        <a href="{% url 'invoices' %}" style="color: white;">
-        <div class="fee-card">
-            <h5 class="text-center"> <small style="background-color: #36A2EB;padding: 5px;border-radius: 10px;"> Cleared </small> Invoices</h5>
-           
-            <div class="progress-canvas">
-                <canvas id="doughnutChart2"  ></canvas>
-            </div>
-            {% with user|get_invoice_balances as progress %}
-            <script>
-                var ctx2 = document.getElementById('doughnutChart2').getContext('2d');
-                var doughnutChart2 = new Chart(ctx2, {
-                    type: 'doughnut',
-                    data: {
-                    
-                        datasets: [{
-                            data: [{{ progress }}, {{ progress|add:'-100' }}],
-                            backgroundColor: ['#36A2EB', '#FF6384'],
-                        }]
-                    },
-                });
-            </script>
-            {% endwith %}
-        </div>
-    </a>
-
-    
         
+        <a href="{% url 'school-fees-balances' %}" class="no-style">
+            <div class="fee-card">
+                <h5 class="text-center"><small>Cleared</small> Fees</h5>
+                <div class="progress-canvas">
+                    <canvas id="doughnutChart1"></canvas>
+                </div>
+                {% with user|get_fee_balances as progress %}
+                <script>
+                    var ctx1 = document.getElementById('doughnutChart1').getContext('2d');
+                    var doughnutChart1 = new Chart(ctx1, {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: [{{ progress }}, {{ progress|add:"-100" }}],
+                                backgroundColor: ['#00b894', '#d63031'],
+                                borderColor: 'transparent'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                </script>
+                {% endwith %}
+            </div>
+        </a>
+        
+        <hr>
+        
+        <a href="{% url 'invoices' %}" class="no-style">
+            <div class="fee-card">
+                <h5 class="text-center"><small>Cleared</small> Invoices</h5>
+                <div class="progress-canvas">
+                    <canvas id="doughnutChart2"></canvas>
+                </div>
+                {% with user|get_invoice_balances as progress %}
+                <script>
+                    var ctx2 = document.getElementById('doughnutChart2').getContext('2d');
+                    var doughnutChart2 = new Chart(ctx2, {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: [{{ progress }}, {{ progress|add:'-100' }}],
+                                backgroundColor: ['#00b894', '#d63031'],
+                                borderColor: 'transparent'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                </script>
+                {% endwith %}
+            </div>
+        </a>
     </div>
 </div>
-
-
 
 <div class="sub-dis">
-            
-    <div class="data-card" style="height: 450px;width: 100%;" style="color: white !important;z-index: 1000;">
-        
+    <div class="data-card">
         <div class="four">
-            <a href="{% url 'processed-fee-payments' %}">
-            <div class="service-card" style="background-color: #ffd3b6;color: #524a79;">
-                <h6 class="text-center">Fee Payments</h6>
-                <p>View and manage fee payments</p>
-        
-        
-            </div>
-        </a>
-        <a href="{% url 'invoices' %}">
-            <div class="service-card" style="background: #fcf8f3;color: #524a79;">
-                <h6 class="text-center">Invoices</h6>
-                <p>Create, view and manage invoices.</p>
-        
-            </div>
-        </a>
-        
-        <a href="{% url 'expenses' %}">
-            <div class="service-card" style="background-color: rgba(29, 25, 46, .8);color: white;">
-                <h6 class="text-center">Expenses</h6>
-                <h6>Create and manage expences incurred.</h6>
-        
-            </div>
-        </a>
-          
+            <a href="{% url 'processed-fee-payments' %}" class="no-style">
+                <div class="service-card">
+                    <i class="bi bi-cash-stack"></i>
+                    <h6>Fee Payments</h6>
+                    <p>View and manage fee payments</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'invoices' %}" class="no-style">
+                <div class="service-card">
+                    <i class="bi bi-receipt"></i>
+                    <h6>Invoices</h6>
+                    <p>Create, view and manage invoices</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'expenses' %}" class="no-style">
+                <div class="service-card">
+                    <i class="bi bi-wallet2"></i>
+                    <h6>Expenses</h6>
+                    <p>Create and manage expenses incurred</p>
+                </div>
+            </a>
         </div>
     </div>
 
-
-    <div class="data-card" id="panel" style="">
-    <h5><i class="bi bi-bezier"> </i> Panel</h5>
-    <br>
-    <div style="padding-left: 20px;color: white !important;" >
-        <a href="{% url 'students-view' %}" style="color: white;"><i class="bi bi-bezier2"> </i> Add Fee Payment</a>
-        <hr>
-            <a href="#" style="color: coral;"><i class="bi bi-bezier2" > </i> Migrate Fee Balances (disabled_)</a>
+    <div class="data-card" id="panel">
+        <h5><i class="bi bi-gear"></i> Panel</h5>
+        <div>
+            <a href="{% url 'students-view' %}"><i class="bi bi-plus-circle"></i> Add Fee Payment</a>
             <hr>
-        <!-- <a href="{% url 'salary-payments' %}" style="color: white;"><i class="bi bi-bezier2" > </i> Salary Payments</a> -->
-        <a href="{% url 'fees-list' %}" style="color: white;"><i class="bi bi-bezier2" > </i> Fee Configurations</a>
-        <hr>
-        <a href="{% url 'terms' %}" style="color: white;"><i class="bi bi-bezier2" > </i> Term Management</a>
-        <hr>
-        <a href="{% url 'school-fees-balances' %}" style="color: white;"><i class="bi bi-bezier2" > </i> Fee Balances</a>
+            <a href="#" style="color: var(--warning-color);"><i class="bi bi-arrow-repeat"></i> Migrate Fee Balances (disabled)</a>
+            <hr>
+            <a href="{% url 'fees-list' %}"><i class="bi bi-gear"></i> Fee Configurations</a>
+            <hr>
+            <a href="{% url 'terms' %}"><i class="bi bi-calendar"></i> Term Management</a>
+            <hr>
+            <a href="{% url 'school-fees-balances' %}"><i class="bi bi-wallet2"></i> Fee Balances</a>
+        </div>
     </div>
-    
-    </div>
-
-</div>
-
-
-
-
-
-
-<div  style="background-color:#524a79;margin-top: 60px;">
-
-
-
-
-
-
-
-
-
-
 </div>
 
 <script>
-    // Sample data for the bar graph
-    const data = {
-        labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-        datasets: [{
-            label: 'Expense Data',
-            backgroundColor: '#ffb6b9',
-            borderColor: 'rgba(25, 125, 55, 1)',
-            borderWidth: 1,
-            data: [{% get_expenses year '1' user.school %},
+const data = {
+    labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+    datasets: [{
+        label: 'Expense Data',
+        backgroundColor: 'rgba(214, 48, 49, 0.2)',
+        borderColor: 'rgba(214, 48, 49, 1)',
+        borderWidth: 1,
+        data: [{% get_expenses year '1' user.school %},
 {% get_expenses year '2' user.school %},
 {% get_expenses year '3' user.school %},
 {% get_expenses year '4' user.school %},
@@ -220,17 +355,14 @@
 {% get_expenses year '9' user.school %},
 {% get_expenses year '10' user.school %},
 {% get_expenses year '11' user.school %},
-{% get_expenses year '12' user.school %}
-]
-},
+{% get_expenses year '12' user.school %}]
+    },
     {
         label: 'Income Data',
-            backgroundColor: '#61c0bf',
-                borderColor: '#61c0bf',
-                    LabelColor: '#61c0bf',
-                        borderRadius: '5px',
-                            borderWidth: 1,
-                                data: [{% get_incomes year '1' user.school %},
+        backgroundColor: 'rgba(0, 184, 148, 0.2)',
+        borderColor: 'rgba(0, 184, 148, 1)',
+        borderWidth: 1,
+        data: [{% get_incomes year '1' user.school %},
 {% get_incomes year '2' user.school %},
 {% get_incomes year '3' user.school %},
 {% get_incomes year '4' user.school %},
@@ -241,37 +373,52 @@
 {% get_incomes year '9' user.school %},
 {% get_incomes year '10' user.school %},
 {% get_incomes year '11' user.school %},
-{% get_incomes year '12' user.school %}
-]
+{% get_incomes year '12' user.school %}]
     }]
 };
 
-    // Configuration options for the bar graph
-    const options = {
-        scales: {
-            x: {
-                ticks: {
-                    color: 'white', // Set the color of X-axis labels
-                }
+const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                color: '#ffffff'
+            }
+        },
+        title: {
+            display: true,
+            text: 'Monthly Financial Overview',
+            color: '#ffffff'
+        }
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
             },
-            y: {
-                ticks: {
-                    color: 'white', // Set the color of Y-axis labels
-                },
-                beginAtZero: true
-
+            ticks: {
+                color: '#ffffff'
+            }
+        },
+        x: {
+            grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+                color: '#ffffff'
             }
         }
+    }
+};
 
-    };
-
-    // Create the bar chart
-    const ctx = document.getElementById('barChart').getContext('2d');
-    const barChart = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: options
-    });
+const ctx = document.getElementById('barChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: options
+});
 </script>
-
 {% endblock %}

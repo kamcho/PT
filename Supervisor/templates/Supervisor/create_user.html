@@ -1,109 +1,163 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 
-
-
 {% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-transparent border-bottom border-secondary">
+                    <h4 class="mb-0 text-primary">Create New Student</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Admission Number -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="inputField1" value="{{ adm_no }}" disabled>
+                                    <label for="inputField1">Admission Number</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="roleSelect" name="boarding" required>
+                                        <option value="" selected disabled></option>
+                                        <option value="0">Day Scholar</option>
+                                        {% if user.school.has_boarding %}
+                                            <option value="1">Boarder</option>
+                                        {% endif %}
+                                    </select>
+                                    <label for="roleSelect">Boarding Status</label>
+                                </div>
+                            </div>
+                        </div>
 
-<div class="">
-    <br><br>
-<div class="container" style="background-color: white;margin-top: 40px;">
+                        <!-- Name Fields -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="inputField2" name="f_name" placeholder="First Name" required>
+                                    <label for="inputField2">First Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="inputField3" name="l_name" placeholder="Last Name" required>
+                                    <label for="inputField3">Last Name</label>
+                                </div>
+                            </div>
+                        </div>
 
-    <br><br>
-    <h5 style="font-family: cursive;">Create User</h5>
-    <form method="post">
-        {% csrf_token %}
-        <div class="row mb-3">
-            <div class="col-md-6">
-            
-                <label for="inputField1" class="form-label">Adm No</label>
-                <input type="text" class="form-control" id="inputField1" name="" value="{{ adm_no }}" disabled>
-            </div>
-            <div class="col-md-6">
-                <label for="inputField1" class="form-label">Boarding Status</label>
-                <select class="form-select" id="roleSelect" aria-label="Default select example" name="boarding" required>
-                    <option></option>
-                    <option value="0" >Day Scholar</option>
-                    {% if user.school.has_boarding %}
-                      <option value="1">Boarder</option>
-                    {% endif %}
-                </select>
-            </div>
-           
-        </div>
-        <br>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="inputField2" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="inputField2" name="f_name" placeholder="First Name" required>
-            </div>
-            <div class="col-md-6">
-                <label for="inputField3" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="inputField3" name="l_name" placeholder="Last Name" required>
-            </div>
-            
-        </div>
-        
-      
-        <div class="row mb-3">
-          
-            <div class="col-md-6">
-                <label for="inputField4" class="form-label">Surname</label>
-                <input type="text" class="form-control" id="inputField4" name="surname" placeholder="Surname">
-            </div>
-            <div class="col-md-6">
-                <label for="inputField1" class="form-label">Gender</label>
-                <select class="form-select"  aria-label="Default select example" name="gender" required>
-                    <option></option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
-        </div>
-    
-        <br>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="inputField1" class="form-label">Class</label>
-                <select class="form-select" id="classInput" name="class" aria-label="Default select example" required>
-                    <option></option>
-                    {% for class in classes %}
-                        <option value="{{ class.class_id }}">{{ class.grade }} {{ class }}</option>
-                    {% endfor %}
-                
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="inputField4" class="form-label">Fee</label>
-                <input type="number" class="form-control" id="inputField4" name="fee" placeholder="12000" required>
-            </div>
-        </div>
-        <br>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <div>.</div>
-    </form>
-    
-    <!-- <script>
-        const roleSelect = document.getElementById('roleSelect');
-        const classInput = document.getElementById('classInput');
-    
-        // Add an event listener to the role select element
-        roleSelect.addEventListener('change', function() {
-            // Check if the selected value is "1" (Student)
-            if (roleSelect.value === 'Student') {
-                // Enable the Class input
-                classInput.removeAttribute('disabled');
-            } else {
-                // Disable the Class input
-                classInput.setAttribute('disabled', 'disabled');
-            }
-        });
-    </script> -->
-   
+                        <!-- Surname and Gender -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="inputField4" name="surname" placeholder="Surname">
+                                    <label for="inputField4">Surname</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="genderSelect" name="gender" required>
+                                        <option value="" selected disabled></option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                    <label for="genderSelect">Gender</label>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Class and Fee -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="classInput" name="class" required>
+                                        <option value="" selected disabled></option>
+                                        {% for class in classes %}
+                                            <option value="{{ class.class_id }}">{{ class.grade }} {{ class }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="classInput">Class</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="feeInput" name="fee" placeholder="12000" required>
+                                    <label for="feeInput">Fee Amount</label>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-plus-fill me-2"></i>Create Student
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</div>
 
+<style>
+    .form-floating > .form-control,
+    .form-floating > .form-select {
+        background-color: var(--bg-dark);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
 
+    .form-floating > .form-control:focus,
+    .form-floating > .form-select:focus {
+        background-color: var(--bg-dark);
+        border-color: var(--primary-color);
+        color: var(--text-primary);
+    }
+
+    .form-floating > label {
+        color: var(--text-secondary);
+    }
+
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label,
+    .form-floating > .form-select ~ label {
+        color: var(--primary-color);
+    }
+
+    .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+    }
+
+    .card-header {
+        background-color: var(--bg-card);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        opacity: 0.9;
+    }
+
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23a0aec0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25);
+    }
+</style>
 {% endblock %}

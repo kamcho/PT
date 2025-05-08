@@ -1,116 +1,203 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 24px;
+    }
+    .alert {
+        background: linear-gradient(109.6deg, #24353a 11.2%, #10253c 51.2%, #000 98.6%);
+        color: var(--text-primary);
+        border-radius: 10px;
+        box-shadow: 0 4px 16px 0 rgba(0,0,0,0.12);
+        padding: 32px 24px;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 10;
+    }
+    .alert h5 {
+        color: var(--warning-color);
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+    }
+    .alert p {
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+    .alert small {
+        color: var(--warning-color);
+    }
+    .alert .btn-secondary {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--danger-color);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.2rem;
+        padding: 4px 12px;
+    }
+    .dashboard-table {
+        background: var(--card-background);
+        color: var(--text-primary);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+        width: 100%;
+    }
+    .dashboard-table th, .dashboard-table td {
+        background: var(--card-background) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px 8px !important;
+    }
+    .dashboard-table th {
+        color: var(--accent-color) !important;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: capitalize;
+    }
+    .dashboard-table a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .dashboard-table a:hover {
+        text-decoration: underline;
+    }
+    .badge.bg-info {
+        background: var(--accent-color) !important;
+        color: #fff !important;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 1rem;
+    }
+    .btn-danger {
+        background: var(--danger-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 20px;
+        margin: 0 4px;
+    }
+    .btn-danger:hover {
+        background: #b91c1c !important;
+    }
+    .btn-warning {
+        background: var(--warning-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 20px;
+    }
+    .btn-warning:hover {
+        background: var(--accent-color) !important;
+    }
+    .form-select {
+        background: var(--background-color);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+</style>
 
-
-
-  <div class="container">
-    <br><br><br>
-
-
-
-    <table class="table">
-      {% if user.questioncount.count|add:'0' < 20 %}
-      <div id="alert" class="container" style="position: relative;;background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);position: absolute;margin: 100px auto;padding: 50px; width: 90%;height: 80vh;z-index: 99999;">
-          <button class="btn btn-secondary" style="position: absolute;top: 20px;right: 20px;" onclick="disable()"><i class="b bi-x"></i></button>
-          <h5 style="color: coral;font-size: 23px;"> Alert </h5>
-          <p style="color: cornflowerblue;font-size: 20px;">In our aim to make account approval absolutely free, you are required
-              to submit atleast 10 question on each 2 topics as assigned from your dashboard.Once submitted
-              we will review the questions approve your account and add a star to your rating.
-               NB You cannot be assigned learners unless you complete this step !!!
-          </p>
-          <small style="color: coral;">Questions Remaining  {{ user.questioncount.count|add:'-20' }}</small>
-        
-        </div>
-      {% endif %}
-    {% if not classes %}
-    {% else %}
+<div class="dashboard-container">
+    {% if user.questioncount.count|add:'0' < 20 %}
+    <div id="alert" class="alert">
+        <button class="btn btn-secondary" onclick="disable()"><i class="b bi-x"></i></button>
+        <h5>Alert</h5>
+        <p>In our aim to make account approval absolutely free, you are required to submit at least 10 questions on each 2 topics as assigned from your dashboard. Once submitted we will review the questions, approve your account, and add a star to your rating.<br>NB: You cannot be assigned learners unless you complete this step!!!</p>
+        <small>Questions Remaining {{ user.questioncount.count|add:'-20' }}</small>
+    </div>
+    {% endif %}
+    <table class="dashboard-table">
+        {% if not classes %}
+        {% else %}
         <thead>
-          <tr class="purple">
-            <th><h6>Class</h6></th>
-            <th><h6>Subject</h6></th>
-              <th><h6>Students</h6></th>
-            <th><h6>Action</h6></th>
-
-
-
-          </tr>
+            <tr>
+                <th>Class</th>
+                <th>Subject</th>
+                <th>Students</th>
+                <th>Action</th>
+            </tr>
         </thead>
         <tbody>
-
-        {% for class in classes %}
-            <tr class="t-body">
-
-              <td ><a href="{% url 'class-task-view-select' class.class_id.class_id class.subject.id %}"><h6 style="color:purple;">{{ class.class_id }}</h6></a></td>
-
+            {% for class in classes %}
+            <tr>
+                <td><a href="{% url 'class-task-view-select' class.class_id.class_id class.subject.id %}"><h6 style="color:var(--accent-color);">{{ class.class_id }}</h6></a></td>
                 <td>{{ class.subject }}</td>
-              <td><span class="badge bg-info text-light">{{ class.class_id.class_size }}</span></td>
-              <td>
-                  <form method="post">
-                      {% csrf_token %}
-                      <input style="display:none;" name="del_name" value="{{ class.class_id.class_id }}">
-                      <input style="display:none;" name="del_subject" value="{{ class.subject }}">
-                    <button type="submit" class="btn btn-danger" name="delete">Delete</button>
-                </form>
-              </td>
-
-
+                <td><span class="badge bg-info text-light">{{ class.class_id.class_size }}</span></td>
+                <td>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="del_name" value="{{ class.class_id.class_id }}">
+                        <input type="hidden" name="del_subject" value="{{ class.subject }}">
+                        <button type="submit" class="btn btn-danger" name="delete">Delete</button>
+                    </form>
+                </td>
             </tr>
-         {% endfor %}
+            {% endfor %}
         {% endif %}
         </tbody>
-      </table>
+    </table>
 
-
-
-
-
-
-
-
-{% if subjects %}
-<div>
-  <br>
-  <h6>Add a Class</h6>
-    <br>
-  <form method="post">
-  {% csrf_token %}
-  <select class="form-select" id="class_id" name="class_id" aria-label="Default select example">
-    <option></option>
-    {% for class in streams %}
-      <option value="{{ class.class_id }}" >(Grade {{ class.grade }}) - {{ class }}</option>
-    {% endfor %}
-  </select>
-  <br>
-  <select class="form-select" id="subject" name="subject" aria-label="Default select example">
-    <option>Subject</option>
-  </select>
-      <br>
-
-  <button class="btn btn-warning" type="submit" name="add">Add</button>
-</form>
-
+    {% if subjects %}
+    <div style="margin-top: 32px;">
+        <h6>Add a Class</h6>
+        <form method="post">
+            {% csrf_token %}
+            <select class="form-select" id="class_id" name="class_id">
+                <option></option>
+                {% for class in streams %}
+                <option value="{{ class.class_id }}">(Grade {{ class.grade }}) - {{ class }}</option>
+                {% endfor %}
+            </select>
+            <select class="form-select" id="subject" name="subject">
+                <option>Subject</option>
+            </select>
+            <button class="btn btn-warning" type="submit" name="add">Add</button>
+        </form>
+    </div>
+    {% endif %}
 </div>
-{% else %}
 
-  <div></div>
-
-{% endif %}
-
-
-  </div>
-
-
-
-</script><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function() {
     const classSelect = $('#class_id');
     const subjectSelect = $('#subject');
-
     classSelect.on('change', function() {
       const selectedGrade = $(this).val();
-
       // Make an AJAX GET request to get subjects based on the selected grade
       $.ajax({
         url: '/Teacher/get_subjects/',
@@ -120,7 +207,6 @@
         success: function(data) {
           // Clear existing options
           subjectSelect.html('<option>Subject</option>');
-
           // Populate subjects
           $.each(data.subjects, function(index, subject) {
             subjectSelect.append($('<option>', {
@@ -135,12 +221,6 @@
       });
     });
   });
-</script>
-
-
-<script>
-    
-  
   function disable() {
     document.getElementById("alert").style.display ='none';
   }

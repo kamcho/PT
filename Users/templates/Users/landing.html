@@ -12,7 +12,7 @@
                                                 track progress, and enhance learning with personalized education.
                                                  Enroll today for a flexible, CBC-compliant learning experience!">
   
-                                                 <link href="https://fonts.googleapis.com/css2?family=Dekko&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+                                                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <!-- Using package from CDN -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/@weavy/dropin-js@18.0.1/dist/weavy.js" crossorigin="anonymous"></script>
 <script>
@@ -41,6 +41,476 @@
 
   <meta name="google-site-verification" content="vd6s18YS9mfPMMoH5srkND_VurceXLA1D6g2eAWtIEE" />
   <link rel="icon" href="{% static 'Users/favicon.png'  %}">
+
+  <style>
+    :root {
+      --primary-color: #2563EB;  /* Blue */
+      --secondary-color: #10B981;  /* Green */
+      --dark-bg: #111827;  /* Dark background */
+      --darker-bg: #0F172A;  /* Darker background */
+      --card-bg: #1F2937;  /* Card background */
+      --text-primary: #F9FAFB;  /* Primary text */
+      --text-secondary: #9CA3AF;  /* Secondary text */
+      --accent-color: #3B82F6;  /* Accent blue */
+      --success-color: #059669;  /* Success green */
+      --warning-color: #D97706;  /* Warning orange */
+      --danger-color: #DC2626;  /* Danger red */
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .navbar {
+      background-color: var(--darker-bg) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 0;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary-color) !important;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .navbar-brand i {
+      font-size: 1.75rem;
+    }
+
+    .nav-link {
+      color: var(--text-primary) !important;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-color) !important;
+      background-color: rgba(37, 99, 235, 0.1);
+    }
+
+    .nav-link i {
+      font-size: 1.1rem;
+    }
+
+    .navbar-toggler {
+      border: none;
+      padding: 0.5rem;
+    }
+
+    .navbar-toggler:focus {
+      box-shadow: none;
+    }
+
+    .offcanvas {
+      background-color: var(--darker-bg);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .offcanvas-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-close {
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .offcanvas-body {
+      padding: 2rem;
+    }
+
+    .navbar-nav {
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .download-app {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white !important;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .download-app:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+      color: white !important;
+    }
+
+    .download-app i {
+      font-size: 1.25rem;
+    }
+
+    @media (max-width: 991.98px) {
+      .navbar-nav {
+        margin-top: 1rem;
+      }
+    }
+
+    .main-holder {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+      padding: 80px 0;
+    }
+
+    .main-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .main-header {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sub-header {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .achievements {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .achieve-card {
+      background-color: var(--card-bg);
+      border-radius: 1rem;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .achieve-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      border-color: var(--primary-color);
+    }
+
+    .icon-wrapper {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .icon-wrapper i {
+      font-size: 1.75rem;
+      color: white;
+    }
+
+    .achieve-card h6 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .achieve-card p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .about-section {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 40px;
+      margin: 40px auto;
+      max-width: 1200px;
+    }
+
+    .about-card {
+      background-color: var(--darker-bg);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .about-card h6 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .contact-info {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .contact-info a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .contact-info a:hover {
+      color: var(--primary-color);
+    }
+
+    /* Subscription Cards */
+    .sub-card {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .sub-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .sub-card h5 {
+      color: var(--primary-color);
+    }
+
+    .sub-card h2 {
+      color: var(--secondary-color);
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--darker-bg);
+      color: var(--text-primary);
+      padding: 60px 0 20px;
+    }
+
+    .footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: var(--primary-color);
+    }
+
+    @media (max-width: 768px) {
+      .main-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .main-header {
+        font-size: 2.5rem;
+      }
+
+      .sub-header {
+        font-size: 2rem;
+      }
+
+      .main-image img {
+        width: 100%;
+        max-width: 350px;
+      }
+
+      .achievements {
+        grid-template-columns: 1fr;
+        padding: 2rem 1rem;
+      }
+    }
+
+    .about-section-wrapper {
+      background-color: var(--darker-bg);
+      padding: 6rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-section-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    }
+
+    .about-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .about-header h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .title-underline {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      margin: 0 auto;
+      border-radius: 2px;
+    }
+
+    .about-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .about-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+    }
+
+    .about-text h3 {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      padding: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary-color);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .about-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background-color: var(--card-bg);
+      padding: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary-color);
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .feature-icon i {
+      font-size: 1.75rem;
+      color: white;
+    }
+
+    .feature-card h4 {
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .about-main {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .about-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .about-header h2 {
+        font-size: 2rem;
+      }
+
+      .about-text h3 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
 </head>
 <header>
   <link rel="icon" href="{% static 'Users/favicon.png'  %}">
@@ -111,238 +581,1564 @@
     </div>
   {% endif %}
   <!-- <img src="{% static 'Users/kids.webp' %}" class="img-fluid" alt="..."> -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm" style="background-color: rgb(7, 2, 31) !important; color: white !important; position: sticky; top: 0; z-index: 1000;">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
-      <!-- Brand -->
-      <a class="navbar-brand" href="#" style="">Mwalimu Private</a>
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <i class="bi bi-mortarboard-fill"></i>
+        Mwalimu Private
+      </a>
       
-      <!-- Toggler for responsive menu -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
         <span class="navbar-toggler-icon"></span>
       </button>
       
-      <!-- Links and buttons -->
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <!-- Center Links -->
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="#home" style="color: white !important;font-size: 22px;font-weight: bolder;">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#about" style="color: white !important;font-size: 22px;font-weight: bolder;">About Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#services" style="color: white !important;font-size: 22px;font-weight: bolder;">Services</a>
-          </li>
-          <li id="downloadApp">
-            <a class="nav-link" href="/static/Users/app-release.apk" download style="color: white !important; font-size: 22px;">
-                <i class="bi bi-google-play"></i> Download APP
-            </a>
-        </li><script>
-          function isWebView() {
-              var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-              
-              // Detect Android WebView
-              return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
-          }
-      
-          if (isWebView()) {
-              document.getElementById("downloadApp").style.display = "none";
-          }
-      </script>
-          <li class="nav-item">
-            <a class="nav-link" href="#footer" style="color: white !important;font-size: 22px;font-weight: bolder;">Contact</a>
-          </li>
-        </ul>
-        <!-- Right Buttons -->
-        <div class="d-flex">
-          <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-custom" style="color: white;font-size: 22px;font-weight: bolder;">Login</a>
-          <a href="{% url 'register' %}" class="btn btn-dark btn-custom" style="margin-left: 20px;color: white;font-size: 22px;font-weight: bolder;">Register</a>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        
+        <div class="offcanvas-body">
+          <ul class="navbar-nav ms-auto">
+            <li id="downloadApp" class="nav-item">
+              <a class="nav-link download-app" href="/static/Users/app-release.apk" download>
+                <i class="bi bi-google-play"></i>
+                Download APP
+              </a>
+            </li>
+
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'update-profile' user.id %}">
+                  <i class="bi bi-person-check"></i>
+                  Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">
+                  <i class="bi bi-box-arrow-left"></i>
+                  Sign out
+                </a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' %}">
+                  <i class="bi bi-house"></i>
+                  Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">
+                  <i class="bi bi-box-arrow-right"></i>
+                  Sign In
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'register' %}">
+                  <i class="bi bi-person-plus"></i>
+                  Sign Up
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'password-reset' %}">
+                  <i class="bi bi-key"></i>
+                  Reset Password
+                </a>
+              </li>
+            {% endif %}
+          </ul>
         </div>
       </div>
     </div>
-</nav>
+  </nav>
 
-<div class="main-holder" id="home">
-  
- <div class="main-section">
-  
-  <div style="padding: 60px;max-width: 850px;z-index: 999999;">
-    <div style=""><i class="bi bi-snow"></i> Zara</div>
-    <h3 class="main-header">E-LEARNING + AI</h3>
-    <h3  class="sub-header">Mwalimu Private</h3>
-    <small class="" style="width: 100px !important;">
-      Yourch child's number #1 best online e-learning platform. Come and be part of Kenyas best edutech community !
-    </small>
-       <br><br>
-       {% if user.is_authenticated %}
-          <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;color: white;border-radius: 20px;border-color: rgb(255, 255, 255);">E-Learning</a>
-        {% else %}
-          <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;z-index: 10000;">Get Started</a>
-          <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;z-index: 100000;">Login</a>
-        {% endif %}
-        <br><br>
-        <div style="color: rgb(57, 194, 29);z-index: 1000000;">
-          <a href="tel:+254739363886" style="color:green !important; text-decoration: none; font-size: 16px;">
-            <i class="bi bi-phone"></i> +254 739 363 886
+<div class="hero-section" id="home">
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="brand-badge">
+        <i class="bi bi-mortarboard-fill"></i>
+        <span>Kenya's Leading EdTech Platform</span>
+      </div>
+      <h1 class="hero-title">
+        Transform Your Learning Journey with
+        <span class="gradient-text">Mwalimu Private</span>
+      </h1>
+      <p class="hero-subtitle">
+        Experience personalized education powered by AI, comprehensive online exams, and expert-led courses. Join Kenya's best e-learning community today!
+      </p>
+      <div class="hero-cta">
+        {% if user.is_authenticated %}
+          <a href="{% url 'rout' %}" class="btn btn-primary">
+            <i class="bi bi-rocket-takeoff"></i>
+            Launch Platform
           </a>
-          <br>
-          <a style="color: green !important;" href="https://wa.me/254739363883?text=Hello%20I%20am%20interested%20in%20your%20services" target="_blank"><i class="bi bi-whatsapp"> </i>+254 739 363 886</a>
+        {% else %}
+          <a href="{% url 'register' %}" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i>
+            Get Started
+          </a>
+          <a href="{% url 'login' %}" class="btn btn-outline">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Login
+          </a>
+        {% endif %}
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">1000+</span>
+          <span class="stat-label">Active Students</span>
         </div>
+        <div class="stat-item">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Expert Tutors</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">98%</span>
+          <span class="stat-label">Success Rate</span>
+        </div>
+      </div>
+      <div class="hero-contact">
+        <a href="tel:+254739363886" class="contact-link">
+          <i class="bi bi-telephone"></i>
+          +254 739 363 886
+        </a>
+        <a href="https://wa.me/254739363883" class="contact-link" target="_blank">
+          <i class="bi bi-whatsapp"></i>
+          WhatsApp Support
+        </a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="image-wrapper">
+        <img src="{% static 'Users/mainbg.webp' %}" alt="Mwalimu Private Platform">
+        <div class="floating-card card-1">
+          <i class="bi bi-robot"></i>
+          <span>AI-Powered Learning</span>
+        </div>
+        <div class="floating-card card-2">
+          <i class="bi bi-graph-up"></i>
+          <span>Track Progress</span>
+        </div>
+        <div class="floating-card card-3">
+          <i class="bi bi-trophy"></i>
+          <span>Certified Courses</span>
+        </div>
+      </div>
+    </div>
   </div>
- 
-  <div style="border-radius: 30% 70% 70% 30% / 30% 30% 70% 70% ;" class="main-image" >
-      <img src="{% static 'Users/mainbg.webp' %}" style="width: 450px;object-fit: contain;border-radius: 30% 70% 70% 30% / 30% 30% 70% 70% ;">
-  </div>
-
- </div>
 </div>
 
+<style>
+  .hero-section {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
 
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  }
+
+  .hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .hero-text {
+    max-width: 600px;
+  }
+
+  .brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .brand-badge i {
+    font-size: 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+    color: white;
+  }
+
+  .btn-outline {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  .btn-outline:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .hero-contact {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .contact-link:hover {
+    color: var(--primary-color);
+  }
+
+  .hero-image {
+    position: relative;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .floating-card {
+    position: absolute;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .floating-card i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+  }
+
+  .floating-card span {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .card-1 {
+    top: 20%;
+    left: -10%;
+    animation-delay: 0s;
+  }
+
+  .card-2 {
+    top: 50%;
+    right: -10%;
+    animation-delay: 0.5s;
+  }
+
+  .card-3 {
+    bottom: 20%;
+    left: 10%;
+    animation-delay: 1s;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .hero-content {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: 3rem;
+    }
+
+    .hero-text {
+      max-width: 100%;
+    }
+
+    .hero-cta {
+      justify-content: center;
+    }
+
+    .hero-stats {
+      justify-content: center;
+    }
+
+    .hero-contact {
+      justify-content: center;
+    }
+
+    .hero-image {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 100px 0 60px;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+    }
+
+    .hero-stats {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .floating-card {
+      display: none;
+    }
+  }
+</style>
 
 <div class="achievements" id="services">
-  <div style="background-color: #ECFDF5 !important;padding: 30px;margin-top: 20px;" class="achieve-card">
-    <h6><i class="bi bi-calendar-check"> </i>Learners + Educators</h6><hr>
-    Mwalimu Private connects educators, learners, and parents to enhance learning through seamless collaboration and support.
-   
+  <div class="achieve-card">
+    <div class="icon-wrapper">
+      <i class="bi bi-people-fill"></i>
+    </div>
+    <h6>Learners + Educators</h6>
+    <p class="text-secondary">Connect with educators, learners, and parents to enhance learning through seamless collaboration and support.</p>
   </div>
-  <div class="achieve-card" style="margin-top: 20px; background-color: black;color: white;padding: 30px;">
-    <h6><i class="bi bi-robot"> </i>AI Assistant</h6><hr>
-    Mwalimu Private features AI-powered support to teach students, assist with assignments, and enhance learning efficiency.
-      
+  <div class="achieve-card">
+    <div class="icon-wrapper">
+      <i class="bi bi-robot"></i>
+    </div>
+    <h6>AI Assistant</h6>
+    <p class="text-secondary">Experience AI-powered support for teaching, assignments, and enhanced learning efficiency.</p>
   </div>
-  <div class="achieve-card" style="background-color: #ECFDF5;padding: 30px;margin-top: 20px;">
-    <h6><i class="bi bi-journal-check"> </i>Online Exams</h6><hr>
-    Mwalimu Private offers online exams with instant marking and immediate results, making assessments faster and more efficient.
-  </div>
-  <div class="achieve-card" style="margin-top: 20px; background-color: black;color: white;padding: 30px;">
-    <h6><i class="bi bi-graph-up"> </i>Progress Tracking</h6><hr>
-    Mwalimu Private includes progress tracking to help identify a child's strengths and weaknesses, ensuring effective learner management and personalized growth.
+  <div class="achieve-card">
+    <div class="icon-wrapper">
+      <i class="bi bi-graph-up-arrow"></i>
+    </div>
+    <h6>Exams & Progress</h6>
+    <p class="text-secondary">Take online exams with instant marking and track your progress to identify strengths and areas for improvement.</p>
   </div>
 </div>
 
 <br><br>
-    <div id="about" style="background-color: rgba(243, 239, 239, .3);">
-      <br><br>
-      <h5 class="text-center">About Us</h5>
-      <br>
-  
-      <div class="main-about" style="width: 100% !important;">
-          <!-- <div style="padding: 30px;">
-              <img src="{% static 'Users/gpt.webp' %}" alt="{% static 'Users/lower.jpg' %}" width="90%"  style="object-fit: cover;"  >
-          </div> -->
-          <div style="width: 95%;padding: 30px;margin:0 auto;">
-              <h5 style="color: rgba(89, 12, 134, 0.507);">Who Is Mwalimu Private ?</h5>
-              <p style="font-size: 20px;">Mwalimu Private is a cutting-edge e-learning platform designed to connect learners with educators and improve academic performance. With an easy-to-use interface and a variety of academic resources, it provides students of all ages with the tools they need to succeed—whether they’re struggling in a subject or aiming to excel further. Mwalimu Private makes learning accessible, engaging, and effective for all. </p>
-                                 <br>
-                                 <!-- {% if user.is_authenticated %}
-                                 <a class="btn btn-outline-secondary" href="{% url 'rout' %}" style="text-decoration:double;color: rgb(0, 0, 0) !important;">E-Learning</a>
-                                 {% else %}
-                                 <a class="btn btn-outline-secondary" href="{% url 'register' %}" style="text-decoration:double;color: white !important;">Get Started</a>
-                                 <a class="btn btn-outline-primary" href="{% url 'login' %}" style="text-decoration:wavy;color: white !important;">Login</a>
-                                 {% endif %} -->
-          </div>
-
-          <div class="about-section">
-            <div class="about-card">
-              <h6>Private Tutoring</h6><hr>
-              Mwalimu Private offers personalized private tutoring to provide focused, one-on-one learning experiences for students.
-            </div>
-            <div class="about-card">
-              <h6>Institution Edutech</h6><hr>
-              Mwalimu Private provides e-learning solutions to educational institutions, enhancing learning experiences through digital platforms and tools.
-            </div>
-          
-           
-
-          </div>
-      </div><br>
-  </div><br><br>
-<div style="background-color:rgb(255, 254, 254)" >
-    <br><br>
-    <h5 class="text-center" style="color: rgb(2, 1, 1);">Our Curricular</h5>
-    <br>
-    <div class="event-view" style="text-align: center;row-gap: 30px ;column-gap: 20px; color: rgb(19, 19, 19);padding: 20px;margin: 0 auto;background-color: white !important;height: auto;" >
-        <div class="achieve-card" style="color: rgb(15, 12, 12);height: 250px;padding: 0 !important;margin: 10px auto;background-color: aliceblue;">
-            <!-- <img src="{% static 'Users/mug.webp' %}" alt="{% static 'Users/lower.jpg' %}" style="width: 100%;height: 60%;object-fit: cover;"> -->
-            <br><br>
-            
-            <h5>CBC Compliance</h5>
-          
-            <h6 style="padding: 10px;">We offer comprehensive learning content for lower primary, upper primary, and junior secondary levels, tailored to meet your educational needs.</h6>
-            
+    <div id="about" class="about-section-wrapper">
+      <div class="container">
+        <div class="about-header">
+          <h2>About Us</h2>
+          <div class="title-underline"></div>
         </div>
-        <div class="achieve-card" style="height: 250px;padding: 0 !important;margin: 10px auto;background-color: aliceblue;">
-            <!-- <img src="{% static 'Users/jj.png' %}" alt="{% static 'Users/home.png' %}" style="width: 100%;height: 60%;object-fit: cover;"> -->
-            <br><br>
-            <h5>Aptitude & IQ</h5>
-        
-            <h6 style="padding: 10px;">We offer both aptitude and IQ tests to assess specific skills and overall intellectual ability, helping you identify strengths and potential</h6>        </div>
-        <div class="achieve-card" style="height: 250px;padding: 0 !important;margin: 10px auto;background-color: aliceblue;color: rgb(7, 6, 6);">
-            <!-- <img src="{% static 'Users/lib.webp' %}" alt="{% static 'Users/lower.jpg' %}" style="width: 100%;height: 60%;object-fit: cover;"> -->
-            <br><br>
-            <h5>IT Competency</h5>
-            <h6 style="padding: 10px;">We offer IT classes covering the basics of computer introduction, networks, and programming, designed to build a solid foundation for beginners.</h6></div>
 
+        <div class="about-content">
+          <div class="about-main">
+            <div class="about-text">
+              <h3>Who Is Mwalimu Private?</h3>
+              <p>Mwalimu Private is a cutting-edge e-learning platform designed to connect learners with educators and improve academic performance. With an easy-to-use interface and a variety of academic resources, it provides students of all ages with the tools they need to succeed—whether they're struggling in a subject or aiming to excel further.</p>
+            </div>
+            <div class="about-stats">
+              <div class="stat-card">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">Active Students</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Expert Tutors</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Success Rate</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-features">
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="bi bi-person-check-fill"></i>
+              </div>
+              <h4>Private Tutoring</h4>
+              <p>Personalized one-on-one learning experiences tailored to each student's needs and learning style.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="bi bi-building"></i>
+              </div>
+              <h4>Institution Edutech</h4>
+              <p>Comprehensive e-learning solutions for educational institutions, enhancing learning through digital innovation.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="bi bi-graph-up-arrow"></i>
+              </div>
+              <h4>Performance Analytics</h4>
+              <p>Advanced tracking and analytics to monitor student progress and identify areas for improvement.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div style="margin-top: 50px;">
-.
+
+<style>
+  /* Add these styles to your existing CSS */
+  .about-section-wrapper {
+    background-color: var(--darker-bg);
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-section-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  }
+
+  .about-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .about-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .title-underline {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+
+  .about-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .about-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 4rem;
+  }
+
+  .about-text h3 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+  }
+
+  .about-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .stat-card {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .about-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+  }
+
+  .feature-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .feature-icon i {
+    font-size: 1.75rem;
+    color: white;
+  }
+
+  .feature-card h4 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .about-main {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .about-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .about-header h2 {
+      font-size: 2rem;
+    }
+
+    .about-text h3 {
+      font-size: 1.75rem;
+    }
+  }
+</style>
+
+<div class="curricular-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Our Curriculum</h2>
+      <div class="title-underline"></div>
     </div>
+
+    <div class="curricular-grid">
+      <div class="curricular-card">
+        <div class="curricular-icon">
+          <i class="bi bi-book"></i>
+        </div>
+        <h3>CBC Compliance</h3>
+        <p>Comprehensive learning content for lower primary, upper primary, and junior secondary levels, tailored to meet your educational needs.</p>
+        <ul class="curricular-features">
+          <li><i class="bi bi-check-circle-fill"></i> Lower Primary</li>
+          <li><i class="bi bi-check-circle-fill"></i> Upper Primary</li>
+          <li><i class="bi bi-check-circle-fill"></i> Junior Secondary</li>
+        </ul>
+      </div>
+
+      <div class="curricular-card">
+        <div class="curricular-icon">
+          <i class="bi bi-lightning-charge"></i>
+        </div>
+        <h3>Aptitude & IQ</h3>
+        <p>Comprehensive assessment tools to evaluate specific skills and overall intellectual ability, helping identify strengths and potential.</p>
+        <ul class="curricular-features">
+          <li><i class="bi bi-check-circle-fill"></i> Skill Assessment</li>
+          <li><i class="bi bi-check-circle-fill"></i> IQ Testing</li>
+          <li><i class="bi bi-check-circle-fill"></i> Performance Analysis</li>
+        </ul>
+      </div>
+
+      <div class="curricular-card">
+        <div class="curricular-icon">
+          <i class="bi bi-laptop"></i>
+        </div>
+        <h3>IT Competency</h3>
+        <p>Comprehensive IT education covering computer basics, networks, and programming, designed to build a solid foundation for beginners.</p>
+        <ul class="curricular-features">
+          <li><i class="bi bi-check-circle-fill"></i> Computer Basics</li>
+          <li><i class="bi bi-check-circle-fill"></i> Network Fundamentals</li>
+          <li><i class="bi bi-check-circle-fill"></i> Programming Basics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div style="background-color: rgba(243, 239, 239, .3) !important"><br><br>
-  <h5 class="text-center" style="color: rgb(20, 19, 18);">Subscriptions</h5>
-<subscription><div><br>
-  <div class="text-center">
-    <!-- <h5 class="btn btn-secondary">Grade 3 - 6</h5> -->
+<style>
+  /* Add these styles to your existing CSS */
+  .curricular-section {
+    background-color: var(--dark-bg);
+    padding: 6rem 0 0;  /* Removed bottom padding */
+    position: relative;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .curricular-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .curricular-card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .curricular-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .curricular-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+  }
+
+  .curricular-card:hover::before {
+    opacity: 1;
+  }
+
+  .curricular-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .curricular-icon i {
+    font-size: 2rem;
+    color: white;
+  }
+
+  .curricular-card h3 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .curricular-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .curricular-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+  }
+
+  .curricular-features li {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .curricular-features i {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .curricular-section {
+      padding: 4rem 0;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+    }
+
+    .curricular-grid {
+      grid-template-columns: 1fr;
+      padding: 0 1rem;
+    }
+  }
+</style>
+
+
+<div class="subscription-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Choose Your Plan</h2>
+      <div class="title-underline"></div>
+      <p class="section-subtitle">Select the perfect plan for your learning journey</p>
+    </div>
+
+    <div class="subscription-grid">
+      <div class="subscription-card">
+        <div class="card-header">
+          <h3>Silver</h3>
+          <div class="price">
+            <span class="currency">Ks</span>
+            <span class="amount">185</span>
+          </div>
+        </div>
+        <div class="card-features">
+          <ul>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Online Tests</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Progress Tracking</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Test Analytics</span>
+            </li>
+            <li class="feature-excluded">
+              <i class="bi bi-x-circle-fill"></i>
+              <span>AI Assistant</span>
+            </li>
+            <li class="feature-excluded">
+              <i class="bi bi-x-circle-fill"></i>
+              <span>Online Contests</span>
+            </li>
+          </ul>
+        </div>
+        <a href="{% url 'specific-pay' '185' %}" class="subscribe-btn">Get Started</a>
+      </div>
+
+      <div class="subscription-card featured">
+        <div class="popular-badge">Most Popular</div>
+        <div class="card-header">
+          <h3>Gold</h3>
+          <div class="price">
+            <span class="currency">Ks</span>
+            <span class="amount">370</span>
+          </div>
+        </div>
+        <div class="card-features">
+          <ul>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Online Tests</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Progress Tracking</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Test Analytics</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>AI Assistant</span>
+            </li>
+            <li class="feature-excluded">
+              <i class="bi bi-x-circle-fill"></i>
+              <span>Online Contests</span>
+            </li>
+          </ul>
+        </div>
+        <a href="{% url 'specific-pay' '370' %}" class="subscribe-btn">Get Started</a>
+      </div>
+
+      <div class="subscription-card">
+        <div class="card-header">
+          <h3>Platinum</h3>
+          <div class="price">
+            <span class="currency">Ks</span>
+            <span class="amount">500</span>
+          </div>
+        </div>
+        <div class="card-features">
+          <ul>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Online Tests</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Progress Tracking</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Test Analytics</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>AI Assistant</span>
+            </li>
+            <li class="feature-included">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Online Contests</span>
+            </li>
+          </ul>
+        </div>
+        <a href="{% url 'specific-pay' '500' %}" class="subscribe-btn">Get Started</a>
+      </div>
+    </div>
   </div>
-  
-  <div class="three" style="">
-    <a href="{% url 'specific-pay' '185' %}">
-      <div class="sub-card">
-        <h5>Silver</h5>
-        <h6><i class="bi bi-"></i> Online Tests <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Progress Tracking <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Test Analytics <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-robot"></i> AI Assistant <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6>
-        <!-- <h6><i class="bi bi-"></i> Personal Tutor <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6> -->
-        <h6><i class="bi bi-"></i> Online Contests <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6>
-        <br>
-        <h2>Ks 185</h2>
+</div>
+
+<style>
+  .curricular-section {
+    background-color: var(--dark-bg);
+    padding: 6rem 0 0;  /* Removed bottom padding */
+    position: relative;
+  }
+
+  .subscription-section {
+    background-color: var(--dark-bg);  /* Changed from rgba(243, 239, 239, .3) */
+    padding: 6rem 0;
+    position: relative;
+  }
+
+  .section-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+
+  .subscription-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .subscription-card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .subscription-card.featured {
+    border: 2px solid var(--primary-color);
+    transform: scale(1.05);
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .card-header {
+    margin-bottom: 2rem;
+  }
+
+  .card-header h3 {
+    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .currency {
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+  }
+
+  .amount {
+    color: var(--primary-color);
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  .card-features {
+    margin-bottom: 2rem;
+  }
+
+  .card-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .feature-included i {
+    color: var(--secondary-color);
+    font-size: 1.25rem;
+  }
+
+  .feature-excluded i {
+    color: var(--danger-color);
+    font-size: 1.25rem;
+  }
+
+  .subscribe-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  .subscribe-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    color: white;
+  }
+
+  .subscription-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .subscription-card.featured:hover {
+    transform: scale(1.05) translateY(-5px);
+  }
+
+  @media (max-width: 768px) {
+    .subscription-section {
+      padding: 4rem 0;
+    }
+
+    .subscription-grid {
+      grid-template-columns: 1fr;
+      padding: 0 1rem;
+    }
+
+    .subscription-card.featured {
+      transform: scale(1);
+    }
+
+    .subscription-card.featured:hover {
+      transform: translateY(-5px);
+    }
+  }
+</style>
+
+<div class="testimonials-section" id="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2>What Our Users Say</h2>
+      <div class="title-underline"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <i class="bi bi-quote"></i>
+          <p>"Mwalimu Private has transformed my child's learning experience. The AI assistant and personalized approach have made a significant difference in their academic performance."</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="author-info">
+            <h4>Sarah Johnson</h4>
+            <p>Parent</p>
+          </div>
+        </div>
       </div>
-    </a>
-    <a href="{% url 'specific-pay' '370' %}">
-      <div class="sub-card">
-        <h5>Gold</h5>
-        <h6><i class="bi bi-"></i> Online Tests <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Progress Tracking <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Test Analytics <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-robot"></i> AI Assistant <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <!-- <h6><i class="bi bi-"></i> Personal Tutor <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6> -->
-        <h6><i class="bi bi-"></i> Online Contests <i class="bi bi-x" style="color: crimson;font-size:30px"> </i></h6>
-        <br>
-        <h2 style="color: cornflowerblue;">Ks 370</h2>
+
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <i class="bi bi-quote"></i>
+          <p>"As a teacher, I appreciate the comprehensive curriculum and the ability to track student progress. It's an invaluable tool for modern education."</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="author-info">
+            <h4>David Mwangi</h4>
+            <p>Teacher</p>
+          </div>
+        </div>
       </div>
-    </a>
 
-    <a href="{% url 'specific-pay' '500' %}">
-      <div class="sub-card">
-        <h5>Platimun</h5>
-
-        <h6><i class="bi bi-"></i> Online Tests <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Progress Tracking <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-"></i> Test Analytics <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <h6><i class="bi bi-robot"></i> AI Assistant <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <!-- <h6><i class="bi bi-"></i> Personal Tutor <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6> -->
-        <h6><i class="bi bi-"></i> Online Contests <i class="bi bi-check" style="color: gold;font-size:30px"> </i></h6>
-        <br>
-        <h2 style="color: coral;">Ks 500</h2>
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <i class="bi bi-quote"></i>
+          <p>"The online exams and progress tracking features have helped me identify my strengths and areas for improvement. It's like having a personal tutor 24/7."</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="author-info">
+            <h4>Emma Wanjiku</h4>
+            <p>Student</p>
+          </div>
+        </div>
       </div>
-    </a>
+    </div>
+  </div>
+</div>
 
+<div class="partnership-section" id="partners">
+  <div class="container">
+    <div class="section-header">
+      <h2>Our Partners</h2>
+      <div class="title-underline"></div>
+    </div>
+    <div class="partnership-grid">
+      <div class="partnership-card">
+        <div class="partnership-icon">
+          <i class="bi bi-building"></i>
+        </div>
+        <h3>Ministry of Education</h3>
+        <p>Official partner in advancing Kenya's education through technology</p>
+      </div>
+      <div class="partnership-card">
+        <div class="partnership-icon">
+          <i class="bi bi-mortarboard"></i>
+        </div>
+        <h3>Educational Institutions</h3>
+        <p>Partnering with schools across Kenya to enhance learning</p>
+      </div>
+      <div class="partnership-card">
+        <div class="partnership-icon">
+          <i class="bi bi-globe"></i>
+        </div>
+        <h3>Global EdTech</h3>
+        <p>Collaborating with international education technology leaders</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-  </div></div>
-</subscription>
+<footer class="footer" id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Mwalimu Private</h3>
+        <p>Kenya's leading e-learning EdTech platform, empowering learners with quality education anytime, anywhere! 📚🚀</p>
+        <div class="social-links">
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-twitter"></i></a>
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#partners">Partners</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact Us</h4>
+        <ul>
+          <li>
+            <i class="bi bi-geo-alt"></i>
+            <span>Nairobi, Kenya</span>
+          </li>
+          <li>
+            <i class="bi bi-telephone"></i>
+            <a href="tel:+254739363883">+254 739 363 883</a>
+          </li>
+          <li>
+            <i class="bi bi-envelope"></i>
+            <a href="mailto:info@mwalimuprivate.com">info@mwalimuprivate.com</a>
+          </li>
+          <li>
+            <i class="bi bi-whatsapp"></i>
+            <a href="https://wa.me/254739363883">WhatsApp Support</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-newsletter">
+        <h4>Stay Updated</h4>
+        <p>Subscribe to our newsletter for the latest updates and offers.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Enter your email">
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2024 Mwalimu Private. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* Testimonials Section */
+  .testimonials-section {
+    background-color: var(--dark-bg);
+    padding: 6rem 0;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .testimonial-card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+  }
+
+  .testimonial-content {
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial-content i {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-content p {
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .author-info h4 {
+    color: var(--text-primary);
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .author-info p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Partnership Section */
+  .partnership-section {
+    background-color: var(--darker-bg);
+    padding: 6rem 0;
+  }
+
+  .partnership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .partnership-card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .partnership-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+  }
+
+  .partnership-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .partnership-icon i {
+    font-size: 2rem;
+    color: white;
+  }
+
+  .partnership-card h3 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .partnership-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .footer {
+    background-color: var(--darker-bg);
+    padding: 6rem 0 2rem;
+    color: var(--text-primary);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .footer-brand h3 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+
+  .footer-brand p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .social-links a {
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+  }
+
+  .social-links a:hover {
+    color: var(--primary-color);
+  }
+
+  .footer h4 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-links li {
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-links a:hover {
+    color: var(--primary-color);
+  }
+
+  .footer-contact ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-contact li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .footer-contact i {
+    color: var(--primary-color);
+  }
+
+  .footer-contact a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-contact a:hover {
+    color: var(--primary-color);
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .newsletter-form input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+  }
+
+  .newsletter-form button {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .newsletter-form button:hover {
+    transform: translateY(-2px);
+  }
+
+  .footer-bottom {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-bottom p {
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .footer-bottom-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .footer-bottom-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-bottom-links a:hover {
+    color: var(--primary-color);
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .footer-bottom-links {
+      justify-content: center;
+    }
+
+    .newsletter-form {
+      flex-direction: column;
+    }
+  }
+</style>
 
 
 
@@ -354,55 +2150,7 @@
     
    
 
-    <section class="footer" id="footer">
- 
-      <div class="footer-column" style="margin-top: -60px;">
-       <div class="company" style="margin-top: 80px;">
-     
-         <div style="padding-left: 30px; max-width: 500px;">
-          <h5 style="font-size: 24px !important;font-weight: bolder;">Mwalimu Private</h5>
-         <p>Mwalimu Private is Kenya's leading e-learning EdTech platform, empowering learners with quality education anytime, anywhere! 📚🚀
-           </p>
-         </div>
-       </div>
-       <div class="uri" style="margin-top: 80px;">
-         <h5  style="font-size: 24px !important;font-weight: bolder;">Quick Links</h5>
-         <div style="padding-left: 30px;">
-           <ul >
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li id="downloadApp">
-              <a  href="/static/Users/app-release.apk" download>
-                  <i class="bi bi-google-play"></i> Download APP
-              </a>
-          </li>
-          <script>
-            function isWebView() {
-                var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                
-                // Detect Android WebView
-                return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
-            }
-        
-            if (isWebView()) {
-                document.getElementById("downloadApp").style.display = "none";
-            }
-        </script>
-             <li><a href="{% url 'rout' %}">Portal</a></li>
-           
-           </ul>
-         </div>
-       </div>
-       <div class="contacts" style="margin-top: 80px;">
-         <h5 style="font-size: 24px !important;font-weight: bolder;">Our Contacts</h5>
-         <h6><i class="bi bi-phone"> </i>+254 739 363 883</h6>
-         <h6><i class="bi bi-facebook"> </i>Mwalimu Private</h6>
-         <h6><a style="color: white !important;" href="https://wa.me/254739363883?text=Hello%20I%20am%20interested%20in%20your%20services" target="_blank"><i class="bi bi-whatsapp"> </i>+254 739 363 883</a></h6>
-       </div>
-      </div>
-      <br><br>
-      <a href="tel:+254742134431" style="color: white !important; "><h6 class="text-center text-muted">developed by Crimsons Analytics</h6></a>
-     </section>
+   
 
 
 </body>

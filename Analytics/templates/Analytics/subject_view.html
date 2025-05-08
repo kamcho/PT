@@ -4,80 +4,208 @@
 
 {% block content %}
 
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
 
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
 
+    .container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
 
-<div class="subject-select-content-continer">
-<div class="container" style="margin-top: 100px;">
-        <br>
-    <form>
-        <div class="dropdown" style="padding-left:25px;">
-            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
+    .grade-selector {
+        margin-bottom: 32px;
+    }
+
+    .grade-btn {
+        background: var(--card-background);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .grade-btn:hover {
+        background: var(--accent-color);
+        color: white;
+        border-color: var(--accent-color);
+    }
+
+    .dropdown-menu {
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px;
+    }
+
+    .dropdown-item {
+        color: var(--text-primary);
+        padding: 8px 16px;
+        border-radius: 4px;
+    }
+
+    .dropdown-item:hover {
+        background: var(--accent-color);
+        color: white;
+    }
+
+    .subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        margin-top: 24px;
+    }
+
+    .subject-card {
+        background: var(--card-background);
+        border-radius: 12px;
+        padding: 24px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid var(--border-color);
+        text-decoration: none;
+        color: var(--text-primary);
+    }
+
+    .subject-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent-color);
+    }
+
+    .subject-header {
+        margin-bottom: 16px;
+    }
+
+    .subject-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--accent-color);
+        margin-bottom: 8px;
+    }
+
+    .subject-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .subject-progress {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+
+    .progress-title {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+    }
+
+    .progress-topic {
+        font-size: 1rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .analytics-btn {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        width: 100%;
+        text-align: center;
+        transition: background-color 0.2s;
+    }
+
+    .analytics-btn:hover {
+        background: var(--primary-color);
+    }
+
+    .no-subjects {
+        text-align: center;
+        padding: 48px;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="container">
+    <div class="grade-selector">
+        <div class="dropdown">
+            <button class="grade-btn dropdown-toggle" type="button" id="gradeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-mortarboard"></i>
                 Grade {{ grade }}
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="{% url 'subject-view' 4 %}">4</a></li>
-                <li><a class="dropdown-item" href="{% url 'subject-view' 5 %}">5</a></li>
-                <li><a class="dropdown-item" href="{% url 'subject-view' 6 %}">6</a></li>
-                <li><a class="dropdown-item" href="{% url 'subject-view' 7 %}">7</a></li>
+            <ul class="dropdown-menu" aria-labelledby="gradeDropdown">
+                <li><a class="dropdown-item" href="{% url 'subject-view' 4 %}">Grade 4</a></li>
+                <li><a class="dropdown-item" href="{% url 'subject-view' 5 %}">Grade 5</a></li>
+                <li><a class="dropdown-item" href="{% url 'subject-view' 6 %}">Grade 6</a></li>
+                <li><a class="dropdown-item" href="{% url 'subject-view' 7 %}">Grade 7</a></li>
             </ul>
         </div>
-    </form>
-
-</div>
-
-{% if not subjects %}
-
-{% else %}
-
-
-    <div>
-        <div class="subjects-select-view">
-
-            {% for subject in subjects %}
-            <a href="{% url 'subject-id-analysis' subject.id  %}">
-            <div class="subject-select-card">
-                <div class="booked-class-ody">
-                    
-                    
-                        <h5 style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{ subject }} </h5>
-                   
-
-                    <h6><i class="bi bi-gear"> </i> Grade {{ subject.grade }}</p>
-
-                </div>
-                <br>
-
-                <div class="subject-select-in-card">
-                    <h6>Topic {{ progress_topic.order }} </h6>
-
-
-                    <small><i class="bi bi-bookmark"></i>
-                        {{ progress_topic }}
-
-                    </small>
-                    <br>
-
-              
-                </div>
-                <br>
-                <div>
-                    <button class="btn btn-info">Analytics</button>
-
-                </div>
-
-            </div>
-         </a>
-            {% endfor %}
-
-        </div>
     </div>
+
+    {% if not subjects %}
+        <div class="no-subjects">
+            <i class="bi bi-journal-x" style="font-size: 2rem; margin-bottom: 16px;"></i>
+            <p>No subjects available for this grade.</p>
+        </div>
+    {% else %}
+        <div class="subjects-grid">
+            {% for subject in subjects %}
+                <a href="{% url 'subject-id-analysis' subject.id %}" class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-title">{{ subject }}</div>
+                        <div class="subject-meta">
+                            <i class="bi bi-gear"></i>
+                            Grade {{ subject.grade }}
+                        </div>
+                    </div>
+
+                    <div class="subject-progress">
+                        <div class="progress-title">Current Topic</div>
+                        <div class="progress-topic">
+                            <i class="bi bi-bookmark"></i>
+                            {{ progress_topic }}
+                        </div>
+                    </div>
+
+                    <button class="analytics-btn">
+                        <i class="bi bi-graph-up"></i>
+                        View Analytics
+                    </button>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>
-{% endif %}
-
-</div>
-
-
 
 {% endblock %}

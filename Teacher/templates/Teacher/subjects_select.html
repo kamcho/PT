@@ -1,90 +1,157 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+    .subject-select-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 24px;
+    }
+    .subject-table {
+        background: var(--card-background);
+        color: var(--text-primary);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+        width: 100%;
+    }
+    .subject-table th, .subject-table td {
+        background: var(--card-background) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px 8px !important;
+    }
+    .subject-table th {
+        color: var(--accent-color) !important;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: capitalize;
+    }
+    .subject-table a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .subject-table a:hover {
+        text-decoration: underline;
+    }
+    .badge.bg-info {
+        background: var(--accent-color) !important;
+        color: #fff !important;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 1rem;
+    }
+    .btn-danger {
+        background: var(--danger-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 20px;
+        margin: 0 4px;
+    }
+    .btn-danger:hover {
+        background: #b91c1c !important;
+    }
+    .btn-warning {
+        background: var(--warning-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 20px;
+    }
+    .btn-warning:hover {
+        background: var(--accent-color) !important;
+    }
+    .form-check-input[type="checkbox"] {
+        accent-color: var(--accent-color);
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+    }
+    .form-check-label {
+        color: var(--text-primary);
+        font-size: 1rem;
+        margin-right: 12px;
+    }
+    .add-subject-form {
+        background: var(--card-background);
+        border-radius: 8px;
+        padding: 24px 18px;
+        margin-top: 32px;
+        box-shadow: 0 1px 4px 0 rgba(0,0,0,0.08);
+    }
+</style>
 
-
-<div class="container" style="width: 90%;max-width: 800px;margin: 0 auto;">
-    <br><br><br>
-
-    <table class="table">
+<div class="subject-select-container">
+    <table class="subject-table">
     {% if not subjects %}
         <!-- <h6 class="alert alert-dark">You do not have any classes attached. Add a class below.</h6> -->
     {% else %}
         <thead>
-          <tr class="purple">
-            <th><h6>Subject</h6></th>
-            <th><h6>Discipline</h6></th>
-
-            <th><h6>Action</h6></th>
-
-
-
+          <tr>
+            <th>Subject</th>
+            <th>Discipline</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-
         {% for subject in subjects %}
-            <tr class="t-body">
-
-              <td ><a href=""><h6 style="color:purple;">{{ subject }}</h6></a></td>
-
-
+            <tr>
+              <td><a href=""><h6 style="color:var(--accent-color);">{{ subject }}</h6></a></td>
               <td><span class="badge bg-info text-light">{{ subject.discipline }}</span></td>
               <td>
                   <form method="post">
                       {% csrf_token %}
-                      <input style="display:none;" name="del_name" value="{{ class.class_id }}">
-                      <input style="display:none;" name="del_subject" value="{{ class.subject }}">
-                    <button type="submit" class="btn btn-danger" name="purge"  value="{{ subject.id }}" >Delete</button>
+                      <input type="hidden" name="del_name" value="{{ class.class_id }}">
+                      <input type="hidden" name="del_subject" value="{{ class.subject }}">
+                    <button type="submit" class="btn btn-danger" name="purge" value="{{ subject.id }}">Delete</button>
                 </form>
               </td>
-
-
             </tr>
          {% endfor %}
         {% endif %}
         </tbody>
       </table>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% if teaching_profile.subject.count < 5 %}
-      <form method="POST">
-          {% csrf_token %}
-
-           <br>
-          <h6>Add The subjects You Teach.</h6>
-          {% for subject in courses %}
-            <div class="form-check">
-              <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
-              <label class="form-check-label" for="{{ subject.id }}">
-                  {{ subject }}
-              </label>
-            </div>
-          {% endfor %}
-
-              <br>
-                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
-                <br>
-              <br>
-
-      </form>
-{% endif %}
+    {% if teaching_profile.subject.count < 5 %}
+    <form method="POST" class="add-subject-form">
+        {% csrf_token %}
+        <h6>Add The subjects You Teach.</h6>
+        {% for subject in courses %}
+        <div class="form-check">
+            <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
+            <label class="form-check-label" for="{{ subject.id }}">
+                {{ subject }}
+            </label>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-warning" name="profile">Add</button>
+    </form>
+    {% endif %}
 </div>
 
 {% endblock %}

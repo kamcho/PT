@@ -36,112 +36,200 @@
 
 <body class="base-html">
 
+<style>
+  :root {
+    --primary-color: #2563EB;
+    --secondary-color: #10B981;
+    --dark-bg: #111827;
+    --darker-bg: #0F172A;
+    --card-bg: #1F2937;
+    --text-primary: #F9FAFB;
+    --text-secondary: #9CA3AF;
+  }
 
+  .navbar {
+    background-color: var(--darker-bg) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+  }
 
+  .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-color) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    <nav class="navbar navbar-dark fixed-top" id="top-bar" style="background-color:rgba(29, 25, 46, .8);">
-      <div class="container-fluid">
-        <a class="zara"  href="#">Mwalimu Private</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-          <div class="offcanvas-header">
-           
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body">
-            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
-              <script>
-                function isWebView() {
-                    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                    
-                    // Detect Android WebView
-                    return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
-                }
-            
-                if (isWebView()) {
-                    document.getElementById("downloadApp").style.display = "none";
-                }
-            </script>
-            <li id="downloadApp">
-              <a class="nav-link" href="/static/Users/app-release.apk" download>
-                  <i class="bi bi-google-play"></i> Download APP
-              </a>
-          </li>
-              {% if user.is_authenticated %}
-       
+  .navbar-brand i {
+    font-size: 1.75rem;
+  }
 
-              
-        
-         
-  
-          
-           
-                
-     
-      
-        <li>
-            <a class="nav-link" href="{% url 'update-profile' user.id  %}" ><i class="bi bi-person-check" > </i>Profile</a>
-          </li>
-        
-          <!-- <li>
-            <a class="nav-link" href="{% url 'teachers-view'   %}" ><i class="bi bi-people" > </i>Teachers</a>
-          </li> -->
+  .nav-link {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-        
+  .nav-link:hover {
+    color: var(--primary-color) !important;
+    background-color: rgba(37, 99, 235, 0.1);
+  }
 
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}" ><i class="bi bi-box-arrow-left" > </i>Sign out</a>
-          </li>
+  .nav-link i {
+    font-size: 1.1rem;
+  }
 
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}" ><i class="bi bi-house" > </i>Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}" ><i class="bi bi-box-arrow-right" > </i>Sign In</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'register' %}" ><i class="bi bi-pen" > </i>Sign Up</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'password-reset' %}"><i class="bi bi-x-octagon" > </i>Reset Password</a>
-        </li>
-        {% endif %}
+  .navbar-toggler {
+    border: none;
+    padding: 0.5rem;
+  }
 
-        
+  .navbar-toggler:focus {
+    box-shadow: none;
+  }
 
-            </ul>
+  .offcanvas {
+    background-color: var(--darker-bg);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-          </div>
-        </div>
-      </div>
-    </nav>
+  .offcanvas-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
+  .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
 
+  .offcanvas-body {
+    padding: 2rem;
+  }
 
+  .navbar-nav {
+    gap: 0.5rem;
+  }
 
+  .nav-item {
+    margin: 0.25rem 0;
+  }
 
+  .download-app {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white !important;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+  }
 
+  .download-app:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+    color: white !important;
+  }
 
+  .download-app i {
+    font-size: 1.25rem;
+  }
 
+  @media (max-width: 991.98px) {
+    .navbar-nav {
+      margin-top: 1rem;
+    }
+  }
+</style>
 
-
-
-
-
-
-<!-- 
-
-    <script>
-      NProgress.start(); // Start the progress bar
-      window.onload = function () {
-        NProgress.done(); // Complete the progress bar when page loads
-      };
-    </script> -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <i class="bi bi-mortarboard-fill"></i>
+      Mwalimu Private
+    </a>
     
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+      </div>
+      
+      <div class="offcanvas-body">
+        <ul class="navbar-nav ms-auto">
+          <li id="downloadApp" class="nav-item">
+            <a class="nav-link download-app" href="/static/Users/app-release.apk" download>
+              <i class="bi bi-google-play"></i>
+              Download APP
+            </a>
+          </li>
 
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'update-profile' user.id %}">
+                <i class="bi bi-person-check"></i>
+                Profile
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-left"></i>
+                Sign out
+              </a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}">
+                <i class="bi bi-house"></i>
+                Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                Sign In
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}">
+                <i class="bi bi-person-plus"></i>
+                Sign Up
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'password-reset' %}">
+                <i class="bi bi-key"></i>
+                Reset Password
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  function isWebView() {
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
+  }
+
+  if (isWebView()) {
+    document.getElementById("downloadApp").style.display = "none";
+  }
+</script>
 
 <div class="main-body">
 

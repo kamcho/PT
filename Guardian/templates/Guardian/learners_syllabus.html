@@ -3,74 +3,204 @@
 {% load static %}
 
 {% block content %}
-<br>
-<br><br>
-<br>
-  <div class="container dropdown" style="margin: 0 auto;max-width: 700px;">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        Grade {{ grade }}
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '4' email %}">4</a></li>
-        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '5' email %}">5</a></li>
-        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '6' email %}">6</a></li>
-        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '7' email %}">7</a></li>
-      </ul>
-    </div>
-<br>
-  <div>
+<style>
+  .syllabus-container {
+    background-color: #0a192f;
+    min-height: 100vh;
+    padding: 2rem 0;
+  }
 
-<div class="container syllabus" style="text-decoration:none !important;margin: 0 auto;max-width: 700px;" style="">
-{% for coverage in syllabus %}
+  .grade-selector {
+    background-color: #112240;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+  }
 
+  .grade-btn {
+    background-color: #1d3461;
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
 
-    {% if  email|guardian_topic_view:coverage %}
-      <div style="display:flex;width:60%;">
-          <p style="color:purple;flex: 1;">{{ coverage.order }}.) {{ coverage }}</p>
-          <input type="checkbox" style="margin-left: 0 auto;" checked>
-      </div>
-        <div>
-           {% for subtopic in email|guardians_subtopic_view:coverage.id %}
-                {% if  email|guardian_subtopic_view:subtopic.id %}
+  .grade-btn:hover {
+    background-color: #2a4d8f;
+  }
 
-                    <div style="display:flex;width:60%;padding-left:30px;">
-                        <small style="color:purple ;flex: 1;"><a href="{% url 'media' coverage subtopic  %}">{{ subtopic }}</a></small>
-                        <i class="bi bi-check-all" style="margin-left: 0 auto;color:purple;font-size:20px;"></i>
-                    </div>
+  .dropdown-menu {
+    background-color: #112240;
+    border: 1px solid #1d3461;
+  }
 
-                {% else %}
-                      <div style="display:flex;width:60%;padding-left:30px;">
-                        <small style="color:purple;flex: 1;"><a href="{% url 'media' coverage subtopic %}">{{ subtopic }}</a></small>
-                          <input type="checkbox" style="margin-left: 0 auto;" disabled>
-                      </div>
-                {% endif %}
+  .dropdown-item {
+    color: #fff;
+  }
 
-            {% endfor %}
-        </div>
+  .dropdown-item:hover {
+    background-color: #1d3461;
+    color: #fff;
+  }
 
-    {% else %}
-      <div style="display:flex;width:60%;">
-          <p style="flex: 1;">{{ coverage.order }}.) {{ coverage }}</p>
-          <input type="checkbox" style="margin-left: 0 auto;" disabled >
-      </div>
-        <div>
-           {% for subtopic in coverage.topic.all %}
-                        <div style="display:flex;width:60%;padding-left:30px;">
-                        <small style="color:purple;flex: 1;"><a href="{% url 'media' coverage subtopic %}">{{ subtopic }}</a></small>
-                          <input type="checkbox" style="margin-left: 0 auto;" disabled>
-                      </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-      <br>
+  .syllabus-content {
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: #112240;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
 
-{% endfor %}
+  .topic-item {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.03);
+    transition: all 0.3s ease;
+  }
 
+  .topic-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 
+  .topic-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .topic-title {
+    color: #64ffda;
+    font-size: 1.1rem;
+    margin: 0;
+    flex: 1;
+  }
+
+  .subtopic-list {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .subtopic-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+
+  .subtopic-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .subtopic-link {
+    color: #8892b0;
+    text-decoration: none;
+    flex: 1;
+    transition: color 0.3s ease;
+  }
+
+  .subtopic-link:hover {
+    color: #64ffda;
+  }
+
+  .status-icon {
+    color: #64ffda;
+    font-size: 1.2rem;
+  }
+
+  .checkbox-custom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #64ffda;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .checkbox-custom:checked {
+    background-color: #64ffda;
+  }
+
+  .checkbox-custom:checked::after {
+    content: '✓';
+    position: absolute;
+    color: #0a192f;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .checkbox-custom:disabled {
+    border-color: #8892b0;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>
+
+<div class="syllabus-container">
+  <div class="grade-selector">
+    <button class="btn grade-btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      Grade {{ grade }}
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      {% for i in "4567" %}
+        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject i email %}">{{ i }}</a></li>
+      {% endfor %}
+    </ul>
   </div>
 
-
-
-
-
+  <div class="syllabus-content">
+    {% for coverage in syllabus %}
+      <div class="topic-item">
+        {% if email|guardian_topic_view:coverage %}
+          <div class="topic-header">
+            <p class="topic-title">{{ coverage.order }}.) {{ coverage }}</p>
+            <input type="checkbox" class="checkbox-custom" checked>
+          </div>
+          <div class="subtopic-list">
+            {% for subtopic in email|guardians_subtopic_view:coverage.id %}
+              {% if email|guardian_subtopic_view:subtopic.id %}
+                <div class="subtopic-item">
+                  <a href="{% url 'media' coverage subtopic %}" class="subtopic-link">{{ subtopic }}</a>
+                  <i class="bi bi-check-all status-icon"></i>
+                </div>
+              {% else %}
+                <div class="subtopic-item">
+                  <a href="{% url 'media' coverage subtopic %}" class="subtopic-link">{{ subtopic }}</a>
+                  <input type="checkbox" class="checkbox-custom" disabled>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="topic-header">
+            <p class="topic-title">{{ coverage.order }}.) {{ coverage }}</p>
+            <input type="checkbox" class="checkbox-custom" disabled>
+          </div>
+          <div class="subtopic-list">
+            {% for subtopic in coverage.topic.all %}
+              <div class="subtopic-item">
+                <a href="{% url 'media' coverage subtopic %}" class="subtopic-link">{{ subtopic }}</a>
+                <input type="checkbox" class="checkbox-custom" disabled>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}

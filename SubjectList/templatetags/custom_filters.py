@@ -18,7 +18,7 @@ from Subscription.models import MpesaPayments
 from Supervisor.models import Attendance
 from Teacher.models import MyClass
 from Term.models import Exam
-from Users.models import Classes, MyUser
+from Users.models import AcademicProfile, Classes, MyUser
 
 register = template.Library()
 logger = logging.getLogger('django')
@@ -654,3 +654,11 @@ def get_attendance(student, given_date):
         return 'ABSENT'  # Student is not in the attendance
     except Attendance.DoesNotExist:
         return 'N/A'
+
+@register.filter
+def get_student_count(class_id):
+    try:
+        count = AcademicProfile.objects.filter(current_class=class_id).count()
+        return count
+    except Exception as e:
+        return 0

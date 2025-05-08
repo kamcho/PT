@@ -2,71 +2,124 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+    .table {
+        color: var(--text-primary);
+    }
+    
+    .table th {
+        color: var(--text-primary);
+        border-bottom-color: var(--border-color);
+    }
+    
+    .table td {
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+    
+    .table tbody tr:hover {
+        background-color: var(--bg-card);
+    }
+    
+    .status-active {
+        color: var(--success-color) !important;
+    }
+    
+    .status-disabled {
+        color: var(--danger-color) !important;
+    }
+    
+    .btn-link {
+        color: var(--primary-color);
+    }
+    
+    .btn-link:hover {
+        color: var(--primary-color);
+        opacity: 0.8;
+    }
 
-<div class="container">
-    <!-- <a href="{% url 'create-user' %}"><button class="btn btn-secondary">Add Teacher</button></a> -->
+    .btn-outline-secondary {
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: var(--bg-card);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .form-control {
+        background-color: var(--bg-dark);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .form-control:focus {
+        background-color: var(--bg-dark);
+        border-color: var(--primary-color);
+        color: var(--text-primary);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-secondary);
+    }
+
+    a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--primary-color);
+        opacity: 0.8;
+    }
+
+    h6 {
+        color: var(--text-primary);
+        margin: 0;
+    }
+</style>
+
+<div class="container py-4">
     {% if user.role == 'Supervisor' %}
     <a href="{% url 'create-staff' %}"><button class="btn btn-primary">Add User</button></a>
-  {% endif %}
+    {% endif %}
+    
     <br><br>
     <form method="post">
-      {% csrf_token %}
-      <div class="input-group mb-3">
-          <input type="text" class="form-control" name="search" placeholder="search by name, email or admission" aria-label="Recipient's username" aria-describedby="button-addon2">
-          
-          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
-      </div>
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search" placeholder="Search by name, email or admission" aria-label="Search" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
+        </div>
     </form>
-    
 
-    <table class="table" >
+    <table class="table">
         <thead>
-          <tr>
-            <th><h6>Id</h6></th>
-            <th><h6>Name</h6></th>
-             <th><h6>Subjects</h6></th>
-            <th><h6>Status</h6></th>
-          </tr>
+            <tr>
+                <th><h6>Id</h6></th>
+                <th><h6>Name</h6></th>
+                <th><h6>Subjects</h6></th>
+                <th><h6>Status</h6></th>
+            </tr>
         </thead>
         <tbody>
-          
             {% for user in users %}
             <tr>
-              <td>{{ forloop.counter }}</td>
-              <td><a href="{% url 'teacher-id' user.id %}"><h6>{{ user.personalprofile.get_names|title }}</h6></a></td>  
-             
-              <td>
-                {% for subject in user.teacherprofile.subject.all %}  
-
-                  <button class="btn btn-outline-secondary">{{ subject }}</button>
-                {% endfor %}
-              </td>
-              {% if user.is_active %}
-              <td style="color: cornflowerblue;">Active</td>
-              {% else %}
-              <td style="color: crimson;">Disabled</td>
-              {% endif %}
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'teacher-id' user.id %}"><h6>{{ user.personalprofile.get_names|title }}</h6></a></td>
+                <td>
+                    {% for subject in user.teacherprofile.subject.all %}
+                    <button class="btn btn-outline-secondary">{{ subject }}</button>
+                    {% endfor %}
+                </td>
+                <td class="{% if user.is_active %}status-active{% else %}status-disabled{% endif %}">
+                    {% if user.is_active %}Active{% else %}Disabled{% endif %}
+                </td>
             </tr>
             {% endfor %}
-         
         </tbody>
-     </table>
+    </table>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {% endblock %}

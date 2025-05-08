@@ -2,79 +2,318 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+    :root {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent-blue: #3b82f6;
+        --accent-green: #10b981;
+        --accent-red: #ef4444;
+        --accent-yellow: #f59e0b;
+    }
 
-<div class="container"  style="margin: 0 auto;width: 90%;max-width: 800px;margin: 2px solid grey;">
- 
+    body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+    }
 
-    
+    .container {
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 40px 16px 16px 16px;
+    }
 
-    <br><br>
-   <form method="post">{% csrf_token %}
-    
-    <div style="justify-self: end;">
-      {% if not attendance %}
-      <button class="btn btn-primary"> <i class="bi bi-layers"> </i>{{ class.grade }} - {{ class|title }}</button>
-        <button class="btn btn-secondary" >Mark Attendance</button>
-      {% else %}
-      <h6 style="text-align: center;" class="btn btn-primary"> <i class="bi bi-layers"> </i>{{ class.grade }} - {{ class|title }}</h6>
-        <button class="btn btn-danger" >Re-Mark Attendance</button>
-      {% endif %}
-  </div><br>
-    <table class="table">
-        <thead>
-          <tr>
-            
-            <th><h6>ID</h6></th>
-            <th><small style="color: rgb(255, 217, 0) !important;font-size: 10px;width: 40px;">(Missing)</small></th>
-            <th><h6>User</h6></th>
-            <th><h6>ADM No</h6></th>
-            <th><h6>Status</h6></th>
-            <th><h6>Book</h6></th>
-            <!-- <th><h6>Add Fee</h6></th> -->
-          </tr>
-        </thead>
-        <tbody>
-          
-            {% for user in students %}
-            
-            <tr>
-                <td>{{ forloop.counter }}</td>
-              {% if user.is_active %}
-              <td><input class=""  type="checkbox" value="{{ user }}" name="attendance"></td>
-              <td><a href="{% url 'students-profile' user.adm_no %}"><h6>{{ user.studentprofile.get_names }} </h6></a></td>
-              <td>{{ user.adm_no }}<br><small style="text-align: center;color: cornflowerblue;">{{ user.studentprofile.gender }}</small></td>
-              
-                <td style="color: cornflowerblue;">Active</td>
-                <td><a href="{% url 'book-incident' user.adm_no %}"><i class="bi bi-bookmark"> </i></a></td>
-              {% else %}
-              <td><input class="form-check" type="checkbox" value="{{ user }}" name="attendance" disabled checked ></td>
-              <td><a href="{% url 'students-profile' user %}" style="color: crimson;"><h6>{{ user.studentprofile.get_names }}</h6></a></td>
-              <td style="color: crimson;">{{ user.adm_no }}</td>
-              <td>{{ user.studentprofile.gender }} </td>
-                <td style="color: crimson;">Disabled</td>
-              {% endif %}
-              <!-- <td><a href="{% url 'add-fee-payment' user %}"><i class="bi bi-cash"></i></a></td> -->
-            </tr>
-            {% endfor %}
-         
-        </tbody>
-     </table></form>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-secondary);
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        border: 1px solid var(--bg-tertiary);
+    }
+
+    .header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--accent-blue);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+
+    .btn-danger {
+        background: var(--accent-red);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+
+    .table-container {
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--bg-tertiary);
+        overflow: hidden;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table thead {
+        background: var(--bg-tertiary);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table th {
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        border-bottom: 2px solid var(--bg-tertiary);
+    }
+
+    .table tbody {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+
+    .table td {
+        padding: 12px 16px;
+        font-size: 0.875rem;
+        border-bottom: 1px solid var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .table tbody tr:hover {
+        background: var(--bg-tertiary);
+    }
+
+    .student-link {
+        color: var(--accent-blue);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .student-link:hover {
+        text-decoration: underline;
+    }
+
+    .gender-tag {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent-blue);
+        margin-left: 8px;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-active {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-green);
+    }
+
+    .status-disabled {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--accent-red);
+    }
+
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .form-check-input {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 2px solid var(--bg-tertiary);
+        background: var(--bg-secondary);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .form-check-input:checked {
+        background: var(--accent-blue);
+        border-color: var(--accent-blue);
+    }
+
+    .form-check-input:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .incident-link {
+        color: var(--accent-yellow);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .incident-link:hover {
+        color: #d97706;
+    }
+
+    /* Custom scrollbar */
+    .table tbody::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .table tbody::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+    }
+
+    .table tbody::-webkit-scrollbar-thumb {
+        background: var(--bg-tertiary);
+        border-radius: 4px;
+    }
+
+    .table tbody::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+    }
+
+    /* ID column styling */
+    .table td:first-child {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    /* Missing column alignment */
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        text-align: center;
+    }
+
+    /* Admission number styling */
+    .admission-number {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+    <div class="header">
+        <h2>{{ class.grade }} {{ class|title }} Class</h2>
+        <div>
+            {% if not attendance %}
+                <button class="btn btn-primary">
+                    <i class="bi bi-layers"></i> Mark Attendance
+                </button>
+            {% else %}
+                <button class="btn btn-danger">
+                    <i class="bi bi-layers"></i> Re-Mark Attendance
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="table-container">
+        
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px">ID</th>
+                        <th style="width: 100px; color: var(--accent-yellow); font-weight: 500; text-align: center; vertical-align: middle;"><div class="checkbox-wrapper" >(Missing)</div></th>
+                        <th>Student Name</th>
+                        <th style="width: 200px">Admission No</th>
+                        <th style="width: 100px">Status</th>
+                        <th style="width: 80px">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in students %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="checkbox-wrapper">
+                            {% if user.is_active %}<br><br>
+                                <input class="form-check-input" type="checkbox" value="{{ user }}" name="attendance">
+                            {% else %}
+                                <input class="form-check-input" type="checkbox" value="{{ user }}" name="attendance" disabled checked>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'students-profile' user.adm_no %}" class="student-link">
+                                {{ user.studentprofile.get_names }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="admission-number">{{ user.adm_no }}</span>
+                            <span class="gender-tag">{{ user.studentprofile.gender }}</span>
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="status status-active">Active</span>
+                            {% else %}
+                                <span class="status status-disabled">Disabled</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'book-incident' user.adm_no %}" class="incident-link">
+                                <i class="bi bi-bookmark"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% endblock %}

@@ -1,68 +1,184 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 
-
-
 {% block content %}
-<br><br><br>
+<style>
+    .create-class-container {
+        background-color: var(--bg-card);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 800px;
+        width: 90%;
+    }
 
-<div class="bg-gradent">
+    .page-title {
+        color: var(--text-primary);
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
 
-    <div class="container" style="background-color: white;width: 90%;max-width: 800px;margin: 0 auto;">
+    .form-label {
+        color: var(--text-primary);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
 
-        <br><br>
-        <h5 style="font-family: cursive;text-align: center;text-shadow:cornflowerblue;">Create Class </h5>
-        <br>
-        <form method="post">
+    .form-control, .form-select {
+        background-color: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background-color: var(--bg-dark);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+        color: var(--text-primary);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-secondary);
+    }
+
+    .form-select option {
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-color);
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .form-row {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-text {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .alert {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+    }
+
+    .alert-danger {
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+    }
+
+    .alert-success {
+        border-color: var(--success-color);
+        color: var(--success-color);
+    }
+</style>
+
+<div class="container py-4">
+    <div class="create-class-container">
+        <h1 class="page-title">Create New Class</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" class="needs-validation" novalidate>
             {% csrf_token %}
-            <div class="row mb-3">
+            
+            <div class="row form-row">
                 <div class="col-md-6">
+                    <label for="className" class="form-label">Class Name</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="className" 
+                           name="name" 
+                           placeholder="e.g., Yellow, Red, Lions" 
+                           required>
+                    <div class="form-text">Enter a unique name for the class</div>
+                </div>
                 
-                    <label for="inputField1" class="form-label">Class Name</label>
-                    <input type="text" class="form-control" id="inputField1" name="name" placeholder="Yellow, Red, Lions" required>
-                </div>
-               
                 <div class="col-md-6">
-                    <label for="inputField2" class="form-label">Grade</label>
-                    <input type="number" class="form-control" id="inputField2" name="grade" placeholder="4" required>
+                    <label for="grade" class="form-label">Grade Level</label>
+                    <input type="number" 
+                           class="form-control" 
+                           id="grade" 
+                           name="grade" 
+                           placeholder="e.g., 4" 
+                           min="1" 
+                           max="12" 
+                           required>
+                    <div class="form-text">Enter the grade level (1-12)</div>
                 </div>
             </div>
-            <br>
-            <div class="row mb-3">
-                <!-- <div class="col-md-6">
-                   
-                        <input type="number" class="form-control" id="inputField4" name="size" placeholder="class size">
-                    
-                </div> -->
+
+            <div class="row form-row">
                 <div class="col-md-6">
-                    <select class="form-select"  aria-label="Default select example" name="teacher" >
-                        <option></option>
+                    <label for="classTeacher" class="form-label">Class Teacher</label>
+                    <select class="form-select" 
+                            id="classTeacher" 
+                            name="teacher">
+                        <option value="">Select a teacher</option>
                         {% for teacher in teachers %}
-                            <option value="{{ teacher }}">{{ teacher.personalprofile.f_name }} {{ teacher.personalprofile.l_name }}</option>
+                            <option value="{{ teacher }}">
+                                {{ teacher.personalprofile.get_names|title }}
+                            </option>
                         {% endfor %}
-                        
                     </select>
+                    <div class="form-text">Assign a teacher to this class</div>
                 </div>
             </div>
-            
-          
-    
-            
-        
-            
-            <br>
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <div>.</div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">
+                    Create Class
+                </button>
+            </div>
         </form>
-
-
-
-
-
-
     </div>
-
-
 </div>
 
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
 {% endblock %}

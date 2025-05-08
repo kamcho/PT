@@ -420,6 +420,7 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return False
 
 
+
 class KidExamTopicView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Guardian/kid_exam_topic_detail.html'
 

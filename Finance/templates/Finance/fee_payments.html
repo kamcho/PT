@@ -1,97 +1,297 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 {% block content %}
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
-<br><br><br><br>
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.filter-section {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    background: var(--bg-card-hover);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group-text {
+    background: var(--bg-card);
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-card-hover);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    box-shadow: none;
+    border-color: var(--primary-color);
+}
+
+.btn-secondary {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.table-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 600px;
+    overflow-y: auto;
+}
+
+.table {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.table thead th {
+    background: var(--bg-card-hover);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table tbody td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.table a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.table a:hover {
+    color: var(--secondary-color);
+}
+
+.table small {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.caption {
+    color: var(--text-secondary);
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Custom scrollbar */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: var(--bg-card);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-container {
+        height: auto;
+        max-height: 600px;
+    }
+}
+</style>
+
 <div class="container">
-  <div style="display: flex; justify-content: flex-end;">
-    <a href="{% url 'raw-fee-payments' %}">
-        <button id="downloadPdf" class="btn btn-secondary">Raw Fee Payments</button>
-    </a>
-</div>
+    <div class="page-header">
+        <h1 class="page-title">Processed Fee Payments</h1>
+        <a href="{% url 'raw-fee-payments' %}" class="btn btn-secondary">
+            <i class="bi bi-download"></i> Raw Fee Payments
+        </a>
+    </div>
 
-
-  <h5 class="text-center">Processed Fee Payments</h5>
-  <br>
-
-    <form  method="post">
-        {% csrf_token %}
-       <div class="input-group mb-3">
-            <span class="input-group-text">From</span>
-            <input type="date" class="form-control" pattern="" name="date" placeholder="01/12/2023" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <span class="input-group-text">To</span>
-            <input type="date" class="form-control" name="to" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
-            
-            <span class="input-group-text">Adm No</span>
-            <input type="text" class="form-control" name="adm_no" placeholder="search by user, phone, adm" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <span class="input-group-text">Mode</span>
-            <select class="form-select" id="roleSelect" aria-label="Default select example" name="mode" >
-              <option ></option>
-              <option value="M-Pesa">M-Pesa</option>
-              <option value="Bank">Bank</option>
-            </select>
-       </div>
-       <div class="input-group">
-        <span class="input-group-text">Receipt</span>
-            <input type="text" class="form-control" name="receipt" placeholder="QWERTYUIOP" aria-label="Recipient's username" aria-describedby="button-addon2">
-        <span class="input-group-text">Phone</span>
-            <input type="text" class="form-control" name="phone" placeholder="phone" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <span class="input-group-text">Account</span>
-            <select class="form-select" id="roleSelect" aria-label="Default select example" name="account" >
-              <option ></option>
-              <option value="10002332432">KCB</option>
-              <option value="13222839272">Equity</option>
-            </select>
-            <button class="btn btn-outline-secondary" >Filter / Reset</button>
-       </div>
+    <div class="filter-section">
+        <form method="post">
+            {% csrf_token %}
+            <div class="filter-row">
+                <div class="input-group">
+                    <span class="input-group-text">From</span>
+                    <input type="date" class="form-control" name="date" placeholder="01/12/2023">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">To</span>
+                    <input type="date" class="form-control" name="to" placeholder="To">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">Adm No</span>
+                    <input type="text" class="form-control" name="adm_no" placeholder="Search by admission number">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">Mode</span>
+                    <select class="form-select" name="mode">
+                        <option value="">Select Mode</option>
+                        <option value="M-Pesa">M-Pesa</option>
+                        <option value="Bank">Bank</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-row">
+                <div class="input-group">
+                    <span class="input-group-text">Receipt</span>
+                    <input type="text" class="form-control" name="receipt" placeholder="Receipt number">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">Phone</span>
+                    <input type="text" class="form-control" name="phone" placeholder="Phone number">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">Account</span>
+                    <select class="form-select" name="account">
+                        <option value="">Select Account</option>
+                        <option value="10002332432">KCB</option>
+                        <option value="13222839272">Equity</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-secondary">
+                    <i class="bi bi-funnel"></i> Filter / Reset
+                </button>
+            </div>
         </form>
-        <br>
+    </div>
 
-        <div style="height: 550px;overflow-y: scroll;">
-
-       
-<table class="table" >
-  <caption>Query Totals {{ totals }}</caption>
-    <thead >
-      <tr style="">
-        <th><h6><input type="checkbox"></h6></th>
-        <th><h6>Id</h6></th>
-         <th><h6>Student</h6></th>
-         <th><h6>Transaction ID</h6></th>
-        <th><h6>Date</h6></th>
-        <th><h6>Account</h6></th>
-        <th><h6>Amount</h6></th>
-        <th><h6>Balance</h6></th>
-      </tr>
-    </thead>
-    <tbody>
-      
-      {% for payment in transactions %}
-        
-            <tr>
-                
-          
-                <td><input type="checkbox"></td>
-                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-
-               
-                <td><a href="{% url 'students-profile' payment.user %}">{{ payment.user.studentprofile.get_names|title }}<br><small class="text-center" style="color: cornflowerblue;">{{ payment.user }}</small></a></td>
-                
-                <td><a href="{% url 'manage-fee-payment' payment.id %}">{{ payment.transaction_id.receipt }}</a></td>
-                <td>{{ payment.date|date:"D d M Y" }}</td>
-                  <td><small>{{ payment.transaction_id.account }} </small> | {{ payment.transaction_id.account.account }}<br>{% if payment.transaction_id.msdn %}<small>{{ payment.transaction_id.msdn }}</small>{% endif %}</td>
-                <td>{{ payment.transaction_id.amount }}</td>
-                <td>{{ payment.balance }}</td>
-                
-                
-                
-              </tr>
-        
-        
-      {% endfor %}
-    </tbody>
- </table>
+    <div class="table-container">
+        <table class="table">
+            <caption>Query Totals: {{ totals }}</caption>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="form-check-input"></th>
+                    <th>Id</th>
+                    <th>Student</th>
+                    <th>Transaction ID</th>
+                    <th>Date</th>
+                    <th>Account</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in transactions %}
+                <tr>
+                    <td><input type="checkbox" class="form-check-input"></td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'students-profile' payment.user %}">
+                            {{ payment.user.studentprofile.get_names|title }}
+                            <br>
+                            <small>{{ payment.user }}</small>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'manage-fee-payment' payment.id %}">
+                            {{ payment.transaction_id.receipt }}
+                        </a>
+                    </td>
+                    <td>{{ payment.date|date:"D d M Y" }}</td>
+                    <td>
+                        <small>{{ payment.transaction_id.account }}</small>
+                        <br>
+                        {{ payment.transaction_id.account.account }}
+                        {% if payment.transaction_id.msdn %}
+                        <br>
+                        <small>{{ payment.transaction_id.msdn }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ payment.transaction_id.amount }}</td>
+                    <td>{{ payment.balance }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
- </div>
-
- {% endblock %}
+{% endblock %}

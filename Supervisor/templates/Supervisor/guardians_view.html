@@ -2,77 +2,131 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+    .table {
+        color: var(--text-primary);
+    }
+    
+    .table th {
+        color: var(--text-primary);
+        border-bottom-color: var(--border-color);
+    }
+    
+    .table td {
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+    
+    .table tbody tr:hover {
+        background-color: var(--bg-card);
+    }
+    
+    .status-active {
+        color: var(--success-color) !important;
+    }
+    
+    .status-disabled {
+        color: var(--danger-color) !important;
+    }
+    
+    .btn-link {
+        color: var(--primary-color);
+    }
+    
+    .btn-link:hover {
+        color: var(--primary-color);
+        opacity: 0.8;
+    }
 
-<div class="container">
-  {% if user.role == 'Supervisor' %}
+    .btn-outline-secondary {
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: var(--bg-card);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .form-control {
+        background-color: var(--bg-dark);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .form-control:focus {
+        background-color: var(--bg-dark);
+        border-color: var(--primary-color);
+        color: var(--text-primary);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-secondary);
+    }
+
+    a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--primary-color);
+        opacity: 0.8;
+    }
+
+    h6 {
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .disabled-text {
+        color: var(--danger-color);
+    }
+</style>
+
+<div class="container py-4">
+    {% if user.role == 'Supervisor' %}
     <a href="{% url 'create-staff' %}"><button class="btn btn-primary">Add User</button></a>
-  {% endif %}
- 
-
+    {% endif %}
 
     <br><br>
     <form method="post">
-      {% csrf_token %}
-      <div class="input-group mb-3">
-          <input type="text" class="form-control" name="search" placeholder="search by name, id_number or phone" aria-label="Recipient's username" aria-describedby="button-addon2">
-          
-          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
-      </div>
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search" placeholder="Search by name, id_number or phone" aria-label="Search" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
+        </div>
     </form>
-    
 
     <table class="table">
         <thead>
-          <tr>
-            <th><h6>Id</h6></th>
-            <th><h6>User</h6></th>
-            <th><h6>Account Number</h6></th>
-            <th><h6>Phone</h6></th>
-            <th><h6>Status</h6></th>
-            <!-- <th><h6>Add Fee</h6></th> -->
-          </tr>
+            <tr>
+                <th><h6>Id</h6></th>
+                <th><h6>User</h6></th>
+                <th><h6>Account Number</h6></th>
+                <th><h6>Phone</h6></th>
+                <th><h6>Status</h6></th>
+            </tr>
         </thead>
         <tbody>
-          
             {% for user in users %}
-            
             <tr>
-              <td>{{ forloop.counter }}</td>
-              {% if user.user.is_active %}
-                
-                    <td><a href="{% url 'guardian-view' user %}"><h6>{{ user.user.personalprofile.get_names|title }}</h6></a></td>
-              <td>{{ user.user }}</td>
-              <td>{{ user.user.personalprofile.phone }} </td>
-              
-                <td style="color: cornflowerblue;">Active</td>
-              {% else %}
-              <td><a href="{% url 'guardian-view' user %}" style="color: crimson;"><h6>{{ user.user.personalprofile.get_names|title}}</h6></a></td>
-              <td style="color: crimson;">{{ user.user }}</td>
-              <td style="color: crimson;">{{ user.user.personalprofile.phone }} </td>
-                <td style="color: crimson;">Disabled</td>
-              {% endif %}
-              <!-- <td><a href="{% url 'add-fee-payment' user %}"><i class="bi bi-cash"></i></a></td> -->
+                <td>{{ forloop.counter }}</td>
+                {% if user.user.is_active %}
+                <td><a href="{% url 'guardian-view' user %}"><h6>{{ user.user.personalprofile.get_names|title }}</h6></a></td>
+                <td>{{ user.user }}</td>
+                <td>{{ user.user.personalprofile.phone }}</td>
+                <td class="status-active">Active</td>
+                {% else %}
+                <td><a href="{% url 'guardian-view' user %}" class="disabled-text"><h6>{{ user.user.personalprofile.get_names|title }}</h6></a></td>
+                <td class="disabled-text">{{ user.user }}</td>
+                <td class="disabled-text">{{ user.user.personalprofile.phone }}</td>
+                <td class="status-disabled">Disabled</td>
+                {% endif %}
             </tr>
             {% endfor %}
-         
         </tbody>
-     </table>
+    </table>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {% endblock %}

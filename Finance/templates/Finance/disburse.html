@@ -1,61 +1,192 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 {% block content %}
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
-<br><br><br><br>
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.container {
+    max-width: 800px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.profile-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.profile-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    background: var(--bg-card-hover);
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.salary-value {
+    color: var(--success-color);
+}
+
+.balance-value {
+    color: var(--danger-color);
+}
+
+.payment-form {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-select, .form-control {
+    background: var(--bg-card-hover);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-control:focus {
+    background: var(--bg-card-hover);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .profile-stats {
+        flex-direction: column;
+    }
+    
+    .stat-item {
+        width: 100%;
+    }
+}
+</style>
+
 <div class="container">
-
-
-    <button class="btn btn-secondary">{{ profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }}</button>
-
-    <h6><button class="btn btn-primary">Salry {{ profile.salary }}</button> - <button class="btn btn-danger">Balance {{ profile.balance }}</button></h6>
-
-
-
-
-    <br><br>
-    <h5 style="font-family: cursive;" class="text-center">Add Salary Payment</h5>
-    <br>
-    <form method="post">
-        {% csrf_token %}
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="inputField2" class="form-label">Mode</label>
-                <select class="form-select" id="roleSelect" aria-label="Default select example" name="mode" required onchange="toggleAmountField()">
-                    
-                    <option value="M-PESA">M-PESA</option>
-                    <option value="CASH">CASH</option>
-                    <option value="KCB">KCB</option>
-                    <option value="EQUITY">EQUITY</option>
-                </select>
-            </div>
-    
-            <div class="col-md-6" id="tField" >
-                <label for="inputField2" class="form-label">Transaction ID</label>
-                <input type="text" class="form-control"  name="transaction" placeholder="QHD78GH46" >
-            </div>
-            
-                <div class="col-md-6" id="amountField" style="display: none;">
-                    <label for="inputField4" class="form-label">Amount</label>
-                    <input type="number" class="form-control" placeholder="20,000" name="amount">
-                </div>
-          
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2 class="profile-name">{{ profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }}</h2>
         </div>
-        <br>
-    
-     
-        <br>
-    
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <div>.</div>
-    </form>
-    
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-label">Salary</div>
+                <div class="stat-value salary-value">{{ profile.salary }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Balance</div>
+                <div class="stat-value balance-value">{{ profile.balance }}</div>
+            </div>
+        </div>
+    </div>
 
-    
-    
-   
-
-
+    <div class="payment-form">
+        <h3 class="text-center mb-4">Add Salary Payment</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="roleSelect" class="form-label">Payment Mode</label>
+                    <select class="form-select" id="roleSelect" name="mode" required onchange="toggleAmountField()">
+                        <option value="">Select Payment Mode</option>
+                        <option value="M-PESA">M-PESA</option>
+                        <option value="CASH">CASH</option>
+                        <option value="KCB">KCB</option>
+                        <option value="EQUITY">EQUITY</option>
+                    </select>
+                </div>
+                <div class="col-md-6" id="tField">
+                    <label for="transaction" class="form-label">Transaction ID</label>
+                    <input type="text" class="form-control" id="transaction" name="transaction" placeholder="Enter transaction ID">
+                </div>
+                <div class="col-md-6" id="amountField" style="display: none;">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount">
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Submit Payment
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -63,7 +194,6 @@
         var modeSelect = document.getElementById("roleSelect");
         var amountField = document.getElementById("amountField");
         var tField = document.getElementById("tField");
-
 
         // Initially hide or show the amount field based on the selected mode
         toggleAmountField(modeSelect.value);
@@ -84,6 +214,4 @@
         }
     };
 </script>
-
-
 {% endblock %}

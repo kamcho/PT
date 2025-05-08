@@ -1,110 +1,179 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 
-
-
 {% block content %}
 
-<br><br><br><br>
+<style>
+    body, .report {
+        background: #fff !important;
+        color: #222 !important;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .print-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 32px 24px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.06);
+        border: 1px solid #e5e7eb;
+    }
+    .school-info h5, .school-info h6, .school-info p {
+        margin: 0;
+        text-align: center;
+    }
+    .bio {
+        margin: 24px 0 16px 0;
+        padding: 12px 0;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: space-between;
+    }
+    .bio h6, .bio p {
+        margin: 0 12px 0 0;
+        font-size: 1rem;
+        font-weight: 400;
+        color: #222;
+    }
+    .bio strong {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-thickness: 2px;
+        color: #222;
+    }
+    .grade-system {
+        margin-top: 24px;
+    }
+    .grade-system table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 18px;
+        background: #fff !important;
+    }
+    .grade-system th, .grade-system td {
+        border: 1px solid #d1d5db;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 1rem;
+        color: #222;
+        background: #fff !important;
+    }
+    .grade-system th {
+        font-weight: 700;
+        background: #f3f4f6 !important;
+    }
+    .grade-system caption {
+        color: #555;
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+    .grade-system td[style*="color: cornflowerblue"] {
+        color: #2563eb !important;
+        font-weight: 600;
+    }
+    .print-btn {
+        display: block;
+        margin-left: auto;
+        margin-right: 0;
+        margin-bottom: 24px;
+        background: #ef4444;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        position: static;
+    }
+    .print-btn:hover {
+        background: #b91c1c;
+    }
+    @media print {
+        body, .report, .print-container {
+            background: #fff !important;
+            color: #222 !important;
+            box-shadow: none !important;
+        }
+        .print-btn { display: none !important; }
+        .container { box-shadow: none !important; border: none !important; }
+    }
+</style>
 
-<div class="container">
-    <button onclick="printDiv('report')" class="btn btn-danger" style="position: fixed; right: 14.5%;top: 10%;"><i class="bi bi-printer"> </i> Print</button> 
-
-<div class="report" id="report">
-    <div class="school-info">
-        <h5>{{ student.school }}</h5>
-        <h6>{{ student.school.location }}</h6>
-        <h6>{{ student.school.box }}</h6>
-        <p>{{ student.school.contact }}</p>
-
-    </div>
-    <div class="bio">
-        <div>
-            <h6  class="text-cente" >Names:<strong style="text-decoration: underlne;text-underline-offset: 10px; text-decoration-thickness: 2px;">{{ student.studentprofile.get_names }}</strong></h6>
+<div class="print-container">
+    <button onclick="printDiv('report')" class="print-btn"><i class="bi bi-printer"> </i> Print</button>
+    <div class="report" id="report">
+        <div class="school-info">
+            <h5>{{ student.school }}</h5>
+            <h6>{{ student.school.location }}</h6>
+            <h6>{{ student.school.box }}</h6>
+            <p>{{ student.school.contact }}</p>
         </div>
-        <p>ADM No. <strong style="text-decoration: uderline;text-underline-offset: 10px; text-decoration-thickness: 2px;">{{ student.adm_no }}</strong></p>
-        
-        <h6 style="font-family: cursive;">Grade :<strong style="text-decoration: underine;text-underline-offset: 10px; text-decoration-thickness: 2px;">{{ grade }} </strong></p>
-        <h6>{{ student.personalprofile.gender }}</h6>
-        <h6>Rank {{ rank }}</h6>
-        <h6>{{ term }}</h6>
-    </div>
-    <div class="grade-system" style="background-color: white !important;">
-        <table style="background-color: white !important;">
-            <thead>
-                <tr>
-                    <th><h6>Subject</h6></th>
-                    <th><h6>Score</h6></th>
-                    <th><h6>Grade</h6></th>
-                </tr>
-            </thead>
-            <tbody>
-                
+        <div class="bio">
+            <h6>Names: <strong>{{ student.studentprofile.get_names }}</strong></h6>
+            <p>ADM No. <strong>{{ student.adm_no }}</strong></p>
+            <h6>Grade: <strong>{{ grade }}</strong></h6>
+            <h6>{{ student.personalprofile.gender }}</h6>
+            <h6>Rank: <strong>{{ rank }}</strong></h6>
+            <h6>{{ term }}</h6>
+        </div>
+        <div class="grade-system">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Score</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
                     {% for subject in results %}
                     <tr>
-                        <td>{{ subject.subject.name }} </td>
-                        <td>{{subject.score }}</td>
+                        <td>{{ subject.subject.name }}</td>
+                        <td>{{ subject.score }}</td>
                         <td>{{ subject.get_grade }}</td>
                     </tr>
                     {% endfor %}
-
-                
-            </tbody>
-
-        </table>
-
-        <table style="width: 95%;">
-            <thead style="background-color: white !important;">
-                <tr >
-              
-                    <th><h6>Score</h6></th>
-                    <th><h6>Grade</h6></th>
-                </tr>
-            </thead>
-            <tbody>
-                
-                
+                </tbody>
+            </table>
+            <table>
+                <thead>
                     <tr>
-                        <td style="color: cornflowerblue; ">80-100</td>
+                        <th>Score</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color: #2563eb;">80-100</td>
                         <td>EE Exceeded Expectations</td>
                     </tr>
                     <tr>
-                        <td style="color: cornflowerblue; ">50-79</td>
+                        <td style="color: #2563eb;">50-79</td>
                         <td>ME Met Expectations</td>
                     </tr>
                     <tr>
-                        <td style="color: cornflowerblue; ">30-49</td>
+                        <td style="color: #2563eb;">30-49</td>
                         <td>AE Approaching Expectations</td>
+                    </tr>
                     <tr>
-                        <tr>
-                        <td style="color: cornflowerblue; ">0-29</td>
+                        <td style="color: #2563eb;">0-29</td>
                         <td>BE Below Expectations</td>
                     </tr>
-                    
-
-                
-            </tbody>
-
-        </table>
-
-        
-
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    
-    
-
-    
 </div>
 <script>
     function printDiv(divId) {
         var printContent = document.getElementById(divId).innerHTML;
         var originalContent = document.body.innerHTML;
-
         document.body.innerHTML = printContent;
-
         window.print();
-
         document.body.innerHTML = originalContent;
     }
 </script>

@@ -4,181 +4,291 @@
 
 {% block content %}
 
-<div class="bg-gradint">
-    
-    <div class="container">
-    <br><br><br>
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
 
-    <div style="color: white;">
-        <h5>{{ subject.name }} {{ subject.grade }}</h5>
-        <a class="btn btn-dark" style="color: white;" href="{% url 'questions' subject.id %}">View Questions</a>
-        <!-- <a class="btn btn-secondary" href="{% url 'topic-review' subject.id %}">filters</a> -->
-    </div>
-    </div>
-    <br>
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
 
-    <div class="class-subject-view">
-        <a>
-            <div class="analytic-card">
-                <div class="analytic-title text-center">
-                    Most Passed
-                    <h6>Total Attempts {{ total }}</h6>
-                    <h6>Passed Total {{ correct }}</h6>
-                    <h6>Failed Total {{ failed }}</h6>
+    .container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
 
-                   
-    
-                </div>
-    
-            </div>
+    .subject-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .subject-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--accent-color);
+    }
+
+    .btn-view {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.2s;
+    }
+
+    .btn-view:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .analytics-card {
+        background: var(--card-background);
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .analytics-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent-color);
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--accent-color);
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .chart-container {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto;
+        position: relative;
+        background: radial-gradient(closest-side, var(--card-background) 79%, transparent 80% 100%),
+                    conic-gradient(var(--accent-color) var(--progress), var(--border-color) 0);
+    }
+
+    .progress-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .topics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 24px;
+        margin-top: 32px;
+    }
+
+    .topic-card {
+        background: var(--card-background);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.2s;
+    }
+
+    .topic-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent-color);
+    }
+
+    .topic-name {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    .topic-progress {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        position: relative;
+    }
+</style>
+
+<div class="container">
+    <div class="subject-header">
+        <div class="subject-title">{{ subject.name }} - Grade {{ subject.grade }}</div>
+        <a href="{% url 'questions' subject.id %}" class="btn-view">
+            <i class="bi bi-list-check"></i>
+            View Questions
         </a>
-        <a>
-            <div class="analytic-card">
-                <div class="analytic-title">
-                    <div class="text-center">Subject Average</div>
-                    
-                 
-                    <div class="text-center" >
-                        <br>
-                        <div style="width: 150px;height: 150px;margin: 0 auto;">
-                            <canvas id="donutChart" width="50" height="50" ></canvas>
-                        </div>
-                        
-                        
-                        <small class="text-muted">Mean {{ mean }}%</small>
-                    </div>
-                    
-                    
-    
+    </div>
+
+    <div class="analytics-grid">
+        <!-- Overall Stats Card -->
+        <div class="analytics-card">
+            <div class="card-title">Overall Performance</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">{{ total }}</div>
+                    <div class="stat-label">Total Attempts</div>
                 </div>
-    
+                <div class="stat-item">
+                    <div class="stat-value">{{ correct }}</div>
+                    <div class="stat-label">Passed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ failed }}</div>
+                    <div class="stat-label">Failed</div>
+                </div>
             </div>
-        </a>
+        </div>
+
+        <!-- Subject Average Card -->
+        <div class="analytics-card">
+            <div class="card-title">Subject Average</div>
+            <div class="chart-container">
+                <canvas id="donutChart"></canvas>
+            </div>
+            <div class="text-center mt-3">
+                <span class="stat-label">Mean: {{ mean }}%</span>
+            </div>
+        </div>
+
         {% if most_failed %}
-        <a>
-            
-            <div class="analytic-card">
-                <div class="analytic-title text-center">
-                    Most Failed
-
-                    <h6>{{ most_failed.topic_name }}</h6>
-                    <div style="margin: 0 auto !important;">
-                        <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ most_failed.topic_id|average_percentile:most_failed.failed_questions_count }}%, rgb(29, 25, 46) 0);">
-                            <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                                
-                            </div>
-                        </div>
-                        
-                    </div>
-
-                    <div class="text-center">
-                        <small class="text-muted">Average Fail {{ most_failed.topic_id|average_percentile:most_failed.failed_questions_count }}</small>
-                    </div>
-                    
-    
-                </div>
-    
+        <!-- Most Failed Card -->
+        <div class="analytics-card">
+            <div class="card-title">Most Failed Topic</div>
+            <div class="topic-name">{{ most_failed.topic_name }}</div>
+            <div class="progress-circle" style="--progress: {{ most_failed.topic_id|average_percentile:most_failed.failed_questions_count }}%">
+                <div class="progress-value">{{ most_failed.topic_id|average_percentile:most_failed.failed_questions_count }}%</div>
             </div>
-            
-        </a>
+        </div>
         {% endif %}
+
         {% if most_passed %}
-        <a>
-            <div class="analytic-card">
-                <div class="analytic-title text-center">
-                    Most Passed
-
-                    <h6>{{ most_passed.topic_name }}</h6>
-
-                    <div style="margin: 0 auto !important;">
-                        <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ most_passed.topic_id|average_percentile:most_passed.pass_questions_count }}%, rgb(29, 25, 46) 0);">
-                            <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                                
-                            </div>
-                        </div>
-                        
-                    </div>
-                    <div class="text-center">
-                        <small class="text-muted">Average {{ most_passed.topic_id|average_percentile:most_passed.pass_questions_count }}</small>
-                    </div>
-    
-                </div>
-    
+        <!-- Most Passed Card -->
+        <div class="analytics-card">
+            <div class="card-title">Most Passed Topic</div>
+            <div class="topic-name">{{ most_passed.topic_name }}</div>
+            <div class="progress-circle" style="--progress: {{ most_passed.topic_id|average_percentile:most_passed.pass_questions_count }}%">
+                <div class="progress-value">{{ most_passed.topic_id|average_percentile:most_passed.pass_questions_count }}%</div>
             </div>
-        </a>
+        </div>
         {% endif %}
+    </div>
 
-        
-
- 
-
-    {% for topic in topics %}
-
-        <a>
-            <div class="analytic-card">
-                <div class="analytic-title text-center">
-                    {{ topic.name }}
-                    <br><br>
-
-                    <div style="margin: 0 auto !important;">
-                        <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {% topic_percentile topic.id %}%, rgb(29, 25, 46) 0);">
-                            <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                                
-                            </div>
-                        </div>
-                        
-                    </div>
-
-                    <div class="text-muted">
-                        Mean - {% topic_percentile topic.id %} %
-                    </div>
-
-                </div>
-
+    <!-- Topics Grid -->
+    <div class="topics-grid">
+        {% for topic in topics %}
+        <div class="topic-card">
+            <div class="topic-name">{{ topic.name }}</div>
+            <div class="progress-circle" style="--progress: {% topic_percentile topic.id %}%">
+                <div class="progress-value">{% topic_percentile topic.id %}%</div>
             </div>
-        </a>
-
-
-
-
-    {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
 <script>
-    var mean = '{{ mean }}'
-    pss = 100 - mean
-    pst = mean - pss
+    var mean = '{{ mean }}';
+    var pass = 100 - mean;
+    var fail = mean - pass;
+    
     var data = {
-        labels: ['pass', 'fail'],
+        labels: ['Pass', 'Fail'],
         datasets: [{
-            data: [pss, pst], // Adjust the values as needed
-            backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)'], // Adjust the colors as needed
-            hoverBackgroundColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'], // Hover colors
-            borderWidth: 1,
+            data: [pass, fail],
+            backgroundColor: [
+                'rgba(16, 185, 129, 0.7)',  // Success color
+                'rgba(239, 68, 68, 0.7)'    // Danger color
+            ],
+            hoverBackgroundColor: [
+                'rgba(16, 185, 129, 1)',
+                'rgba(239, 68, 68, 1)'
+            ],
+            borderWidth: 0
         }]
     };
-    
 
     var config = {
         type: 'doughnut',
         data: data,
         options: {
-            cutout: '80%', // Adjust the cutout percentage as needed
+            cutout: '80%',
             plugins: {
                 legend: {
                     display: true,
-                    position: 'bottom', // Adjust the legend position as needed
+                    position: 'bottom',
+                    labels: {
+                        color: '#94a3b8',
+                        font: {
+                            size: 12
+                        }
+                    }
                 }
             }
         }
@@ -187,12 +297,5 @@
     var ctx = document.getElementById('donutChart').getContext('2d');
     var myChart = new Chart(ctx, config);
 </script>
-
-
-
-
-</div>
-</div>
-
 
 {% endblock %}

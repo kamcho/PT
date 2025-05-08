@@ -1,168 +1,227 @@
-
 {% extends base_html %}
 {% load supervisor_filters %}
 
-
-<br><br>
 {% block content %}
-<div class="b">
-    <br><br><br>
-  
-    
-    <br>
-    <form method="post" style="width: 90%;margin: 0 auto;">
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+    .analytics-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 24px;
+    }
+    .analytics-form {
+        background: var(--card-background);
+        border-radius: 12px;
+        padding: 24px 32px 16px 32px;
+        box-shadow: 0 4px 16px 0 rgba(0,0,0,0.12);
+        border: 1px solid var(--border-color);
+        margin-bottom: 32px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        justify-content: center;
+    }
+    .analytics-form input,
+    .analytics-form select {
+        background: var(--background-color);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 1rem;
+        margin-right: 8px;
+        min-width: 120px;
+    }
+    .analytics-form button {
+        background: var(--primary-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+    .analytics-form button:hover {
+        background: var(--secondary-color);
+    }
+    .school-graph {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+    .class-card {
+        background: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+        border: 1px solid var(--border-color);
+        padding: 24px 24px 16px 24px;
+        margin-bottom: 0;
+    }
+    .class-card h6 {
+        text-align: center;
+        margin-bottom: 16px;
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    .chart-container {
+        width: 100%;
+        height: 400px;
+        background: var(--background-color);
+        border-radius: 8px;
+        box-shadow: 0 1px 4px 0 rgba(0,0,0,0.08);
+        border: 1px solid var(--border-color);
+        padding: 12px;
+        margin: 0 auto;
+    }
+    .stream-card {
+        background: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+        border: 1px solid var(--border-color);
+        padding: 24px 24px 16px 24px;
+        margin: 40px auto 0 auto;
+        width: 100%;
+    }
+    .stream-card h6 {
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+    .stream-chart-container {
+        width: 100%;
+        max-width: 900px;
+        height: 500px;
+        background: var(--background-color);
+        border-radius: 8px;
+        box-shadow: 0 1px 4px 0 rgba(0,0,0,0.08);
+        border: 1px solid var(--border-color);
+        padding: 12px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="analytics-container">
+    <form method="post" class="analytics-form">
         {% csrf_token %}
-        <div class="input-group mb-3">
-            <input type="number" class="form-control" value="{{year}}" name="year" required>
-
-            <select class="form-select" aria-label="Default select example" name="term" required>
-                <option value="{{ term }}" selected>{{ term }}</option>
-                <option value="Term 1">Term 1</option>
-                <option value="Term 2">Term 2</option>
-                <option value="Term 3">Term 3</option>
-                
-        
-        
-              </select>
-              <select class="form-select" aria-label="Default select example" name="period" required>
-                <option value="{{ period }}" selected>{{ period }}</option>
-                <option value="OPENER">OPENER</option>
-                <option value="MID">MID TERM</option>
-                <option value="END Term">END TERM</option>
-                
-        
-        
-              </select>
-            <button class="btn btn-dark" type="submit">SET</button>
-        </div>
+        <input type="number" value="{{year}}" name="year" required>
+        <select name="term" required>
+            <option value="{{ term }}" selected>{{ term }}</option>
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+        </select>
+        <select name="period" required>
+            <option value="{{ period }}" selected>{{ period }}</option>
+            <option value="OPENER">OPENER</option>
+            <option value="MID">MID TERM</option>
+            <option value="END Term">END TERM</option>
+        </select>
+        <button type="submit">SET</button>
     </form>
-    <br><br>
-<div  class="school-graph" style="width: 95%;margin: 0 auto;" >
-    {% for class in classes %}
-        
-        <div class="admi-2">
-            <h6 class="text-center"><button type="button" class="btn btn-primary">
-                {{ class.grade }} {{ class }} <span class="btn btn-secondary"></span>
-              </button>  </h6>
-            <br><br>
-            <div style="width: 96%;margin: 0px auto;height: 400px;background-color: white;">
-                <canvas id="myChart{{ forloop.counter }}" ></canvas>
-            </div>
-            {% get_class_perfomance class.class_id year term period as chart_data %}
-            <script>
-                var labels = {{ chart_data.labels|safe }};
-                var datasets = {{ chart_data.datasets|safe }};
-            
-                var config = {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: datasets,
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                position: 'top',
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Number Of Students'
-                                }
-                            },
-                            x: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Total Marks Distribution'
+
+    <div class="school-graph">
+        {% for class in classes %}
+            <div class="class-card">
+                <h6><button type="button" class="btn btn-primary" style="background: var(--accent-color); color: var(--text-primary); border: none;">{{ class.grade }} {{ class }}</button></h6>
+                <div class="chart-container">
+                    <canvas id="myChart{{ forloop.counter }}"></canvas>
+                </div>
+                {% get_class_perfomance class.class_id year term period as chart_data %}
+                <script>
+                    var labels = {{ chart_data.labels|safe }};
+                    var datasets = {{ chart_data.datasets|safe }};
+                    // Set line color to cornflower blue for all datasets
+                    datasets.forEach(function(ds) {
+                        ds.borderColor = '#60a5fa';
+                        ds.backgroundColor = 'rgba(96, 165, 250, 0.2)';
+                    });
+                    var config = {
+                        type: 'line',
+                        data: { labels: labels, datasets: datasets },
+                        options: {
+                            plugins: { legend: { labels: { color: '#f8fafc' } } },
+                            scales: {
+                                y: {
+                                    type: 'linear',
+                                    position: 'top',
+                                    beginAtZero: true,
+                                    title: { display: true, text: 'Number Of Students', color: '#f8fafc' },
+                                    ticks: { color: '#f8fafc' }
+                                },
+                                x: {
+                                    beginAtZero: true,
+                                    title: { display: true, text: 'Total Marks Distribution', color: '#f8fafc' },
+                                    ticks: { color: '#f8fafc' }
                                 }
                             }
                         }
-                    }
-                };
-            
-                // Get the canvas element and render the chart
-                var ctx = document.getElementById('myChart{{ forloop.counter }}').getContext('2d');
-                var myChart = new Chart(ctx, config);
-            </script>
-
-        </div>
-    {% endfor %}
-
-</div>
-<br><br>
-<div style="background-color:rgba(29, 25, 46, .8);width: 95%;margin: 0 auto;">
-    <br>
-        <h6 class="text-center" style="color: white;">
-            Grade {{ class.grade }} Stream</h6>
-            <br>
-       
-        <div class="admi\n-2" style="color: white;">
-            <div style="width: 95%;margin: auto auto;background-color: white; max-height: 500px;" >
-                <canvas id="myChart" ></canvas>
+                    };
+                    var ctx = document.getElementById('myChart{{ forloop.counter }}').getContext('2d');
+                    var myChart = new Chart(ctx, config);
+                </script>
             </div>
-            {% get_schools_grap class.grade year term period as chart_datas %}
-            <script>
-                var labels = {{ chart_datas.labels|safe }};
-                var datasets = {{ chart_datas.datasets|safe }};
-            
-                var config = {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: datasets,
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                position: 'bottom',
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Number Of Students'
-                                }
-                            },
-                            x: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Total Marks Distribution'
-                                }
-                            }
-                        }
-                    }
-                };
-            
-                // Get the canvas element and render the chart
-                var ctx = document.getElementById('myChart').getContext('2d');
-                var myChart = new Chart(ctx, config);
-            </script>
-            
-    
-           
-    
-        </div>
-
+        {% endfor %}
     </div>
-        
-        
 
-
-        
-        
-
-    
-
-
-
-
-<div>
-    .
+    <div class="stream-card">
+        <h6>Grade {{ class.grade }} Stream</h6>
+        <div class="stream-chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+        {% get_schools_grap class.grade year term period as chart_datas %}
+        <script>
+            var labels = {{ chart_datas.labels|safe }};
+            var datasets = {{ chart_datas.datasets|safe }};
+            // Set line color to cornflower blue for all datasets
+            datasets.forEach(function(ds) {
+                ds.borderColor = '#60a5fa';
+                ds.backgroundColor = 'rgba(96, 165, 250, 0.2)';
+            });
+            var config = {
+                type: 'line',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    plugins: { legend: { labels: { color: '#f8fafc' } } },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'bottom',
+                            beginAtZero: true,
+                            title: { display: true, text: 'Number Of Students', color: '#f8fafc' },
+                            ticks: { color: '#f8fafc' }
+                        },
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Total Marks Distribution', color: '#f8fafc' },
+                            ticks: { color: '#f8fafc' }
+                        }
+                    }
+                }
+            };
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, config);
+        </script>
+    </div>
 </div>
-
-
-
-</div>
-
 {% endblock %}

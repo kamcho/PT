@@ -1,44 +1,126 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
-<br><br><br>
-<div class="container">
-    {% if error %}
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+    .save-question-container {
+        max-width: 700px;
+        margin: 100px auto 40px auto;
+        padding: 32px 24px;
+        background: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    }
+    .card-title {
+        color: var(--accent-color);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 24px;
+        text-align: center;
+        letter-spacing: 0.01em;
+    }
+    .info-label {
+        color: var(--accent-color);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 6px;
+    }
+    .info-value {
+        color: var(--text-primary);
+        font-size: 1.05rem;
+        margin-bottom: 4px;
+    }
+    .quiz-label {
+        color: var(--success-color);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-top: 18px;
+        margin-bottom: 6px;
+    }
+    .quiz-value {
+        color: var(--text-primary);
+        font-size: 1.08rem;
+        margin-bottom: 12px;
+    }
+    .choices-label {
+        color: var(--accent-color);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-top: 18px;
+        margin-bottom: 6px;
+    }
+    .choice-correct {
+        color: var(--success-color);
+        font-weight: 600;
+        font-size: 1.05rem;
+    }
+    .choice-incorrect {
+        color: var(--danger-color);
+        font-weight: 600;
+        font-size: 1.05rem;
+    }
+    .file-input {
+        background: var(--background-color);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 18px;
+        width: 100%;
+    }
+    .btn-warning {
+        background: var(--warning-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 10px 28px;
+        font-size: 1.1rem;
+        margin-top: 10px;
+        transition: background 0.2s;
+    }
+    .btn-warning:hover {
+        background: var(--accent-color) !important;
+    }
+</style>
 
+<div class="save-question-container">
+    <h3 class="card-title">Review & Save Question</h3>
+    {% if error %}
         <button class="btn btn-warning">Save</button>
     {% else %}
-    <h6>Strand Info.</h6>
-    <p>{{ subtopic.subject }}</p>
-    <small>{{ subtopic.topic }}</small><br>
-    <small>{{ subtopic }}</small>
-    <br><br>
-    <h6>Quiz</h6>
-    <p>{{ quiz }}</p>
-
-    <h6>Choices</h6>
-    <p style="color:green;">a) {{ selection.selection1 }} <small>(correct)</small></p>
-    <p style="color:crimson;">b) {{ selection.selection2 }}.</p>
-    <p style="color:crimson;">c) {{ selection.selection3 }}.</p>
-    <p style="color:crimson;">d) {{ selection.selection4 }}.</p>
-
-
-
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="file">
-        <button class="btn btn-warning">Save</button>
-    </form>
-
-
-
-
-
-{% endif %}
+        <div class="info-label">Strand Info.</div>
+        <div class="info-value">{{ subtopic.subject }}</div>
+        <div class="info-value">{{ subtopic.topic }}</div>
+        <div class="info-value">{{ subtopic }}</div>
+        <div class="quiz-label">Quiz</div>
+        <div class="quiz-value">{{ quiz }}</div>
+        <div class="choices-label">Choices</div>
+        <div class="choice-correct">a) {{ selection.selection1 }} <small>(correct)</small></div>
+        <div class="choice-incorrect">b) {{ selection.selection2 }}</div>
+        <div class="choice-incorrect">c) {{ selection.selection3 }}</div>
+        <div class="choice-incorrect">d) {{ selection.selection4 }}</div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" class="file-input">
+            <button class="btn btn-warning">Save</button>
+        </form>
+    {% endif %}
 </div>
-
-
-
-
-
-
 {% endblock %}

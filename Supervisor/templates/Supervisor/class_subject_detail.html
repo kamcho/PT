@@ -3,10 +3,178 @@
 {% load supervisor_filters %}
 
 {% block content %}
-<br><br><br><br>
-<div class="container">
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+    .subject-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 24px;
+    }
+    .accordion-flush, .accordion-item, .accordion-header, .accordion-button {
+        background: var(--card-background) !important;
+        color: var(--text-primary) !important;
+        border: none;
+    }
+    .accordion-button {
+        border-radius: 8px !important;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: none !important;
+    }
+    .accordion-body {
+        background: var(--background-color);
+        border-radius: 8px;
+        padding: 24px;
+        color: var(--text-primary);
+    }
+    .form-label, .form-select, .form-control {
+        color: var(--text-primary) !important;
+        background: var(--background-color) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+    .form-select, .form-control {
+        border-radius: 6px !important;
+        padding: 8px 12px !important;
+        font-size: 1rem;
+    }
+    .btn-success {
+        background: var(--success-color) !important;
+        color: var(--text-primary) !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 8px 20px;
+    }
+    .btn-success:hover {
+        background: #059669 !important;
+    }
+    .btn-danger {
+        background: var(--danger-color) !important;
+        color: var(--text-primary) !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 8px 20px;
+    }
+    .btn-danger:hover {
+        background: #b91c1c !important;
+    }
+    .btn-secondary {
+        background: var(--accent-color) !important;
+        color: var(--text-primary) !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 8px 20px;
+    }
+    .btn-secondary:hover {
+        background: var(--primary-color) !important;
+    }
+    .subject-header {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+    .subject-header h6 {
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .table {
+        background: var(--card-background);
+        color: var(--text-primary);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    }
+    .table th, .table td {
+        background: var(--card-background) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px 8px !important;
+    }
+    .table th {
+        color: var(--accent-color) !important;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: capitalize;
+    }
+    .table caption {
+        color: var(--text-secondary);
+        background: none;
+        caption-side: top;
+        font-size: 0.95rem;
+        padding-bottom: 8px;
+    }
+    .table a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .table a:hover {
+        text-decoration: underline;
+    }
+    .grade-table th, .grade-table td {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    .radio-group {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 12px;
+        align-items: center;
+    }
+    .form-check-input[type="radio"] {
+        accent-color: var(--accent-color);
+        width: 18px;
+        height: 18px;
+        margin-right: 6px;
+    }
+    .form-check-label {
+        color: var(--text-primary);
+        font-size: 1rem;
+        margin-right: 12px;
+    }
+    .topic-section {
+        background: var(--card-background);
+        border-radius: 8px;
+        padding: 18px 24px;
+        margin-bottom: 18px;
+        box-shadow: 0 1px 4px 0 rgba(0,0,0,0.08);
+    }
+    .topic-section h6 {
+        color: var(--accent-color);
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="subject-container">
   {% if user.role == 'Supervisor' %}
-  <div class="accordion accordion-flush" id="accordionFlushExample" class="container">
+  <div class="accordion accordion-flush" id="accordionFlushExample">
     <div class="accordion-item">
       <h2 class="accordion-header">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
@@ -19,7 +187,6 @@
             {% csrf_token %}
             <div class="row mb-3">
                 <div class="col-md-6">
-                
                     <label for="inputField1" class="form-label">Current</label>
                     <input type="text" class="form-control" id="inputField1" name="" value="{{ current.user.personalprofile.get_names|title }}" disabled>
                 </div>
@@ -32,230 +199,178 @@
                         {% endfor %}
                     </select>
                 </div>
-                
               </div>
               <button class="btn btn-success" name="appoint">Appoint</button></form>
         </div>
       </div>
     </div>
-  
   </div>
   {% endif %}
-  <!-- Form section will always show -->
-  <!-- <form method="post" style="padding: 30px;">
-    {% csrf_token %}
-    <div class="input-group mb-3">
-      <select class="form-select" aria-label="Default select example" name="year" required>
-        <option value="">Select Grade</option>
-        <option value="1">Grade 1</option>
-        <option value="2">Grade 2</option>
-        <option value="3">Grade 3</option>
-        <option value="4">Grade 4</option>
-        <option value="5">Grade 5</option>
-        <option value="6">Grade 6</option>
-        <option value="7">Grade 7</option>
-        <option value="8">Grade 8</option>
-      </select>
-      <span class="input-group-text">Term</span>
-      <select class="form-select" aria-label="Default select example" name="term" required>
-        <option value="">Select Term</option>
-        <option value="Term 1">1</option>
-        <option value="Term 2">2</option>
-        <option value="Term 3">3</option>
-      </select>
-      <select class="form-select" aria-label="Default select example" name="period" required>
-        <option value="{{ period }}" selected>{{ request.session.period }}</option>
-        <option value="OPENER">OPENER</option>
-        <option value="MID">MID TERM</option>
-        <option value="END Term">END TERM</option>
-        
 
-
-      </select>
-      <button class="btn btn-warning">Filter</button>
-    </div>
-  </form> -->
- 
-
-
-  <!-- Content that will show if tests are available -->
   {% if tests %}
-    <div style=" color: white; border-radius: 1px; padding: 20px;">
-      <div style="display: flex; gap: 30px; margin: 0 auto; width: 95%; justify-content: center; flex-wrap: wrap;">
+    <div class="subject-header">
+      <div>
         {% if user.school.exammode.status and exam %}
           <a href="{% url 'add-score' class.class_id subject %}">
             <button class="btn btn-danger">Add Marks</button>
           </a>
-       
         {% endif %}
-        {% if tests %}
-          <h6>
-            <div class="dropdown">
-              <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ csubject }}  {{ class }}
-              </a>
-            </div>
-          </h6>
-       
-        </div>
       </div>
+      <h6>
+        <div class="dropdown">
+          <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ csubject }}  {{ class }}
+          </a>
+        </div>
+      </h6>
+    </div>
 
-      <!-- Test Results Table -->
-      <table class="container table">
-        <thead>
-          
-          <tr style="background-color: black; color: white; text-transform: capitalize !important;">
-            <th><h6>RANK</h6></th>
-            <th><h6>STUDENT</h6></th>
-            <th><h6>SCORE</h6></th>
-            
-            <th><h6>GRADE</h6></th>
-          </tr><caption> {{ term }} {{ period }} Average :  {% get_class_average class_id subject term period %}</caption>
-        </thead>
-        <tbody>
-          {% for test in tests %}
-            <tr>
-              <td>{{ forloop.counter }}</td>
-                <td><a href="{% url 'students-profile' test.user %}">{{ test.user.studentprofile.get_names }}<br><small>{{ test.user }}</small></a></td>
-              
-              <td>{{ test.score }}</td>
-              <td>{{ test.get_grade }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-
-      <!-- Grade Count Table -->
-      <table class="container table">
-        <thead>
-          <tr style="background-color: black; color: white; text-transform: capitalize !important;">
-            <th><h6>EE</h6></th>
-            <th><h6>ME</h6></th>
-            <th><h6>AE</h6></th>
-            <th><h6>BE</h6></th>
-          </tr>
-        </thead>
-        <tbody>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>RANK</th>
+          <th>STUDENT</th>
+          <th>SCORE</th>
+          <th>GRADE</th>
+        </tr>
+      </thead>
+      <caption>{{ term }} {{ period }} Average :  {% get_class_average class_id subject term period %}</caption>
+      <tbody>
+        {% for test in tests %}
           <tr>
-            <td><h6>{% get_grade_count class_id subject tests.0.term 'EE' %}</h6></td>
-            <td><h6>{% get_grade_count class_id subject tests.0.term 'ME' %}</h6></td>
-            <td><h6>{% get_grade_count class_id subject tests.0.term 'AE' %}</h6></td>
-            <td><h6>{% get_grade_count class_id subject tests.0.term 'BE' %}</h6></td>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'students-profile' test.user %}">{{ test.user.studentprofile.get_names }}<br><small>{{ test.user }}</small></a></td>
+            <td>{{ test.score }}</td>
+            <td>{{ test.get_grade }}</td>
           </tr>
-        </tbody>
-      </table>
-    {% endif %}
-  {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
 
+    <table class="table grade-table">
+      <thead>
+        <tr>
+          <th>EE</th>
+          <th>ME</th>
+          <th>AE</th>
+          <th>BE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{% get_grade_count class_id subject tests.0.term 'EE' %}</td>
+          <td>{% get_grade_count class_id subject tests.0.term 'ME' %}</td>
+          <td>{% get_grade_count class_id subject tests.0.term 'AE' %}</td>
+          <td>{% get_grade_count class_id subject tests.0.term 'BE' %}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
 
   <div>
     {% for topic in topics %}
-      <h6>{{topic.order}}) {{ topic.name }}</h6>
-      {% with topic.id|get_subtopics as subtopics %}
-        {% for subtopic in subtopics %}
-          <div style="padding: 20px;">
-          <h6 >{{ topic.order }}.{{ forloop.counter }} {{ subtopic.name }}</h6>
-
-          {% with subtopic.id|get_expectations:user.school.id as expectation %}
-          {% if expectation >= 80 %}
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student"  checked>
-            <label class="form-check-label" for="{{subtopic.id}}"> EE {{ expectation }} %</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">ME</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">AE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled >
-            <label class="form-check-label" for="{{subtopic.id}}">BE</label>
-          </div>
-          {% elif expectation < 80 and  expectation >= 50  %}
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">EE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
-            <label class="form-check-label" for="{{subtopic.id}}">ME {{ expectation }} %</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">AE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">BE</label>
-          </div>
-       
-          {% elif expectation < 50 and  expectation >= 30  %}
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">EE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled >
-            <label class="form-check-label" for="{{subtopic.id}}">ME</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
-            <label class="form-check-label" for="{{subtopic.id}}">AE {{ expectation }} %</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">BE</label>
-          </div>
-          {% elif expectation < 50 and  expectation >= 30  %}
-          
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">EE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">ME</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">AE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
-            <label class="form-check-label" for="{{subtopic.id}}">BE {{ expectation }} %</label>
-          </div>
-          {% else  %}
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
-            <label class="form-check-label" for="{{subtopic.id}}">{{ expectation }}</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">EE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">ME</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">AE</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
-            <label class="form-check-label" for="{{subtopic.id}}">BE </label>
-          </div>
-          {% endif  %}
-
-          {% endwith %}
-        </div>
-        {% endfor %}
-
-      {% endwith %}
-    <hr>
+      <div class="topic-section">
+        <h6>{{topic.order}}) {{ topic.name }}</h6>
+        {% with topic.id|get_subtopics as subtopics %}
+          {% for subtopic in subtopics %}
+            <div class="radio-group">
+              <h6 style="margin-bottom:0;">{{ topic.order }}.{{ forloop.counter }} {{ subtopic.name }}</h6>
+              {% with subtopic.id|get_expectations:user.school.id as expectation %}
+                {% if expectation >= 80 %}
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
+                    <label class="form-check-label" for="{{subtopic.id}}"> EE {{ expectation }} %</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">ME</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">AE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled >
+                    <label class="form-check-label" for="{{subtopic.id}}">BE</label>
+                  </div>
+                {% elif expectation < 80 and  expectation >= 50  %}
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">EE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
+                    <label class="form-check-label" for="{{subtopic.id}}">ME {{ expectation }} %</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">AE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">BE</label>
+                  </div>
+                {% elif expectation < 50 and  expectation >= 30  %}
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">EE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled >
+                    <label class="form-check-label" for="{{subtopic.id}}">ME</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
+                    <label class="form-check-label" for="{{subtopic.id}}">AE {{ expectation }} %</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">BE</label>
+                  </div>
+                {% elif expectation < 50 and  expectation >= 30  %}
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">EE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">ME</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">AE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
+                    <label class="form-check-label" for="{{subtopic.id}}">BE {{ expectation }} %</label>
+                  </div>
+                {% else  %}
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" checked>
+                    <label class="form-check-label" for="{{subtopic.id}}">{{ expectation }}</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">EE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">ME</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">AE</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="{{subtopic.id}}" id="{{subtopic.id}}" value="Student" disabled>
+                    <label class="form-check-label" for="{{subtopic.id}}">BE </label>
+                  </div>
+                {% endif  %}
+              {% endwith %}
+            </div>
+          {% endfor %}
+        {% endwith %}
+      </div>
     {% endfor %}
   </div>
 </div>

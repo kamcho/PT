@@ -1,85 +1,116 @@
 {% extends base_html %}
 {% block content %}
 
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+    .question-container {
+        max-width: 950px;
+        margin: 100px auto 40px auto;
+        padding: 32px 24px;
+        background: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    }
+    .question-form {
+        width: 100%;
+    }
+    .form-select, .form-control, textarea {
+        background: var(--background-color) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+        padding: 10px 12px !important;
+        font-size: 1rem;
+        margin-bottom: 18px;
+        width: 100%;
+    }
+    .form-label {
+        color: var(--text-primary);
+        font-weight: 700;
+        font-size: 1.08rem;
+        margin-bottom: 8px;
+        letter-spacing: 0.01em;
+    }
+    .btn-info {
+        background: var(--accent-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 10px 28px;
+        font-size: 1.1rem;
+        margin-top: 10px;
+        transition: background 0.2s;
+    }
+    .btn-info:hover {
+        background: var(--primary-color) !important;
+    }
+    .card-title {
+        color: var(--accent-color);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 24px;
+        text-align: center;
+        letter-spacing: 0.01em;
+    }
+</style>
 
-
-
-  <div class="container">
-
-
-      <br>
-      <br>
-      <br>
-
-      <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-
-
-{% if not subjects %}
-                <!-- <a href="{% url 'subjects-selection' %}"class="btn btn-warning"> Add </a> -->
-              {% else %}
-          <br>
-          <br>
-
-
-          {% if user.role == 'Supervisor' %}
-              <select class="form-select"  name="type" aria-label="Default select example" required>
+<div class="question-container">
+    <h3 class="card-title">Create Question</h3>
+    <form method="post" enctype="multipart/form-data" class="question-form">
+        {% csrf_token %}
+        {% if not subjects %}
+            <!-- <a href="{% url 'subjects-selection' %}"class="btn btn-warning"> Add </a> -->
+        {% else %}
+            {% if user.role == 'Supervisor' %}
+                <label class="form-label" for="subjectSelect">Subject</label>
+                <select class="form-select" name="type" required>
                     <option value="knec">KNEC</option>
                     <option value="knec">School Test</option>
-
-              </select>
-              <br>
-              <select class="form-select"  name="subject" id="subjectSelect" aria-label="Default select example" required>
-
-                  {% for subject in subjects %}
-                    <option value="{{ subject.id }}">{{ subject.subject__name }}</option>
-                  {% endfor %}
-              </select>
-
-
-
-
-
-          {% else %}
-
-              <select class="form-select" id="subjectSelect" name="subject" aria-label="Default select example" required>
-                  <option></option>
-                  {% for subject in subjects %}
-                    <option value="{{ subject.subject__id }}">{{ subject.subject__name }} - Grade ({{ subject.subject__grade }})</option>
-                  {% endfor %}
-              </select>
-          {% endif %}
-
-
-
-
-
-
-          <br>
-          <select class="form-select" id="topicSelect" name="topic" aria-label="Default select example" required>
-          </select>
-
-          <br>
-          <select class="form-select" aria-label="Default select example" id="subtopicSelect" name="subtopic" required>
-              
-
-
-          </select>
-
-          <br>
-
-          <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Add question here</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="quiz" required></textarea>
-          </div>
-
-
+                </select>
+                <label class="form-label" for="subjectSelect">Subject</label>
+                <select class="form-select" name="subject" id="subjectSelect" required>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}">{{ subject.subject__name }}</option>
+                    {% endfor %}
+                </select>
+            {% else %}
+                <label class="form-label" for="subjectSelect">Subject</label>
+                <select class="form-select" id="subjectSelect" name="subject" required>
+                    <option></option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.subject__id }}">{{ subject.subject__name }} - Grade ({{ subject.subject__grade }})</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+            <label class="form-label" for="topicSelect">Topic</label>
+            <select class="form-select" id="topicSelect" name="topic" required></select>
+            <label class="form-label" for="subtopicSelect">Subtopic</label>
+            <select class="form-select" id="subtopicSelect" name="subtopic" required></select>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Add question here</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="quiz" required></textarea>
+            </div>
             <button class="btn btn-info">NEXT</button>
-          {% endif %}
-
-      </form>
+        {% endif %}
+    </form>
 </div>
-
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
@@ -90,17 +121,15 @@
       var tchr = '{{ user.email }}';
       $('#topicSelect').empty().append('<option selected>Loading...</option>');
       $('#subtopicSelect').empty().append('<option selected>Subtopic</option>');
-
       // AJAX request to load topics
       $.ajax({
-        url: '/Teacher/load_topics/',  // Replace with the actual URL of your load_topics view
+        url: '/Teacher/load_topics/',
         type: 'get',
         data: { subject_id: subjectId, tch: tchr },
         success: function(response) {
           var options = '';
           options += '<option >' +'' + '</option>';
           $.each(response, function(index, topic) {
-            
             options += '<option value="' + topic.id + '">' + topic.name + '</option>';
           });
           $('#topicSelect').empty().append(options);
@@ -110,15 +139,13 @@
         }
       });
     });
-
     // Event handler for the topic select element
     $('#topicSelect').change(function() {
       var topicId = $(this).val();
       $('#subtopicSelect').empty().append('<option selected>Loading...</option>');
-
       // AJAX request to load subtopics
       $.ajax({
-        url: '/Teacher/load_subtopics/',  // Replace with the actual URL of your load_subtopics view
+        url: '/Teacher/load_subtopics/',
         type: 'get',
         data: { topic_id: topicId },
         success: function(response) {

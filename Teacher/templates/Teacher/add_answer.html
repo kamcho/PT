@@ -1,70 +1,143 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+    .answer-container {
+        max-width: 950px;
+        margin: 100px auto 40px auto;
+        padding: 32px 24px;
+        background: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    }
+    .answer-form {
+        width: 100%;
+    }
+    .form-label {
+        color: var(--text-primary);
+        font-weight: 700;
+        font-size: 1.08rem;
+        margin-bottom: 8px;
+        letter-spacing: 0.01em;
+    }
+    .form-control, textarea {
+        background: var(--background-color) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+        padding: 10px 12px !important;
+        font-size: 1rem;
+        margin-bottom: 18px;
+        width: 100%;
+    }
+    .btn-info {
+        background: var(--accent-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 10px 28px;
+        font-size: 1.1rem;
+        margin-top: 10px;
+        transition: background 0.2s;
+    }
+    .btn-info:hover {
+        background: var(--primary-color) !important;
+    }
+    .choice-hint-correct {
+        color: var(--success-color);
+        font-weight: 600;
+        font-size: 0.98rem;
+        margin-left: 8px;
+    }
+    .choice-hint-incorrect {
+        color: var(--danger-color);
+        font-weight: 600;
+        font-size: 0.98rem;
+        margin-left: 8px;
+    }
+    .card-title {
+        color: var(--accent-color);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 24px;
+        text-align: center;
+        letter-spacing: 0.01em;
+    }
+    .quiz-question {
+        color: var(--text-primary);
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+        text-align: center;
+    }
+    .reset-btn {
+        background: var(--danger-color) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 20px;
+        margin-bottom: 24px;
+        display: block;
+        margin-left: auto;
+    }
+    .reset-btn:hover {
+        background: #b91c1c !important;
+    }
+</style>
 
-
-  <div class="container">
-
+<div class="answer-container">
+    <h3 class="card-title">Add Answer Choices</h3>
     {% if error %}
-    <a href="{% url 'create-questions' %}"><button class="btn btn-danger">Reset</button></a>
-
-
+        <a href="{% url 'create-questions' %}"><button class="reset-btn">Reset</button></a>
     {% else %}
-    <br>
-    <br>
-    <br>
-
-
-    <p>{{ quiz.quiz }}</p>
-    <form method="post">
-      {% csrf_token %}
-
-    <div class="mb-3">
-  <label class="form-label">
-    <small>selection 1 <small style="color:green;">(THIS SHOULD BE THE CORRECT CHOICE)</small></small>
-  </label>
-  <textarea class="form-control" rows="3" name="selection1" required></textarea>
-</div>
-
-<div class="mb-3">
-  <label class="form-label">
-    <small>selection 2 <small style="color:crimson;">(THIS SHOULD BE AN INCORRECT CHOICE)</small></small>
-  </label>
-  <textarea class="form-control" rows="3" name="selection2" required></textarea>
-</div>
-
-<div class="mb-3">
-  <label class="form-label">
-    <small>selection 3 <small style="color:crimson;">(THIS SHOULD BE AN INCORRECT CHOICE)</small></small>
-  </label>
-  <textarea class="form-control" rows="3" name="selection3" required></textarea>
-</div>
-
-<div class="mb-3">
-  <label class="form-label">
-    <small>selection 4 <small style="color:crimson;">(THIS SHOULD BE AN INCORRECT CHOICE)</small></small>
-  </label>
-  <textarea class="form-control" rows="3" name="selection4" required></textarea>
-</div>
-
-
-<button class="btn btn-info">Next</button>
-
-
-
-</form>
-
-
+        <div class="quiz-question">{{ quiz.quiz }}</div>
+        <form method="post" class="answer-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">
+                    Selection 1 <span class="choice-hint-correct">(This should be the correct choice)</span>
+                </label>
+                <textarea class="form-control" rows="3" name="selection1" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">
+                    Selection 2 <span class="choice-hint-incorrect">(This should be an incorrect choice)</span>
+                </label>
+                <textarea class="form-control" rows="3" name="selection2" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">
+                    Selection 3 <span class="choice-hint-incorrect">(This should be an incorrect choice)</span>
+                </label>
+                <textarea class="form-control" rows="3" name="selection3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">
+                    Selection 4 <span class="choice-hint-incorrect">(This should be an incorrect choice)</span>
+                </label>
+                <textarea class="form-control" rows="3" name="selection4" required></textarea>
+            </div>
+            <button class="btn btn-info">Next</button>
+        </form>
     {% endif %}
-  </div>
-
-
-
-
-
-
-
-
-
-
+</div>
 {% endblock %}
