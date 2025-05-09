@@ -1019,10 +1019,13 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
         
         id = self.kwargs['id']
         try:
-            student  = Students.objects.get(adm_no=id)
+            student = Students.objects.get(adm_no=id)
             grade = self.request.session.get('grade', student.academicprofile.current_class.grade)
-            term = self.request.session.get('term','Term 1')
-            print(self.request.user.role)
+            term = self.request.session.get('term', 'Term 1')
+            
+            # Get all available grades (1-12)
+            context['grades'] = list(range(1, 13))
+            
             scores = Exam.objects.filter(user__adm_no=id, subject__grade=grade, term__term=term) 
             if scores:
                 opener = scores.filter(period='OPENER')
@@ -1034,41 +1037,19 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
                 context['scores'] = scores
                 context['term'] = term
             context['grade'] = grade
-            context['student']  = student
+            context['student'] = student
         except:
             messages.error(self.request, 'We could not find a student matching your query !')
-        # if self.request.user.role == 'Guardian':
-        #     # get the current logged in user(learner) current grade and associated Subjects
-        #     context['base_html'] = 'Guardian/baseg.html'
         
-        # elif self.request.user.role == 'Teacher':
-        #     context['base_html'] = 'Teacher/teachers_base.html'
-        # elif self.request.user.role == 'Supervisor':
-        #     context['base_html'] = 'Supervisor/base.html'
-        # print(self.request.user.role)
-        
-
-        
-        
-        context['student'] = student
         return context
     
-    # def test_func(self):
-    #     return self.request.user.role == 'Supervisor'
-    
     def post(self, *args, **kwargs):
-      
         if self.request.method == 'POST':
             selected = self.request.POST.get('grade')
-            term = self.request.POST.get('term') 
-            print(term)
+            term = self.request.POST.get('term')
             self.request.session['grade'] = selected
             self.request.session['term'] = term
-
-
             return redirect(self.request.get_full_path())
-
-
 
 class StudentTaskSelect(TemplateView):
     template_name = 'Supervisor/student_task_select.html'
@@ -1237,9 +1218,9 @@ class ClassesView(LoginRequiredMixin, TemplateView):
             
         context['classes'] = classes
         
-
-        return context     
-
+        
+        return context
+    
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
             

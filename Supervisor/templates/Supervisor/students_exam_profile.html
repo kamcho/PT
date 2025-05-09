@@ -1,209 +1,389 @@
-{% extends base_html %}
-{% load custom_filters %}
+{% extends 'Supervisor/base.html' %}
+{% load static %}
 {% block content %}
 
-<br><br><br><br>
-<div class="">
-<div class="container">
-  <br><br><br>
-    <form method="post" style="color: rgb(26, 24, 24) !important;width: 90%;max-width: 400px;justify-self: end;">
-        {% csrf_token %}
-        <div class="input-group" >
-            <select name="grade" class="form-select" required>
-              <option></option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-            </select>
-            <select name="term" class="form-select" required>
-              <option></option>
-              <option value="Term 1">Term 1</option>
-              <option value="Term 2">Term 2</option>
-              <option value="Term 3">Term 3</option>
-              
-            </select>
-            <button class="btn btn-secondary">Submit</button>
-        </div>
-    </form>
+<style>
+    :root {
+        --primary-bg: #1a1a1a;
+        --secondary-bg: #2d2d2d;
+        --accent-color: #4a90e2;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --border-radius: 8px;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-</div>
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
 
-<div class="container" style="color: rgb(3, 3, 3);">
-    <br>
-    <h5>{{ student.studentprofile.get_names }}</h5>
-    <p>Grade {{ student.academicprofile.current_class.grade }} {{ student.academicprofile.current_class|title }}</p>
-</div>
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234a90e2' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
 
-<div class="container form-view">
-    <br>
-    <h5>Grade {{ grade }} {{ term }} Opener</h5>
-    {% if opener %}
-    <div class="accordion" id="accordionTerm1">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTerm1"
-                    aria-expanded="true" aria-controls="collapseTerm1">
-                    Term Average {% get_user_term_average student grade term 'OPENER' %}
+    .back-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: var(--text-primary);
+    }
+
+    .profile-card {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .student-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-item i {
+        color: var(--accent-color);
+        font-size: 1.25rem;
+    }
+
+    .period-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .period-tab {
+        background: var(--secondary-bg);
+        border: none;
+        color: var(--text-secondary);
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .period-tab.active {
+        background: var(--accent-color);
+        color: var(--text-primary);
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 2rem;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .results-table th {
+        background: var(--secondary-bg);
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .results-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .grade-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .grade-a { background: var(--success-color); color: white; }
+    .grade-b { background: var(--accent-color); color: white; }
+    .grade-c { background: var(--warning-color); color: black; }
+    .grade-d { background: var(--danger-color); color: white; }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--secondary-bg);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--accent-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .filter-form {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 2rem;
+    }
+
+    .filter-form .input-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-form .form-control,
+    .filter-form .form-select {
+        background: var(--primary-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .filter-form .form-control:focus,
+    .filter-form .form-select:focus {
+        background: var(--primary-bg);
+        border-color: var(--accent-color);
+        color: var(--text-primary);
+        box-shadow: none;
+    }
+
+    .filter-form .btn-primary {
+        background: var(--accent-color);
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: var(--border-radius);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .filter-form .btn-primary:hover {
+        background: var(--accent-color);
+        opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        .student-info {
+            grid-template-columns: 1fr;
+        }
+
+        .period-tabs {
+            flex-wrap: wrap;
+        }
+
+        .period-tab {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-form .input-group {
+            flex-direction: column;
+        }
+
+        .filter-form .form-control,
+        .filter-form .form-select,
+        .filter-form .btn-primary {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="page-header">
+        <a href="{% url 'students-profile' student.adm_no %}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to Profile
+        </a>
+        <h1 class="text-white mt-3">{{ student.studentprofile.f_name }} {{ student.studentprofile.l_name }} {{ student.studentprofile.surname }}</h1>
+        <p class="text-white-50 mb-0">Exam Results - {{ term }} {{ grade }}</p>
+    </div>
+
+    <div class="filter-form">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <select class="form-select" name="grade" required>
+                    <option value="{{ grade }}" selected>Grade {{ grade }}</option>
+                    {% for g in grades %}
+                        <option value="{{ g }}">Grade {{ g }}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select" name="term" required>
+                    <option value="{{ term }}" selected>{{ term }}</option>
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Term 3">Term 3</option>
+                </select>
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-funnel"></i> Filter Results
                 </button>
-            </h2>
-            <div id="collapseTerm1" class="accordion-collapse collapse show">
-                <div class="accordion-body">
-                    <table class="table">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th><h6>Subject</h6></th>
-                            <th><h6>Score</h6></th>
-                            <th><h6>Comments</h6></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for score in term1 %}
-                            <tr>
-                              <td><a href=""><h6>{{ score.subject }}</h6></a></td>
-                              <td>{{ score.score }}</td>
-                              <td>{{ score.get_grade }}</td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                    </table>
-                    </table>
+            </div>
+        </form>
+    </div>
+
+    <!-- <div class="profile-card">
+        <div class="student-info">
+            <div class="info-item">
+                <i class="bi bi-calendar3"></i>
+                <div>
+                    <div class="text-white-50">Year</div>
+                    <div class="text-white">{{ grade }}</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="bi bi-book"></i>
+                <div>
+                    <div class="text-white-50">Term</div>
+                    <div class="text-white">{{ term }}</div>
                 </div>
             </div>
         </div>
+    </div> -->
+
+    <div class="period-tabs">
+        <button class="period-tab active" data-period="all">All Results</button>
+        <button class="period-tab" data-period="opener">Opener</button>
+        <button class="period-tab" data-period="mid">Mid Term</button>
+        <button class="period-tab" data-period="end">End Term</button>
     </div>
-    {% else %}
-    <div class="accordion" id="accordionTerm1Unavailable">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseTerm1Unavailable" aria-expanded="false"
-                    aria-controls="collapseTerm1Unavailable">
-                    Grade {{ grade }} {{term}} Opener results are not available.
-                </button>
-            </h2>
-            <div id="collapseTerm1Unavailable" class="accordion-collapse collapse">
-                <div class="accordion-body">
-                    <strong>We could not find marks for {{ grade }} {{term}}</strong>
-                </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ scores.count }}</div>
+            <div class="stat-label">Total Subjects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                {% with max_score=scores|dictsort:"score"|last %}
+                    {{ max_score.score }}
+                {% endwith %}
             </div>
+            <div class="stat-label">Highest Score</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                {% with min_score=scores|dictsort:"score"|first %}
+                    {{ min_score.score }}
+                {% endwith %}
+            </div>
+            <div class="stat-label">Lowest Score</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ grade }}</div>
+            <div class="stat-label">Current Grade</div>
         </div>
     </div>
-    {% endif %}
-</div>
-<br><br>
 
-<div class="container form-view" >
-  <h5 style="text-align: left !important;">Grade {{ grade }} {{term}} Mid Term</h5>
-  <br>
-  {% if mid %}
-  <div class="accordion" id="accordionTerm2" style="width: 99% !important;">
-      <div class="accordion-item">
-          <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapseTerm2" aria-expanded="false" aria-controls="collapseTerm2">
-                  Term 2 Average {% get_user_term_average student grade  term 'MID' %}
-              </button>
-          </h2>
-          <div id="collapseTerm2" class="accordion-collapse collapse">
-              <div class="accordion-body">
-                
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th><h6>Subject</h6></th>
-                          <th><h6>Score</h6></th>
-                          <th><h6>Comments</h6></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for score in mid %}
-                          <tr>
-                            <td><a href=""><h6>{{ score.subject }}</h6></a></td>
-                            <td>{{ score.score }}</td>
-                            <td>{{ score.get_grade }}</td>
-                          </tr>
-                        {% endfor %}
-                      </tbody>
-            
-                  </table>
-              </div>
-          </div>
-      </div>
-  </div>
-  {% else %}
-  <div class="accordion" id="accordionTerm2Unavailable">
-      <div class="accordion-item">
-          <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapseTerm2Unavailable" aria-expanded="false"
-                  aria-controls="collapseTerm2Unavailable">
-                  Grade {{ grade }} {{ term }} Mid Term results are not available.
-              </button>
-          </h2>
-          <div id="collapseTerm2Unavailable" class="accordion-collapse collapse">
-              <div class="accordion-body">
-                  <strong>We could not find marks for {{ grade }} {{term}} Mid Term</strong>
-              </div>
-          </div>
-      </div>
-  </div>
-  {% endif %}
-</div>
-<br><br>
-
-<div class="container form-view" style="background-color: white;">
-  <h5>Grade {{ grade }} {{ term }} End Term</h5>
-  <br>
-  {% if end %}
-  <h6>Term Average {% get_user_term_average student grade term 'END' %}</h6>
- 
-    <table class="table">
-      <thead>
-        <tr>
-          <th><h6>Subject</h6></th>
-          <th><h6>Score</h6></th>
-          <th><h6>Comments</h6></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for score in end %}
-          <tr>
-            <td><a href=""><h6>{{ score.subject }}</h6></a></td>
-            <td>{{ score.score }}</td>
-            <td>{{ score.get_grade }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-  </table>
-  {% else %}
-  <div class="accordion" id="accordionTerm3Unavailable">
-      <div class="accordion-item">
-          <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapseTerm3Unavailable" aria-expanded="false"
-                  aria-controls="collapseTerm3Unavailable">
-                  Grade {{ grade }} {{ term }} End Term results are not available.
-              </button>
-          </h2>
-          <div id="collapseTerm3Unavailable" class="accordion-collapse collapse">
-              <div class="accordion-body">
-                  <strong>We could not find marks for {{ grade }} {{ term }} End Term</strong>
-              </div>
-          </div>
-      </div>
-  </div>
-  {% endif %}
-  <br>
-</div>
-<br><br>
+    <div class="table-responsive">
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                    <th>Period</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in scores %}
+                <tr>
+                    <td>{{ score.subject.name }}</td>
+                    <td>{{ score.score }}</td>
+                    <td>
+                        <span class="grade-badge grade-{{ score.grade|lower }}">
+                            {{ score.grade }}
+                        </span>
+                    </td>
+                    <td>{{ score.period }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.period-tab');
+    const tableBody = document.querySelector('.results-table tbody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            this.classList.add('active');
+
+            const period = this.dataset.period;
+
+            // Show/hide rows based on period
+            rows.forEach(row => {
+                const rowPeriod = row.querySelector('td:last-child').textContent.trim();
+                if (period === 'all' || rowPeriod === period.toUpperCase()) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
 
 {% endblock %}

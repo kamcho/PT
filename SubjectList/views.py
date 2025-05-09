@@ -1631,7 +1631,10 @@ def chatgpt_answer(request):
             # Call OpenAI API
             try:
                 print("Calling OpenAI API with model:", model)
-                client = OpenAI(api_key='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')
+                SECRET_KEY = os.getenv("SECRET_KEY")
+                # print(SECRET_KEY)
+                # SECRET_KEY = 
+                client = OpenAI(api_key=SECRET_KEY)
                 response = client.chat.completions.create(
                     model=model,
                     messages=messages,
