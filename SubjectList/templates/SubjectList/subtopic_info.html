@@ -4,55 +4,232 @@
 
 {% block content %}
 
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
 
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
 
-<br><br><br>
+.container {
+    max-width: 800px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.subject-header {
+    background: var(--gradient-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
+}
+
+.subject-header h5 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 0.5rem;
+}
+
+.subject-header h6 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin: 0.25rem 0;
+}
+
+.subject-header p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0.25rem 0;
+}
+
+.test-info {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.test-info p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.test-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.test-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--bg-card-hover);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.test-detail-item i {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+}
+
+.test-detail-item strong {
+    color: var(--accent-color);
+    font-size: 1.1rem;
+}
+
+.test-note {
+    background: var(--bg-card-hover);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.test-note strong {
+    color: var(--warning-color);
+}
+
+.error-message {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem auto;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.error-message h5 {
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.error-message p {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.start-test-form {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.start-test-form strong {
+    color: var(--danger-color);
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.start-btn {
+    background: var(--gradient-bg);
+    color: var(--text-primary);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 4rem;
+    }
+    
+    .test-details {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
 <div class="container">
+    <div class="subject-header">
+        <h5>{{ subtopic.subject }} Grade {{ subtopic.subject.grade }}</h5>
+        <h6>Topic: {{ subtopic.topic.name }}</h6>
+        <p>Subtopic: {{ subtopic }}</p>
+    </div>
 
-<h5>{{ subtopic.subject }} Grade {{ subtopic.subject.grade }}</h5>
-<h6>Topic : {{ subtopic.topic.name }}</h6>
-<p>Subtopic : {{ subtopic }}</p>
+    {% if not size %}
+        <div class="error-message">
+            <h5><i class="bi bi-exclamation-triangle"></i> This test cannot be taken now</h5>
+            <p>Please proceed to the next topic. Here are the possible reasons:</p>
+            <p>1. The subtopic is under review in compliance with CBC</p>
+            <p>2. There is not enough test questions due to the nature of the subtopic</p>
+            <p>3. K.I.C.D has removed the substrand from the {{ subtopic.subject }} Grade {{ subtopic.subject.grade }} course</p>
+        </div>
+    {% else %}
+        <div class="test-info">
+            <p>We have scheduled a test on the subtopic {{ subtopic }}. The purpose of this test is to evaluate your grasp of the material and identify areas where further improvement may be needed.</p>
+            
+            <div class="test-details">
+                <div class="test-detail-item">
+                    <i class="bi bi-clock"></i>
+                    <div>
+                        <small>Time</small>
+                        <strong>{{ time }} minutes</strong>
+                    </div>
+                </div>
+                
+                <div class="test-detail-item">
+                    <i class="bi bi-ui-checks"></i>
+                    <div>
+                        <small>Questions</small>
+                        <strong>{{ size }}</strong>
+                    </div>
+                </div>
+            </div>
 
-{% if not size %}
-<br><br>
-<h5 style="color: coral;">This test cannot be taken now. Kindly proceed to the next topic !</h6>
-<div style="padding: 40px;">
-    <h5> Possible Reasons</h5>
-    <p>1. The subtopic is under review in compliance with CBC,</p>
-    <p>2. There is not enough test questions due to the nature of the subtopic,</p>
-    <p>3. K.I.C.D has removed the substrand from the {{ subtopic.subject }} Grade {{ subtopic.subject.grade }} course.</p>
+            <div class="test-note">
+                <strong>Note:</strong> Upon completing all tests on subtopics in this topic ({{ subtopic.topic.name }}), you will be provided with a final test!
+            </div>
+        </div>
+
+        <div class="start-test-form">
+            <strong><i class="bi bi-exclamation-circle"></i> A test once started cannot be stopped</strong>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="start-btn">
+                    <i class="bi bi-play-fill"></i> Start Test
+                </button>
+            </form>
+        </div>
+    {% endif %}
 </div>
-{% else %}
-<p>We have scheduled a test on the subtopic {{ subtopic }}.
-     The purpose of this test is to evaluate your grasp of the material
-    and identify areas where further improvement may be needed. Additional
-    information about the test is provided below.
-</p>
-
-<h6><i class="bi bi-clock" style="color: cornflowerblue;"> </i>Time <strong style="color: coral;">{{ time }}</strong> minutes</h6>
-<h6><i class="bi bi-ui-checks" style="color: cornflowerblue;"> </i>Questions <strong style="color: coral;">{{ size }}</strong></h6>
-<br>
-<h6><strong>NB. Upon completing all test on subtopics in this topic ({{ subtopic.topic.name }}), you will be provided with a final test !! </strong></h6>
-
-
-<br><br>
-
-<!-- % if student.mysubscription.status % -->
-<form method="post">
-    {% csrf_token %}
-    <strong>A test once started cannot be stopped</strong>
-    <br>
-    <button class="btn btn-danger" style="width: 100px;">Start</button>
-
-</form>
-<!-- % else % -->
-<!-- <p>You do not have an active subscription. To take this test kindly subscribe by clicking the button below:</p>
-                <a href="{% url 'subscription' %}"><button class="btn btn-primary">Subscribe</button></a>
-
-        {% endif %}
-
-
-</div> -->
-<!--% endif % -->
 
 {% endblock %}

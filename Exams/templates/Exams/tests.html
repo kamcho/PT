@@ -2,69 +2,303 @@
 
 {% block content %}
 
-<div class="container">
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.5rem;
+    margin-top: 70px;
+}
+
+.test-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    padding: 0.5rem;
+    box-shadow: var(--card-shadow);
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 60px;
+}
+
+.student-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-card-hover);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.student-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.student-grade {
+    font-size: 1rem;
+    color: var(--primary-color);
+    background: var(--bg-card);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--primary-color);
+}
+
+.timer-container {
+    text-align: center;
+    margin-bottom: 0.25rem;
+}
+
+.timer-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.timer-display {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    background: var(--bg-card-hover);
+    padding: 0.25rem 1rem;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.question-nav {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+}
+
+.question-number {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.question-number.current {
+    background: var(--gradient-bg);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+}
+
+.question-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1rem;
+    margin: 1rem 0;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.question-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.question-number-large {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.question-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.question-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.choices-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.choice-item {
+    position: relative;
+}
+
+.choice-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.choice-label {
+    display: block;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card-hover);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.choice-input:checked + .choice-label {
+    background: var(--gradient-bg);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+}
+
+.choice-label:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.next-button {
+    background: var(--gradient-bg);
+    color: var(--text-primary);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.next-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.next-button:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
     
+    .question-container {
+        padding: 1.5rem;
+    }
+    
+    .question-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<div class="test-header">
+    <div class="timer-container">
+        <div class="timer-label">Time Remaining</div>
+        <div class="timer-display" id="time">01:00</div>
+    </div>
+</div>
+
+<div class="container">
     {% if error %}
-    <br><br><br><br>
-    <p>This test cannot be taken now. Contact @support</p>
+        <div class="error-message">
+            <p>This test cannot be taken now. Contact @support</p>
+        </div>
     {% else %}
-    <br><br><br><br>
-    <div class="test-container">Test Ends in
-        <br><span style="font-size:40px;" class="badge bg-info text-light" id="time">01:00</span>
-    </div>
-
-    <div style="display:flex">
-        {% for li in list %}
-        {% with index as current_index %}
-        {% if li == current_index %}
-        <p style="color:aqua;padding-left:5px;text-decoration:underline;font-size:20px;">{{ li }}</p>
-        {% else %}
-        <p style="padding-left:5px;">{{ li }}</p>
-        {% endif %}
-        {% endwith %}
-        {% endfor %}
-    </div>
-
-    <div class="quiz">
-        <p><small>{{ index }}.</small>) </p>
-        {% if quiz.file %}
-        <div class="image-container">
-            <img src="{{ quiz.file.url }}" width="100" height="100" class="responsive-image">
+        <div class="student-info">
+            <div class="student-name">{{ request.user.get_full_name }}</div>
+            <div class="student-grade">Grade {{ request.user.grade }}</div>
         </div>
-        {% else %}
-        {% endif %}
-        <div>
-            {{ quiz.quiz }}
-        </div>
-    </div>
 
-    <div class="container">
-        <form method="post">
-            {% csrf_token %}
-            {% for choice in choices %}
-            <div class="radio-check">
-                <input type="radio" id="{{ choice.uuid }}" name="choice" value="{{ choice.uuid }}">
-                <label for="{{ choice.uuid }}">{{ choice.choice }}</label>
-            </div>
+        <div class="question-nav">
+            {% for li in list %}
+                {% with index as current_index %}
+                    <div class="question-number {% if li == current_index %}current{% endif %}">
+                        {{ li }}
+                    </div>
+                {% endwith %}
             {% endfor %}
-            <br>
-            <button id="nextButton" class="btn btn-info"  disabled>NEXT</button>
-        </form>
-    </div>
+        </div>
+
+        <div class="question-container">
+            <div class="question-header">
+                <div class="question-number-large">{{ index }}</div>
+                <div class="question-text">{{ quiz.quiz }}</div>
+            </div>
+
+            {% if quiz.file %}
+                <div class="question-image">
+                    <img src="{{ quiz.file.url }}" alt="Question Image" class="question-image">
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="choices-container">
+                    {% for choice in choices %}
+                        <div class="choice-item">
+                            <input type="radio" 
+                                   id="{{ choice.uuid }}" 
+                                   name="choice" 
+                                   value="{{ choice.uuid }}"
+                                   class="choice-input">
+                            <label for="{{ choice.uuid }}" class="choice-label">
+                                {{ choice.choice }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" id="nextButton" class="next-button" disabled>Next Question</button>
+            </form>
+        </div>
     {% endif %}
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  
-
-    function disableButton() {
-        document.getElementById("nextButton").disabled = true;
-    }
-</script>
-
-<script>
     function startTimer(duration, display) {
-
         var timer = duration;
         var minutes, seconds;
 
@@ -79,24 +313,19 @@
 
             if (--timer < 0) {
                 clearInterval(intervalId);
-                display.textContent = 'Expired';  // Change text when timer expires
-
-                // Call the Django function using AJAX when timer expires
+                display.textContent = 'Expired';
                 callDjangoFunction();
             }
         }, 1000);
     }
 
     function callDjangoFunction() {
-        // Make an AJAX request to trigger the Django function
         $.ajax({
-            url: '/Exams/{{instance}}/{{ test_id }}/Finish/',  // Replace with the actual URL
+            url: '/Exams/{{instance}}/{{ test_id }}/Finish/',
             type: 'GET',
             success: function (response) {
                 window.location.href = '/Exams/{{instance}}/{{ test_id }}/Finish/';
                 localStorage.removeItem('{{ test_id }}');
-
-
             },
             error: function () {
                 console.error('Error calling Django function');
@@ -105,16 +334,10 @@
     }
 
     window.onload = function () {
-        if ('{{ instance }}' === 'Topical' || '{{ instance }}' === 'General' || '{{ instance }}' === 'KNECGradeExam') {
-            var test_duration = parseInt('{{ test.duration }}');
-        }
-        else {
-            var test_duration = parseInt('{{ test.duration }}');
-        }
+        var test_duration = parseInt('{{ test.duration }}');
         var fiveMinutes = 60 * test_duration;
         var display = document.querySelector('#time');
 
-        // Check if timer start time is stored in localStorage
         var startTime = localStorage.getItem('{{ test_id }}');
         if (!startTime) {
             startTime = new Date().getTime();
@@ -127,43 +350,22 @@
         var elapsed = currentTime - startTime;
         var remainingTime = fiveMinutes - Math.floor(elapsed / 1000);
 
-        // Start the timer with remaining time
         startTimer(remainingTime, display);
     };
-</script>
-<script>
+
     $(document).ready(function () {
         $('input[type="radio"]').change(function () {
             var selected = false;
             $('input[type="radio"]').each(function () {
                 if ($(this).is(':checked')) {
                     selected = true;
-                    return false;  // Exit the loop if a radio button is selected
+                    return false;
                 }
             });
 
-            if (selected) {
-                $('#nextButton').prop('disabled', false);
-            } else {
-                $('#nextButton').prop('disabled', true);
-            }
-        });
-        $('#nextButton').click(function () {
-            $(this).css('display', 'none');
+            $('#nextButton').prop('disabled', !selected);
         });
     });
 </script>
-
-<!-- <script>
-    // Get the data from localStorage
-    var startTime = localStorage.getItem('{{ test_id }}');
-
-    // Add an event listener to the window's beforeunload event
-    window.addEventListener('beforeunload', function () {
-        // Remove the data from localStorage
-        localStorage.removeItem('{{ test_id }}');
-    });
-
-</script> -->
 
 {% endblock %}

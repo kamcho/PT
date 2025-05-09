@@ -1,0 +1,334 @@
+{% extends 'Supervisor/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    :root {
+        --bg-dark: #1a1c23;
+        --bg-card: #242631;
+        --bg-card-hover: #2d303d;
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --accent-color: #fd79a8;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-title {
+        color: var(--text-primary);
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .support-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .contact-card {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-card:hover {
+        transform: translateY(-5px);
+        background: var(--bg-card-hover);
+        border-color: var(--primary-color);
+    }
+
+    .contact-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .contact-title {
+        color: var(--text-primary);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-info {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .contact-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .contact-link:hover {
+        color: var(--secondary-color);
+    }
+
+    .faq-section {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .faq-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .faq-item {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .faq-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .faq-question {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .faq-question i {
+        color: var(--primary-color);
+    }
+
+    .faq-answer {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.6;
+        padding-left: 1.75rem;
+    }
+
+    .support-form {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 3rem;
+    }
+
+    .form-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: var(--text-primary);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .btn-submit {
+        background: var(--primary-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .btn-submit:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+        }
+
+        .support-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-card {
+            padding: 1.5rem;
+        }
+
+        .faq-section, .support-form {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Support Center</h1>
+        <p class="page-subtitle">We're here to help you with any questions or issues you may have. Choose the best way to reach us below.</p>
+    </div>
+
+    <div class="support-grid">
+        <div class="contact-card">
+            <i class="bi bi-envelope-fill contact-icon"></i>
+            <h3 class="contact-title">Email Support</h3>
+            <p class="contact-info">Get in touch with our support team via email</p>
+            <a href="mailto:support@iamlearning.com" class="contact-link">support@iamlearning.com</a>
+        </div>
+
+        <div class="contact-card">
+            <i class="bi bi-telephone-fill contact-icon"></i>
+            <h3 class="contact-title">Phone Support</h3>
+            <p class="contact-info">Call us during business hours</p>
+            <a href="tel:+254700000000" class="contact-link">+254 700 000 000</a>
+        </div>
+
+        <div class="contact-card">
+            <i class="bi bi-chat-dots-fill contact-icon"></i>
+            <h3 class="contact-title">Live Chat</h3>
+            <p class="contact-info">Chat with our support team in real-time</p>
+            <a href="#" class="contact-link">Start Chat</a>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                How do I reset my password?
+            </h3>
+            <p class="faq-answer">
+                Click on the "Forgot Password" link on the login page. Enter your email address and follow the instructions sent to your email to reset your password.
+            </p>
+        </div>
+
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                How can I update my profile information?
+            </h3>
+            <p class="faq-answer">
+                Go to your profile page by clicking on your name in the top right corner. Click the "Edit Profile" button to update your information.
+            </p>
+        </div>
+
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                What are the system requirements?
+            </h3>
+            <p class="faq-answer">
+                Our system works best on modern browsers like Chrome, Firefox, Safari, or Edge. Make sure you have JavaScript enabled and a stable internet connection.
+            </p>
+        </div>
+
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                How do I report a technical issue?
+            </h3>
+            <p class="faq-answer">
+                Use the support form below to report any technical issues. Please include as much detail as possible about the problem you're experiencing.
+            </p>
+        </div>
+    </div>
+
+    <div class="support-form">
+        <h2 class="form-title">Contact Support</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <input type="text" class="form-control" name="subject" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" name="message" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Send Message</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %} 

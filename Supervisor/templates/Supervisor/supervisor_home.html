@@ -27,17 +27,14 @@ body {
 
 .dashboard-container {
     position: relative;
-    /* min-height: 480px; */
     margin-bottom: 2rem;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .wave-container {
-    position: absolute;
+    position: relative;
     width: 100%;
-    top: 60px;
-    /* min-height: 400px; */
-    height: max-content;
+    margin-top: 60px;
     background: var(--gradient-bg);
     overflow: hidden;
     border-radius: 20px;
@@ -62,9 +59,9 @@ body {
 
 .users-view {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
     position: relative;
     z-index: 1;
 }
@@ -72,7 +69,7 @@ body {
 .user-card {
     background: var(--bg-card);
     border-radius: 15px;
-    padding: 1.5rem;
+    padding: 1rem;
     text-align: center;
     box-shadow: var(--card-shadow);
     transition: all 0.3s ease;
@@ -86,41 +83,48 @@ body {
 }
 
 .user-card i {
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: var(--primary-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .user-card h4 {
     color: var(--text-primary);
-    font-size: 2rem;
-    margin: 0.5rem 0;
+    font-size: 1.5rem;
+    margin: 0.25rem 0;
 }
 
 .user-card small {
     color: var(--text-secondary);
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
 }
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
     padding: 1rem;
-    margin-top: 380px;
+    margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 2fr 1fr;
+    }
 }
 
 .service-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
 }
 
 .service-card {
     background: var(--bg-card);
     border-radius: 15px;
-    padding: 1.5rem;
+    padding: 1rem;
     box-shadow: var(--card-shadow);
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -133,26 +137,27 @@ body {
 }
 
 .service-card i {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: var(--primary-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .service-card h6 {
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
 }
 
 .service-card p {
     color: var(--text-secondary);
     margin: 0;
+    font-size: 0.875rem;
 }
 
 .panel-card {
     background: var(--bg-card);
     border-radius: 15px;
-    padding: 1.5rem;
+    padding: 1rem;
     color: var(--text-primary);
     box-shadow: var(--card-shadow);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -161,23 +166,24 @@ body {
 
 .panel-card h6 {
     color: var(--text-primary);
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
 }
 
 .panel-card a {
     color: var(--text-secondary);
     text-decoration: none;
     display: block;
-    padding: 0.8rem 0;
+    padding: 0.5rem 0;
     transition: all 0.3s ease;
     border-radius: 8px;
+    font-size: 0.875rem;
 }
 
 .panel-card a:hover {
     color: var(--text-primary);
     background: var(--bg-card-hover);
-    padding-left: 1rem;
+    padding-left: 0.75rem;
 }
 
 .panel-card i {
@@ -188,26 +194,27 @@ body {
 .chart-container {
     background: var(--bg-card);
     border-radius: 15px;
-    padding: 1.5rem;
+    padding: 1rem;
     box-shadow: var(--card-shadow);
-    margin: 2rem auto;
-    width: 90%;
+    margin: 1rem auto;
+    width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .filter-form {
     background: var(--bg-card);
     border-radius: 15px;
-    padding: 1.5rem;
+    padding: 1rem;
     box-shadow: var(--card-shadow);
-    margin: 2rem auto;
-    width: 90%;
+    margin: 1rem auto;
+    width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .filter-form .input-group {
-    max-width: 800px;
-    margin: 0 auto;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .filter-form .form-control,
@@ -215,6 +222,10 @@ body {
     background: var(--bg-dark);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
+    flex: 1 1 150px;
+    max-width: 200px;
+    height: 38px;
+    font-size: 0.875rem;
 }
 
 .filter-form .form-control:focus,
@@ -228,7 +239,10 @@ body {
 .filter-form .btn-primary {
     background: var(--primary-color);
     border: none;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 1rem;
+    flex: 0 1 auto;
+    height: 38px;
+    font-size: 0.875rem;
 }
 
 .filter-form .btn-primary:hover {
@@ -242,7 +256,31 @@ body {
 
 hr {
     border-color: rgba(255, 255, 255, 0.1);
-    margin: 1rem 0;
+    margin: 0.5rem 0;
+}
+
+@media (max-width: 576px) {
+    .users-view {
+        grid-template-columns: 1fr;
+    }
+    
+    .service-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-form .input-group {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .filter-form .form-control,
+    .filter-form .form-select {
+        max-width: 120px;
+    }
+    
+    .filter-form .btn-primary {
+        max-width: 100px;
+    }
 }
 </style>
 

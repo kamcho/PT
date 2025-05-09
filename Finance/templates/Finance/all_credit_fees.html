@@ -2,71 +2,297 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+
+    body {
+        background-color: var(--background-color);
+        color: var(--text-primary);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-card {
+        background: var(--card-background);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary-card h3 {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin: 0 0 0.5rem;
+    }
+
+    .summary-card .amount {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .filter-section {
+        background: var(--card-background);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .input-group {
+        background: var(--background-color);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .input-group-text {
+        background: var(--card-background);
+        border: none;
+        color: var(--text-secondary);
+    }
+
+    .form-control {
+        background: var(--background-color) !important;
+        border: none !important;
+        color: var(--text-primary) !important;
+    }
+
+    .form-control:focus {
+        box-shadow: none !important;
+    }
+
+    .btn-filter {
+        background: var(--warning-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-filter:hover {
+        background: #f59e0b;
+        transform: translateY(-1px);
+    }
+
+    .table-container {
+        background: var(--card-background);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+    }
+
+    .table {
+        width: 100%;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .table caption {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    .table th {
+        background: var(--background-color);
+        color: var(--text-secondary);
+        font-weight: 500;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+    }
+
+    .table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .student-link {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .student-link:hover {
+        color: var(--primary-color);
+    }
+
+    .balance-positive {
+        color: var(--success-color);
+    }
+
+    .balance-negative {
+        color: var(--danger-color);
+    }
+
+    .export-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .export-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .table-container {
+            padding: 1rem;
+        }
+    }
+</style>
+
 <div class="container">
-  Add negative sign (-) to query students with fee balances.
+    <div class="page-header">
+        <h1 class="page-title">Students Fee Balances</h1>
+        <button class="export-btn" onclick="exportToExcel()">
+            <i class="bi bi-download"></i> Export to Excel
+        </button>
+    </div>
 
-  <br><br>
-    <form  method="post">
-        {% csrf_token %}
-       <div class="input-group mb-3">
-        <span class="input-group-text">Balance</span>
-            <input type="number" class="form-control" value="{{ limit }}" name="limit" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
+    <div class="summary-cards">
+        <div class="summary-card">
+            <h3>Total Fee Balances</h3>
+            <div class="amount">{{ balance }}</div>
+        </div>
+        {% if query_balance %}
+        <div class="summary-card">
+            <h3>Query Total Balance</h3>
+            <div class="amount">{{ query_balance }}</div>
+        </div>
+        {% endif %}
+    </div>
 
-    
-    
-            <span class="input-group-text">Grade</span>
-            <input type="number" class="form-control" value="{{ grade }}" name="grade" placeholder="From Grade" aria-label="Recipient's username" aria-describedby="button-addon2">
-            </select>  
-            <button class="btn btn-warning" >Filter</button>
-       </div>
+    <div class="filter-section">
+        <form method="post" class="filter-form">
+            {% csrf_token %}
+            <div class="input-group">
+                <span class="input-group-text">Balance</span>
+                <input type="number" class="form-control" value="{{ limit }}" name="limit" placeholder="Enter balance amount">
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">Grade</span>
+                <input type="number" class="form-control" value="{{ grade }}" name="grade" placeholder="Enter grade">
+            </div>
+            <button type="submit" class="btn-filter">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
         </form>
-        <br>
+    </div>
+
     {% if profiles %}
-    
-<table class="table">
-  <caption>
-    Fee Total Balances {{ balance }}
-    <br>
-    Query Total Balance {{ query_balance }}
-  </caption>
-    <thead >
-      <tr>
-        <!-- <th><h6><input type="checkbox"></h6></th> -->
-        <th><h6>Id</h6></th>
-        <th><h6>Student</h6></th>
-        <th><h6>Class</h6></th>
-        <th><h6>Balance</h6></th>
-        <!-- <th><h6>Contact Info</h6></th> -->
-      </tr>
-    </thead>
-    <tbody>
-      
-      {% for profile in profiles %}
-      {% if profile.balance > -1 %}
-            <tr style="color: green; font-size: 20px;">
-        
-                <!-- <td><input type="checkbox"></td> -->
-                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-                <td><a href="{% url 'student-fee-profile' profile.user %}" style="color: rgb(9, 14, 14) !important;">{{ profile.user.studentprofile.get_names|title }}</a></td>
-                <td>{{ profile.user.academicprofile.current_class.grade }} {{ profile.user.academicprofile.current_class }}</td>
-                  <td >{{ profile.balance }}<br></td>
-              </tr>
-              {% else %}
-              <tr style="color: crimson; font-size: 20px; font-family: Arial, Helvetica, sans-serif;">
-        
-                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-                <td><a href="{% url 'student-fee-profile' profile.user %}" style="color: rgb(9, 14, 14) !important;">{{ profile.user.studentprofile.get_names|title }}</a></td>
-                <td>{{ profile.user.academicprofile.current_class.grade }} {{ profile.user.academicprofile.current_class }}</td>
-                  <td >{{ profile.balance }}<br></td>
-              </tr>
+    <div class="table-container">
+        <table class="table">
+            <caption>
+                Showing {{ profiles|length }} students
+                {% if query_balance %}
+                <br>Query Total Balance: {{ query_balance }}
                 {% endif %}
-        
-        
-      {% endfor %}
-    </tbody>
- </table>
-{% else %}
-{% endif %}
+            </caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Class</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'student-fee-profile' profile.user %}" class="student-link">
+                            {{ profile.user.studentprofile.get_names|title }}
+                        </a>
+                    </td>
+                    <td>{{ profile.user.academicprofile.current_class.grade }} {{ profile.user.academicprofile.current_class }}</td>
+                    <td class="{% if profile.balance > -1 %}balance-positive{% else %}balance-negative{% endif %}">
+                        {{ profile.balance }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="filter-section">
+        <p class="text-center mb-0">No students found matching your criteria.</p>
+    </div>
+    {% endif %}
 </div>
- {% endblock %}
+
+<script>
+function exportToExcel() {
+    // Add export functionality here
+    alert('Export functionality will be implemented soon!');
+}
+</script>
+
+{% endblock %}

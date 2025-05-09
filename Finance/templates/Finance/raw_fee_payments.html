@@ -2,82 +2,282 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.filter-section {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group {
+    background: var(--bg-card-hover);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group-text {
+    background: var(--bg-card);
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-card-hover);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    box-shadow: none;
+    border-color: var(--primary-color);
+}
+
+.btn-secondary {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.table-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 600px;
+    overflow-y: auto;
+}
+
+.table {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.table thead th {
+    background: var(--bg-card-hover);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table tbody td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.table a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.table a:hover {
+    color: var(--secondary-color);
+}
+
+.table small {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.caption {
+    color: var(--text-secondary);
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+.amount-badge {
+    background: var(--success-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-badge.processed {
+    background: var(--success-color);
+    color: white;
+}
+
+.status-badge.unprocessed {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* Custom scrollbar */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: var(--bg-card);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+    .filter-section {
+        padding: 1rem;
+    }
+    
+    .table-container {
+        height: auto;
+        max-height: 600px;
+    }
+}
+</style>
+
 <div class="container">
-    <h6>RAW FEE PAYMENTS</h6>
-    <br><br>
-    <a href="{% url 'processed-fee-payments' %}"><button id="downloadPdf" class="btn btn-primary" style="position: fixed; right: 14.5%;top: 10%;">Processed Payments</button></a>
+    <div class="page-header">
+        <h1 class="page-title">Raw Fee Payments</h1>
+        <a href="{% url 'processed-fee-payments' %}" class="btn btn-secondary">
+            <i class="bi bi-check2-circle"></i> Processed Payments
+        </a>
+    </div>
 
-    <form  method="post">
-        {% csrf_token %}
-       <div class="input-group mb-3">
-        <span class="input-group-text">From</span>
-            <input type="date" class="form-control" pattern="" name="from" placeholder="01/12/2023" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <input type="date" class="form-control" pattern="" name="to" placeholder="01/12/2023" aria-label="Recipient's username" aria-describedby="button-addon2">
-
-    
-    
-            <!-- <span class="input-group-text">To</span>
-            <input type="date" class="form-control" name="to" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2"> -->
-            <span class="input-group-text">Receipt</span>
-            <input type="text" class="form-control" name="receipt" placeholder="QWERTYUIOP" aria-label="Recipient's username" aria-describedby="button-addon2">
-            
-            <span class="input-group-text">Phone</span>
-            <input type="text" class="form-control" name="phone" placeholder="0742134431" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <span class="input-group-text">Status</span>
-            <select class="form-select" id="roleSelect" aria-label="Default select example" name="status" >
-              <option ></option>
-              <option value='True'>Processed</option>
-              <option value='False'>Un-Processed</option>
-          </select>
-            <button class="btn btn-outline-secondary" >Filter/Reset</button>
-       </div>
+    <div class="filter-section">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <span class="input-group-text">From</span>
+                <input type="date" class="form-control" name="from" placeholder="01/12/2023">
+                <span class="input-group-text">To</span>
+                <input type="date" class="form-control" name="to" placeholder="01/12/2023">
+                <span class="input-group-text">Receipt</span>
+                <input type="text" class="form-control" name="receipt" placeholder="Enter receipt number">
+                <span class="input-group-text">Phone</span>
+                <input type="text" class="form-control" name="phone" placeholder="Enter phone number">
+                <span class="input-group-text">Status</span>
+                <select class="form-select" name="status">
+                    <option value="">All Status</option>
+                    <option value="True">Processed</option>
+                    <option value="False">Un-Processed</option>
+                </select>
+                <button type="submit" class="btn btn-secondary">
+                    <i class="bi bi-funnel"></i> Filter / Reset
+                </button>
+            </div>
         </form>
-        <br>
+    </div>
 
+    {% if not nun %}
+    <div class="table-container">
+        <table class="table">
+            <caption>Query Totals: {{ totals }}</caption>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="form-check-input"></th>
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>Receipt</th>
+                    <th>Account</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in transactions %}
+                <tr>
+                    <td><input type="checkbox" class="form-check-input"></td>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{% url 'manage-fee-payment' payment.id %}">{{ payment.date }}</a></td>
+                    <td>{{ payment.receipt }}</td>
+                    <td>
+                        <small>{{ payment.account }}</small> | {{ payment.account.account }}
+                        {% if payment.msdn %}
+                        <br><small>{{ payment.msdn }}</small>
+                        {% endif %}
+                    </td>
+                    <td><span class="amount-badge">{{ payment.amount }}</span></td>
+                    <td>
+                        {% if payment.status %}
+                        <span class="status-badge processed">Processed</span>
+                        {% else %}
+                        <span class="status-badge unprocessed">Not Processed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
 
-        {% if not nun %}
-<table class="table">
-  <caption>Query Totals {{ totals }}</caption>
-    <thead>
-      <tr>
-        <th><h6><input type="checkbox"></h6></th>
-        <th><h6>Id</h6></th>
-         <th><h6>Date</h6></th>
-        <th><h6>Receipt</h6></th>
-        <th><h6>Account</h6></th>
-        <th><h6>Amount</h6></th>
-        <th><h6>Status</h6></th>
-      </tr>
-    </thead>
-    <tbody>
-      
-      {% for payment in transactions %}
-        
-         
-        <tr>
-                
-          
-            <td><input type="checkbox"></td>
-            <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-            <td><a href="{% url 'manage-fee-payment' payment.id %}">{{ payment.date }}</a></td>
-            <td>{{ payment.receipt }}</td>
-            <td><small>{{ payment.account }}</small> | {{ payment.account.account }}<br>{% if payment.msdn %}<small>{{ payment.msdn }}</small>{% endif %}</td>
-            <td>{{ payment.amount }}</td>
-            {% if payment.status %}
-                  <td style="color: cornflowerblue;">Proccessed</td>
-                {% else %}
-                  <td style="color: crimson;">Not Processed</td>
-                {% endif %}
-            
-          </tr>
-        
-        
-      {% endfor %}
-    </tbody>
- </table>
- {% endif %}
-
- </div>
-
- {% endblock %}
+{% endblock %}

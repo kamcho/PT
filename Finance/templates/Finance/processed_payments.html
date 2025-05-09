@@ -2,59 +2,268 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+    :root {
+        --bg-dark: #1a1c23;
+        --bg-card: #242631;
+        --bg-card-hover: #2d303d;
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --accent-color: #fd79a8;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .filter-section {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .filter-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .input-group {
+        background: var(--bg-card-hover);
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .input-group-text {
+        background: var(--bg-card);
+        border: none;
+        color: var(--text-secondary);
+        padding: 0.5rem 1rem;
+    }
+
+    .form-control {
+        background: var(--bg-card-hover);
+        border: none;
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+    }
+
+    .form-control:focus {
+        background: var(--bg-card-hover);
+        color: var(--text-primary);
+        box-shadow: none;
+        border-color: var(--primary-color);
+    }
+
+    .btn-filter {
+        background: var(--primary-color);
+        border: none;
+        color: var(--text-primary);
+        padding: 0.5rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-filter:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .table-container {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow-x: auto;
+    }
+
+    .table {
+        width: 100%;
+        color: var(--text-primary);
+        margin: 0;
+        min-width: 800px;
+    }
+
+    .table thead th {
+        background: var(--bg-card-hover);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .table tbody td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background: var(--bg-card-hover);
+    }
+
+    .table a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .table a:hover {
+        color: var(--secondary-color);
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .status-accepted {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .status-denied {
+        background: var(--danger-color);
+        color: white;
+    }
+
+    .amount-badge {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+        .filter-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .btn-filter {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
 <div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Processed Fee Payments</h1>
+        <a href="{% url 'raw-fee-payments' %}" class="btn-filter">
+            <i class="bi bi-download"></i>
+            Raw Fee Payments
+        </a>
+    </div>
 
-    <form  method="post">
-        {% csrf_token %}
-       <div class="input-group mb-3">
-        <span class="input-group-text">From</span>
-            <input type="date" class="form-control" name="from" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
-
-    
-    
-            <span class="input-group-text">To</span>
-            <input type="date" class="form-control" name="to" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
-            </select>  
-            <button class="btn btn-warning" >Filter</button>
-       </div>
+    <div class="filter-section">
+        <form method="post">
+            {% csrf_token %}
+            <div class="filter-row">
+                <div class="input-group">
+                    <span class="input-group-text">From</span>
+                    <input type="date" class="form-control" name="from" placeholder="From">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">To</span>
+                    <input type="date" class="form-control" name="to" placeholder="To">
+                </div>
+                <button type="submit" class="btn-filter">
+                    <i class="bi bi-funnel"></i>
+                    Filter
+                </button>
+            </div>
         </form>
-        <br>
-<table class="table">
-    <thead>
-      <tr>
-        <th><h6><input type="checkbox"></h6></th>
-        <th><h6>Id</h6></th>
-        <th><h6>Initiator Id</h6></th>
-         <th><h6>Date</h6></th>
-        <th><h6>Receipt</h6></th>
-        <th><h6>Account</h6></th>
-        <th><h6>Amount</h6></th>
-        <th><h6>Status</h6></th>
-      </tr>
-    </thead>
-    <tbody>
-      
-      {% for payment in transactions %}
-        <tr>
-          
-          <td><input type="checkbox"></td>
-          <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-          <td>{{ payment.initiator_id }} </td>
-          <td>{{ payment.processed_at }}</td>
-          <td><a href="{% url 'processed-receipt' payment.transaction_id %}">{{ payment.transaction_id }}</a></td>
-          <td>M-Pesa</td>
-          <td>{{ payment.initiator_id.amount }}</td>
-          {% if payment.status %}
-            <td style="color: green;">Accepted</td>
-          {% else %}
-            <td style="color: crimson;">Denied</td>
-          {% endif %}
-          
-        </tr>
-      {% endfor %}
-    </tbody>
- </table>
+    </div>
 
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="form-check-input"></th>
+                    <th>Id</th>
+                    <th>Initiator Id</th>
+                    <th>Date</th>
+                    <th>Receipt</th>
+                    <th>Account</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in transactions %}
+                <tr>
+                    <td><input type="checkbox" class="form-check-input"></td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ payment.initiator_id }}</td>
+                    <td>{{ payment.processed_at|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'processed-receipt' payment.transaction_id %}">
+                            {{ payment.transaction_id }}
+                        </a>
+                    </td>
+                    <td>M-Pesa</td>
+                    <td><span class="amount-badge">{{ payment.initiator_id.amount }}</span></td>
+                    <td>
+                        {% if payment.status %}
+                        <span class="status-badge status-accepted">Accepted</span>
+                        {% else %}
+                        <span class="status-badge status-denied">Denied</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
- {% endblock %}
+{% endblock %}

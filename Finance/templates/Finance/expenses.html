@@ -3,296 +3,536 @@
 {% load supervisor_filters %}
 {% block content %}
 
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
+.expenses-container {
+    padding: 2rem 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
 
-<div class="container" style="width: 90%;margin-top: 100px;">
-   <div style="justify-self: end;padding-right: 60px;">
-    <a class="btn btn-secondary" href="{% url 'invoices' %}">Invoices</a>
-    <a href="{% url 'create-expense' %}" style="text-align: right;"><button class="btn btn-primary">Add Expense</button></a>
-   </div>
-    <br>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
 
-    <div class="expenses">
-        <div class="data-card" id="expense"  style="color: white !important;">
-            <div style="display: flex;flex-wrap: nowrap;column-gap: 10px;">
-                <small style="background-color:#ffb6b9 ;border-radius: 5px;padding: 5px;">Expense {{ totals }}</small>
-                <small style="background-color:#61c0bf ;border-radius: 5px;padding: 5px;">Income {{ incomes }}</small>
-            </div>
-            <form method="post">
-                {% csrf_token %}
-            
-                <div class="dropdown top-left">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        {{ year }}
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><button class="dropdown-item" name="year" value="2022">2022</button></li>
-                        <li><button class="dropdown-item" name="year" value="2023">2023</button></li>
-                        <li><button class="dropdown-item" name="year" value="2024">2024</button></li>
-                    </ul>
-                </div>
-            </form>
-            <canvas id="barChart" width="500"  height="220"></canvas>
+.action-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
 
-        </div>
+.action-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
 
-        <div class="data-card" id="data" style="width: 100% !important;overflow-y: scroll;">
-            <button class="btn btn-secondary">Incomes</button>
-            <br>
-            <div
-                style="display: grid;grid-template-columns: repeat(2, .8fr);column-gap: 20px;margin: 20px auto;width: 90%;">
-                <div>
-                    <h6>Expenses</h6>
-                    <strong>Jan {% get_expenses year '1' user.school %}</strong><br>
+.secondary-btn {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
 
-                    <strong>Feb {% get_expenses year '2' user.school %}</strong><br>
-                    <hr>
-                    <strong>Mar {% get_expenses year '3' user.school %}</strong><br>
-                    <strong>Apr {% get_expenses year '4' user.school %}</strong><br>
-                    <hr>
-                    <strong>May {% get_expenses year '5' user.school %}</strong><br>
-                    <strong>Jun {% get_expenses year '6' user.school %}</strong><br>
-                    <hr>
-                    <strong>Jul {% get_expenses year '7' user.school %}</strong><br>
-                    <strong>Aug {% get_expenses year '8' user.school %}</strong><br>
-                    <hr>
-                    <strong>Sep {% get_expenses year '9' user.school %}</strong><br>
-                    <strong>Oct {% get_expenses year '10' user.school %}</strong><br>
-                    <hr>
-                    <strong>Nov {% get_expenses year '11' user.school %}</strong><br>
-                    <strong>Dec {% get_expenses year '12' user.school %}</strong><br>
-                </div>
+.secondary-btn:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+}
 
-                <div>
-                    <h6>Incomes</h6>
-                    <strong>Jan {% get_incomes year '1' user.school %}</strong><br>
+.stats-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+}
 
-                    <strong>Feb {% get_incomes year '2' user.school %}</strong><br>
-                    <hr>
-                    <strong>Mar {% get_incomes year '3' user.school %}</strong><br>
-                    <strong>Apr {% get_incomes year '4' user.school %}</strong><br>
-                    <hr>
-                    <strong>May {% get_incomes year '5' user.school %}</strong><br>
-                    <strong>Jun {% get_incomes year '6' user.school %}</strong><br>
-                    <hr>
-                    <strong>Jul {% get_incomes year '7' user.school %}</strong><br>
-                    <strong>Aug {% get_incomes year '8' user.school %}</strong><br>
-                    <hr>
-                    <strong>Sep {% get_incomes year '9' user.school %}</strong><br>
-                    <strong>Oct {% get_incomes year '10' user.school %}</strong><br>
-                    <hr>
-                    <strong>Nov {% get_incomes year '11' user.school %}</strong><br>
-                    <strong>Dec {% get_incomes year '12' user.school %}</strong><br>
-                </div>
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
 
-                
+.stats-badges {
+    display: flex;
+    gap: 1rem;
+}
 
-            </div>
+.stat-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
 
-        </div>
-      
+.expense-badge {
+    background: rgba(255, 182, 185, 0.2);
+    color: #ffb6b9;
+}
+
+.income-badge {
+    background: rgba(97, 192, 191, 0.2);
+    color: #61c0bf;
+}
+
+.year-selector {
+    background: var(--bg-dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.chart-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.monthly-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stats-column {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+}
+
+.stats-column h6 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-row:last-child {
+    border-bottom: none;
+}
+
+.stats-row strong {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.filter-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.filter-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: var(--bg-dark);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.input-group-text {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-dark) !important;
+    border: none !important;
+    color: var(--text-primary) !important;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: none !important;
+    border-color: var(--primary-color) !important;
+}
+
+.filter-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.expenses-table {
+    background: var(--bg-card);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+
+.table {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.table thead th {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+    font-size: 0.875rem;
+}
+
+.table tbody td {
+    border-color: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.table a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.table a:hover {
+    color: var(--secondary-color);
+}
+
+.total-amount {
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .monthly-stats {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="expenses-container">
+    <div class="page-header">
+        <a href="{% url 'invoices' %}" class="action-btn secondary-btn">
+            <i class="bi bi-receipt"></i> Invoices
+        </a>
+        <a href="{% url 'create-expense' %}" class="action-btn">
+            <i class="bi bi-plus-circle"></i> Add Expense
+        </a>
     </div>
 
-        <script>
-            // Sample data for the bar graph
-            const data = {
-                labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-                datasets: [{
-                    label: 'Expense Data',
-                    backgroundColor: '#ffb6b9',
-                    borderColor: 'rgba(25, 125, 55, 1)',
-                    borderWidth: 1,
-                    data: [{% get_expenses year '1' user.school %},
-{% get_expenses year '2' user.school %},
-{% get_expenses year '3' user.school %},
-{% get_expenses year '4' user.school %},
-{% get_expenses year '5' user.school %},
-{% get_expenses year '6' user.school %},
-{% get_expenses year '7' user.school %},
-{% get_expenses year '8' user.school %},
-{% get_expenses year '9' user.school %},
-{% get_expenses year '10' user.school %},
-{% get_expenses year '11' user.school %},
-{% get_expenses year '12' user.school %}]
-        },
-            {
-                label: 'Income Data',
-                    backgroundColor: '#61c0bf',
-                        borderColor: '#61c0bf',
-                            LabelColor: '#61c0bf',
-                                borderRadius: '5px',
-                                    borderWidth: 1,
-                                        data: [{% get_incomes year '1' user.school %},
-{% get_incomes year '2' user.school %},
-{% get_incomes year '3' user.school %},
-{% get_incomes year '4' user.school %},
-{% get_incomes year '5' user.school %},
-{% get_incomes year '6' user.school %},
-{% get_incomes year '7' user.school %},
-{% get_incomes year '8' user.school %},
-{% get_incomes year '9' user.school %},
-{% get_incomes year '10' user.school %},
-{% get_incomes year '11' user.school %},
-{% get_incomes year '12' user.school %}]
-            }]
-    };
-
-            // Configuration options for the bar graph
-            const options = {
-                scales: {
-                    x: {
-                        ticks: {
-                            color: 'white', // Set the color of X-axis labels
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: 'white', // Set the color of Y-axis labels
-                        },
-                        beginAtZero: true
-
-                    }
-                }
-
-            };
-
-            // Create the bar chart
-            const ctx = document.getElementById('barChart').getContext('2d');
-            const barChart = new Chart(ctx, {
-                type: 'bar',
-                data: data,
-                options: options
-            });
-        </script>
-        <br><br>
-        <form method="post" style="width: 90%;margin: 0 auto;">
-            {% csrf_token %}
-            <div class="input-group mb-3" id="list">
-                <input type="text" class="form-control" name="title" placeholder="search by title"
-                    aria-label="Recipient's username" aria-describedby="button-addon2">
-                <span class="input-group-text">From</span>
-                <input type="date" class="form-control" name="from">
-                <span class="input-group-text">To</span>
-                <input type="date" class="form-control" name="to">
-
-
+    <div class="stats-card">
+        <div class="stats-header">
+            <div class="stats-badges">
+                <span class="stat-badge expense-badge">Expense {{ totals }}</span>
+                <span class="stat-badge income-badge">Income {{ incomes }}</span>
             </div>
-
-            <div class="input-group mb-3">
-                <select class="form-select" aria-label="Default select example" name="mode">
-                    <option></option>
-                    <option value="CASH">CASH</option>
-                    <option value="M-PESA">M-PESA</option>
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <select class="year-selector" name="year" onchange="this.form.submit()">
+                    <option value="2022" {% if year == '2022' %}selected{% endif %}>2022</option>
+                    <option value="2023" {% if year == '2023' %}selected{% endif %}>2023</option>
+                    <option value="2024" {% if year == '2024' %}selected{% endif %}>2024</option>
                 </select>
+            </form>
+        </div>
+        <div class="chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
 
-                <span class="input-group-text">Amount Min Range</span>
-                <input type="number" class="form-control" name="lower">
-                <span class="input-group-text">Amount Max Range</span>
-                <input type="number" class="form-control" name="upper">
-                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
-
+    <div class="monthly-stats">
+        <div class="stats-column">
+            <h6>Expenses</h6>
+            <div class="stats-row">
+                <span>January</span>
+                <strong>{% get_expenses year '1' user.school %}</strong>
             </div>
+            <div class="stats-row">
+                <span>February</span>
+                <strong>{% get_expenses year '2' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>March</span>
+                <strong>{% get_expenses year '3' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>April</span>
+                <strong>{% get_expenses year '4' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>May</span>
+                <strong>{% get_expenses year '5' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>June</span>
+                <strong>{% get_expenses year '6' user.school %}</strong>
+            </div>
+        </div>
 
+        <div class="stats-column">
+            <h6>Incomes</h6>
+            <div class="stats-row">
+                <span>January</span>
+                <strong>{% get_incomes year '1' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>February</span>
+                <strong>{% get_incomes year '2' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>March</span>
+                <strong>{% get_incomes year '3' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>April</span>
+                <strong>{% get_incomes year '4' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>May</span>
+                <strong>{% get_incomes year '5' user.school %}</strong>
+            </div>
+            <div class="stats-row">
+                <span>June</span>
+                <strong>{% get_incomes year '6' user.school %}</strong>
+            </div>
+        </div>
+    </div>
 
-            <br><br>
+    <div class="filter-card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="filter-form">
+                <div class="filter-row">
+                    <div class="input-group">
+                        <span class="input-group-text">Title</span>
+                        <input type="text" class="form-control" name="title" placeholder="Search by title">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">From</span>
+                        <input type="date" class="form-control" name="from">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">To</span>
+                        <input type="date" class="form-control" name="to">
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <div class="input-group">
+                        <span class="input-group-text">Mode</span>
+                        <select class="form-select" name="mode">
+                            <option value="">All</option>
+                            <option value="CASH">Cash</option>
+                            <option value="M-PESA">M-Pesa</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">Min Amount</span>
+                        <input type="number" class="form-control" name="lower" placeholder="0">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">Max Amount</span>
+                        <input type="number" class="form-control" name="upper" placeholder="0">
+                    </div>
+                    <button type="submit" class="filter-btn">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                </div>
+            </div>
         </form>
+    </div>
 
-        <!-- <button onclick="printDiv('report')" class="btn btn-danger" ><i class="bi bi-printer"> </i> Print</button>  -->
-        
-        <table class="table"  style="width: 90%;margin: 0 auto;">
-            <caption>{{ q_totals }}</caption>
-            <thead >
+    {% if q_totals %}
+    <div class="total-amount">
+        Total Amount: {{ q_totals }}
+    </div>
+    {% endif %}
+
+    <div class="expenses-table">
+        <table class="table">
+            <thead>
                 <tr>
-                    <th><h6>Id</h6></th>
-                    <th>
-                        <h6 class="tb">Title</h6>
-                    </th>
-                    <th>
-                        <h6>Date</h6>
-                    </th>
-                    <th>
-                        <h6>Amount</h6>
-                    </th>
-                    <th>
-                        <h6>Mode</h6>
-                    </th>
-                    <th>
-                        <h6>Status</h6>
-                    </th>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Mode</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-
                 {% for expense in expenses %}
-
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td><a href="{% url 'manage-expense' expense.id %}" style="color: black;text-decoration: none;">
-                            <h6>{{ expense.title }}</h6>
-                        </a></td>
-                    <td>{{ expense.date }} </td>
+                    <td>
+                        <a href="{% url 'manage-expense' expense.id %}">
+                            {{ expense.title }}
+                        </a>
+                    </td>
+                    <td>{{ expense.date }}</td>
                     <td>{{ expense.amount }}</td>
                     <td>{{ expense.mode }}</td>
-                    <td style="color: cornflowerblue;">Approved</td>
-
+                    <td style="color: var(--success-color);">Approved</td>
                 </tr>
-
                 {% endfor %}
-
             </tbody>
         </table>
-
-      
-
-
-     
-
-
     </div>
+</div>
 
+<script>
+const data = {
+    labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+    datasets: [{
+        label: 'Expenses',
+        backgroundColor: '#ffb6b9',
+        borderColor: '#ffb6b9',
+        borderWidth: 1,
+        data: [
+            {% get_expenses year '1' user.school %},
+            {% get_expenses year '2' user.school %},
+            {% get_expenses year '3' user.school %},
+            {% get_expenses year '4' user.school %},
+            {% get_expenses year '5' user.school %},
+            {% get_expenses year '6' user.school %},
+            {% get_expenses year '7' user.school %},
+            {% get_expenses year '8' user.school %},
+            {% get_expenses year '9' user.school %},
+            {% get_expenses year '10' user.school %},
+            {% get_expenses year '11' user.school %},
+            {% get_expenses year '12' user.school %}
+        ]
+    },
+    {
+        label: 'Incomes',
+        backgroundColor: '#61c0bf',
+        borderColor: '#61c0bf',
+        borderWidth: 1,
+        data: [
+            {% get_incomes year '1' user.school %},
+            {% get_incomes year '2' user.school %},
+            {% get_incomes year '3' user.school %},
+            {% get_incomes year '4' user.school %},
+            {% get_incomes year '5' user.school %},
+            {% get_incomes year '6' user.school %},
+            {% get_incomes year '7' user.school %},
+            {% get_incomes year '8' user.school %},
+            {% get_incomes year '9' user.school %},
+            {% get_incomes year '10' user.school %},
+            {% get_incomes year '11' user.school %},
+            {% get_incomes year '12' user.school %}
+        ]
+    }]
+};
 
-
-
-
-    <script>
-        function printDiv(divId) {
-            var printContent = document.getElementById(divId).innerHTML;
-            
-            var originalContent = document.body.innerHTML;
-    
-            document.body.innerHTML = printContent;
-    
-            window.print();
-    
-            document.body.innerHTML = originalContent;
+const options = {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                color: '#ffffff'
+            }
         }
-    </script>
-
-
-
-
-
-
-    <script>
-        function scrollToList() {
-            const element = '{{ scroll }}';
-            const rect = element.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-
-            window.scrollTo({
-                top: rect.top + scrollTop,
-                left: rect.left + scrollLeft,
-                behavior: "smooth"
-            });
+    },
+    scales: {
+        x: {
+            grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+                color: '#ffffff'
+            }
+        },
+        y: {
+            grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+                color: '#ffffff'
+            },
+            beginAtZero: true
         }
+    }
+};
 
-        window.onload = function() {
-            scrollToList();
-        };
-    </script>
+const ctx = document.getElementById('barChart').getContext('2d');
+const barChart = new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: options
+});
+</script>
 
-
-
-    {% endblock %}
+{% endblock %}

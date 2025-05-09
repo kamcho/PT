@@ -254,7 +254,7 @@ class Completion(models.Model):
     #     managed = False
 
 class RateLimiter(models.Model):
-    user = models.OneToOneField(Students, on_delete=models.CASCADE)
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     tokens = models.PositiveIntegerField()
     image = models.PositiveIntegerField()
     speech = models.PositiveIntegerField()

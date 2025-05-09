@@ -4,76 +4,231 @@
 
 {% block content %}
 
-<br>
-<br>
-<br>
-<div class="">
-  {% if not syllabus %}
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 800px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.subject-header {
+    background: var(--gradient-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.subject-header h6 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.error-message {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 600px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.error-message h5 {
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.error-message p {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.topic-item {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.topic-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.topic-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.topic-title {
+    flex: 1;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.topic-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid var(--primary-color);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.topic-checkbox:checked {
+    background: var(--primary-color);
+}
+
+.topic-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    color: var(--text-primary);
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.topic-checkbox:disabled {
+    border-color: var(--text-secondary);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.subtopic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-left: 1rem;
+}
+
+.subtopic-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.subtopic-item:hover {
+    background: var(--bg-card-hover);
+}
+
+.subtopic-link {
+    flex: 1;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.subtopic-link:hover {
+    color: var(--primary-color);
+}
+
+.subtopic-status {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .topic-item {
+        padding: 1rem;
+    }
+    
+    .subtopic-list {
+        padding-left: 0.5rem;
+    }
+}
+</style>
+
 <div class="container">
-  <br>
-<h5 style="color: coral;">This subject cannot be viewed now as the subject is under review. Kindly be patient as we handle the issue.</h6>
-<div style="padding: 40px;">
-    <h5> Possible Reasons</h5>
-    <p>1. The subtopic is under review in compliance with CBC,</p>
-    <p>2. There is not enough test questions due to the nature of the subject,</p>
-    <p>3. K.I.C.D has removed the subject from the  Grade {{ subject.subject.grade }} course.</p>
-</div>
-</div>
-  {% else %}
-  <div class="container " style="text-decoration:none !important;">
-    <h6 class="dashed-heading">{{ subject.subject }} Grade - {{ subject.subject.grade }}</h6>
-    <br>
-    <br>
-    {% for coverage in syllabus %}
-
-
-    {% if student|topic_in_progress:coverage %}
-    <div style="display:flex;width:80%;">
-      <h5 style="color:purple;flex: 1;">{{ coverage.order }}.) {{ coverage.name }}</h5>
-      <input type="checkbox" style="margin-left: 0 auto;" checked>
-    </div>
-    <div>
-      {% for subtopic in coverage.topic.all %}
-        {% if student|subtopic_in_progress:subtopic %}
-
-        <div style="display:flex;width:80%;padding-left:30px;">
-          <h6 style="color:purple ;flex: 1;"><a href="{% url 'subtopic-info' student.adm_no subtopic.id %}">{{ forloop.counter }}. {{ subtopic.name }}</a></h6>
-          <i class="bi bi-check-all" style="margin-left: 0 auto;color:purple;font-size:20px;"></i>
+    {% if not syllabus %}
+        <div class="error-message">
+            <h5>Subject Under Review</h5>
+            <p>This subject cannot be viewed now as it is under review. Kindly be patient as we handle the issue.</p>
+            <div style="margin-top: 1.5rem;">
+                <h6 style="color: var(--text-primary); margin-bottom: 1rem;">Possible Reasons:</h6>
+                <p>1. The subtopic is under review in compliance with CBC</p>
+                <p>2. There is not enough test questions due to the nature of the subject</p>
+                <p>3. K.I.C.D has removed the subject from the Grade {{ subject.subject.grade }} course</p>
+            </div>
         </div>
-
-        {% else %}
-          <div style="display:flex;width:80%;padding-left:30px;">
-            <h6 style="color:purple;flex: 1;"><a href="{% url 'subtopic-info' student.adm_no  subtopic.id %}">{{ forloop.counter }}. {{ subtopic.name }}</a></h6>
-            <input type="checkbox" style="margin-left: 0 auto;" disabled>
-          </div>
-      {% endif %}
-
-      {% endfor %}
-    </div>
-
     {% else %}
-    <div style="display:flex;width:80%;">
-      <h5 style="flex: 1;">{{ coverage.order }}.) {{ coverage.name }}</h5>
-      <input type="checkbox" style="margin-left: 0 auto;" disabled>
-    </div>
-    <div>
-      {% for subtopic in coverage.topic.all %}
-      <div style="display:flex;width:80%;padding-left:30px;">
-        <h6 style="color:purple;flex: 1;"><a href="{% url 'subtopic-info' student.adm_no subtopic.id %}">{{ forloop.counter }}. {{ subtopic.name }}</a></h6>
-        <input type="checkbox" style="margin-left: 0 auto;" disabled>
-      </div>
-      {% endfor %}
-    </div>
+        <div class="subject-header">
+            <h6>{{ subject.subject }} - Grade {{ subject.subject.grade }}</h6>
+        </div>
+        
+        <div class="topic-list">
+            {% for coverage in syllabus %}
+                <div class="topic-item">
+                    <div class="topic-header">
+                        <h5 class="topic-title">{{ coverage.order }}.) {{ coverage.name }}</h5>
+                        <input type="checkbox" class="topic-checkbox" 
+                            {% if student|topic_in_progress:coverage %}checked{% endif %}
+                            {% if not student|topic_in_progress:coverage %}disabled{% endif %}>
+                    </div>
+                    
+                    <div class="subtopic-list">
+                        {% for subtopic in coverage.topic.all %}
+                            <div class="subtopic-item">
+                                <a href="{% url 'subtopic-info' student.adm_no subtopic.id %}" class="subtopic-link">
+                                    {{ forloop.counter }}. {{ subtopic.name }}
+                                </a>
+                                {% if student|subtopic_in_progress:subtopic %}
+                                    <i class="bi bi-check-all subtopic-status"></i>
+                                {% else %}
+                                    <input type="checkbox" class="topic-checkbox" disabled>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
-    <br>
+</div>
 
-    {% endfor %}
-
-
-  </div>
-
-  {% endif %}
-
-
-
-  {% endblock %}
+{% endblock %}

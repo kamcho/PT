@@ -1,20 +1,195 @@
-
 {% extends base_html %}
 {% load custom_filters %}
 
 {% block content %}
 
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
 
-<div style="width: 95%;max-width: 800px;margin: 100px auto; color: white;" >
+.container {
+    max-width: 800px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
 
-   
-    <div style="position: relative;border: 1px solid rgb(8, 32, 8);width: 90%;max-width:600px;min-height: 200px ;margin: 0 auto;overflow-y: hidden;border-radius: 10px;padding: 30px;background-color: rgb(8, 6, 27);">
-      
-        <h5 style="color: cornflowerblue;">{{ update.ministry }}</h5>
-      <h6>{{ update.title }}</h6>
-     <small style="height: 100px;overflow-y: hidden;">{{ update.description }}</small>
-     <small class="badge text-bg-secondary" style="position: absolute;bottom: 10px;right: 10px;"><span class="badge bg-secondary">{{ update.date }}</span></small>
-    </div><br>
+.notification-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.notification-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gradient-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+}
+
+.notification-title {
+    flex: 1;
+}
+
+.notification-title h5 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.notification-title h6 {
+    color: var(--text-primary);
+    margin: 0.25rem 0 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.notification-content {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.notification-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notification-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.notification-date i {
+    color: var(--primary-color);
+}
+
+.notification-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-button.primary {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    border: none;
+}
+
+.action-button.secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--primary-color);
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .notification-card {
+        padding: 1.5rem;
+    }
+    
+    .notification-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .action-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<div class="container">
+    <div class="notification-card">
+        <div class="notification-header">
+            <div class="notification-icon">
+                <i class="bi bi-bell"></i>
+            </div>
+            <div class="notification-title">
+                <h5>{{ update.ministry }}</h5>
+                <h6>{{ update.title }}</h6>
+            </div>
+        </div>
+        
+        <div class="notification-content">
+            {{ update.description }}
+        </div>
+        
+        <div class="notification-footer">
+            <div class="notification-date">
+                <i class="bi bi-clock"></i>
+                {{ update.date }}
+            </div>
+            
+            <div class="notification-actions">
+                <a href="{% url 'notifications' %}" class="action-button secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Notifications
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

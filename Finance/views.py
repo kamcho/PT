@@ -1397,6 +1397,13 @@ class StudentsFeeProfile(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
         id = self.kwargs['id']
+     
+        if self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor', 'Finance', 'Receptionist']:
+            context['base_html'] = 'Supervisor/base.html'
         try:
             profile = StudentsFeeAccount.objects.get(user__adm_no=id)
             context['profile'] = profile
@@ -1404,6 +1411,7 @@ class StudentsFeeProfile(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
            
             messages.error(self.request, 'We could not find a user matching your query')
         except Exception as e:
+
             # Handle DatabaseError if needed
             messages.error(self.request, 'An error occurred. We are fixing it!')
             error_message = str(e)  # Get the error message as a string
@@ -1423,10 +1431,18 @@ class StudentsFeeProfile(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
                 }
             )
-        transactions = StudentFeePayment.objects.filter(user__id=id, user__school=self.request.user.school)
-        if not transactions:
-            messages.info(self.request, 'This student has no transactions available')
-        context['transactions'] = transactions
+        
+        if self.request.user.role == 'Guardian':
+            print(id)
+            transactions = StudentFeePayment.objects.filter(user__adm_no=id)
+            if not transactions:
+                messages.info(self.request, 'This student has no transactions available')
+            context['transactions'] = transactions
+        else:
+            transactions = StudentFeePayment.objects.filter(user__adm_no=id, user__school=self.request.user.school) 
+            if not transactions:
+                messages.info(self.request, 'This student has no transactions available')
+            context['transactions'] = transactions
         
 
         return context

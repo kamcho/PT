@@ -174,7 +174,7 @@
             {% for subtopic in email|guardians_subtopic_view:coverage.id %}
               {% if email|guardian_subtopic_view:subtopic.id %}
                 <div class="subtopic-item">
-                  <a href="{% url 'media' coverage subtopic %}" class="subtopic-link">{{ subtopic }}</a>
+                  <a href="{% url 'subtopic-info' email subtopic.id %}" class="subtopic-link">{{ subtopic }}</a>
                   <i class="bi bi-check-all status-icon"></i>
                 </div>
               {% else %}

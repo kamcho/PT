@@ -635,7 +635,7 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         test = str(self.kwargs['uuid'])
         instance = self.kwargs['instance']
         user = Students.objects.get(adm_no=user)
-
+        context['student'] = user
         try:
             if instance == 'Topical':
                 answers = StudentsAnswers.objects.filter(user=user, test_object_id=test)

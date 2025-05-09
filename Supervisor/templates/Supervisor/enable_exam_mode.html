@@ -1,42 +1,181 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 
-
-
 {% block content %}
-<br>
-    <br><br><br>
-    <div class="container" style="width: 90%;margin: 0 auto;max-width: 700px;">
+
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.form-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-title i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+.form-description {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.form-select {
+    background: var(--bg-card-hover);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.form-select:focus {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: var(--danger-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    width: 100%;
+}
+
+.btn-secondary:hover {
+    background: #c23616;
+    transform: translateY(-2px);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.status-badge.enabled {
+    background: var(--success-color);
+    color: var(--text-primary);
+}
+
+.status-badge.disabled {
+    background: var(--danger-color);
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="bi bi-pencil-square"></i> Exam Mode Control
+        </h2>
 
         {% if mode.status %}
-        Disable exam results inputs for {{ mode.period }} period Exams from teachers..
-            
-            <br><br>
-            <form method="post">
-                {% csrf_token %}
-                <select class="form-select" name="period" >
-                    <option selected>{{ mode.period }}</option>
-                </select><br>
-                <button class="btn btn-secondary" name="action" value="disable" style="color: white;">Disable</button>
-
-            </form>
+        <div class="status-badge enabled">
+            <i class="bi bi-check-circle"></i> Exam Mode Enabled
+        </div>
+        <p class="form-description">
+            Currently allowing teachers to input exam results for {{ mode.period }} period exams.
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <select class="form-select" name="period">
+                <option selected>{{ mode.period }}</option>
+            </select>
+            <button class="btn btn-secondary" name="action" value="disable">
+                <i class="bi bi-x-circle"></i> Disable Exam Mode
+            </button>
+        </form>
         {% else %}
-        Enable teachers to input exam results  for students.
-        <br><br>
-            <form method="post">
-                {% csrf_token %}
-                <select class="form-select" name="period" required>
-                    <option></option>
-                    <option value="OPENER">Opener</option>
-                    <option value="MID">MID Term</option>
-                    <option value="END">END Term</option>
-                </select><br>
-                <button class="btn btn-primary" name="action" value="enable">Enable</button>
-
-            </form>
-
+        <div class="status-badge disabled">
+            <i class="bi bi-x-circle"></i> Exam Mode Disabled
+        </div>
+        <p class="form-description">
+            Enable teachers to input exam results for students by selecting the exam period below.
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <select class="form-select" name="period" required>
+                <option value="">Select Exam Period</option>
+                <option value="OPENER">Opener</option>
+                <option value="MID">MID Term</option>
+                <option value="END">END Term</option>
+            </select>
+            <button class="btn btn-primary" name="action" value="enable">
+                <i class="bi bi-check-circle"></i> Enable Exam Mode
+            </button>
+        </form>
         {% endif %}
-
     </div>
+</div>
 
 {% endblock %}

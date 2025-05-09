@@ -4,31 +4,191 @@
 
 {% block content %}
 
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 800px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.result-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.result-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gradient-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--text-primary);
+    font-size: 2rem;
+}
+
+.result-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.result-message {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.score-display {
+    background: var(--bg-card-hover);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border: 1px solid var(--primary-color);
+}
+
+.score-display h6 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.action-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-button.primary {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    border: none;
+}
+
+.action-button.secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--primary-color);
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .result-card {
+        padding: 1.5rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
 
 <div class="container">
-    <br>
-    <br>
-    <br>
-    {% if instance == 'KNECGradeExams' or instance == 'ClassTests' %}
-        <p>Congratulations! You've reached the end of the test. Your responses have been saved and can be reviewed in the exam panel.
-            Thank you for completing the test. You answered {{ score }} out of {{ size }} questions correctly.</p>
-        <h6>You scored {{ score }} / {{ size }}</h6>
-        <br>
-        <a href="{% url 'test-detail' instance test_uuid %}"><button class="btn btn-info">Review</button></a>
-    {% else %}
-        <p>Congratulations! You've reached the end of the test. Your responses have been saved and can be reviewed in the exam panel.
-            Thank you for completing the test. You have come to the end of this test.
-            You answered {{ score }} out of {{ test.test_size }} questions correctly.</p>
-        <h6>You scored {{ score }} / {{ test.test_size}}.</h6>
-        <br>
-        <a href="{% url 'kid-test-revision'  instance student.adm_no test_uuid %}"><button class="btn btn-info">Review</button></a>
-    {% endif %}
-        <a href="{% url 'guardian-home' %}"><button class="btn btn-warning">Home</button></a>
+    <div class="result-card">
+        <div class="result-icon">
+            <i class="bi bi-trophy"></i>
+        </div>
+        
+        <h2 class="result-title">Test Completed!</h2>
+        
+        <div class="result-message">
+            {% if instance == 'KNECGradeExams' or instance == 'ClassTests' %}
+                Congratulations! You've reached the end of the test. Your responses have been saved and can be reviewed in the exam panel.
+                Thank you for completing the test.
+            {% else %}
+                Congratulations! You've reached the end of the test. Your responses have been saved and can be reviewed in the exam panel.
+                Thank you for completing the test.
+            {% endif %}
+        </div>
+        
+        <div class="score-display">
+            <h6>
+                {% if instance == 'KNECGradeExams' or instance == 'ClassTests' %}
+                    You scored {{ score }} / {{ size }}
+                {% else %}
+                    You scored {{ score }} / {{ test.test_size }}
+                {% endif %}
+            </h6>
+        </div>
+        
+        <div class="action-buttons">
+            {% if instance == 'KNECGradeExams' or instance == 'ClassTests' %}
+                <a href="{% url 'test-detail' instance test_uuid %}" class="action-button primary">
+                    <i class="bi bi-eye"></i>
+                    Review Test
+                </a>
+            {% else %}
+                <a href="{% url 'kid-test-revision' instance student.adm_no test_uuid %}" class="action-button primary">
+                    <i class="bi bi-eye"></i>
+                    Review Test
+                </a>
+            {% endif %}
+            
+            <a href="{% url 'guardian-home' %}" class="action-button secondary">
+                <i class="bi bi-house"></i>
+                Return Home
+            </a>
+        </div>
+    </div>
 </div>
-
-
-
-
 
 <script>
     // Clear session storage when the page loads

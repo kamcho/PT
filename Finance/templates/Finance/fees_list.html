@@ -2,74 +2,251 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.filter-section {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group {
+    background: var(--bg-card-hover);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group-text {
+    background: var(--bg-card);
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-card-hover);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    box-shadow: none;
+    border-color: var(--primary-color);
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    border: none;
+    color: var(--bg-dark);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+    transform: translateY(-2px);
+}
+
+.table-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.table thead th {
+    background: var(--bg-card-hover);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table tbody td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.table a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.table a:hover {
+    color: var(--secondary-color);
+}
+
+.term-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.amount-badge {
+    background: var(--success-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-badge {
+    background: var(--bg-card-hover);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .filter-section {
+        padding: 1rem;
+    }
+    
+    .table-container {
+        padding: 1rem;
+    }
+}
+</style>
+
 <div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Fee Configurations</h1>
+        <a href="{% url 'set-fees' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Fee Configuration
+        </a>
+    </div>
 
-    <a class="btn btn-primary" href="{% url 'set-fees' %}">Create Fee Configuration</a>
-    <br><br>
-    <form  method="post">
-        {% csrf_token %}
-       <div class="input-group mb-3">
-        <select class="form-select" aria-label="Default select example" name="grade">
-            <option value="{{ grade }}">Grade {{ grade }}</option>
-            <option value="1">Grade 1</option>
-            <option value="2">Grade 2</option>
-            <option value="3">Grade 3</option>
-            <option value="4">Grade 4</option>
-            <option value="5">Grade 5</option>
-            <option value="6">Grade 6</option>
-            <option value="7">Grade 7</option>
-            <option value="8">Grade 8</option>
-    
-    
-          </select>  
-            <span class="input-group-text">Term</span>
-            <select class="form-select" aria-label="Default select example" name="term">
-                <option value="Term 1">1</option>
-                <option value="Term 2">2</option>
-                <option value="Term 3">3</option>
-            </select>  
-
-            <span class="input-group-text">Year</span>
-            <input type="number" class="form-control" name="year"  value="{{ year }}" >
-
-            <button class="btn btn-warning" >Filter</button>
-       </div>
+    <div class="filter-section">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <select class="form-select" name="grade">
+                    <option value="{{ grade }}">Grade {{ grade }}</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                </select>
+                <span class="input-group-text">Term</span>
+                <select class="form-select" name="term">
+                    <option value="Term 1">1</option>
+                    <option value="Term 2">2</option>
+                    <option value="Term 3">3</option>
+                </select>
+                <span class="input-group-text">Year</span>
+                <input type="number" class="form-control" name="year" value="{{ year }}">
+                <button class="btn btn-warning">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </div>
         </form>
-        <br>
-    
+    </div>
 
-    <table class="table">
-        <thead>
-          <tr>
-            <th><h6>ID</h6></th>
-             <th><h6>Term</h6></th>
-            <th><h6>Grade</h6></th>
-            <th><h6>Boarding</h6></th>
-            <th><h6>Gender</h6></th>
-            <th><h6>Amount</h6></th>
-
-          </tr>
-        </thead>
-        <tbody>
-          
-            {% for term in terms %}
-            <tr>
-              <td><h6>{{ forloop.counter }}</h6></a></td>
-              <td><a href="{% url 'manage-fees' term.id %}">{{ term.term.year }} - {{ term.term.term }}</a></td>
-              
-              <td>{{ term.grade }}</td>
-              <td>{{ term.boarding }}</td>
-              <td>{{ term.gender }}</td>
-              <td>{{ term.amount }}</td>
-            </tr>
-            {% endfor %}
-         
-        </tbody>
-     </table>
-
-
-
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Term</th>
+                    <th>Grade</th>
+                    <th>Boarding</th>
+                    <th>Gender</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for term in terms %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{% url 'manage-fees' term.id %}"><span class="term-badge">{{ term.term.year }} - {{ term.term.term }}</span></a></td>
+                    <td><span class="status-badge">{{ term.grade }}</span></td>
+                    <td><span class="status-badge">{{ term.boarding }}</span></td>
+                    <td><span class="status-badge">{{ term.gender }}</span></td>
+                    <td><span class="amount-badge">{{ term.amount }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% endblock %}

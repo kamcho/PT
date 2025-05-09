@@ -1,46 +1,192 @@
 {% extends template %}
 {% block content %}
 
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.table-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.table thead th {
+    background: var(--bg-card-hover);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table tbody td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.table a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.table a:hover {
+    color: var(--secondary-color);
+}
+
+.student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.student-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.student-id {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.class-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.offence-badge {
+    background: var(--bg-card-hover);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.points-badge {
+    background: var(--success-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        padding: 1rem;
+    }
+}
+</style>
 
 <div class="container">
-  <br><br><br><br>
-  {% if user.role == 'Teacher' %}
-  <a class="btn btn-primary" href="{% url 'book-incident' %}">Book Student</a>
-  <br><br>
-  {% endif %}
-  <table class="table">
-    <thead>
-      <tr>
-        <th><h6><input type="checkbox"></h6></th>
-        <th><h6>Id</h6></th>
-         <th><h6>Student</h6></th>
-         <th><h6>Class</h6></th>
-         <th><h6>Offence</h6></th>
-        <th><h6>Points Remaining</h6></th>
-        
-      </tr>
-    </thead>
-    <tbody>
-      
-      {% for incident in incidents %}
-        
-            <tr>
-                
-                <td><input type="checkbox"></td>
-                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-                <td><a href="{% url 'manage-booked-incident' incident.id %}">{{ incident.user.studentprofile.get_names }}<br><small>{{ incident.user.adm_no }}</small></a></td>
-                <td>{{ incident.user.academicprofile.current_class.grade }} {{ incident.user.academicprofile.current_class }}</td>
-                <td>{{ incident.incident.name }} <span class="badge bg-secondary">{{ incident.incident.points }}</span></td>
-                <td>{{ incident.user.studentdisciplinescore.points }}</td>
-         
-              </tr>
-        
-        
-      {% endfor %}
-    </tbody>
- </table>
+    <div class="page-header">
+        <h1 class="page-title">Incident Bookings</h1>
+        {% if user.role == 'Teacher' %}
+        <a href="{% url 'book-incident' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Book Student
+        </a>
+        {% endif %}
+    </div>
 
-
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Class</th>
+                    <th>Offence</th>
+                    <th>Points Remaining</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for incident in incidents %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'manage-booked-incident' incident.id %}">
+                            <div class="student-info">
+                                <span class="student-name">{{ incident.user.studentprofile.get_names }}</span>
+                                <span class="student-id">{{ incident.user.adm_no }}</span>
+                            </div>
+                        </a>
+                    </td>
+                    <td><span class="class-badge">{{ incident.user.academicprofile.current_class.grade }} {{ incident.user.academicprofile.current_class }}</span></td>
+                    <td>
+                        <span class="offence-badge">{{ incident.incident.name }}</span>
+                        <span class="points-badge">{{ incident.incident.points }}</span>
+                    </td>
+                    <td><span class="points-badge">{{ incident.user.studentdisciplinescore.points }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% endblock %}

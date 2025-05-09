@@ -2,95 +2,300 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+    :root {
+        --bg-dark: #1a1c23;
+        --bg-card: #242631;
+        --bg-card-hover: #2d303d;
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --accent-color: #fd79a8;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .card {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-title {
+        color: var(--text-primary);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        background: var(--bg-card-hover);
+        border-radius: 8px;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-label {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .amount-value {
+        color: var(--primary-color);
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .status-pending {
+        background: var(--warning-color);
+        color: var(--bg-dark);
+    }
+
+    .status-processed {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        border: none;
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .btn-accept {
+        background: var(--success-color);
+    }
+
+    .btn-deny {
+        background: var(--danger-color);
+    }
+
+    .btn-back {
+        background: var(--bg-card-hover);
+        color: var(--text-primary);
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .btn-action:hover, .btn-back:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+    }
+
+    .transaction-details {
+        margin-top: 1.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: var(--text-secondary);
+    }
+
+    .detail-value {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-action, .btn-back {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 <div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Manage Fee Payment</h1>
+        <a href="{% url 'student-fee-profile' transaction.user  %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i>
+            Back to Payments
+        </a>
+    </div>
 
-    
-        <div class="mb-3">
-            <input type="text" class="form-control"   placeholder="{{ transaction.transaction_id.receipt }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
-        </div>
-        <div class="mb-3">
-            <input type="text" class="form-control"   placeholder="{{ transaction.user.adm_no }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
-        </div>
-        
-
-
-        <div class="mb-3">
-            <input type="text" class="form-control"  placeholder="{{ transaction.date }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
-        </div>
-
-        <!-- <div class="mb-3">
-            <input type="text" class="form-control" name="recipient" placeholder="{{ transaction.transaction_id.adm_no }}" aria-label="Recipient's username" aria-describedby="button-addon2">
-        </div> -->
-
-        <div class="mb-3">
-            <input type="text" class="form-control"  placeholder="{{ transaction.transaction_id.amount }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Payment Details</h2>
+            <span class="status-badge {% if transaction.transaction_id.status %}status-processed{% else %}status-pending{% endif %}">
+                {% if transaction.transaction_id.status %}Processed{% else %}Pending{% endif %}
+            </span>
         </div>
 
-        <div class="mb-3">
-            <span>Balance</span>
-            <input type="text" class="form-control"  placeholder="{{ transaction.balance }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Student</div>
+                <div class="info-value">{{ transaction.user.studentprofile.get_names|title }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Admission Number</div>
+                <div class="info-value">{{ transaction.user }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Receipt Number</div>
+                <div class="info-value">{{ transaction.transaction_id.receipt }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Amount</div>
+                <div class="info-value amount-value">{{ transaction.transaction_id.amount }}</div>
+            </div>
         </div>
 
-
-<br><br><br>
-{% if user.rloe == 'Supervisor' %}
-    <form  method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <span>Transfer To</span>
-            <input type="text" class="form-control" name="adm_no" value="{{ adm_no }}"  placeholder="ADM NO" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+        <div class="transaction-details">
+            <div class="detail-row">
+                <span class="detail-label">Payment Date</span>
+                <span class="detail-value">{{ transaction.date|date:"d M Y" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Payment Mode</span>
+                <span class="detail-value">{{ transaction.transaction_id.account.account }}</span>
+            </div>
+            {% if transaction.transaction_id.msdn %}
+            <div class="detail-row">
+                <span class="detail-label">MSDN</span>
+                <span class="detail-value">{{ transaction.transaction_id.msdn }}</span>
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <span class="detail-label">Account Number</span>
+                <span class="detail-value">{{ transaction.transaction_id.account }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Balance</span>
+                <span class="detail-value">{{ transaction.balance }}</span>
+            </div>
         </div>
 
-        <button class="btn btn-info" style="color: white;" name="verify">VERIFY</button>
-        <br>
-    </form>
-{% else %}
-{% endif %}
-        {% if student %}
-        <br>
-        <input type="text" class="form-control"  placeholder="{{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
-        <br>
-        <input type="text" class="form-control"  placeholder="{{ student.academicprofile.current_class }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
-        <br>
-        <button class="btn btn-warning" style="color: white;" id="next" onclick="showConfirm()"  name="next">NEXT</button>
-        {% else %}
-        
+        {% if not transaction.transaction_id.status %}
+        <div class="action-buttons">
+            <button class="btn-action btn-accept" onclick="acceptPayment('{{ transaction.id }}')">
+                <i class="bi bi-check-lg"></i>
+                Accept Payment
+            </button>
+            <button class="btn-action btn-deny" onclick="denyPayment('{{ transaction.id }}')">
+                <i class="bi bi-x-lg"></i>
+                Deny Payment
+            </button>
+        </div>
         {% endif %}
-    
-    
-
-
-
-
+    </div>
 </div>
 
-<form method="post">
-    {% csrf_token %}
-    <div class="confirmation" style="display: none;" id="confirm">
-        You are trying to transfer the payment of {{ transaction.transaction_id.amount }} from 
-         {{ transaction.user.personalprofile.f_name }} {{ transaction.user.personalprofile.f_name }} {{ transaction.user.personalprofile.f_name }}
-         of Admission Number {{ transaction.user }} to  {{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}.
-         To complete this action enter the  WORD <strong style="color: crimson;"><h4>TRANSFER</h4></strong> below.
-         <br><br>
-         <input type="text" class="form-control" name="adm_no" value="{{ adm_no }}" style="display: none;"  placeholder="ADM NO" aria-label="Recipient's username" aria-describedby="button-addon2" required>
-
-         <input type="text" class="form-control" name="random"   placeholder="42134431" aria-label="Recipient's username" aria-describedby="button-addon2" required>
-         <br>
-         <button name="transfer" class="btn btn-danger">Transfer</button>
-    
-       
-    </div>
-    
-</form>
-
 <script>
-    function showConfirm() {
-        // Get the element by ID
-        var confirmElement = document.getElementById('confirm');
+    function acceptPayment(paymentId) {
+        if (confirm('Are you sure you want to accept this payment?')) {
+            window.location.href = `/Finance/accept-payment/${paymentId}/`;
+        }
+    }
 
-        // Change the display property to block
-        confirmElement.style.display = 'block';
+    function denyPayment(paymentId) {
+        if (confirm('Are you sure you want to deny this payment?')) {
+            window.location.href = `/Finance/deny-payment/${paymentId}/`;
+        }
     }
 </script>
 {% endblock %}

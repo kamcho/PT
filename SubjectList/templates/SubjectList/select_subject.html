@@ -5,138 +5,263 @@
 {% block content %}
 
 <style>
-    html, body {
-  height: 100%;
-  margin: 0;
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
 }
-    #body{
-        background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important;
-        min-height: 70pc;
-        /* min-height: 100%; */
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.grade-selector {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grade-btn {
+    background: var(--gradient-bg);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.grade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+}
+
+.dropdown-menu {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--card-shadow);
+}
+
+.dropdown-item {
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--bg-card-hover);
+    color: var(--primary-color);
+}
+
+.subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 120px;
+    padding: 1rem;
+}
+
+.subject-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
+.subject-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+}
+
+.subject-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.subject-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.subject-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.subject-meta i {
+    color: var(--primary-color);
+}
+
+.subject-progress {
+    background: var(--bg-card-hover);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.progress-title {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.progress-topic {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.progress-topic i {
+    color: var(--primary-color);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.syllabus-btn {
+    background: var(--gradient-bg);
+    color: var(--text-primary);
+}
+
+.analytics-btn {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tests-btn {
+    background: var(--accent-color);
+    color: var(--text-primary);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 768px) {
+    .subjects-grid {
+        grid-template-columns: 1fr;
+        margin-top: 100px;
     }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
 </style>
 
-
-
-<div  id="body">{% if not  subjects %}
 <div class="container">
-        <br>
-    <form>
-        <div class="dropdown" style="padding-left:25px;">
-            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="grade-selector">
+        <div class="dropdown">
+            <button class="grade-btn dropdown-toggle" type="button" id="gradeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-mortarboard"></i>
                 Grade {{ grade }}
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 1 %}">1</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 2 %}">2</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 3 %}">3</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 4 %}">4</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 5 %}">5</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 6 %}">6</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 7 %}">7</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 8 %}">8</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 9 %}">9</a></li>
+            <ul class="dropdown-menu" aria-labelledby="gradeDropdown">
+                {% for i in "123456789" %}
+                    <li><a class="dropdown-item" href="{% url 'learn' adm_no i %}">Grade {{ i }}</a></li>
+                {% endfor %}
             </ul>
-        </div>
-    </form>
-
-</div>
-<!-- </div> -->
-{% else %}
-<div class="" >
-<div >
-        <br>
-    <form style="margin-top: 60px;margin-left: 7pc;">
-        <div class="dropdown" style="padding-left:25px;">
-            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Grade {{ grade }}
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 1 %}">1</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 2 %}">2</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 3 %}">3</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 4 %}">4</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 5 %}">5</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 6 %}">6</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 7 %}">7</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 8 %}">8</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' adm_no 9 %}">9</a></li>
-            </ul>
-        </div>
-    </form>
-
-</div>
-    <div>
-        <div class="subjects-select-view" style="margin-top: -10px;">
-
-            {% for subject in subjects %}<a href="{% url 'syllabus' student.adm_no subject.id  %}">
-            <div class="subject-select-card">
-                <div class="booked-class-ody">
-                    {% with progress_topic=student|get_user_progress_topic:subject.id %}
-                    
-                        <h5 style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{ subject }} </h5>
-                   
-
-                    <h6><i class="bi bi-gear"> </i> Grade {{ subject.grade }}</p>
-
-                </div>
-                <br>
-
-                <div class="subject-select-in-card">
-                    <h6>Topic {{ progress_topic.order }} </h6>
-
-
-                    <small><i class="bi bi-bookmark"></i>
-                        {{ progress_topic }}
-
-                    </small>
-                    <br>
-
-                    {% endwith %}
-                </div>
-                <br>
-                <div>
-                    <p href="{% url 'syllabus' student.adm_no subject.id %}"><button class="btn btn-secondary">Syllabus</button></p>
-
-                </div>
-
-            </div> </a>
-            {% endfor %}
-
         </div>
     </div>
+
+    {% if not subjects %}
+        <div class="no-subjects" style="text-align: center; margin-top: 200px;">
+            <i class="bi bi-journal-x" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+            <h5 style="color: var(--text-primary);">No subjects available for this grade</h5>
+            <p style="color: var(--text-secondary);">Please select a different grade or contact your administrator.</p>
+        </div>
+    {% else %}
+        <div class="subjects-grid">
+            {% for subject in subjects %}
+            <a href="{% url 'syllabus' student.adm_no subject.id %}" style="text-decoration: none;">
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <h5 class="subject-title">{{ subject }}</h5>
+                        <div class="subject-meta">
+                            <i class="bi bi-gear"></i>
+                            Grade {{ subject.grade }}
+                        </div>
+                    </div>
+
+                    {% with progress_topic=student|get_user_progress_topic:subject.id %}
+                        <div class="subject-progress">
+                            <div class="progress-title">Current Topic</div>
+                            <div class="progress-topic">
+                                <i class="bi bi-bookmark"></i>
+                                {{ progress_topic }}
+                            </div>
+                        </div>
+                    {% endwith %}
+
+                    <div class="action-buttons">
+                        <div class="action-btn syllabus-btn">
+                            <i class="bi bi-book"></i> Syllabus
+                        </div>
+                        <div class="action-btn analytics-btn">
+                            <i class="bi bi-graph-up"></i> Analytics
+                        </div>
+                        <div href="#" class="action-btn tests-btn">
+                            <i class="bi bi-pencil-square"></i> Tests
+                        </div>
+                    </div>
+                </div></a>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>
-{% endif %}
 
-</div>
-
-
-
-
-<!-- <script>
-    // Add an event listener to the window's beforeunload event
-window.addEventListener('beforeunload', function (e) {
-  // Display a confirmation popup
-  var confirmationMessage = 'You cannot leave this page unless you finish this test. If you close this page you automatically fail!';
-
-  // You can customize the confirmation message as needed
-
-  // Some browsers do not allow custom messages, so setting a return value is essential.
-  e.returnValue = confirmationMessage;
-
-  // Show the confirmation dialog and return its result
-  var userConfirmed = window.confirm(confirmationMessage);
-
-  // If the user confirmed, allow navigation, otherwise, prevent it
-  if (!userConfirmed) {
-    e.preventDefault();
-  }
-  else {
-    e.preventDefault();
-  }
-});
-
-</script> -->
 {% endblock %}

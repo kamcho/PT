@@ -2,73 +2,178 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
-<div class="container">
-    <a class="btn btn-primary" href="{% url 'invoices' %}"><i class="bi bi-arrow-left"> </i> Back</a>
-    <br><br>
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
-    <form method="post">
+.invoice-container {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.back-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateX(-5px);
+}
+
+.invoice-form {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-dark) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-primary) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: none !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-secondary);
+}
+
+.form-floating > .form-control,
+.form-floating > .form-select {
+    height: calc(3.5rem + 2px);
+    line-height: 1.25;
+}
+
+.form-floating > label {
+    color: var(--text-secondary);
+    padding: 1rem;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+    color: var(--primary-color);
+    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+.submit-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 200px;
+}
+
+.submit-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .invoice-form {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<div class="invoice-container">
+    <div class="page-header">
+        <a href="{% url 'invoices' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Invoices
+        </a>
+    </div>
+
+    <form method="post" class="invoice-form">
         {% csrf_token %}
         
-
-        <br>
-        <div class="row mb-3">
+        <div class="row g-3">
             <div class="col-md-6">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" name="title" id="floatingInput" placeholder="payment for" required>
-                    <label for="floatingInput">Title</label>
-                </div>
-            </div>
-            <div class="col-md-6">    
-                <div class="form-floating mb-3">
-                        <select class="form-select" aria-label="Default select example" name="user">
-                            <option></option>
-                            {% for associate in associates %}
-                              <option value="{{ associate }}">{{ associate.personalprofile.get_names|title }} - {{ associate.personalprofile.phone }}</option>
-                            {% endfor %}
-                               
-                          </select>
-                 
-                
-                <label for="floatingInput">Received From</label>
-                </div>
-            </div>
-            
-        </div>
-
-        <div class="" style="justify-content: end;">
-            <div class="col-m-6">
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" name="amount" id="floatingInput" placeholder="payment for" required>
-                    <label for="floatingInput">Amount</label>
-                </div>
-            </div>
-
-            
-        </div>
-
-            <div >
                 <div class="form-floating">
-                    <textarea class="form-control" rows="7" placeholder="invoice description" name="description" id="floatingTextarea" required></textarea>
-                    <label for="floatingTextarea">Description</label>
-                  </div>
+                    <input type="text" class="form-control" name="title" id="title" placeholder="Payment for" required>
+                    <label for="title">Title</label>
+                </div>
             </div>
-            
-            
-    
-        
-      
-        <br><br>
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="user" id="user" required>
+                        <option value=""></option>
+                        {% for associate in associates %}
+                            <option value="{{ associate }}">{{ associate.personalprofile.get_names|title }} - {{ associate.personalprofile.phone }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="user">Received From</label>
+                </div>
+            </div>
         </div>
-        
+
+        <div class="form-floating mt-3">
+            <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" required>
+            <label for="amount">Amount</label>
+        </div>
+
+        <div class="form-floating mt-3">
+            <textarea class="form-control" name="description" id="description" placeholder="Invoice description" style="height: 150px" required></textarea>
+            <label for="description">Description</label>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="submit-btn">
+                <i class="bi bi-check2-circle"></i> Create Invoice
+            </button>
+        </div>
     </form>
-
-
-
-
-
 </div>
 
 {% endblock %}

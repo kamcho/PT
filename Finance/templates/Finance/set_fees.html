@@ -2,121 +2,225 @@
 {% load custom_filters %}
 {% block content %}
 
-<!-- Custom CSS -->
 <style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.form-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.form-container h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-card-hover);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    background-color: var(--bg-card-hover);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-label {
+    color: var(--text-secondary);
+}
+
+.btn-custom {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: var(--success-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background: #00a884;
+    transform: translateY(-2px);
+}
+
+.grade-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.grade-card {
+    background: var(--bg-card-hover);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.grade-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
     .form-container {
-        background-color: #111b25;
-        padding: 2rem;
-        border-radius: 10px;
-        color: white !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
     }
-    .form-container h2 {
-        margin-bottom: 1.5rem;
-        color: #ffffff;
-        font-weight: bold;
+    
+    .grade-grid {
+        grid-template-columns: 1fr;
     }
-    .form-label {
-        font-weight: 500;
-        color: #ffffff;
-    }
-    .btn-custom {
-        background-color: #17a2b8;
-        color: white;
-        border: none;
-        padding: 0.5rem 1.5rem;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-    }
-    .btn-custom:hover {
-        background-color: #138496;
-    }
-    .btn-warning {
-        transition: background-color 0.3s ease;
-    }
-    .btn-warning:hover {
-        background-color: #e0a800;
-    }
+}
 </style>
 
-<br><br><br><br>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="form-container">
                 <h2>Fees Management</h2>
-                <a class="btn btn-custom mb-4" href="{% url 'fees-list' %}">Manage Fees Structure</a>
+                <a href="{% url 'fees-list' %}" class="btn btn-custom mb-4">
+                    <i class="bi bi-gear"></i> Manage Fees Structure
+                </a>
 
                 <form method="post">
                     {% csrf_token %}
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="form-label">Select Term</label>
-                        <select class="form-select" aria-label="Default select example" name="term" required>
+                        <select class="form-select" name="term" required>
                             {% for term in terms %}
                                 <option value="{{ term.id }}">{{ term.term }} - {{ term.year }}</option>
                             {% endfor %}
                         </select>
                     </div>
+
                     {% if user.school.is_mixed %}
-
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="form-label">Select Gender</label>
-                        <select class="form-select" aria-label="Default select example" name="gender" required>
-                                <option value="all">All</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
+                        <select class="form-select" name="gender" required>
+                            <option value="all">All</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
                         </select>
                     </div>
-
                     {% endif %}
+
                     {% if user.school.has_boarding %}
-
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="form-label">Select Learning Status</label>
-                        <select class="form-select" aria-label="Default select example" name="boarding" required>
-                                <option></option>
-                                <option value="1">Boarders</option>
-                                <option value="0">Day Scholars</option>
+                        <select class="form-select" name="boarding" required>
+                            <option value="1">Boarders</option>
+                            <option value="0">Day Scholars</option>
                         </select>
                     </div>
-
                     {% endif %}
-                    <div class="mb-3">
+
+                    <div class="mb-4">
                         <label class="form-label">Select Grade</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="grade" value="pg" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">
-                              Play Group
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="grade" value="pp1" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">
-                              PP1
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="grade" value="pp2" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">
-                              PP2
-                            </label>
-                          </div>
+                        <div class="grade-grid">
+                            <div class="grade-card">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="grade" value="pg" id="grade-pg">
+                                    <label class="form-check-label" for="grade-pg">Play Group</label>
+                                </div>
+                            </div>
+                            <div class="grade-card">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="grade" value="pp1" id="grade-pp1">
+                                    <label class="form-check-label" for="grade-pp1">PP1</label>
+                                </div>
+                            </div>
+                            <div class="grade-card">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="grade" value="pp2" id="grade-pp2">
+                                    <label class="form-check-label" for="grade-pp2">PP2</label>
+                                </div>
+                            </div>
                             {% for i in "123456789" %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="grade" value="{{ i }}" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                  Grade {{ i }}
-                                </label>
-                              </div>
+                            <div class="grade-card">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="grade" value="{{ i }}" id="grade-{{ i }}">
+                                    <label class="form-check-label" for="grade-{{ i }}">Grade {{ i }}</label>
+                                </div>
+                            </div>
                             {% endfor %}
+                        </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="form-label">Amount</label>
-                        <input type="number" class="form-control" name="amount" value="{{ term.year }}" placeholder="10,000" required>
+                        <input type="number" class="form-control" name="amount" placeholder="10,000" required>
                     </div>
 
-                    <button class="btn btn-success" type="submit">Save</button>
+                    <button class="btn btn-success" type="submit">
+                        <i class="bi bi-save"></i> Save Configuration
+                    </button>
                 </form>
             </div>
         </div>

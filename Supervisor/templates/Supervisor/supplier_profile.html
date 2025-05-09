@@ -1,277 +1,368 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 {% block content %}
-<style>/* From Uiverse.io by Yaya12085 */ 
-    .card2{
-      overflow: hidden;
-      position: relative;
-      text-align: left;
-      border-radius: 0.5rem;
-      max-width: 800px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-      background-color: #281c3b;
-      color: white;
-    }
-    
-    .dismiss {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem 1rem;
-      /* background-color: #fff; */
-      color: rgb(255, 255, 255);
-      border: 2px solid #D1D5DB;
-      font-size: 1rem;
-      font-weight: 300;
-      /* width: 30px; */
-      height: 30px;
-      border-radius: 7px;
-      transition: .3s ease;
-    }
-    .date {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-     
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem 1rem;
-      color: rgb(255, 255, 255);
-      font-size: 1rem;
-      font-weight: 300;
-      height: 30px;
-      border-radius: 7px;
-      transition: .3s ease;
-    }
-    
-    .dismiss:hover {
-      background-color: #ee0d0d;
-      border: 2px solid #ee0d0d;
-      color: #fff;
-    }
-    
-    .header {
-      padding: 1.25rem 1rem 1rem 1rem;
-    }
-    
-    .image2 {
-      display: flex;
-      margin-left: auto;
-      margin-right: auto;
-      background-color: #e2feee;
-      flex-shrink: 0;
-      justify-content: center;
-      align-items: center;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 9999px;
-      animation: animate .6s linear alternate-reverse infinite;
-      transition: .6s ease;
-    }
-    
-    .image2 svg {
-      color: #0afa2a;
-      width: 2rem;
-      height: 2rem;
-    }
-    
-    .content {
-      margin-top: 0.75rem;
-      text-align: center;
-    }
-    
-    .title2 {
-      color: cornflowerblue;
-      font-size: 20px;
-      font-weight: bolder;
-      /* line-height: 1.5rem; */
-    }
-    
-    .message {
-      margin-top: 0.5rem;
-      color: #ffffff;
-      font-size: 19px;
-      line-height: 1.25rem;
-    }
-    
-    .actions {
-      margin: 0.75rem 1rem;
-    }
-    
-    .history {
-      display: inline-flex;
-      padding: 0.5rem 1rem;
-      background-color: #1aa06d;
-      color: #ffffff;
-      font-size: 1rem;
-      line-height: 1.5rem;
-      font-weight: 500;
-      justify-content: center;
-      width: 100%;
-      border-radius: 0.375rem;
-      border: none;
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    }
-    
-    .track {
-      display: inline-flex;
-      margin-top: 0.75rem;
-      padding: 0.5rem 1rem;
-      color: #242525;
-      font-size: 1rem;
-      line-height: 1.5rem;
-      font-weight: 500;
-      justify-content: center;
-      width: 100%;
-      border-radius: 0.375rem;
-      border: 1px solid #D1D5DB;
-      background-color: #fff;
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    }
-    
-    @keyframes animate {
-      from {
-        transform: scale(1);
-      }
-    
-      to {
-        transform: scale(1.09);
-      }
-    }</style>
-<br><br><br><br>
-<div class="container" style="width: 90%;max-width: 800px;">
 
-    <a class="btn btn-primary" href="{% url 'invoices' %}">Invoices</a>
-    <button class="btn btn-danger"  name="delete" disabled>Delete <i class="bi bi-trash"> </i></button>
-    <!-- <form method="post">
-        {% csrf_token %}
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
-        
+.supplier-container {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
 
-    </form> -->
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
 
-    <br><br>
-    <!-- From Uiverse.io by Yaya12085 --> 
-<div class="card2"> 
-    <h5 class="dismiss" ># {{ supplier.id }}</h5> 
-    <h5 class="date" >Date : {{ supplier.date|date:'d-m-Y' }}</h5> 
-    <div class="header"> 
-      <div class="image2">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20 7L9.00004 18L3.99994 13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-        </div> 
-        <div class="content">
-           <span class="title2">{{ supplier.personalprofile.get_names|title }}</span> 
-           <p class="message"> {{ supplier.id_number|title }}</p> 
-           <small>{{ supplier.personalprofile.phone }}</small><br>
-           </div> 
-           <div class="actions">
-              <button class="history" type="button">Balance  {{ supplier.supplierbalances.balance }}</button> 
-              <!-- <button class="track" type="button">Pending Balance {{ invoice.balance }}</button>  -->
-              </div> 
-              </div> 
-              </div>
+.action-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
 
-    <br><br>
+.action-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.danger-btn {
+    background: var(--danger-color);
+}
+
+.danger-btn:hover {
+    background: #ff4757;
+}
+
+.supplier-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    position: relative;
+}
+
+.supplier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.supplier-id {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.supplier-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.supplier-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: rgba(0, 184, 148, 0.1);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+}
+
+.supplier-status svg {
+    color: var(--success-color);
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.supplier-name {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.supplier-id-number {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.supplier-phone {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.supplier-balance {
+    background: var(--success-color);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.payment-form {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.form-label {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-dark) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-primary) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: none !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-secondary);
+}
+
+.submit-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 200px;
+}
+
+.submit-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.transactions-table {
+    background: var(--bg-card);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+
+.table {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.table thead th {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+    font-size: 0.875rem;
+}
+
+.table tbody td {
+    border-color: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.amount-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.amount-badge.credit {
+    background: rgba(0, 184, 148, 0.1);
+    color: var(--success-color);
+}
+
+.amount-badge.debit {
+    background: rgba(214, 48, 49, 0.1);
+    color: var(--danger-color);
+}
+
+@media (max-width: 768px) {
+    .supplier-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .supplier-id {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+
+<div class="supplier-container">
+    <div class="page-header">
+        <a href="{% url 'invoices' %}" class="action-btn">
+            <i class="bi bi-arrow-left"></i> Back to Invoices
+        </a>
+        <button class="action-btn danger-btn" disabled>
+            <i class="bi bi-trash"></i> Delete
+        </button>
+    </div>
+
+    <div class="supplier-card">
+        <div class="supplier-header">
+            <div class="supplier-id">Supplier #{{ supplier.id }}</div>
+            <div class="supplier-date">{{ supplier.date|date:'d M Y' }}</div>
+        </div>
+
+        <div class="supplier-status">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 7L9.00004 18L3.99994 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <div class="supplier-name">{{ supplier.personalprofile.get_names|title }}</div>
+        <div class="supplier-id-number">{{ supplier.id_number|title }}</div>
+        <div class="supplier-phone">{{ supplier.personalprofile.phone }}</div>
+
+        <div class="supplier-balance">
+            Current Balance: {{ supplier.supplierbalances.balance }}
+        </div>
+    </div>
 
     {% if user %}
-
-
-
-
-    <form method="post">
+    <form method="post" class="payment-form">
         {% csrf_token %}
-        <div class="">
-            <div class="">
-                <label for="inputField2" class="form-label">Mode</label>
-                <select class="form-select" id="roleSelect" aria-label="Default select example" name="mode" required onchange="toggleTransactionId()">
-                    <option selected value="">Payment Options</option>
-                    <option value="Cash">Cash</option>
-                    {% for account in accounts %}
-                        <option value="{{ account.id }}">{{ account.name }}</option>
-
-                    {% endfor %}
-                </select>
-            </div>
+        <div class="mb-3">
+            <label for="paymentMode" class="form-label">Payment Mode</label>
+            <select class="form-select" id="paymentMode" name="mode" required onchange="toggleTransactionId()">
+                <option value="">Select Payment Mode</option>
+                <option value="Cash">Cash</option>
+                {% for account in accounts %}
+                    <option value="{{ account.id }}">{{ account.name }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <br>
-    
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="inputField2" class="form-label">Transaction ID</label>
-                <input type="text" class="form-control" id="transactionIdInput" name="tid" placeholder="QWERTY67HJ9" required>
+
+        <div class="row g-3">
+            <div class="col-md-6" id="transactionIdContainer">
+                <label for="transactionId" class="form-label">Transaction ID</label>
+                <input type="text" class="form-control" id="transactionId" name="tid" placeholder="Enter transaction ID">
             </div>
             
             <div class="col-md-6">
-                <label for="inputField2" class="form-label">Amount</label>
-                <input type="number" class="form-control" id="inputField2" name="amount" placeholder="1000" required max="{{ invoice.balance }}">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" required max="{{ invoice.balance }}">
             </div>
         </div>
-        <br>
-        <button class="btn btn-primary" name="raw">Save</button>
+
+        <div class="text-center mt-4">
+            <button type="submit" name="raw" class="submit-btn">
+                <i class="bi bi-check2-circle"></i> Save Payment
+            </button>
+        </div>
     </form>
+    {% endif %}
 
-    <script>
-        // Function to hide the transaction ID input if "Cash" is selected
-        function toggleTransactionId() {
-            var paymentMode = document.getElementById("roleSelect").value;
-            var transactionIdInput = document.getElementById("transactionIdInput");
-    
-            if (paymentMode === "Cash") {
-                transactionIdInput.removeAttribute("required");
-
-                transactionIdInput.parentElement.style.display = "none"; // Hide the transaction ID field
-            } else {
-                transactionIdInput.parentElement.style.display = "block"; // Show the transaction ID field
-            }
-        }
-    
-        // Call the function initially to set the correct visibility
-        toggleTransactionId();
-    </script>
-    
-{% endif %}
-
-
-<br><br>
-
-
-
-<table class="table">
-    <thead>
-      <tr>
-        <th><h6><input type="checkbox"></h6></th>
-        <th><h6>Id</h6></th>
-        <th><h6>Date</h6></th>
-        <th><h6>Type</h6></th>
-        <th><h6>Title / Mode</h6></th>
-        <th><h6>Amount</h6></th>
-        <th><h6>Balance</h6></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in transactions %}
-        <tr>
-          <td><input type="checkbox"></td>
-          <td><a><h6>{{ forloop.counter }}</h6></a></td>
-          <td>{{ item.date|date:'d-m-Y' }}</td>
-          <td>{{ item.item_type|title }}</td>
-          
-          {% if item.item_type == 'invoice' %}
-            <td>{{ item.title }}</td>
-          {% else %}
-            <td>{{ item.mode }}</td>
-          {% endif %}
-          
-          <td><p style="color: green;">{{ item.amount }}</p></td>
-          <td><p style="color: crimson;">{{ item.balance }}</p></td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  
+    <div class="transactions-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><h6>Id</h6></th>
+                    <th><h6>Date</h6></th>
+                    <th><h6>Type</h6></th>
+                    <th><h6>Title / Mode</h6></th>
+                    <th><h6>Amount</h6></th>
+                    <th><h6>Balance</h6></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in transactions %}
+                <tr>
+                    <td><a><h6>{{ forloop.counter }}</h6></a></td>
+                    <td>{{ item.date|date:'d-m-Y' }}</td>
+                    <td>{{ item.item_type|title }}</td>
+                    
+                    {% if item.item_type == 'invoice' %}
+                        <td>{{ item.title }}</td>
+                    {% else %}
+                        <td>{{ item.mode }}</td>
+                    {% endif %}
+                    
+                    <td><span class="amount-badge credit">{{ item.amount }}</span></td>
+                    <td><span class="amount-badge debit">{{ item.balance }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<script>
+function toggleTransactionId() {
+    var paymentMode = document.getElementById("paymentMode").value;
+    var transactionIdContainer = document.getElementById("transactionIdContainer");
+    var transactionIdInput = document.getElementById("transactionId");
+
+    if (paymentMode === "Cash") {
+        transactionIdContainer.style.display = "none";
+        transactionIdInput.removeAttribute("required");
+    } else {
+        transactionIdContainer.style.display = "block";
+        transactionIdInput.setAttribute("required", "required");
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', toggleTransactionId);
+</script>
 
 {% endblock %}

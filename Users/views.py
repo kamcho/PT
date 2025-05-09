@@ -248,11 +248,16 @@ class MyProfile(LoginRequiredMixin, TemplateView):
                         new_phone_number = self.request.POST.get('phone-number')
                         l_name = self.request.POST.get('last-name').lower()
                         surname = self.request.POST.get('surname').lower()
-                        if new_phone_number:
-                            profile.phone = new_phone_number
+                        location = self.request.POST.get('location')
+                        gender = self.request.POST.get('gender')
+                        
+                        # Update profile fields
                         profile.f_name = f_name
                         profile.l_name = l_name
                         profile.surname = surname
+                        profile.phone = new_phone_number
+                        profile.location = location
+                        profile.gender = gender
                         profile.save()
                         messages.success(self.request, 'Profile has been successfully Updated!')
 

@@ -1,215 +1,338 @@
-{% extends 'Supervisor/base.html' %}
+{% extends base_html %}
 {% load custom_filters %}
 {% block content %}
-<style>/* From Uiverse.io by Yaya12085 */ 
-  .card2{
-    overflow: hidden;
-    position: relative;
-    text-align: left;
-    border-radius: 0.5rem;
-    max-width: 800px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-    background-color: #281c3b;
-    color: white;
-  }
-  
-  .dismiss {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    /* background-color: #fff; */
-    color: rgb(255, 255, 255);
-    border: 2px solid #D1D5DB;
-    font-size: 1rem;
-    font-weight: 300;
-    /* width: 30px; */
-    height: 30px;
-    border-radius: 7px;
-    transition: .3s ease;
-  }
-  .date {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-   
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    color: rgb(255, 255, 255);
-    font-size: 1rem;
-    font-weight: 300;
-    height: 30px;
-    border-radius: 7px;
-    transition: .3s ease;
-  }
-  
-  .dismiss:hover {
-    background-color: #ee0d0d;
-    border: 2px solid #ee0d0d;
-    color: #fff;
-  }
-  
-  .header {
-    padding: 1.25rem 1rem 1rem 1rem;
-  }
-  
-  .image2 {
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #e2feee;
-    flex-shrink: 0;
-    justify-content: center;
-    align-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 9999px;
-    animation: animate .6s linear alternate-reverse infinite;
-    transition: .6s ease;
-  }
-  
-  .image2 svg {
-    color: #0afa2a;
-    width: 2rem;
-    height: 2rem;
-  }
-  
-  .content {
-    margin-top: 0.75rem;
-    text-align: center;
-  }
-  
-  .title2 {
-    color: cornflowerblue;
-    font-size: 20px;
-    font-weight: bolder;
-    /* line-height: 1.5rem; */
-  }
-  
-  .message {
-    margin-top: 0.5rem;
-    color: #ffffff;
-    font-size: 19px;
-    line-height: 1.25rem;
-  }
-  
-  .actions {
-    margin: 0.75rem 1rem;
-  }
-  
-  .history {
-    display: inline-flex;
-    padding: 0.5rem 1rem;
-    background-color: #1aa06d;
-    color: #ffffff;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    font-weight: 500;
-    justify-content: center;
-    width: 100%;
-    border-radius: 0.375rem;
-    border: none;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-  
-  .track {
-    display: inline-flex;
-    margin-top: 0.75rem;
-    padding: 0.5rem 1rem;
-    color: #242525;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    font-weight: 500;
-    justify-content: center;
-    width: 100%;
-    border-radius: 0.375rem;
-    border: 1px solid #D1D5DB;
-    background-color: #fff;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-  
-  @keyframes animate {
-    from {
-      transform: scale(1);
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
     }
-  
-    to {
-      transform: scale(1.09);
+
+    body {
+        background-color: var(--background-color);
+        color: var(--text-primary);
     }
-  }</style>
-<br><br><br><br>
-<div class="container" style="margin: 0 auto;width: 90%;max-width: 800px;">
 
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
 
-  <div class="card2"> 
-      <h5 class="dismiss" >Adm No : {{ profile.user.adm_no }}</h5> 
-      <h5 class="date" >Date Joined : {{ profile.user.date|date:'d-m-Y' }}</h5> 
-      <div class="header"> 
-        <div class="image2">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20 7L9.00004 18L3.99994 13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-          </div> 
-          <div class="content">
-             <span class="title2"></span> 
-             <p class="message" style="font-size: 22px;">{{ profile.user.studentprofile.get_names|title }} </p> 
-             <small style="font-size: 20px;">{{ profile.user.academicprofile.current_class.grade }} {{ profile.user.academicprofile.current_class }}</small><br>
-             {% if profile.balance > 1 %}
-             <a class="history" style="color: white;">Overpayment Of {{ profile.balance }}</a>
-             {% else %}
-             <a class="history" style="color: white;background-color: #ee0d0d;">Balance {{ profile.balance|abs_value }}</a>
-             {% endif %}
-             </div> 
-             <div class="actions">
-                
-                </div> 
-                </div> 
+    .profile-card {
+        background: var(--card-background);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        height: auto;
+        min-height: fit-content;
+    }
+
+    .profile-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        z-index: 0;
+        opacity: 0.1;
+    }
+
+    .profile-header {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 1rem;
+        backdrop-filter: blur(10px);
+        height: auto;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--primary-color);
+        border: 3px solid var(--primary-color);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-text {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .info-text h2 {
+        color: var(--text-primary);
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .info-text p {
+        color: var(--text-secondary);
+        margin: 0.5rem 0 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-text p i {
+        color: var(--primary-color);
+    }
+
+    .meta-info {
+        text-align: right;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        min-width: 200px;
+    }
+
+    .meta-info p {
+        color: var(--text-primary);
+        margin: 0.5rem 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .meta-info p i {
+        color: var(--primary-color);
+    }
+
+    .balance-card {
+        position: relative;
+        z-index: 1;
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        height: auto;
+    }
+
+    .balance-card h3 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .balance-amount {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 1rem 0;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .balance-positive {
+        color: var(--success-color);
+    }
+
+    .balance-negative {
+        color: var(--danger-color);
+    }
+
+    .transactions-table {
+        width: 100%;
+        background: var(--card-background);
+        border-radius: 1rem;
+        overflow-x: auto;
+        margin-top: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .transactions-table table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+    }
+
+    .transactions-table th {
+        background: var(--background-color);
+        color: var(--text-secondary);
+        font-weight: 500;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .transactions-table td {
+        padding: 1rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .transactions-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .receipt-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .receipt-link:hover {
+        text-decoration: underline;
+    }
+
+    .no-transactions {
+        background: var(--card-background);
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        color: var(--text-secondary);
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card {
+            padding: 1rem;
+            height: auto;
+        }
+
+        .profile-header {
+            flex-direction: column;
+            gap: 1rem;
+            height: auto;
+        }
+
+        .balance-card {
+            margin-top: 1rem;
+            padding: 1rem;
+            height: auto;
+        }
+
+        .balance-amount {
+            font-size: 2rem;
+            padding: 0.75rem;
+            word-break: break-word;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .profile-card {
+            padding: 0.75rem;
+            height: auto;
+        }
+
+        .profile-header {
+            padding: 0.75rem;
+            height: auto;
+        }
+
+        .balance-card {
+            padding: 0.75rem;
+            height: auto;
+        }
+
+        .balance-amount {
+            font-size: 1.75rem;
+            padding: 0.5rem;
+            word-break: break-word;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="student-info">
+                <div class="avatar">
+                    <i class="bi bi-person"></i>
                 </div>
-    {% if profile %}
-    
-    <br><br>
-   
-        <br>
-        {% if transactions %}
-<table class="table">
-    <thead>
-      <tr>
-        <th><h6><input type="checkbox"></h6></th>
-        <th><h6>Id</h6></th>
-         <th><h6>Date</h6></th>
-        <th><h6>Checkout Id</h6></th>
-        <th><h6>Account/Phone</h6></th>
-        <th><h6>Amount</h6></th>
-        <th><h6>Balance</h6></th>
-      </tr>
-    </thead>
-    <tbody>
-      
-      {% for payment in transactions %}
-        
-            <tr>
-                
-          
-                <td><input type="checkbox"></td>
-                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
-                <td>{{ payment.date|date:"D d M Y" }}</td>
-                <td><a href="{% url 'manage-fee-payment' payment.id %}">{{ payment.transaction_id.receipt }}</a></td>
-                
-                <td>{{ payment.transaction_id.mode }}</td>
-                <td>{{ payment.transaction_id.amount }}</td>
-                <td>{{ payment.balance }}<br></td>
-                
-              </tr>
-        
-        
-      {% endfor %}
-    </tbody>
- </table>
-{% else %}
-{% endif %}
-{% else %}
-{% endif %}
+                <div class="info-text">
+                    <h2>{{ profile.user.studentprofile.get_names|title }}</h2>
+                    <p><i class="bi bi-mortarboard"></i> {{ profile.user.academicprofile.current_class.grade }} {{ profile.user.academicprofile.current_class }}</p>
+                </div>
+            </div>
+            <div class="meta-info">
+                <p><i class="bi bi-card-text"></i> Admission No: {{ profile.user.adm_no }}</p>
+                <p><i class="bi bi-calendar"></i> Joined: {{ profile.user.date|date:'d M Y' }}</p>
+            </div>
+        </div>
+
+        <div class="balance-card">
+            <h3>Fee Status</h3>
+            <div class="balance-amount {% if profile.balance > 1 %}balance-positive{% else %}balance-negative{% endif %}">
+                {% if profile.balance > 1 %}
+                    Overpayment: {{ profile.balance }}
+                {% else %}
+                    Balance Due: {{ profile.balance|abs_value }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if transactions %}
+    <div class="transactions-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Receipt No</th>
+                    <th>Payment Mode</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in transactions %}
+                <tr>
+                    <td>{{ payment.date|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'manage-fee-payment' payment.id %}" class="receipt-link">
+                            {{ payment.transaction_id.receipt }}
+                        </a>
+                    </td>
+                    <td>{{ payment.transaction_id.account }}</td>
+                    <td>{{ payment.transaction_id.amount }}</td>
+                    <td>{{ payment.balance }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="no-transactions">
+        <p>No transactions found</p>
+    </div>
+    {% endif %}
 </div>
- {% endblock %}
+{% endblock %}

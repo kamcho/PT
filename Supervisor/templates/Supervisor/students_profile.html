@@ -7,6 +7,42 @@
     .main-fr{
         display: grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap: 30px;width: 95%;margin: 0 auto;overflow-x: hidden;
     }
+    
+    /* Remove styling from a tags */
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    /* Style for fee balance and discipline score buttons */
+    .status-button {
+        border-radius: 30px;
+        min-height: 100px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .status-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .fee-positive {
+        background-color: var(--danger-color);
+        color: white;
+    }
+    
+    .fee-negative {
+        background-color: var(--success-color);
+        color: white;
+    }
+    
+    .discipline-score {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
 </style>
 
 
@@ -109,14 +145,15 @@
         <h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
         <br><br>
         <a href="{% url 'student-fee-profile' student.adm_no %}">
-        <div style="border-radius: 30px ;background-color: var(--bg-dark);color: var(--text-primary);min-height: 100px;padding: 30px;">
-            <h5>Fee Balance - {{ student.studentsfeeaccount.balance|title }}</h5>
-        </div>
-    </a><br><br>
-    <a href="{% url 'students-discipline' student.adm_no %}">
-        <div style="border-radius: 30px ;background-color: var(--bg-dark);color: var(--text-primary);min-height: 100px;padding: 30px;">
-            <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: var(--danger-color);">100</strong></h5>
-        </div></a>
+            <div class="status-button {% if student.studentsfeeaccount.balance < 0 %}fee-positive{% else %}fee-negative{% endif %}">
+                <h5>{% if student.studentsfeeaccount.balance < 0 %}Fee Balance - {{ student.studentsfeeaccount.balance|title }}{% else %}Fee Overpayment - {{ student.studentsfeeaccount.balance|title }}{% endif %}</h5>
+            </div>
+        </a><br><br>
+        <a href="{% url 'students-discipline' student.adm_no %}">
+            <div class="status-button discipline-score">
+                <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: var(--danger-color);">100</strong></h5>
+            </div>
+        </a>
         
         <!-- <canvas id="donutChart" style="max-width: 200px;"></canvas>
     

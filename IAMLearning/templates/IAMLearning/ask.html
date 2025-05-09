@@ -1,4 +1,4 @@
-{% extends 'Guardian/baseg.html' %}
+{% extends base_html %}
 {% load custom_filters %}
 {% block content %}
 
@@ -21,17 +21,16 @@ body {
     color: var(--text);
     font-family: system-ui, -apple-system, sans-serif;
     margin: 0;
-    min-height: 100vh;
+    height: 100vh;
     line-height: 1.5;
-    overflow-y: auto;
 }
 
 .chat-container {
     max-width: 1200px;
     margin: 0 auto;
-    min-height: 50vh;
-    display: flex;
-    flex-direction: column;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
     background: var(--bg-light);
     box-shadow: var(--shadow);
 }
@@ -43,7 +42,6 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
-    flex-shrink: 0;
 }
 
 .chat-header .avatar {
@@ -73,12 +71,12 @@ body {
 
 .chat-messages {
     padding: 1.5rem;
-    flex: 1;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     background: var(--bg);
-    overflow-y: visible;
+    height: calc(100vh - 180px);
 }
 
 .message {
@@ -120,7 +118,6 @@ body {
     padding: 1rem;
     background: var(--bg-light);
     border-top: 1px solid var(--border);
-    flex-shrink: 0;
 }
 
 .input-wrapper {
@@ -144,7 +141,6 @@ body {
     resize: none;
     min-height: 24px;
     max-height: 150px;
-    width: 100%;
 }
 
 .message-input::placeholder {
@@ -164,7 +160,6 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     font-size: 1.25rem;
-    flex-shrink: 0;
 }
 
 .upload-btn:hover {
@@ -181,7 +176,6 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
-    flex-shrink: 0;
 }
 
 .send-btn:hover:not(:disabled) {
@@ -276,11 +270,12 @@ body {
 
 @media (max-width: 768px) {
     .chat-container {
-        min-height: 100vh;
+        height: 100vh;
     }
     
     .chat-messages {
         padding: 1rem;
+        height: calc(100vh - 160px);
     }
     
     .message {
@@ -292,66 +287,12 @@ body {
     }
     
     .input-wrapper {
-        flex-direction: row;
-        align-items: center;
-        padding: 0.5rem;
-    }
-    
-    .message-input {
-        padding: 0.5rem;
-        font-size: 0.95rem;
-        min-height: 20px;
-    }
-    
-    .upload-btn {
-        padding: 0.5rem;
-        font-size: 1.1rem;
+        flex-direction: column;
     }
     
     .send-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.95rem;
+        width: 100%;
     }
-    
-    .file-preview {
-        margin-top: 0.5rem;
-    }
-    
-    .file-item {
-        padding: 0.35rem 0.5rem;
-        font-size: 0.8rem;
-    }
-    
-    .file-item img {
-        width: 20px;
-        height: 20px;
-    }
-}
-
-/* Add styles for the speaker button */
-.speaker-btn {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 4px;
-    margin-left: 8px;
-    transition: color 0.3s ease;
-}
-
-.speaker-btn:hover {
-    color: var(--primary-color);
-}
-
-.speaker-btn.speaking {
-    color: var(--primary-color);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
 }
 </style>
 
@@ -386,9 +327,6 @@ body {
                 <div class="message ai">
                     <div class="message-content">
                         {{ completion.response }}
-                        <button class="speaker-btn" onclick="speakText('{{ completion.response|escapejs }}')">
-                            <i class="bi bi-volume-up"></i>
-                        </button>
                     </div>
                     <div class="message-time">{{ completion.created_at|date:"g:i A" }}</div>
                 </div>
@@ -474,218 +412,96 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Add text-to-speech functionality
-    let currentSpeech = null;
-    let voices = [];
-
-    // Load voices when they become available
-    function loadVoices() {
-        voices = window.speechSynthesis.getVoices();
-        console.log('Available voices:', voices.map(v => v.name));
-    }
-
-    // Chrome loads voices asynchronously
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-
-    function speakText(text) {
-        // Cancel any ongoing speech
-        if (currentSpeech) {
-            window.speechSynthesis.cancel();
-        }
-
-        // Create new speech synthesis
-        const speech = new SpeechSynthesisUtterance(text);
-        speech.rate = 0.9; // Slightly slower rate for better clarity
-        speech.pitch = 1;
-        speech.volume = 1;
-
-        // Get available voices and set a female voice
-        if (voices.length === 0) {
-            voices = window.speechSynthesis.getVoices();
-        }
-
-        // Try to find a female voice in order of preference
-        const preferredVoices = [
-            'Microsoft Zira Desktop', // Windows
-            'Google UK English Female', // Chrome
-            'Samantha', // macOS
-            'Microsoft Hazel Desktop', // Windows
-            'Google US English Female', // Chrome
-            'Microsoft Haruka Desktop', // Windows
-            'Karen', // macOS
-            'Victoria' // macOS
-        ];
-
-        // Find the first available preferred voice
-        const selectedVoice = preferredVoices.find(voiceName => 
-            voices.find(voice => voice.name === voiceName)
-        );
-
-        if (selectedVoice) {
-            speech.voice = voices.find(voice => voice.name === selectedVoice);
-            console.log('Using voice:', selectedVoice);
-        } else {
-            // Fallback to any female voice
-            const femaleVoice = voices.find(voice => 
-                voice.name.toLowerCase().includes('female') || 
-                voice.name.toLowerCase().includes('woman') ||
-                voice.name.toLowerCase().includes('girl')
-            );
-            if (femaleVoice) {
-                speech.voice = femaleVoice;
-                console.log('Using fallback female voice:', femaleVoice.name);
-            } else {
-                console.log('No female voice found, using default voice');
-            }
-        }
-
-        // Store current speech
-        currentSpeech = speech;
-
-        // Add event listeners
-        speech.onstart = () => {
-            const speakerBtn = document.querySelector('.speaker-btn.speaking');
-            if (speakerBtn) {
-                speakerBtn.classList.remove('speaking');
-            }
-            const newSpeakerBtn = document.querySelector(`[data-text="${text}"]`);
-            if (newSpeakerBtn) {
-                newSpeakerBtn.classList.add('speaking');
-            }
-        };
-
-        speech.onend = () => {
-            const speakerBtn = document.querySelector('.speaker-btn.speaking');
-            if (speakerBtn) {
-                speakerBtn.classList.remove('speaking');
-            }
-            currentSpeech = null;
-        };
-
-        // Start speaking
-        window.speechSynthesis.speak(speech);
-    }
-
-    function stopSpeaking() {
-        if (currentSpeech) {
-            window.speechSynthesis.cancel();
-            const speakerBtn = document.querySelector('.speaker-btn.speaking');
-            if (speakerBtn) {
-                speakerBtn.classList.remove('speaking');
-            }
-            currentSpeech = null;
-        }
-    }
-
-    // Modify the function that displays AI responses to include the speaker button
-    function displayMessage(message, isUser = false) {
-        const messagesDiv = document.getElementById('chat-messages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
-        
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'message-content';
-        
-        if (isUser) {
-            contentDiv.textContent = message;
-        } else {
-            // For AI messages, add speaker button
-            const textSpan = document.createElement('span');
-            textSpan.textContent = message;
-            contentDiv.appendChild(textSpan);
-            
-            const speakerBtn = document.createElement('button');
-            speakerBtn.className = 'speaker-btn';
-            speakerBtn.innerHTML = '<i class="bi bi-volume-up"></i>';
-            speakerBtn.setAttribute('data-text', message);
-            speakerBtn.onclick = () => speakText(message);
-            contentDiv.appendChild(speakerBtn);
-        }
-        
-        messageDiv.appendChild(contentDiv);
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    // Add cleanup when leaving the page
-    window.addEventListener('beforeunload', () => {
-        stopSpeaking();
-    });
-
-    // Modify the sendMessage function to use the new displayMessage function
-    async function sendMessage() {
-        const messageInput = document.getElementById('message-input');
+    function sendMessage() {
         const message = messageInput.value.trim();
+        if (!message) return;
         
-        if (message) {
-            // Display user message
-            displayMessage(message, true);
-            messageInput.value = '';
-            
-            // Show typing indicator
-            const messagesDiv = document.getElementById('chat-messages');
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.innerHTML = `
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
-            messagesDiv.appendChild(typingDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            try {
-                const formData = new FormData();
-                formData.append('prompt', message);
-                formData.append('adm_no', '{{ student.adm_no }}');
-                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
-                const response = await fetch('{% url "answer" %}', {
-                    method: 'POST',
-                    body: formData
+        // Add user message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message user';
+        userMessage.innerHTML = `
+            <div class="message-content">${message}</div>
+            <div class="message-time">${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</div>
+        `;
+        chatMessages.appendChild(userMessage);
+        
+        // Add typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = `
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        `;
+        chatMessages.appendChild(typingIndicator);
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Clear input
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        sendBtn.disabled = true;
+        
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('prompt', message);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        formData.append('adm_no', '{{ request.user.adm_no }}');  // Add admission number
+        
+        // Add files if any
+        const fileItems = filePreview.querySelectorAll('.file-item');
+        fileItems.forEach((item, index) => {
+            const file = item.querySelector('img').src;
+            // Convert base64 to blob
+            fetch(file)
+                .then(res => res.blob())
+                .then(blob => {
+                    formData.append('images[]', blob, `image${index}.png`);
                 });
-
-                // Remove typing indicator
-                messagesDiv.removeChild(typingDiv);
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.error) {
-                        displayMessage(data.error);
-                    } else {
-                        displayMessage(data.answer);
-                    }
-                } else {
-                    displayMessage('Sorry, there was an error processing your request. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                displayMessage('Sorry, there was an error processing your request. Please try again.');
+        });
+        
+        // Clear file preview
+        filePreview.innerHTML = '';
+        
+        // Send message to server
+        fetch('{% url "chatgpt_answer" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-        }
+        })
+        .then(response => response.json())
+        .then(data => {
+            typingIndicator.remove();
+            
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'message ai';
+            aiMessage.innerHTML = `
+                <div class="message-content">${data.answer}</div>
+                <div class="message-time">${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</div>
+            `;
+            chatMessages.appendChild(aiMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            typingIndicator.remove();
+            
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'message ai';
+            errorMessage.innerHTML = `
+                <div class="message-content">Sorry, there was an error. Please try again.</div>
+                <div class="message-time">${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</div>
+            `;
+            chatMessages.appendChild(errorMessage);
+        });
     }
     
     // Scroll to bottom on load
     chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    // Add text-to-speech functionality for existing messages
-    function initializeTextToSpeech() {
-        const aiMessages = document.querySelectorAll('.message.ai .message-content');
-        aiMessages.forEach(contentDiv => {
-            const text = contentDiv.textContent.trim();
-            const speakerBtn = contentDiv.querySelector('.speaker-btn');
-            if (speakerBtn) {
-                speakerBtn.setAttribute('data-text', text);
-                speakerBtn.onclick = () => speakText(text);
-            }
-        });
-    }
-
-    // Initialize text-to-speech for existing messages
-    initializeTextToSpeech();
 });
 </script>
 
-{% endblock %}
+{% endblock %} 

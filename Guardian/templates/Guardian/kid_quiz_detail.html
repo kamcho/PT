@@ -2,62 +2,197 @@
 {% load custom_filters %}
 {% block content %}
 
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.container {
+    max-width: 800px;
+    margin: 4rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.quiz-header {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.student-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: var(--bg-card-hover);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.student-name {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.student-grade {
+    color: var(--primary-color);
+    background: var(--bg-card);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.score-display {
+    background: var(--gradient-bg);
+    border-radius: 12px;
+    padding: 0.75rem;
+    text-align: center;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.quiz-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.quiz-item {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.quiz-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.quiz-item.incorrect {
+    border-left: 4px solid var(--danger-color);
+}
+
+.quiz-item.correct {
+    border-left: 4px solid var(--success-color);
+}
+
+.quiz-question {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.quiz-answer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--bg-card-hover);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.quiz-answer.incorrect {
+    color: var(--danger-color);
+}
+
+.quiz-answer.correct {
+    color: var(--success-color);
+}
+
+.quiz-answer i {
+    font-size: 1.25rem;
+}
+
+.quiz-answer small {
+    font-size: 0.875rem;
+}
+
+.correct-choice {
+    color: var(--success-color);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .quiz-header {
+        padding: 1rem;
+    }
+    
+    .quiz-item {
+        padding: 1rem;
+    }
+}
+</style>
 
 <div class="container">
-    <br>
-    <br>
-    <br>
-    {% if user.role != 'Student' %}
-        <h6>{{ marks.user.personalprofile.surname|title }} {{ marks.user.personalprofile.f_name|title }} {{ marks.user.personalprofile.l_name|title }}
-        </h6>
-    {% else %}
-
-    {% endif %}
-    <br>
-
-    {% if instance == 'ClassTests' %}
-        <h6>Scores {{ marks.marks }} / {{ marks.test.test_size }}</h6>
-    {% else %}
-        <h6>Scores {{ marks.marks }} / {{ marks.test_size }}</h6>
-    {% endif %}
-    
-    {% for quiz in quizzes %}
-
-
-    <div>
-        {% if quiz.is_correct == False %}
-        <div style="color:crimson;">
-            <h6>{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
-            <div style="padding-left:15px;">
-                <small style="padding-left:15px;">You chose {{ quiz.selection.choice }}</small><i style="font-size:30px;color:crimson;" class="bi bi-x"></i><small>{{ quiz.is_correct }}</small><br>
-                <small style="color:green;padding-left:15px;"><b>Correct choice is </b> {{ quiz.quiz.id|get_correct_choice }}</small>
-
-                
+    <div class="quiz-header">
+        <div class="student-info">
+            <div class="student-name">
+            {{ student.studentprofile.get_names|title }}
             </div>
-
-        </div>
-
-        {% else %}
-        <div>
-            <h6 style="color:purple;">{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
-
-            <div style="padding-left:15px;">
-                <small>{{ quiz.selection.choice }}</small><i style="font-size:30px;color:green;" class="bi bi-check-all"></i>
-                <small>{{ quiz.is_correct }}</small>
+            <div class="student-grade">
+                Grade {{ marks.user.academicprofile.current_class.grade }}
             </div>
         </div>
-        {% endif %}
+        
+        <div class="score-display">
+            {% if instance == 'ClassTests' %}
+                Score: {{ marks.marks }} / {{ marks.test.test_size }}
+            {% else %}
+                Score: {{ marks.marks }} / {{ marks.test_size }}
+            {% endif %}
+        </div>
     </div>
-
-
-    {% endfor %}
-
-
+    
+    <div class="quiz-list">
+        {% for quiz in quizzes %}
+            <div class="quiz-item {% if quiz.is_correct %}correct{% else %}incorrect{% endif %}">
+                <div class="quiz-question">
+                    {{ forloop.counter }}) {{ quiz.quiz.quiz }}
+                </div>
+                
+                <div class="quiz-answer {% if quiz.is_correct %}correct{% else %}incorrect{% endif %}">
+                    <i class="bi {% if quiz.is_correct %}bi-check-all{% else %}bi-x{% endif %}"></i>
+                    <small>Your answer: {{ quiz.selection.choice }}</small>
+                </div>
+                
+                {% if not quiz.is_correct %}
+                    <div class="correct-choice">
+                        <b>Correct answer:</b> {{ quiz.quiz.id|get_correct_choice }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 </div>
-
-
-
-
-
 
 {% endblock %}

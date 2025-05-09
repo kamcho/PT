@@ -156,6 +156,24 @@ body {
     background: var(--bg-card-hover);
 }
 
+.amount-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.amount-badge.credit {
+    background: rgba(0, 184, 148, 0.1);
+    color: var(--success-color);
+}
+
+.amount-badge.debit {
+    background: rgba(214, 48, 49, 0.1);
+    color: var(--danger-color);
+}
+
 .table a {
     color: var(--primary-color);
     text-decoration: none;
@@ -238,7 +256,6 @@ body {
             <caption>Totals: {{ totals }}</caption>
             <thead>
                 <tr>
-                    <th><input type="checkbox" class="form-check-input"></th>
                     <th>Id</th>
                     <th>User</th>
                     <th>Date</th>
@@ -248,7 +265,6 @@ body {
             <tbody>
                 {% for invoice in invoices %}
                 <tr>
-                    <td><input type="checkbox" class="form-check-input"></td>
                     <td>
                         <a href="{% url 'invoice-id' invoice.id %}">
                             {{ forloop.counter }}
@@ -260,7 +276,7 @@ body {
                         </a>
                     </td>
                     <td>{{ invoice.date|date:"D d M Y" }}</td>
-                    <td>{{ invoice.amount }}</td>
+                    <td><span class="amount-badge credit">{{ invoice.amount }}</span></td>
                 </tr>
                 {% endfor %}
             </tbody>

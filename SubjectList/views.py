@@ -1488,7 +1488,14 @@ class AskAi(TemplateView):
         user = self.request.user
         student = Students.objects.get(adm_no=self.kwargs['adm_no'])
         context['student'] = student
-        prompts = Prompt.objects.filter(user=student)[:5].prefetch_related('file', 'completion_set')
+        prompts = list(
+    Prompt.objects.filter(user=student)
+    .prefetch_related('file', 'completion_set')
+    .order_by('-id')[:3]
+)[::-1]
+
+
+
         print(prompts)
         context['prompts'] = prompts
     
@@ -1499,115 +1506,169 @@ class AskAi(TemplateView):
 
 
 def chatgpt_answer(request):
-    if request.method == 'POST' :
-        adm_no = request.POST.get('adm_no')
-        rate = RateLimiter.objects.get(user__adm_no=adm_no)
-        if rate.tokens == 0:
-            return JsonResponse({'answer':'you have consumed your tokens. Please subscribe to continue with the experience, Thank you !'})
-        else:
-            question = request.POST.get('prompt')
-
-            images = request.FILES.getlist('images[]')
-           
-            student = Students.objects.get(adm_no=adm_no)
+    if request.method == 'POST':
+        try:
+            # Log the incoming request data
+            print("Request POST data:", request.POST)
+            print("Request FILES:", request.FILES)
             
+            # Get request data with fallbacks
+            adm_no = request.POST.get('adm_no')
+            prompt = request.POST.get('prompt') or request.POST.get('message')
+            images = request.FILES.getlist('images[]') or request.FILES.getlist('file')
             
-            prompts = Prompt.objects.filter(user=student).order_by('-id')[:5]
-            # print('prompts', prompts)
-            messages = []
-            # Call ChatGPT API to get the answer
+            # Log the extracted data
+            print(f"Extracted data - adm_no: {adm_no}, prompt: {prompt}, images count: {len(images)}")
             
-            try:
-                SECRET_KEY = os.getenv("SECRET_KEY")
-                # print(SECRET_KEY)
-                # SECRET_KEY = 
-                client = OpenAI(api_key=SECRET_KEY)
-                messages = []
+            # Validate adm_no - check for empty string or None
+            if not adm_no:
+                print("Error: Empty or missing adm_no parameter")
+                return JsonResponse({
+                    'error': 'You are not allowed to use this service'
+                }, status=403)
                 
-                if prompts:
-                    for prompt in prompts:
-                        
-                        try:
-                            completion = Completion.objects.get(prompt=prompt)
-                            messages.append({'role':'assistant', "content":completion.response})
-                        except Exception as e:
-                            print('nt')
-                            
-                        messages.append({"role": "user", "content": prompt.quiz})
-                messages.reverse()
-                academia = get_object_or_404(AcademicProfile, user=student)
-                grade = academia.current_class.grade 
-                level = academia.current_class.level
-                profile = get_object_or_404(StudentProfile, user=student)
-                name = profile.get_names()
-                messages.insert(0,{
-                    "role": "system",
-                    "content": f"You are a helpful assistant for a grade  {grade} named {name} . Use simple language since you are talking to a child"
+            if not prompt:
+                print("Error: Message content is required")
+                return JsonResponse({
+                    'error': 'Message content is required'
+                }, status=400)
+            
+            # Get student and rate limiter
+            try:
+                student = Students.objects.get(adm_no=adm_no)
+                rate = RateLimiter.objects.get(user=request.user)
+                print(f"Found student: {student}, rate limit: {rate.tokens}")
+            except Students.DoesNotExist:
+                print(f"Error: Student not found for adm_no: {adm_no}")
+                return JsonResponse({
+                    'error': 'Student account not found. Please make sure you are logged in as a student.'
+                }, status=404)
+            except RateLimiter.DoesNotExist:
+                rate = RateLimiter.objects.create(user=request.user, tokens=100, image=0, speech=0)
+                print(f"Created new rate limiter for user")
+            
+            # Check rate limit
+            if rate.tokens <= 0:
+                print(f"Error: Rate limit exceeded for student: {adm_no}")
+                return JsonResponse({
+                    'answer': 'You have consumed your tokens. Please subscribe to continue with the experience. Thank you!'
                 })
-                if images:
-                    quiz = Prompt.objects.create(user=student, quiz=question)
-                    # for image in images:
+            
+            # Get recent chat history
+            prompts = Prompt.objects.filter(user=student).order_by('-id')[:5]
+            messages = []
+            
+            # Add system message with student context
+            try:
+                academia = AcademicProfile.objects.get(user=student)
+                profile = StudentProfile.objects.get(user=student)
+                grade = academia.current_class.grade
+                name = profile.get_names()
+                messages.append({
+                    "role": "system",
+                    "content": f"You are a helpful assistant for a grade {grade} student named {name}. Use simple language since you are talking to a child."
+                })
+            except (AcademicProfile.DoesNotExist, StudentProfile.DoesNotExist):
+                messages.append({
+                    "role": "system",
+                    "content": "You are a helpful assistant. Use simple language since you are talking to a child."
+                })
+            
+            # Add chat history
+            if prompts:
+                for prompt_obj in prompts:
+                    try:
+                        completion = Completion.objects.get(prompt=prompt_obj)
+                        messages.append({
+                            'role': 'assistant',
+                            'content': completion.response
+                        })
+                    except Completion.DoesNotExist:
+                        pass
+                    messages.append({
+                        "role": "user",
+                        "content": prompt_obj.quiz
+                    })
+            messages.reverse()
+            
+            # Create new prompt
+            quiz = Prompt.objects.create(user=student, quiz=prompt)
+            
+            # Handle image upload if present
+            if images:
+                try:
                     upload = AIFiles.objects.create(file=images[0])
                     quiz.file.add(upload)
+                    
                     with open(upload.file.path, "rb") as image_file:
-    # Read the image as bytes and encode it to base64
                         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-
-                    # Create the base64 image URL format
-                    data_url = f"data:image/{upload.file.name.split('.')[-1]};base64,{encoded_string}"
-                                            
-                else:
-                    quiz = Prompt.objects.create(user=student, quiz=question)
-                if images:
-                    datas = [
+                        data_url = f"data:image/{upload.file.name.split('.')[-1]};base64,{encoded_string}"
+                    
+                    messages.append({
+                        "role": "user",
+                        "content": [
                             {
                                 "type": "text",
-                                "text": question
+                                "text": prompt
                             },
                             {
                                 "type": "image_url",
                                 "image_url": {
-                                "url": data_url
+                                    "url": data_url
                                 }
                             }
-                            ]
-                    print(images[0])
-                    messages.append({"role": "user", "content":datas })
+                        ]
+                    })
                     model = "gpt-4o"
-                else:
+                except Exception as e:
+                    print(f"Error processing image: {str(e)}")
+                    messages.append({"role": "user", "content": prompt})
                     model = "gpt-3.5-turbo"
-                    messages.append({"role": "user", "content": question})
-                
-
-
-                # print(messages)
+            else:
+                messages.append({"role": "user", "content": prompt})
+                model = "gpt-3.5-turbo"
+            
+            # Call OpenAI API
+            try:
+                print("Calling OpenAI API with model:", model)
+                client = OpenAI(api_key='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')
                 response = client.chat.completions.create(
                     model=model,
                     messages=messages,
-                    temperature=0.8,  # Set creativity level (lower for deterministic, higher for more variety)
+                    temperature=0.8,
                     n=1
                 )
-                # print('response')
                 
+                # Process response
+                response_text = response.choices[0].message.content
+                tokens_used = response.usage.total_tokens
                 
-                    
-                choice = response.choices[0]
-                response_ = response.choices[0].message.content
-                tokens = response.usage.total_tokens
-                
-                balance = int(rate.tokens) - int(tokens)
-                rate.tokens = balance
+                # Update rate limiter
+                rate.tokens = max(0, rate.tokens - tokens_used)
                 rate.save()
-            
-                answer = Completion.objects.create(prompt=quiz, response=response_)
-        
-        
                 
-                return JsonResponse({'answer': response_})
-            
+                # Save completion
+                completion = Completion.objects.create(prompt=quiz, response=response_text)
+                
+                print("Successfully processed request and got response")
+                return JsonResponse({
+                    'answer': response_text,
+                    'prompt_id': quiz.id,
+                    'completion_id': completion.id
+                })
+                
             except Exception as e:
-                # quiz = Prompt.objects.create(user=request.user, quiz=question)
+                print(f"OpenAI API error: {str(e)}")
+                return JsonResponse({
+                    'error': 'Error processing your request. Please try again later.'
+                }, status=500)
                 
-                reason = 'i could not process your request at this time. Please try again later or contact @support'
-                # answer = Completion.objects.create(prompt=quiz, response=reason)
-                return JsonResponse({'answer': reason})
+        except Exception as e:
+            print(f"General error: {str(e)}")
+            return JsonResponse({
+                'error': 'An unexpected error occurred. Please try again later.'
+            }, status=500)
+    
+    return JsonResponse({
+        'error': 'Invalid request method'
+    }, status=405)
