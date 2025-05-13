@@ -2,98 +2,175 @@
 {% load custom_filters %}
 {% block content %}
 
-<br><br><br><br>
+<style>
+    .assignments-container {
+        margin-top: 60px;
+        padding: 2rem;
+    }
 
-<div class="container">
+    .search-section {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
- 
+    .search-section .form-select,
+    .search-section .form-control {
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+    }
 
+    .search-section .input-group-text {
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+    }
 
-    <br><br>
-    <form method="post">
-        {% csrf_token %}
-        <div class="input-group mb-3" id="list">
-            <select class="form-select" name="user">
-                <option></option>
-                {% for tch in users %}
-                   <option value="{{ tch.id }}">{{ tch.personalprofile.get_names }}</option>
+    .assignments-table {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .assignments-table table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .assignments-table th {
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .assignments-table td {
+        padding: 1rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .assignments-table tr:hover {
+        background: var(--bg-dark);
+    }
+
+    .assignments-table a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .assignments-table a:hover {
+        color: var(--secondary-color);
+    }
+
+    .status-active {
+        color: var(--success-color) !important;
+    }
+
+    .status-expired {
+        color: var(--danger-color) !important;
+    }
+
+    .date-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .date-info small {
+        color: var(--text-secondary);
+    }
+</style>
+
+<div class="assignments-container">
+    <div class="search-section">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group" id="list">
+                <select class="form-select" name="user">
+                    <option value="">Select Teacher</option>
+                    {% for tch in users %}
+                       <option value="{{ tch.id }}">{{ tch.personalprofile.get_names }}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select" name="subject">
+                    <option value="">Select Subject</option>
+                    {% for subject in subjects %}
+                       <option value="{{ subject.id }}">{{ subject }}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select" name="grade">
+                    <option value="">Select Grade</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                </select>
+                <select class="form-select" name="status">
+                    <option value="">Select Status</option>
+                    <option value="active">Active</option>
+                    <option value="expired">Expired</option>
+                </select>
+                <span class="input-group-text">From</span>
+                <input type="date" class="form-control" name="from">
+                <span class="input-group-text">To</span>
+                <input type="date" class="form-control" name="to">
+                <button class="btn btn-primary" type="submit">Search/Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="assignments-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in assignments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'teachers-profile' user.teacher %}">
+                            {{ user.teacher.personalprofile.get_names }}
+                        </a>
+                    </td>
+                    <td>{{ user.class_id }}</td>
+                    <td>
+                        <a href="{% url 'class-test-analytics' user.uuid %}">
+                            {{ user.subject }} | {{ user.subject.grade }}
+                        </a>
+                    </td>
+                    <td>
+                        <div class="date-info">
+                            <span>Created: {{ user.date|date:'d-M-Y' }}</span>
+                            <small>Expires: {{ user.expiry|date:'d-M-Y' }}</small>
+                        </div>
+                    </td>
+                    <td>
+                        {% if now < user.expiry %}
+                            <span class="status-active">Active</span>
+                        {% else %}
+                            <span class="status-expired">Expired</span>
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
-            </select>
-            <select class="form-select" name="subject">
-                <option></option>
-                {% for subject in subjects %}
-                   <option value="{{ subject.id }}">{{ subject }}</option>
-                {% endfor %}
-            </select>
-            <select class="form-select" name="grade">
-                <option></option>
-                <option value="4">Grade 4</option>
-                <option value="5">Grade 5</option>
-                <option value="6">Grade 6</option>
-                <option value="7">Grade 7</option>
-            </select>
-            <select class="form-select" name="status">
-                <option></option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-              
-            </select>
-            <span class="input-group-text">From</span>
-            <input type="date" class="form-control" name="from">
-            <span class="input-group-text">To</span>
-            <input type="date" class="form-control" name="to">
-
-
-   
-          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
-      </div>
-    </form>
-    <table class="table">
-        <thead>
-          <tr>
-            <th><h6>ID</h6></th>
-            <th><h6>User</h6></th>
-            <th><h6>Class</h6></th>
-            <th><h6>Subject</h6></th>
-            <th><h6>Date</h6></th>
-            <th><h6>Status</h6></th>
-          </tr>
-        </thead>
-        <tbody>
-          
-            {% for user in assignments %}
-            
-            <tr>
-                <td>{{ forloop.counter }}</td>
-              <td><a href="{% url 'teachers-profile' user.teacher %}"><h6>{{ user.teacher.personalprofile.get_names }}</h6></a></td>
-              <td>{{ user.class_id }}</td>
-              <td><a href="{% url 'class-test-analytics' user.uuid %}">{{ user.subject }} | {{ user.subject.grade }}</a> </td>
-              <td style="color: cornflowerblue;">{{ user.date|date:'d-M-Y' }} | <strong><small style="color: coral;">{{ user.expiry|date:'d-M-Y' }}</small></strong></td>
-              {% if now < user.date %}
-                <td style="color: cornflowerblue;">Active</td>
-              {% else %}
-                <td style="color: crimson;">Expired</td>
-              {% endif %}
-            </tr>
-            {% endfor %}
-         
-        </tbody>
-     </table>
+            </tbody>
+        </table>
+    </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% endblock %}

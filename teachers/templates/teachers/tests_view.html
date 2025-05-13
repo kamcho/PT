@@ -16,11 +16,6 @@
         --text-secondary: #94a3b8;
     }
 
-    body {
-        background-color: var(--dark-bg);
-        color: var(--text-primary);
-    }
-
     .tests-container {
         max-width: 1200px;
         margin: 50px auto 2rem;
@@ -108,20 +103,6 @@
         font-weight: 500;
     }
 
-    .test-class {
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-    }
-
-    .test-class::before {
-        content: '•';
-        color: var(--primary-light);
-    }
-
     .test-date {
         color: var(--text-secondary);
         font-size: 0.875rem;
@@ -135,22 +116,10 @@
     }
 
     .stat-item {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(129, 140, 248, 0.1));
+        background: rgba(255, 255, 255, 0.05);
         padding: 1rem;
         border-radius: 0.75rem;
         text-align: center;
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        transition: all 0.3s ease;
-    }
-
-    .stat-item:first-child {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
-        border-color: rgba(34, 197, 94, 0.2);
-    }
-
-    .stat-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .stat-label {
@@ -249,13 +218,14 @@
         }
     }
 </style>
-<br><br>
+
 <div class="tests-container">
     <div class="header-section">
         <div class="header-title">
             <h1>Test Management</h1>
             <p>View and manage all your class tests</p>
         </div>
+       
     </div>
 
     {% if not tests %}
@@ -270,13 +240,10 @@
         </div>
     {% else %}
         <div class="tests-grid">
-            {% for test in tests %}
+        {% for test in tests %}
                 <div class="test-card">
                     <div class="test-header">
-                        <div>
-                            <div class="test-subject">{{ test.subject.name }}</div>
-                            <div class="test-class">{{ test.class_id.grade }} {{ test.class_id.name }}</div>
-                        </div>
+                        <div class="test-subject">{{ test.subject.name }}</div>
                         <div class="test-date">Created: {{ test.date }}</div>
                     </div>
                     
@@ -302,9 +269,9 @@
                         </a>
                     </div>
                 </div>
-            {% endfor %}
+         {% endfor %}
         </div>
     {% endif %}
 </div>
 
-{% endblock %}
+{% endblock %} 

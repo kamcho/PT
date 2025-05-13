@@ -3,56 +3,276 @@
 {% load custom_filters %}
 
 {% block content %}
+<style>
+    :root {
+        --bg-dark: #111827;
+        --bg-card: #1F2937;
+        --bg-card-hover: #374151;
+        --primary-color: #2563EB;
+        --secondary-color: #10B981;
+        --accent-color: #ff7eb6;
+        --text-primary: #F9FAFB;
+        --text-secondary: #9CA3AF;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        --border-color: rgba(255, 255, 255, 0.1);
+    }
 
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
 
+    .assignment-container {
+        max-width: 800px;
+        margin: 120px auto 60px;
+        padding: 20px;
+        height: auto;
+    }
 
-<br><br>
-<div class="container">
+    .assignment-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        padding: 35px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: auto;
+    }
+
+    .assignment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+        background: var(--bg-card-hover);
+    }
+
+    .assignment-header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 25px;
+        margin-bottom: 25px;
+    }
+
+    .assignment-title {
+        color: var(--text-primary);
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+    }
+
+    .teacher-name {
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .teacher-name i {
+        color: var(--primary-color);
+    }
+
+    .deadline {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning-color);
+        padding: 12px 18px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        font-weight: 500;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+        margin-bottom: 35px;
+    }
+
+    .info-item {
+        background: var(--bg-dark);
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--primary-color);
+        background: var(--bg-card-hover);
+    }
+
+    .info-label {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .info-value {
+        color: var(--text-primary);
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .warning-text {
+        background: rgba(245, 158, 11, 0.1);
+        border-left: 4px solid var(--warning-color);
+        padding: 20px;
+        margin: 25px 0;
+        color: var(--warning-color);
+        border-radius: 0 12px 12px 0;
+        font-size: 15px;
+        line-height: 1.5;
+        backdrop-filter: blur(8px);
+    }
+
+    .warning-text i {
+        margin-right: 10px;
+    }
+
+    .button-container {
+        text-align: center;
+        margin-top: 35px;
+    }
+
+    .btn-start, .btn-view, .btn-subscription {
+        padding: 14px 35px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .btn-start {
+        background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+        color: var(--text-primary);
+    }
+
+    .btn-start:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+        color: var(--text-primary);
+    }
+
+    .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-subscription {
+        background: linear-gradient(135deg, var(--danger-color), #dc2626);
+        color: var(--text-primary);
+    }
+
+    .btn-subscription:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .text-muted {
+        color: var(--text-secondary) !important;
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .assignment-container {
+            padding: 15px;
+            margin: 30px auto;
+        }
+
+        .assignment-card {
+            padding: 25px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .assignment-title {
+            font-size: 24px;
+        }
+
+        .info-value {
+            font-size: 20px;
+        }
+    }
+</style>
+
+<div class="assignment-container">
     {% if not assignment %}
-
-
+        <div class="assignment-card">
+            <div class="text-center">
+                <h3 class="text-muted">No Assignment Found</h3>
+                <p class="text-muted">Please check back later or contact your teacher if you believe this is an error.</p>
+            </div>
+        </div>
     {% else %}
+        <div class="assignment-card">
+            <div class="assignment-header">
+                <h1 class="assignment-title">{{ assignment.subject }}</h1>
+                <p class="teacher-name">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Teacher: Mr/Mrs {{ assignment.teacher.personalprofile.f_name }}
+                </p>
+                <div class="deadline">
+                    <i class="fas fa-clock"></i>
+                    Deadline: {{ assignment.expiry }}
+                </div>
+            </div>
 
-    <br><br><br>
-    <h5>{{ assignment.subject }} (<small>Mr/Mrs {{ assignment.teacher.personalprofile.f_name }}</small>)</h5>
-    <h6>Deadline {{ assignment.expiry }}</h6>
-    <p>Number of questions ~ {{ assignment.test_size }} </p>
-    <p>Duration - {{ assignment.duration }} Minutes.</p>
-    <p>This test contains {{ assignment.test_size }} questions and will take {{ assignment.duration }} minutes to complete. Click
-    the button below to start. Once started the test cannot be paused nor restarted, make sure you have ample uninterrupted time.</p>
-{% if user|test_is_done:assignment.uuid %}
-        <p class="text-muted">You have already taken this test. Click the button below to view your results</p>
-        <a href="{% url 'test-detail' 'ClassTests' assignment.uuid %}"><button class="btn btn-info">View Results</button></a>
-        {% else %}
-        {% if user.mysubscription.status %}
-           
-        <form method="post">
-        {% csrf_token %}
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Number of Questions</div>
+                    <div class="info-value">{{ assignment.test_size }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Duration</div>
+                    <div class="info-value">{{ assignment.duration }} Minutes</div>
+                </div>
+            </div>
 
-            <button class="btn btn-danger">Start Test</button>
-            </form>
-            {% else %}
-            <a href="{% url 'subscription' %}"><button class="btn btn-danger">Subscription Expired</button></a>
+            <div class="warning-text">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Important:</strong> This test contains {{ assignment.test_size }} questions and will take {{ assignment.duration }} minutes to complete. Once started, the test cannot be paused or restarted. Please ensure you have uninterrupted time available.
+            </div>
 
+            <div class="button-container">
+                {% if user|test_is_done:assignment.uuid %}
+                    <p class="text-muted">You have already taken this test</p>
+                    <a href="{% url 'test-detail' adm_no 'ClassTests' assignment.uuid %}" class="btn-view">
+                        <i class="fas fa-chart-bar"></i> View Results
+                    </a>
+                {% else %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-start">
+                                <i class="fas fa-play"></i> Start Test
+                            </button>
+                        </form>
+                    
+                {% endif %}
+            </div>
+        </div>
     {% endif %}
-        {% endif %}
-            
-
 </div>
-
-
-
-
-
-
-
-{% endif %}
-
-
-
-
-
-
-
-
 {% endblock %}

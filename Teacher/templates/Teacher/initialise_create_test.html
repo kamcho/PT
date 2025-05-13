@@ -1,99 +1,174 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
-<div class="container">
-    <br><br><br>
-{% if not user.teacherprofile.subject.all %}
-                <p>You have not selected any subjects that you teach at
-                    this institution. To add subjects click the button below.
-                </p>
-                <a href="{% url 'subjects-selection' %}"><button class="btn btn-warning">Add Subjects</button></a>
-            {% else %}
+<style>
+    :root {
+        --primary-bg: #1a1c23;
+        --secondary-bg: #242631;
+        --accent-color: #6c5ce7;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --border-radius: 8px;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
 
-    <form method="post">
-        {% csrf_token %}
+    body {
+        background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+        min-height: 100vh;
+        color: var(--text-primary);
+    }
 
-        <br>
-        <div>
-               <select class="form-select"  name="class-id" aria-label="Default select example" required>
+    .test-container {
+        max-width: 800px;
+        margin: 8rem auto 2rem;
+        padding: 2rem;
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-                       <option value="{{ class.class_id.class_id }}"> {{ class.subject }} Grade {{ class.subject.grade }}</option>
+    .test-title {
+        color: var(--text-primary);
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
 
-               </select>
-           </div>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
 
-            <br>
-            <div>
-               <select class="form-select"  name="exam-type" aria-label="Default select example" required>
-                        <option></option>
-                       <option value="topical">Topical (Test on one specific topic)</option>
-                       <option value="general">General (Test on a range of topics in this subject)</option>
+    .form-label {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
 
-               </select>
-           </div>
-          <br>
-    <div>
-               <select class="form-select" id="" name="selection-type" aria-label="Default select example" required>
-                <option></option>
-                       <option value="system">Let the system pick the questions</option>
-                       <option value="user">I will pick the questions</option>
+    .form-select, .form-control {
+        background: var(--primary-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        border-radius: var(--border-radius);
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
 
-               </select>
-           </div>
-          <br>
-          <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Number of Questions</label>
-              <input class="form-control" type="number"  name="test-size" required>
-          </div>
-        <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Expiry</label>
-              <input class="form-control" type="date" id="exampleFormControlTextarea1" name="date" required>
-          </div>
+    .form-select:focus, .form-control:focus {
+        border-color: var(--accent-color);
+        outline: none;
+    }
 
-          <button class="btn btn-info" >Next</button>
+    .form-select option {
+        background: var(--primary-bg);
+        color: var(--text-primary);
+    }
 
+    .btn-next {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 2rem auto 0;
+        width: 200px;
+    }
 
+    .btn-next:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
 
-    </form>
+    .alert {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--text-primary);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1.5rem;
+    }
 
+    .btn-warning {
+        background: #f59e0b;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
 
-{% endif %}
+    .btn-warning:hover {
+        background: #d97706;
+        transform: translateY(-2px);
+    }
 
+    @media (max-width: 768px) {
+        .test-container {
+            margin: 6rem 1rem 1rem;
+            padding: 1.5rem;
+        }
+    }
+</style>
 
+<div class="test-container">
+    {% if not user.teacherprofile.subject.all %}
+        <div class="alert">
+            <p>You have not selected any subjects that you teach at this institution. To add subjects click the button below.</p>
+            <a href="{% url 'subjects-selection' %}" class="btn-warning">Add Subjects</a>
+        </div>
+    {% else %}
+        <h2 class="test-title">Create New Test</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Class</label>
+                <select class="form-select" name="class-id" required>
+                    <option value="{{ class.class_id }}">{{ class.grade }}  {{ class.name }}</option>
+                </select>
+            </div>
 
+            <div class="form-group">
+                <label class="form-label">Test Type</label>
+                <select class="form-select" name="exam-type" required>
+                    <option value="">Select test type</option>
+                    <option value="topical">Topical (Test on one specific topic)</option>
+                    <option value="general">General (Test on a range of topics in this subject)</option>
+                </select>
+            </div>
 
+            <div class="form-group">
+                <label class="form-label">Question Selection</label>
+                <select class="form-select" name="selection-type" required>
+                    <option value="">Select question selection method</option>
+                    <option value="system">Let the system pick the questions</option>
+                    <option value="user">I will pick the questions</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Number of Questions</label>
+                <input class="form-control" type="number" name="test-size" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Expiry Date</label>
+                <input class="form-control" type="date" name="date" required>
+            </div>
+
+            <button type="submit" class="btn-next">Next</button>
+        </form>
+    {% endif %}
 </div>
-
-
-
-
-
-<script>
-$(document).ready(function() {
-  $('#subject').change(function() {
-    var subjectId = $(this).val();
-    $('#class-id').empty().append('<option selected>Loading...</option>');
-
-    $.ajax({
-      url: '/Teacher/load_class/',  // Replace with the actual URL of your load_class view
-      type: 'get',
-      data: { subject: subjectId },
-      success: function(response) {
-        var options = '';
-        $.each(response, function(index, classItem) {
-          options += '<option value="' + classItem.id + '">' + classItem.name + '</option>';
-        });
-        $('#class-id').empty().append(options);
-      },
-      error: function(xhr, status, error) {
-        console.error(xhr.responseText);
-      }
-    });
-  });
-});
-
-
-</script>
-
 
 {% endblock %}

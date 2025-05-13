@@ -5,157 +5,343 @@
 
 <style>
     :root {
-        --primary-color: #3b82f6;
-        --secondary-color: #1d4ed8;
-        --accent-color: #60a5fa;
-        --success-color: #10b981;
-        --warning-color: #f59e0b;
-        --danger-color: #ef4444;
-        --background-color: #0f172a;
-        --card-background: #1e293b;
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --border-color: #334155;
+        --bg-primary: #111827;
+        --bg-secondary: #1f2937;
+        --bg-accent: #374151;
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+        --primary: #6366f1;
+        --primary-light: #818cf8;
+        --success: #10b981;
+        --danger: #ef4444;
+        --border: #374151;
+        --shadow: rgba(0, 0, 0, 0.3);
     }
+
     body {
-        background: var(--background-color);
+        background: var(--bg-primary);
         color: var(--text-primary);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
     }
-    .profile-container {
-        max-width: 950px;
-        margin: 100px auto 40px auto;
-        padding: 32px 24px;
+
+    .page-container {
+        max-width: 1200px;
+        margin: 60px auto 2rem auto;
+        padding: 0 1.5rem;
     }
-    .profile-card {
-        background: var(--card-background);
-        color: var(--text-primary);
-        border-radius: 16px;
-        box-shadow: 0 4px 16px 0 rgba(0,0,0,0.12);
-        padding: 32px 24px 24px 24px;
-        position: relative;
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 1.5rem;
+    }
+
+    .profile-sidebar {
+        background: var(--bg-secondary);
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px var(--shadow);
         overflow: hidden;
     }
-    .profile-header {
-        display: flex;
-        align-items: center;
-        gap: 32px;
-        margin-bottom: 24px;
-    }
-    .profile-avatar {
-        width: 80px;
+
+    .profile-cover {
         height: 80px;
-        border-radius: 50%;
-        background: var(--accent-color);
+        background: linear-gradient(45deg, var(--primary), var(--primary-light));
+        position: relative;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: var(--bg-secondary);
+        border: 4px solid var(--bg-secondary);
+        border-radius: 1rem;
+        position: absolute;
+        bottom: -60px;
+        left: 50%;
+        transform: translateX(-50%);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2.5rem;
-        color: #fff;
-        font-weight: 800;
-        box-shadow: 0 2px 8px 0 rgba(59,130,246,0.15);
+        box-shadow: 0 4px 12px var(--shadow);
     }
-    .profile-info {
-        flex: 1;
+
+    .profile-avatar i {
+        font-size: 3rem;
+        color: var(--primary);
     }
-    .profile-title {
-        color: var(--accent-color);
-        font-size: 2rem;
-        font-weight: 800;
-        margin-bottom: 8px;
+
+    .sidebar-content {
+        padding: 4rem 1.5rem 1.5rem;
+        text-align: center;
     }
-    .profile-meta {
+
+    .teacher-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .teacher-id {
         color: var(--text-secondary);
-        font-size: 1.1rem;
-        margin-bottom: 4px;
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
     }
+
     .profile-actions {
         display: flex;
-        gap: 12px;
-        margin-top: 16px;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1rem;
     }
-    .btn-success {
-        background: var(--success-color) !important;
-        color: #fff !important;
-        border: none !important;
-        border-radius: 6px;
-        font-weight: 600;
-        padding: 8px 20px;
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.75rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        background: var(--bg-accent);
+        color: var(--text-primary);
     }
-    .btn-success:hover {
-        background: #059669 !important;
+
+    .btn:hover {
+        transform: translateY(-2px);
     }
-    .btn-danger {
-        background: var(--danger-color) !important;
-        color: #fff !important;
-        border: none !important;
-        border-radius: 6px;
-        font-weight: 600;
-        padding: 8px 20px;
-    }
-    .btn-danger:hover {
-        background: #b91c1c !important;
-    }
+
     .btn-primary {
-        background: var(--primary-color) !important;
-        color: #fff !important;
-        border: none !important;
-        border-radius: 6px;
-        font-weight: 600;
-        padding: 8px 20px;
+        background: var(--primary);
+        color: white;
     }
+
     .btn-primary:hover {
-        background: var(--secondary-color) !important;
+        background: var(--primary-light);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
-    .profile-subjects {
+
+    .btn-success {
+        background: var(--success);
+        color: white;
+    }
+
+    .btn-success:hover {
+        opacity: 0.9;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        opacity: 0.9;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .profile-main {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .info-card {
+        background: var(--bg-secondary);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    .card-header {
         display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 24px;
-        margin-bottom: 16px;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
     }
-    .subject-tag {
-        background: var(--accent-color);
-        color: #fff;
-        border-radius: 4px;
-        padding: 4px 12px;
+
+    .card-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .info-item {
+        padding: 1.25rem;
+        background: var(--bg-accent);
+        border-radius: 0.75rem;
+        transition: transform 0.2s ease;
+    }
+
+    .info-item:hover {
+        transform: translateY(-2px);
+        background: var(--bg-accent);
+        box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .info-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .subject-card {
+        background: var(--bg-accent);
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .subject-card:hover {
+        transform: translateY(-2px);
+        background: var(--primary);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .subject-icon {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+        color: var(--primary);
+        transition: color 0.2s;
+    }
+
+    .subject-card:hover .subject-icon {
+        color: white;
+    }
+
+    .subject-name {
         font-size: 0.875rem;
         font-weight: 500;
-        box-shadow: 0 1px 2px 0 rgba(59,130,246,0.10);
+        color: var(--text-primary);
+    }
+
+    @media (max-width: 768px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-container {
+            margin-top: 40px;
+        }
     }
 </style>
 
-<div class="profile-container">
-    <div class="profile-card">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <i class="bi bi-person"></i>
+<div class="page-container">
+    <div class="profile-grid">
+        <!-- Sidebar -->
+        <div class="profile-sidebar">
+            <div class="profile-cover">
+                <div class="profile-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
             </div>
-            <div class="profile-info">
-                <div class="profile-title">{{ teacher.personalprofile.get_names|title }}</div>
-                <div class="profile-meta">TSC No: {{ teacher.id_number }}</div>
-                <div class="profile-meta">Date Joined: {{ teacher.date|date:'d-m-Y' }}</div>
-                <div class="profile-meta">Phone: {{ teacher.personalprofile.phone }}</div>
-                <div class="profile-meta">Gender: {{ teacher.personalprofile.gender }}</div>
+            <div class="sidebar-content">
+                <h1 class="teacher-name">{{ teacher.personalprofile.get_names|title }}</h1>
+                <div class="teacher-id">TSC No: {{ teacher.id_number }}</div>
                 <div class="profile-actions">
-                    <a href="{% url 'update-profile' teacher.id %}" class="btn btn-success">Edit Profile</a>
+                    <a href="{% url 'update-profile' teacher.id %}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit Profile
+                    </a>
                     {% if user.role == 'Supervisor' %}
                     <form method="post" style="display:inline;">
                         {% csrf_token %}
                         {% if teacher.is_active %}
-                        <button class="btn btn-danger" name="archive">Deactivate</button>
+                        <button class="btn btn-danger" name="archive">
+                            <i class="bi bi-archive"></i>
+                            Deactivate Account
+                        </button>
                         {% else %}
-                        <button class="btn btn-danger" name="delete">Delete</button>
-                        <button class="btn btn-primary" name="restore">Restore</button>
+                        <button class="btn btn-danger" name="delete">
+                            <i class="bi bi-trash"></i>
+                            Delete Account
+                        </button>
+                        <button class="btn btn-success" name="restore">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            Restore Account
+                        </button>
                         {% endif %}
                     </form>
                     {% endif %}
                 </div>
             </div>
         </div>
-        <div class="profile-subjects">
-            {% for subject in teacher.teacherprofile.subject.all %}
-                <span class="subject-tag">{{ subject }}</span>
-            {% endfor %}
+
+        <!-- Main Content -->
+        <div class="profile-main">
+            <!-- Personal Information -->
+            <div class="info-card">
+                <div class="card-header">
+                    <i class="bi bi-person-badge" style="color: var(--primary); font-size: 1.25rem;"></i>
+                    <h2 class="card-title">Personal Information</h2>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Date Joined</div>
+                        <div class="info-value">{{ teacher.date|date:'d-m-Y' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Phone Number</div>
+                        <div class="info-value">{{ teacher.personalprofile.phone }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value">{{ teacher.personalprofile.gender }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value">{% if teacher.is_active %}Active{% else %}Inactive{% endif %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subjects -->
+            <div class="info-card">
+                <div class="card-header">
+                    <i class="bi bi-book" style="color: var(--primary); font-size: 1.25rem;"></i>
+                    <h2 class="card-title">Teaching Subjects</h2>
+                </div>
+                <div class="subjects-grid">
+                    {% for subject in teacher.teacherprofile.subject.all %}
+                    <div class="subject-card">
+                        <div class="subject-icon">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <div class="subject-name">{{ subject }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

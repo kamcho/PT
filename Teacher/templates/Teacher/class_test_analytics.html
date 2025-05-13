@@ -1,115 +1,272 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
+<style>
+    :root {
+        --bg-dark: #1a1c23;
+        --bg-card: #242631;
+        --bg-card-hover: #2d303d;
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --accent-color: #fd79a8;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 8rem auto 2rem;
+        padding: 2rem;
+    }
+
+    .analytics-header {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .analytics-header h6 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .delete-form {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .delete-form .form-control {
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+    }
+
+    .delete-form .btn-danger {
+        background: var(--danger-color);
+        border: none;
+    }
+
+    .insights-section {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .insights-section h6 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .insights-section p {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .chart-container {
+        background: var(--bg-dark);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .questions-section {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .questions-section h6 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .question-item {
+        background: var(--bg-dark);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .question-item small {
+        color: var(--text-secondary);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .question-item p {
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .students-table {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .students-table table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .students-table th {
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .students-table td {
+        padding: 1rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .students-table tr:hover {
+        background: var(--bg-card-hover);
+    }
+
+    .students-table a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .students-table a:hover {
+        color: var(--secondary-color);
+    }
+
+    .status-icon {
+        font-size: 1.2rem;
+    }
+
+    .status-completed {
+        color: var(--success-color) !important;
+    }
+
+    .status-not-started {
+        color: var(--danger-color) !important;
+    }
+</style>
 
 <div class="container">
-  <br><br><br>
- 
-  {% if error %}
+    {% if error %}
+    {% else %}
+        {% if user.is_authenticated %}
+        <div class="delete-form">
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group" style="width: 320px;">
+                    <input type="text" class="form-control" placeholder="enter 'delete' to delete test" name="command">
+                    <button class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
 
+        <div class="analytics-header">
+            <h6>{{ test.subject }} Grade - {{ test.subject.grade }}</h6>
+        </div>
 
+        <div class="insights-section">
+            <h6>Insights</h6>
+            {% if test_count == 0 %}
+                <p>No insights available since no student has taken this test</p>
+            {% else %}
+                <p>{{ test_count }} of {{ class_size }} students have taken this test.</p>
+                <p>Most passed question - {{ passed }}.</p>
+                <p>Most failed question - {{ failed }}.</p>
 
-  {% else %}
-  {% if user.is_authenticated %}
-  <form method="post">
-    {% csrf_token %}
-    <div class="input-group mb-3" id="list" style="width: 320px;">
-        <input type="text" class="form-control" placeholder="enter 'delete' to delete test" name="command">
-        <button class="btn btn-danger">Delete</button>
-      </div>
-  </form>
+                <div class="chart-container">
+                    <canvas id="lineChart" height="200"></canvas>
+                </div>
+            {% endif %}
+        </div>
 
-  {% endif %}
-  <h6 class="dashed-heading" style="color:orange;">{{ test.subject }} Grade - {{ test.subject.grade }}</h6>
-  <br>
-  <h6>Insights</h6>
-{% if test_count == 0 %}
-  <h6>No insights available since no student has taken this test</h6>
+        <div class="questions-section">
+            <h6>Questions</h6>
+            {% for quiz in quizzes %}
+                <div class="question-item">
+                    <small>{{ quiz.topic }}</small>
+                    <p>{{ forloop.counter }}). {{ quiz.quiz }}</p>
+                </div>
+            {% endfor %}
+        </div>
 
-{% else %}
-<p> {{ test_count }} of {{ class_size }} students have taken this test.</p>
-  <p> Most passed question - {{ passed }}.</p>
-  <p> Most failed question - {{ failed }}.</p>
-
-<br>
-  <p>The graph below shows students performance in this test. The x-axis represents
-      the questions and y-axis the number of students that passed or failed that question.
-
-  </p>
-
-
+        <div class="students-table">
+            <table>
+                <thead>
+                    <tr><th>Id</th>
+                        <th>STUDENT</th>
+                        <th>SCORE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for test in passes %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'students-profile' test %}">{{ test.user.studentprofile.get_names }}</a></td>
+                        <td>{{ test.marks }}</td>
+                        <td>
+                            {% if test.finished %}
+                                <i class="bi bi-check status-icon status-completed"></i>
+                            {% else %}
+                                <i class="bi bi-check status-icon status-completed"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% with passes_count=passes|length %}
+                    {% for test in fails %}
+                    <tr>
+                        <td>{{ forloop.counter|add:passes_count }}</td>
+                        <td><a href="">{{ test.user.studentprofile.get_names }}</a><br><small>{{ test.user.adm_no }}</small></td>
+                        <td>0</td>
+                        <td><i class="bi bi-x status-icon status-not-started"></i></td>
+                    </tr>
+                    {% endfor %}
+                    {% endwith %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<canvas id="lineChart"  height="200" style="width:70%;"></canvas>
-
-
-{% endif %}
-
-<br>
-<br>
-<h6>Questions.</h6>
-<div class="continer">
-  {% for quiz in quizzes %}
-  <small>{{ quiz.topic }}</small><br>
-    <p>{{ forloop.counter }}). {{ quiz.quiz }}</p>
-  {% endfor %}
-
-</div>
-
-  {% endif %}
-<br><br>
-
-  <div>
-    <table class="container table">
-      <thead>
-        <tr style="background-color: black;color: white;text-transform: capitalize !important;">
-          <th><h6 >STUDENT</th></h6></th>
-          <th><h6>SCORE</h6></th>
-          <th><h6>Status</h6></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for test in passes %}
-        <tr>
-          
-          
-              <td><a href="{% url 'students-profile' test %}">{{ test.user.personalprofile.get_names }}</a></td>
-          
-          <td>
-              {{ test.marks }}
-          </td>
-          {% if test.finished %}
-          <td ><i style="color: cornflowerblue;" class="bi bi-check"></i></td>
-          {% else %}
-          <td ><i style="color: cornflowerblue;" class="bi bi-check"></i></td>
-          {% endif %}
-        </tr>
-      {% endfor %}
-      {% for test in fails %}
-        <tr>
-          
-          
-              <td><a href="">{{ test.personalprofile.get_names }}</a></td>
-          
-          <td>
-              0
-          </td>
-          <td><i style="color: crimson;" class="bi bi-x"></i></td>
-        </tr>
-      {% endfor %}
-      
-      </tbody>
-   </table>
-
-      
-  </div>
-</div>
-
 <script>
-    // Get the performance data from the context (assuming it's a dictionary)
     var performanceData = {{ performance_data|safe }};
-
-    // Convert the dictionary to arrays for labels (x-axis) and data (y-axis)
     var labels = Object.keys(performanceData).map(Number);
     var data = Object.values(performanceData).map(Number);
 
@@ -121,34 +278,49 @@
             datasets: [{
                 label: 'Performance',
                 data: data,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-                fill: false
+                borderColor: '#6c5ce7',
+                backgroundColor: 'rgba(108, 92, 231, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
             }]
         },
         options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#ffffff'
+                    }
+                }
+            },
             scales: {
                 x: {
-                    // Start x-axis from 0
-                    type: 'linear', // Use linear scale for whole numbers
+                    type: 'linear',
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
                     ticks: {
-                        stepSize: 1, // Display whole number increments
-                        precision: 0 // Disable showing decimal points
+                        color: '#ffffff',
+                        stepSize: 1,
+                        precision: 0
                     }
                 },
                 y: {
-                    beginAtZero: true, // Start y-axis from 0
-                    type: 'linear', // Use linear scale for whole numbers
+                    beginAtZero: true,
+                    type: 'linear',
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
                     ticks: {
-                        stepSize: 1, // Display whole number increments
-                        precision: 0 // Disable showing decimal points
+                        color: '#ffffff',
+                        stepSize: 1,
+                        precision: 0
                     }
                 }
             }
         }
     });
 </script>
-
-
 
 {% endblock %}

@@ -1,38 +1,256 @@
 {% extends 'Teacher/teachers_base.html' %}
+{% load static %}
+
 {% block content %}
+<style>
+    :root {
+        --bg-dark: #1a1c23;
+        --bg-card: #242631;
+        --bg-card-hover: #2d303d;
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --accent-color: #fd79a8;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
 
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
 
-<br><br><br>
+    .container {
+        max-width: 1200px;
+        margin: 8rem auto 2rem;
+        padding: 2rem;
+    }
+
+    .test-info {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .test-info h4 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .info-item {
+        background: var(--bg-dark);
+        padding: 1rem;
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .info-item label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-item span {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+    }
+
+    .questions-section {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .questions-section h4 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .question-card {
+        background: var(--bg-dark);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .question-card:hover {
+        transform: translateY(-2px);
+        background: var(--bg-card-hover);
+        border-color: var(--primary-color);
+    }
+
+    .question-topic {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .question-text {
+        color: var(--text-primary);
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .btn-save {
+        background: var(--primary-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: 15px;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-save:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .btn-reset {
+        background: var(--danger-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: 15px;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 1rem;
+    }
+
+    .btn-reset:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 6rem 1rem 1rem;
+            padding: 1rem;
+        }
+    }
+</style>
+
 <div class="container">
-  <h6>{{ class }}</h6>
-<p>{{ request.session.test_data.date }}</p>
-  {% for quiz in quizzes %}
+    <div class="test-info">
+        <h4>Test Information</h4>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Subject</label>
+                <span>{{ class.grade }} {{ class.name }} - {{ subject.name }}</span>
+            </div>
+            <div class="info-item">
+                <label>Test Size</label>
+                <span>{{ request.session.test_data.size }} Questions</span>
+            </div>
+            <div class="info-item">
+                <label>Due Date</label>
+                <span>{{ request.session.test_data.date }}</span>
+            </div>
+            <div class="info-item">
+                <label>Exam Type</label>
+                <span>{{ request.session.test_data.exam_type }}</span>
+            </div>
+        </div>
+    </div>
 
-    <small>{{ quiz.topic }}</small><br>
-    <p>{{ quiz.quiz }}</p>
+    <div class="questions-section">
+        <h4>Selected Questions</h4>
+        {% for quiz in quizzes %}
+            <div class="question-card">
+                <div class="question-topic">{{ quiz.topic }}</div>
+                <div class="question-text">{{ quiz.quiz }}</div>
+            </div>
+        {% endfor %}
+    </div>
 
-
-
-
-
-{% endfor %}
-
-
-  <form method="post">
-    {% csrf_token %}
-
-    <button class="btn btn-warning">Save</button>
-
-  </form>
-
-
-
+    <div class="action-buttons">
+        <button class="btn-reset" onclick="resetQuestions()">
+            <i class="bi bi-trash-fill"></i> Reset
+        </button>
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-save">
+                <i class="bi bi-check-circle-fill"></i> Save Test
+            </button>
+        </form>
+    </div>
 </div>
 
+<script>
+    function resetQuestions() {
+        if (confirm('Are you sure you want to reset all selected questions? This action cannot be undone.')) {
+            $.ajax({
+                url: '/Teacher/reset-session/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert('All questions have been reset successfully.');
+                        window.location.href = '/Teacher/Home';
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log('Reset error:', errmsg);
+                    alert('Error resetting questions. Please try again.');
+                }
+            });
+        }
+    }
 
-
-
-
-
-
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
 {% endblock %}

@@ -13,7 +13,7 @@
     max-height: 95vh;
     overflow-y: scroll;
     margin-top: 50px;
-    position: absolute; /* Set to absolute */
+    position: absolute;
     top: 60%; 
     left: 50%; 
     transform: translate(-50%, -50%);" 
@@ -34,117 +34,166 @@
     </div>
 </div>
 
-    <div class="container position-relative">
-        {% if not marks %}
-        {% else %}
-        <br><br><br>
-            {% if instance == 'ClassTests' %}
-                <h6>Scores {{ marks.marks }} / {{ marks.test.test_size }}</h6>
-            {% else %}
-                <h6>Scores {{ marks.marks }} / {{ marks.test_size }}</h6>
+<div class="container mt-4" style="max-width: 800px; background-color: #1a1d21;">
+    <!-- Student Details -->
+    <div style="background-color: #1e2227; border-radius: 4px; padding: 20px; margin-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h5 style="color: #e9ecef; margin-bottom: 15px;">Student Details</h5>
+                <p style="color: #e9ecef; margin-bottom: 5px;">
+                    <i class="bi bi-person-fill" style="color: #6c757d; margin-right: 8px;"></i>
+                    {{ student.studentprofile.get_names }}
+                </p>
+                <p style="color: #e9ecef; margin-bottom: 5px;">
+                    <i class="bi bi-envelope-fill" style="color: #6c757d; margin-right: 8px;"></i>
+                    {{ student.adm_no }}
+                </p>
+                <p style="color: #e9ecef; margin-bottom: 0;">
+                    <i class="bi bi-book-fill" style="color: #6c757d; margin-right: 8px;"></i>
+                    {{ student.academicprofile.current_class.grade }} {{ student.academicprofile.current_class }}
+                </p>
+            </div>
+            {% if marks %}
+            <div style="text-align: right;">
+                <div style="background-color: #28a745; padding: 15px; border-radius: 4px;">
+                    <h6 style="color: white; margin-bottom: 5px;">Score</h6>
+                    <h4 style="color: white; margin-bottom: 0;">
+                        {% if instance == 'ClassTests' %}
+                            {{ marks.marks }} / {{ marks.test.test_size }}
+                        {% else %}
+                            {{ marks.marks }} / {{ marks.test_size }}
+                        {% endif %}
+                    </h4>
+                    <p style="color: white; margin-bottom: 0; opacity: 0.9;">
+                        {% if instance == 'ClassTests' %}
+                            {{ marks.marks|divide:marks.test.test_size }}%
+                        {% else %}
+                            {{ marks.marks|divide:marks.test_size }}%
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
             {% endif %}
-        {% endif %}
+        </div>
     </div>
 
-    <div class="container" id="container">
-        {% if not quizzes %}
-        {% else %}
+    <div id="container">
+        {% if quizzes %}
             {% for quiz in quizzes %}
-                <div style="position: relative;" id="quiz-{{ quiz.quiz.id }}">
+                <div style="position: relative; margin: 20px 0;" id="quiz-{{ quiz.quiz.id }}">
                     {% if quiz.is_correct == False %}
-                        <div style="color:crimson;" id="{{ quiz.quiz.id }}" style="border: 2px solid crimson;padding: 10px;border-radius: 10px;">
+                        <div class="p-4" id="{{ quiz.quiz.id }}" style="background-color: #1e2227; border-left: 4px solid #dc3545; border-radius: 4px;">
                             {% if quiz.quiz.file %}
-                                <div class="file-container">
+                                <div class="file-container mb-3">
                                     <img src="{{ quiz.quiz.file.url }}" width="100" height="100" class="quiz-file">
                                 </div>
                             {% endif %}
-                            <h6>{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
-                            <small style="padding-left:15px;">You chose {{ quiz.selection.choice }}</small>
-                            <i style="font-size:30px;color:crimson;" class="bi bi-x"></i>
-                            <small>{{ quiz.is_correct }}</small><br>
-                            <small style="color:green;padding-left:15px;"><b>Correct choice is </b> {{ quiz.quiz.id|get_correct_choice }}</small>
-                            
-                            <!-- Button to explain AI -->
-                            <button class="btn btn-secondary" style="position: absolute; top: 10px; right: 20px;" id="quiz-{{ quiz.quiz.id }}">Explain AI</button>
-                         
+                            <div>
+                                <h6 style="color: #e9ecef; font-size: 1rem; margin-bottom: 16px;">{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
+                                <div style="margin-left: 20px;">
+                                    <p style="color: #dc3545; margin-bottom: 8px;">
+                                        <i class="bi bi-x" style="font-size: 16px; margin-right: 8px;"></i>
+                                        Your answer: {{ quiz.selection.choice }}
+                                    </p>
+                                    <p style="color: #28a745; margin-bottom: 0;">
+                                        Correct answer: {{ quiz.quiz.id|get_correct_choice }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                                <button class="btn btn-outline-info btn-sm" id="quiz-{{ quiz.quiz.id }}">
+                                    <i class="bi bi-robot" style="margin-right: 5px;"></i>
+                                    AI Explain
+                                </button>
+                            </div>
                         </div>
                     {% else %}
-                        <div id="{{ quiz.quiz.id }}" style="border: 2px solid cornflowerblue;padding: 10px;border-radius: 10px;">
+                        <div class="p-4" id="{{ quiz.quiz.id }}" style="background-color: #1e2227; border-left: 4px solid #28a745; border-radius: 4px;">
                             {% if quiz.quiz.file %}
-                                <div class="file-container">
+                                <div class="file-container mb-3">
                                     <img src="{{ quiz.quiz.file.url }}" width="100" height="100" class="quiz-file">
                                 </div>
                             {% endif %}
-                            <h6 style="color:purple;">{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
-                            <small style="color:green;padding-left:15px;">{{ quiz.selection.choice }}</small>
-                            <i style="font-size:30px;color:green;" class="bi bi-check-all"></i>
-                            
-                            <!-- Button to explain AI -->
-                            <button class="btn btn-secondary" style="position: absolute; top: 10px; right: 20px;" id="quiz-{{ quiz.quiz.id }}" >Explain AI</button>
-                            
+                            <div>
+                                <h6 style="color: #e9ecef; font-size: 1rem; margin-bottom: 16px;">{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
+                                <div style="margin-left: 20px;">
+                                    <p style="color: #28a745; margin-bottom: 0;">
+                                        <i class="bi bi-check" style="font-size: 16px; margin-right: 8px;"></i>
+                                        Your answer: {{ quiz.selection.choice }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                                <button class="btn btn-outline-info btn-sm" id="quiz-{{ quiz.quiz.id }}">
+                                    <i class="bi bi-robot" style="margin-right: 5px;"></i>
+                                    AI Explain
+                                </button>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
             {% endfor %}
 
             {% if undone %}
-                <h6 class="dashed-heading">Un-Answered Questions</h6>
-                {% for quiz in undone %}
-                    <p>Quiz {{ quiz.quiz }}</p>
-                    <small style="color:green;padding-left:15px;">Answer - {{ quiz.id|get_correct_choice }}</small>
-                {% endfor %}
-            {% else %}
+                <div style="margin: 30px 0; padding: 20px; background-color: #1e2227; border-radius: 4px;">
+                    <h6 style="color: #ffc107; border-bottom: 1px solid #2c3038; padding-bottom: 10px; margin-bottom: 20px;">
+                        <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i>
+                        Unanswered Questions
+                    </h6>
+                    {% for quiz in undone %}
+                        <div style="margin-bottom: 16px;">
+                            <p style="color: #e9ecef; margin-bottom: 8px;">{{ quiz.quiz }}</p>
+                            <p style="color: #28a745; margin-left: 20px; margin-bottom: 0;">
+                                <i class="bi bi-check-circle" style="margin-right: 8px;"></i>
+                                <strong>Answer:</strong> {{ quiz.id|get_correct_choice }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
         {% endif %}
     </div>
+</div>
 
-    <!-- jQuery for AJAX -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            // When any button with class 'btn-explain' is clicked
-            $("button[id^='quiz-']").click(function(){
-                var quizId = $(this).attr("id"); // Get the quiz ID from the button's ID
-                
-                // Send AJAX request to get the explanation
-                $.ajax({
-                    url: "{% url 'get_explanation' %}",  // Adjust this URL based on your actual Django URL for fetching explanations
-                    type: "GET",
-                    data: {
-                        'quiz_id': quizId,
-                        'user':"{{ user }}"  // Pass the quiz ID to the view
-                    },
-                    success: function(response){
-                        // Append the explanation inside a div or card with same ID as the button
-                        var paragraph = document.querySelector('#card-text');
-                        var question = document.querySelector('#question');
-                        document.querySelector('#e-container').style.display = 'block';
-                        document.querySelector('#container').style.opacity = '0.3';
-                        paragraph.innerHTML = '<strong>'+ response.explanation +'.</strong>';
-                        question.innerHTML = '<strong>'+ response.quiz +'.</strong>';
-                        // $("#cardtext").append('<div class="explanation"><h6>Explanation:</h6><p>' + response.explanation + '</p></div>');
-                    },
-                    error: function(xhr, status, error){
-                        alert("There was an error retrieving the explanation. Please try again.");
-                    }
-                });
+<!-- jQuery for AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $("button[id^='quiz-']").click(function(){
+            var quizId = $(this).attr("id");
+            $.ajax({
+                url: "{% url 'get_explanation' %}",
+                type: "GET",
+                data: {
+                    'quiz_id': quizId,
+                    'user':"{{ user }}"
+                },
+                success: function(response){
+                    var paragraph = document.querySelector('#card-text');
+                    var question = document.querySelector('#question');
+                    document.querySelector('#e-container').style.display = 'block';
+                    document.querySelector('#container').style.opacity = '0.3';
+                    paragraph.innerHTML = '<strong>'+ response.explanation +'.</strong>';
+                    question.innerHTML = '<strong>'+ response.quiz +'.</strong>';
+                },
+                error: function(xhr, status, error){
+                    alert("There was an error retrieving the explanation. Please try again.");
+                }
             });
         });
-    </script>
-    
-    
-    <script>
-        document.querySelector('.closer').addEventListener('click', function() {
-  const eContainer = document.getElementById('e-container');
-  // Toggle visibility
-  if (eContainer.style.display === 'none') {
-    eContainer.style.display = 'block'; // Or whatever display type is appropriate (e.g., 'flex')
-    document.querySelector('#container').style.opacity = '.3';
-  } else {
-    eContainer.style.display = 'none';
-    document.querySelector('#container').style.opacity = '1';
-  }
-});
+    });
+</script>
 
-    </script>
+<script>
+    document.querySelector('.closer').addEventListener('click', function() {
+        const eContainer = document.getElementById('e-container');
+        if (eContainer.style.display === 'none') {
+            eContainer.style.display = 'block';
+            document.querySelector('#container').style.opacity = '.3';
+        } else {
+            eContainer.style.display = 'none';
+            document.querySelector('#container').style.opacity = '1';
+        }
+    });
+</script>
 {% endblock %}

@@ -171,12 +171,12 @@
         
         <div class="action-buttons">
             {% if instance == 'KNECGradeExams' or instance == 'ClassTests' %}
-                <a href="{% url 'test-detail' instance test_uuid %}" class="action-button primary">
+                <a href="{% url 'test-detail' adm_no instance test_uuid %}" class="action-button primary">
                     <i class="bi bi-eye"></i>
                     Review Test
                 </a>
             {% else %}
-                <a href="{% url 'kid-test-revision' instance student.adm_no test_uuid %}" class="action-button primary">
+                <a href="{% url 'kid-test-revision' instance adm_no test_uuid %}" class="action-button primary">
                     <i class="bi bi-eye"></i>
                     Review Test
                 </a>

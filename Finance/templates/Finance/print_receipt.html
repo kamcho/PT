@@ -1,0 +1,139 @@
+{% extends 'Supervisor/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    @media print {
+        /* Hide everything except the receipt */
+        body * {
+            visibility: hidden;
+        }
+        .receipt-container, .receipt-container * {
+            visibility: visible;
+        }
+        .receipt-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            background-color: white !important;
+            box-shadow: none !important;
+            margin: 0;
+            padding: 20px;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+
+    .receipt-container {
+        background-color: white;
+        color: black;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .receipt-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .receipt-header img {
+        max-width: 150px;
+        margin-bottom: 15px;
+    }
+
+    .receipt-details {
+        margin: 20px 0;
+    }
+
+    .receipt-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        padding: 5px 0;
+        border-bottom: 1px dashed #eee;
+    }
+
+    .receipt-footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .print-btn {
+        background-color: #2563EB;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 20px 0;
+    }
+
+    .print-btn:hover {
+        background-color: #1d4ed8;
+    }
+</style>
+
+<div class="receipt-container">
+    <button onclick="window.print()" class="print-btn no-print">Print Receipt</button>
+    
+    <div class="receipt-header">
+        <img src="{% static 'Users/favicon.png' %}" alt="School Logo">
+        <h2>{{ student.school }}</h2>
+        <h3>Fee Payment Receipt</h3>
+        <p>Receipt No: {{ transaction.receipt }}</p>
+        <p>Date: {{ transaction.processed_at }}</p>
+    </div>
+
+    <div class="receipt-details">
+        <div class="receipt-row">
+            <span>Student Name:</span>
+            <span>{{ student.studentprofile.get_names }}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Admission Number:</span>
+            <span>{{ student.adm_no }}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Payment Mode:</span>
+            <span>{{ transaction.account.name }}</span>
+        </div>
+        {% if transaction.msdn %}
+        <div class="receipt-row">
+            <span>Phone Number:</span>
+            <span>{{ transaction.msdn }}</span>
+        </div>
+        {% endif %}
+        <div class="receipt-row">
+            <span>Amount Paid:</span>
+            <span>KES {{ transaction.amount }}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Current Balance:</span>
+            <span>KES {{ fee_payment.balance }}</span>
+        </div>
+    </div>
+
+    <div class="receipt-footer">
+        <p>Thank you for your payment!</p>
+        <p>This is a computer generated receipt and does not require a signature.</p>
+        <small>Generated on: {% now "F j, Y H:i" %}</small>
+    </div>
+</div>
+
+<script>
+    // Automatically trigger print dialog when page loads
+    window.onload = function() {
+        if (window.location.hash === '#print') {
+            window.print();
+        }
+    }
+</script>
+
+{% endblock %} 

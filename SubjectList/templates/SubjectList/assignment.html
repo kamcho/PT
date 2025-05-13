@@ -1,87 +1,176 @@
-{% extends 'Users/base.html' %}
-{% load static %}
+{% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 {% block content %}
 
+<style>
+    .assignments-container {
+        margin-top: 60px;
+        padding: 2rem;
+    }
 
+    .search-section {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-{% if not assignments %}
+    .search-section .form-select,
+    .search-section .form-control {
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+    }
 
+    .search-section .input-group-text {
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+    }
 
-{% else %}
-<div class="container">
-    <br><br><br>
-   {% for assignment in assignments %}
+    .assignments-table {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-    {% if not user|test_is_done:assignment.uuid %}
+    .assignments-table table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
 
-<div class="accordion" id="accordionExample">
+    .assignments-table th {
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
-            {{ assignment.subject|title }} by Mr/Mrs {{ assignment.teacher.personalprofile.f_name }}
-        </button>
-        </h2>
-        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <strong>{{ assignment.subject }} Assignment.</strong> You have a {{ assignment.subject }} assignment to be done before {{ assignment.expiry }}.
-                    Click the button below to take the test.
-                    <br><br>
-                    <a class="btn btn-primary" href="{% url 'assignment-lobby' assignment.uuid %}">Proceed</a>
-                </div>
-        </div>
-    </div>
+    .assignments-table td {
+        padding: 1rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-</div>
-    <br>
+    .assignments-table tr:hover {
+        background: var(--bg-dark);
+    }
 
+    .assignments-table a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
 
-    {% else %}
+    .assignments-table a:hover {
+        color: var(--secondary-color);
+    }
 
+    .status-active {
+        color: var(--success-color) !important;
+    }
 
+    .status-expired {
+        color: var(--danger-color) !important;
+    }
 
-            <div class="accordion" id="accordionExample">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
-                {{ assignment.subject|title }} by Mr/Mrs {{ assignment.teacher.personalprofile.f_name }}
-            </button>
-        </h2>
-        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-                <strong>{{ assignment.subject }} Assignment.</strong> You have already taken this test. Click the button below to view your results.
-                <br><br>
-                <a class="btn btn-secondary" href="{% url 'test-detail' 'ClassTests' assignment.uuid %}">View Results</a>
+    .date-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .date-info small {
+        color: var(--text-secondary);
+    }
+</style>
+
+<div class="assignments-container">
+    <div class="search-section">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group" id="list">
+                <select class="form-select" name="user">
+                    <option value="">Select Teacher</option>
+                    {% for tch in users %}
+                       <option value="{{ tch.id }}">{{ tch.personalprofile.get_names }}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select" name="subject">
+                    <option value="">Select Subject</option>
+                    {% for subject in subjects %}
+                       <option value="{{ subject.id }}">{{ subject }}</option>
+                    {% endfor %}
+                </select>
+                <select class="form-select" name="grade">
+                    <option value="">Select Grade</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                </select>
+                <select class="form-select" name="status">
+                    <option value="">Select Status</option>
+                    <option value="active">Active</option>
+                    <option value="expired">Expired</option>
+                </select>
+                <span class="input-group-text">From</span>
+                <input type="date" class="form-control" name="from">
+                <span class="input-group-text">To</span>
+                <input type="date" class="form-control" name="to">
+                <button class="btn btn-primary" type="submit">Search/Reset</button>
             </div>
-        </div>
+        </form>
+    </div>
+
+    <div class="assignments-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in assignments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="">
+                            {{ user.teacher.personalprofile.get_names }}
+                        </a>
+                    </td>
+                    <td>{{ user.class_id }}</td>
+                    <td>
+                        <a href="{% url 'assignment-lobby' adm_no user.uuid %}">
+                            {{ user.subject }} | {{ user.subject.grade }}
+                        </a>
+                    </td>
+                    <td>
+                        <div class="date-info">
+                            <span>Created: {{ user.date|date:'d-M-Y' }}</span>
+                            <small>Expires: {{ user.expiry|date:'d-M-Y' }}</small>
+                        </div>
+                    </td>
+                    <td>
+                        {% if now < user.expiry %}
+                            <span class="status-active">Active</span>
+                        {% else %}
+                            <span class="status-expired">Expired</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
-    <br>
-
-    {% endif %}
-
-    {% endfor %}
-
-    
-
-
-
-
-
-
-
-
-
-{% endif %}
-
-
-
-
-
-
-
-
-
 
 {% endblock %}

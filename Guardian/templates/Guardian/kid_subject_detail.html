@@ -4,35 +4,148 @@
 {% load custom_filters %}
 {% block content %}
 
+<style>
+  .subject-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
 
+  .subject-table {
+    background: linear-gradient(145deg, #2a1c3d, #1f1635);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
 
+  .subject-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
 
+  .subject-table thead {
+    background: rgba(110, 87, 224, 0.1);
+  }
 
-<div class="container">
-  <br>
-  <br>
-  <br>
-  
+  .subject-table th {
+    color: #a8b2d1;
+    font-weight: 500;
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-     <table class="table">
-        <thead>
-          <tr>
-            <th><h6>Topic</h6></th>
-            <th><h6>Score</h6></th>
-            <th><h6>Percentage</h6></th>
-          </tr>
-        </thead>
-        <tbody>
+  .subject-table td {
+    padding: 1.2rem 1.5rem;
+    color: #fff;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .subject-table tbody tr {
+    transition: all 0.3s ease;
+  }
+
+  .subject-table tbody tr:hover {
+    background: rgba(110, 87, 224, 0.1);
+    transform: translateX(6px);
+  }
+
+  .subject-table a {
+    color: #6e57e0;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .subject-table a:hover {
+    color: #8f7ff7;
+    text-decoration: none;
+  }
+
+  .score-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .percentage-badge {
+    background: linear-gradient(45deg, #6e57e0, #4c3d99);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .subject-container {
+    animation: fadeIn 0.6s ease-out;
+  }
+</style>
+
+<div class="subject-container">
+  <div class="subject-table">
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-book me-2"></i>Topic
+            </div>
+          </th>
+          <th>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-star me-2"></i>Score
+            </div>
+          </th>
+          <th>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-graph-up me-2"></i>Percentage
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
         {% for topic in subject %}
           <tr>
-              <td><a href="{% url 'kid-test-revision' 'Topical' email topic.uuid %}">{{ topic.topic }}</a></td>
-            <td>{{ topic.marks }} / {{ topic.test_size }}</td>
-            <td>{{ topic.marks|divide:topic.test_size }}%</td>
+            <td>
+              <a href="{% url 'kid-test-revision' 'Topical' email topic.uuid %}">
+                {{ topic.topic }}
+              </a>
+            </td>
+            <td>
+              <div class="score-badge">
+                <i class="bi bi-check2-circle"></i>
+                {{ topic.marks }} / {{ topic.test_size }}
+              </div>
+            </td>
+            <td>
+              <div class="percentage-badge">
+                <i class="bi bi-percent"></i>
+                {{ topic.marks|divide:topic.test_size }}%
+              </div>
+            </td>
           </tr>
         {% endfor %}
-        </tbody>
-     </table>
+      </tbody>
+    </table>
+  </div>
 </div>
-
 
 {% endblock %}

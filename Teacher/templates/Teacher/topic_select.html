@@ -1,37 +1,163 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
-  <div class="container">
-      <br><br><br>
-      {% if not topics %}
+<style>
+    :root {
+        --primary-bg: #1a1c23;
+        --secondary-bg: #242631;
+        --accent-color: #6c5ce7;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --border-radius: 8px;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
 
-      {% else %}
-    <form method="post">
-    {% for topic in topics %}
+    body {
+        background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+        min-height: 100vh;
+        color: var(--text-primary);
+    }
 
-      <div class="for">
-          {% if exam_type == 'general' %}
-              <input class="form-check-input" name="selected" type="checkbox" value="{{ topic.id }}" >
-          {% else %}
-              <input class="form-check-input" name="selected" type="radio" value="{{ topic.id }}" required>
-          {% endif %}
-          {{ topic }}
-        </label>
-      </div>
+    .topics-container {
+        max-width: 800px;
+        margin: 8rem auto 2rem;
+        padding: 2rem;
+    }
 
-      <br>
+    .page-header {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-    {% endfor %}
-        <br>
-        {% csrf_token %}
-        <button class="btn btn-info">Next</button>
-     </form>
+    .page-title {
+        color: var(--text-primary);
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
 
-     {% endif %}
-  </div>
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
 
+    .topics-list {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
+    .topic-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
 
+    .topic-item:hover {
+        background: rgba(108, 92, 231, 0.1);
+    }
 
+    .topic-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 1rem;
+        cursor: pointer;
+        border: 2px solid var(--accent-color);
+        background-color: var(--secondary-bg);
+    }
+
+    .form-check-input:checked {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+
+    .topic-label {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        cursor: pointer;
+        flex-grow: 1;
+    }
+
+    .submit-section {
+        margin-top: 2rem;
+        text-align: right;
+    }
+
+    .btn-next {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-next:hover {
+        background: #5649c0;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .topics-container {
+            margin: 6rem 1rem 1rem;
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="topics-container">
+    <div class="page-header">
+        <h1 class="page-title">Select Topic{% if exam_type == 'general' %}s{% endif %}</h1>
+        <p class="page-subtitle">
+            {% if exam_type == 'general' %}
+                Select one or more topics for your general test.
+            {% else %}
+                Select a single topic for your topical test.
+            {% endif %}
+        </p>
+    </div>
+
+    {% if not topics %}
+        <div class="topics-list">
+            <p class="text-center text-muted">No topics available.</p>
+        </div>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="topics-list">
+                {% for topic in topics %}
+                    <div class="topic-item">
+                        {% if exam_type == 'general' %}
+                            <input class="form-check-input" name="selected" type="checkbox" value="{{ topic.id }}" id="topic_{{ topic.id }}">
+                        {% else %}
+                            <input class="form-check-input" name="selected" type="radio" value="{{ topic.id }}" required id="topic_{{ topic.id }}">
+                        {% endif %}
+                        <label class="topic-label" for="topic_{{ topic.id }}">{{ topic }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="submit-section">
+                <button type="submit" class="btn btn-next">
+                    Next <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+    {% endif %}
+</div>
 
 {% endblock %}

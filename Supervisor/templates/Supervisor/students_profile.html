@@ -4,6 +4,20 @@
 {% block content %}
 
 <style>
+    :root {
+      --primary-color: #2563EB;  /* Blue */
+      --secondary-color: #10B981;  /* Green */
+      --dark-bg: #111827;  /* Dark background */
+      --darker-bg: #0F172A;  /* Darker background */
+      --card-bg: #1F2937;  /* Card background */
+      --text-primary: #F9FAFB;  /* Primary text */
+      --text-secondary: #9CA3AF;  /* Secondary text */
+      --accent-color: #3B82F6;  /* Accent blue */
+      --success-color: #059669;  /* Success green */
+      --warning-color: #D97706;  /* Warning orange */
+      --danger-color: #DC2626;  /* Danger red */
+    }
+
     .main-fr{
         display: grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap: 30px;width: 95%;margin: 0 auto;overflow-x: hidden;
     }
@@ -22,47 +36,54 @@
         text-align: center;
         transition: all 0.3s ease;
         cursor: pointer;
+        background-color: var(--card-bg);
+        color: var(--text-primary);
     }
     
     .status-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--primary-color);
     }
     
     .fee-positive {
         background-color: var(--danger-color);
-        color: white;
+        color: var(--text-primary);
     }
     
     .fee-negative {
         background-color: var(--success-color);
-        color: white;
+        color: var(--text-primary);
     }
     
     .discipline-score {
-        background-color: var(--bg-dark);
+        background-color: var(--card-bg);
         color: var(--text-primary);
     }
 </style>
 
-
-
 <style>
     body{
-        background-color: var(--bg-dark);
+        background-color: var(--dark-bg);
     }
 </style>
 
-
-<div style="background-color:var(--bg-card); margin-top: -9px;"><br><br>
+<div style="background-color:var(--card-bg); margin-top: -9px;"><br><br>
     {% if user.role == 'Guardian' %}
     <div style="justify-content: end;display: flex;gap: 30px;padding-right: 70px;">
-        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}"><button style="background-color: var(--danger-color);color: white;padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-stars"> </i>Online Exams</button></a>
-       <a href="{% url 'ask-ai' student.adm_no %}"> <button style="background-color: var(--primary-color);color: white;padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-robot"> </i>AI Assistant</button></a>
+        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}"><button style="background-color: var(--primary-color);color: var(--text-primary);padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-stars"> </i>Online Exams</button></a>
+        <a href="{% url 'ask-ai' student.adm_no %}"> <button style="background-color: var(--secondary-color);color: var(--text-primary);padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-robot"> </i>AI Assistant</button></a>
+        {% if student.academicprofile.current_class %}
+            {% with class_tests=student.academicprofile.current_class.classtest_set.all %}
+                {% if class_tests %}
+                    <a href="{% url 'assignments' student.adm_no %}"><button style="background-color: var(--accent-color);color: var(--text-primary);padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-journal-text"> </i>Assignments</button></a>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
     </div><br>
     {% endif %}
 <div class="main-fr">
-    <div style="background-color: var(--bg-card);border-radius: 10px;float: left;padding: 40px;">
+    <div style="background-color: var(--card-bg);border-radius: 10px;float: left;padding: 40px;">
         <h5 style="color: var(--text-primary);">Personal Info</h5><br><br>
         <div style="display: grid;grid-template-columns: 40% 60%;">
             <img style="width: 100px; height: 100px;border-radius: 5%;" src="{% static 'Users/child.jpg' %}">
@@ -73,20 +94,20 @@
             <h6 style="color: var(--text-secondary);">Grade {{ student.academicprofile.current_class.grade|title }}  {{ student.academicprofile.current_class|title }}</h6></div>
             
         </div><br><br>
-        <div style="background-color: var(--bg-dark);border-radius: 20px;align-items: center;align-items: center;padding: 20px;">
+        <div style="background-color: var(--darker-bg);border-radius: 20px;align-items: center;align-items: center;padding: 20px;">
             <div style="display: flex;margin: 0 auto;gap: 20px;width: 99%;">
                 {% for day in days %}
     {% with student|get_attendance:day.date as attendance %}
     {% if attendance == 'PRESENT' %}
-    <div style="background-color: var(--success-color); border-radius: 30%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: white;">
+    <div style="background-color: var(--success-color); border-radius: 30%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: var(--text-primary);">
         {{ day.day }}
     </div>
 {% elif attendance == 'ABSENT' %}
-    <div style="background-color: var(--danger-color); border-radius: 30%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: white;">
+    <div style="background-color: var(--danger-color); border-radius: 30%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: var(--text-primary);">
         {{ day.day }}
     </div>
 {% elif attendance == 'N/A' %}
-    <div style="background-color: var(--text-secondary); border-radius: 30%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: white;">
+    <div style="background-color: var(--text-secondary); border-radius: 30%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: var(--text-primary);">
         {{ day.day }}
     </div>
 {% endif %}
@@ -97,50 +118,42 @@
             </div>
         </div>
     </div>
-    <div style="background-color: var(--bg-card);border-radius: 10px;padding: 30px;">
+    <div style="background-color: var(--card-bg);border-radius: 10px;padding: 30px;">
         <h5 style="color: var(--text-primary);">My Subjects</h5>
         <br><br><h6 style="color: var(--text-primary);">Selected Subjects</h6>
-        <div style="display: flex;
-        flex-wrap: wrap; /* Enables items to wrap to the next line */
-        gap: 10px;
-        ">
+        <div style="display: flex;flex-wrap: wrap;gap: 10px;">
         {% if mysubjects %}
         {% for subject in mysubjects %}
-            <div style="background-color: var(--bg-dark);color: var(--success-color);padding: 5px;border-radius: 5px;">
+            <div style="background-color: var(--darker-bg);color: var(--text-primary);padding: 5px;border-radius: 5px;">
                 <small><i class="bi bi-check"></i>{{ subject }}</small>
             </div>
             {% endfor %}
         {% else %}
             <a href="{% url 'student-subject-select' student.adm_no %}"><h6 class="text-center" style="color: var(--danger-color);justify-content: center;"><i class="bi bi-info">You have not selected any subjects! </i></h6></a>
         {% endif %}
-        </div><br><hr style="border-color: var(--border-color);">
+        </div><br><hr style="border-color: rgba(255, 255, 255, 0.1);">
         <br><br>
         {% if mysubjects %}
         <h6 style="color: var(--danger-color);">ForeGone</h6>
-        <div style="display: flex;
-        flex-wrap: wrap; /* Enables items to wrap to the next line */
-        gap: 10px;
-        ">{% for subject in foregone %}
-            <div style="background-color: var(--bg-dark);color: var(--danger-color);padding: 5px;border-radius: 5px;">
+        <div style="display: flex;flex-wrap: wrap;gap: 10px;">
+        {% for subject in foregone %}
+            <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
                 <small><i class="bi bi-x"></i>{{ subject }}</small>
             </div>
             {% endfor %}
         </div>
-        {% else %}<h6 style="color: var(--danger-color);">Available Subjects</h6>
-        <div style="display: flex;
-        flex-wrap: wrap; /* Enables items to wrap to the next line */
-        gap: 10px;
-        ">
+        {% else %}
+        <h6 style="color: var(--text-primary);">Available Subjects</h6>
+        <div style="display: flex;flex-wrap: wrap;gap: 10px;">
         {% for subject in foregone %}
-        
-            <div style="background-color: var(--bg-dark);color: var(--text-primary);padding: 5px;border-radius: 5px;">
+            <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
                 <small><i class="bi bi-x"></i>{{ subject }}</small>
             </div>
-            {% endfor %}</div>
+            {% endfor %}
+        </div>
         {% endif %}
-
     </div>
-    <div style="background-color: var(--bg-card); border-radius: 10px; padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <div style="background-color: var(--card-bg); border-radius: 10px; padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center;">
         <h5 style="color: var(--text-primary);">Fees & Discipline</h5>
         <h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
         <br><br>
@@ -151,49 +164,19 @@
         </a><br><br>
         <a href="{% url 'students-discipline' student.adm_no %}">
             <div class="status-button discipline-score">
-                <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: var(--danger-color);">100</strong></h5>
+                <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: var(--primary-color);">100</strong></h5>
             </div>
         </a>
-        
-        <!-- <canvas id="donutChart" style="max-width: 200px;"></canvas>
-    
-
-        <script>
-            const ctx = document.getElementById('donutChart').getContext('2d');
-            const donutChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Fees Paid', 'Fees Due'],
-                    datasets: [{
-                        data: [75, 25], // Example data, replace with actual values from Django
-                        backgroundColor: ['#36A2EB', '#FF6384'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            enabled: true
-                        }
-                    }
-                }
-            });
-        </script> -->
-        
     </div>
 </div>
 <br><br>
 </div>
 
 <div style="width: 95%;margin: 60px auto;position: relative;">
-    <h6 style="padding: 20px;color: var(--text-primary);" class="text-center">Perfomance <strong style="color: var(--primary-color);">Analytics</strong></h6>
+    <h6 style="padding: 20px;color: var(--text-primary);" class="text-center">Performance <strong style="color: var(--primary-color);">Analytics</strong></h6>
     <form method="post">{% csrf_token %}
     <div style="justify-content: center;justify-items: center;justify-self: end;width: 400px;" class="input-group">
-    <select class="form-select" aria-label="Default select example" name="grade"  required>
+    <select class="form-select" aria-label="Default select example" name="grade" required>
         <option value="" selected>Select Grade</option>
         {% for grade in grades %}
             <option value="{{grade}}">Grade {{ grade }}</option>
@@ -205,64 +188,44 @@
             <option value="Term 2">Term 2</option>
             <option value="Term 3">Term 3</option>
       </select>
-      <button class="btn btn-secondary">Filter</button>
+      <button class="btn" style="background-color: var(--primary-color); color: var(--text-primary);">Filter</button>
     </div></form><br><br>
-    {% if def %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Get the element ID from the context variable `def`
-            var elementId = "{{ def }}";
-            
-            // Find the element using the ID and scroll to it
-            var element = document.getElementById(elementId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    </script>
-{% endif %}
- <!-- Make sure you have the static tag loaded -->
 
-      <div id="def" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 350px)); gap: 10px; width: 100%; margin: 0 auto; justify-content: center;">
+    <div id="def" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 350px)); gap: 10px; width: 100%; margin: 0 auto; justify-content: center;">
         {% for subject in student.mysubjects.name.all %}
         <a href="{% url 'students-exam-profile' student.adm_no %}">
-        <div style="background-color: var(--bg-card); border-radius: 10px; padding: 30px; margin-top: 40px; color: var(--text-primary);">
+        <div style="background-color: var(--card-bg); border-radius: 10px; padding: 30px; margin-top: 40px; color: var(--text-primary);">
             <h6 class="text-center">{{ subject.name }}</h6>
-            
-            <!-- Canvas for one graph per subject -->
             <canvas id="chart-{{ forloop.counter }}"></canvas>
         </div>
-    </a>
-        <!-- Prepare dynamic data for the chart -->
+        </a>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                // Data for the three terms: opener, mid-term, and end-term
                 var openerScore = {% get_subject_score student.adm_no grade subject.id term 'OPENER' %};
                 var midtermScore = {% get_subject_score student.adm_no grade subject.id term 'MID' %};
                 var endtermScore = {% get_subject_score student.adm_no grade subject.id term 'END' %};
                 
-                // Create the chart only if there is data available for the subject
                 var ctx = document.getElementById("chart-{{ forloop.counter }}").getContext('2d');
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['Opener', 'Mid-Term', 'End-Term'],  // The 3 labels for each term
+                        labels: ['Opener', 'Mid-Term', 'End-Term'],
                         datasets: [{
-                            label: '{{ subject.name }} Scores',  // The label for the dataset
+                            label: '{{ subject.name }} Scores',
                             data: [
-                                openerScore || 0,  // Set to 0 if no score for Opener
-                                midtermScore || 0,  // Set to 0 if no score for Mid-Term
-                                endtermScore || 0   // Set to 0 if no score for End-Term
+                                openerScore || 0,
+                                midtermScore || 0,
+                                endtermScore || 0
                             ],
                             backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',  // Color for Opener
-                                'rgba(54, 162, 235, 0.2)',  // Color for Mid-Term
-                                'rgba(75, 192, 192, 0.2)'   // Color for End-Term
+                                'rgba(37, 99, 235, 0.2)',  // Primary color
+                                'rgba(16, 185, 129, 0.2)', // Secondary color
+                                'rgba(59, 130, 246, 0.2)'  // Accent color
                             ],
                             borderColor: [
-                                'rgba(255, 99, 132, 1)',  // Border color for Opener
-                                'rgba(54, 162, 235, 1)',  // Border color for Mid-Term
-                                'rgba(75, 192, 192, 1)'   // Border color for End-Term
+                                'rgba(37, 99, 235, 1)',   // Primary color
+                                'rgba(16, 185, 129, 1)',  // Secondary color
+                                'rgba(59, 130, 246, 1)'   // Accent color
                             ],
                             borderWidth: 1
                         }]
@@ -272,25 +235,25 @@
                             y: { 
                                 beginAtZero: true,
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+                                    color: 'rgba(249, 250, 251, 0.1)'  // text-primary with low opacity
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
+                                    color: 'rgba(249, 250, 251, 0.7)'  // text-primary with medium opacity
                                 }
                             },
                             x: {
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+                                    color: 'rgba(249, 250, 251, 0.1)'
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
+                                    color: 'rgba(249, 250, 251, 0.7)'
                                 }
                             }
                         },
                         plugins: {
                             legend: {
                                 labels: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
+                                    color: 'rgba(249, 250, 251, 0.7)'
                                 }
                             }
                         }
@@ -298,32 +261,16 @@
                 });
             });
         </script>
-    {% endfor %}
-    
-    <!-- Include Chart.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    
-    <!-- Include Chart.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-      </div>
-      
-      <!-- Include Chart.js from CDN -->
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- 
-    
+        {% endfor %}
+    </div>
 </div>
 
-
-<div style="width: 99%;margin: 150px auto 0 auto;background-color: var(--bg-card);color: var(--text-primary);position: relative;"><br><br>
-    <h5 style="padding-left: 30px;" class="text-center">E-Learning, Assignments & Datalytics</h5><br><br>
+<div style="width: 99%;margin: 150px auto 0 auto;background-color: var(--card-bg);color: var(--text-primary);position: relative;"><br><br>
+    <h5 style="padding-left: 30px;" class="text-center">E-Learning, Assignments & Analytics</h5><br><br>
     
-    <div style=" gap: 10px; width: 100%; margin: 0 auto; justify-content: center;position: relative;">
-        <div style="padding: 30px;background-color: var(--bg-dark);color: var(--text-primary);width: 90%;max-width: 800px;margin: 0 auto;position: relative;">
-            <a class="btn btn-dark" style="position: absolute;top: 10px;right: 30px;" href="{% url 'task-view-select' student.adm_no student.academicprofile.current_class.grade %}">View All</a>
+    <div style="gap: 10px; width: 100%; margin: 0 auto; justify-content: center;position: relative;">
+        <div style="padding: 30px;background-color: var(--darker-bg);color: var(--text-primary);width: 90%;max-width: 800px;margin: 0 auto;position: relative;">
+            <a class="btn" style="position: absolute;top: 10px;right: 30px;background-color: var(--card-bg);color: var(--text-primary);" href="{% url 'task-view-select' student.adm_no student.academicprofile.current_class.grade %}">View All</a>
             <h6>E-Learning Progress</h6>
             <select class="form-select" aria-label="Default select example">
                 <option value="" selected>Select Grade</option>
@@ -335,24 +282,19 @@
             <h6>{{ subject.name }}</h6>
             
             <div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar bg-success" {% with student|subject_progress:subject.id as progressive  %}
+                <div class="progress-bar" {% with student|subject_progress:subject.id as progressive  %}
                 {% if progressive < 50 %}
                   style="width: {{ progressive }}%;background-color:var(--danger-color)"
                 {% else %}
-                  style="width: {{ progressive }}%;background-color: var(--primary-color);  color:white;"
+                  style="width: {{ progressive }}%;background-color: var(--primary-color);color:var(--text-primary);"
                 {% endif %}
                   aria-valuenow="63" aria-valuemin="0" aria-valuemax="100">
                   {{ progressive }}%
               {% endwith %}</div>
-                
-              </div><br>
+            </div><br>
             {% endfor %}
         </div>
-        <br>
-
     </div>
 </div>
-
-
 
 {% endblock %}

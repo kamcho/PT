@@ -1,41 +1,345 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SVG Wave Separator</title>
-  <style>
-    .wave-separator {
-      width: 100%;
-      height: auto;
-      display: block;
+{% extends 'Users/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    :root {
+        --primary-bg: #1a1a1a;
+        --secondary-bg: #2d2d2d;
+        --accent-color: #4a90e2;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --border-radius: 8px;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .wave-path {
-      fill: none;
-      stroke: #000000;
-      stroke-width: 2;
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+        padding: 4rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
     }
 
-    .wave-path-filled {
-      fill: #e0e0e0;
-      stroke: #000000;
-      stroke-width: 2;
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234a90e2' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
     }
-  </style>
-</head>
-<body>
-  <h1>Wave Separator Example</h1>
-  <svg class="wave-separator" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
-    <path class="wave-path" d="M0,60 C240,0 400,120 560,60 C720,0 880,120 1040,60 C1200,0 1360,120 1440,60"></path>
-  </svg>
 
-  <div style="background: #f0f0f0; padding: 20px;">
-    <p>This is a section with a wave separator above it.</p>
-  </div>
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
 
-  <svg class="wave-separator" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
-    <path class="wave-path-filled" d="M0,60 C240,0 400,120 560,60 C720,0 880,120 1040,60 C1200,0 1360,120 1440,60 L1440,120 L0,120 Z"></path>
-  </svg>
-</body>
-</html>
+    .hero-title {
+        color: var(--text-primary);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .contact-card {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-color);
+    }
+
+    .contact-icon {
+        font-size: 2.5rem;
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+    }
+
+    .contact-title {
+        color: var(--text-primary);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-info {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .contact-link {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .contact-link:hover {
+        color: var(--text-primary);
+    }
+
+    .faq-section {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .faq-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .faq-item {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .faq-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .faq-question {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .faq-question i {
+        color: var(--accent-color);
+    }
+
+    .faq-answer {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.6;
+        padding-left: 1.75rem;
+    }
+
+    .support-form {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: var(--text-primary);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        background: var(--primary-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        border-radius: var(--border-radius);
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-color);
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .btn-submit {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .btn-submit:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 3rem 1rem;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-card {
+            padding: 1.5rem;
+        }
+
+        .faq-section, .support-form {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">How can we help you?</h1>
+        <p class="hero-subtitle">We're here to help you with any questions or issues you may have. Choose the best way to reach us below.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="contact-grid">
+        <div class="contact-card">
+            <i class="bi bi-envelope-fill contact-icon"></i>
+            <h3 class="contact-title">Email Support</h3>
+            <p class="contact-info">Get in touch with our support team via email</p>
+            <a href="mailto:support@iamlearning.com" class="contact-link">support@iamlearning.com</a>
+        </div>
+
+        <div class="contact-card">
+            <i class="bi bi-telephone-fill contact-icon"></i>
+            <h3 class="contact-title">Phone Support</h3>
+            <p class="contact-info">Call us during business hours</p>
+            <a href="tel:+254700000000" class="contact-link">+254 700 000 000</a>
+        </div>
+
+        <div class="contact-card">
+            <i class="bi bi-chat-dots-fill contact-icon"></i>
+            <h3 class="contact-title">Live Chat</h3>
+            <p class="contact-info">Chat with our support team in real-time</p>
+            <a href="{% url 'support' %}" class="contact-link">Start Chat</a>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                How do I reset my password?
+            </h3>
+            <p class="faq-answer">
+                Click on the "Forgot Password" link on the login page. Enter your email address and follow the instructions sent to your email to reset your password.
+            </p>
+        </div>
+
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                How can I update my profile information?
+            </h3>
+            <p class="faq-answer">
+                Go to your profile page by clicking on your name in the top right corner. Click the "Edit Profile" button to update your information.
+            </p>
+        </div>
+
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                What are the system requirements?
+            </h3>
+            <p class="faq-answer">
+                Our system works best on modern browsers like Chrome, Firefox, Safari, or Edge. Make sure you have JavaScript enabled and a stable internet connection.
+            </p>
+        </div>
+
+        <div class="faq-item">
+            <h3 class="faq-question">
+                <i class="bi bi-question-circle"></i>
+                How do I report a technical issue?
+            </h3>
+            <p class="faq-answer">
+                Use the support form below to report any technical issues. Please include as much detail as possible about the problem you're experiencing.
+            </p>
+        </div>
+    </div>
+
+    <div class="support-form">
+        <h2 class="form-title">Contact Support</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <input type="text" class="form-control" name="subject" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" name="message" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Send Message</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

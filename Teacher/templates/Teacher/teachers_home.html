@@ -1,4 +1,5 @@
 {% extends 'Teacher/teachers_base.html' %}
+{% load custom_filters %}
 {% block content %}
 
 <style>
@@ -304,13 +305,15 @@
         <div class="stat-value">{{ total_students }}</div>
         <div class="stat-label">Total Students</div>
       </div>
+      <a href="{% url 'teacher-tests-view' %}">
       <div class="stat-card">
         <div class="stat-icon">
           <i class="bi bi-journal-check"></i>
         </div>
-        <div class="stat-value">{{ total_tests }}</div>
+        <div class="stat-value">{{ user|get_teacher_tests }}</div>
         <div class="stat-label">Tests Created</div>
       </div>
+      </a>
     </div>
   </div>
 
@@ -372,7 +375,7 @@
       </div>
 
       <div class="quick-actions">
-        <a href="{% url 'create-questions' %}" class="action-button">
+        <a href="" class="action-button">
           <i class="bi bi-plus-circle"></i>
           <span>Create New Test</span>
         </a>

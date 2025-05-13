@@ -1,0 +1,258 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+<style>
+    :root {
+        --primary-bg: #1a1c23;
+        --secondary-bg: #242631;
+        --accent-color: #6c5ce7;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --border-radius: 8px;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+        min-height: 100vh;
+        color: var(--text-primary);
+    }
+
+    .questions-container {
+        max-width: 1200px;
+        margin: 8rem auto 2rem;
+        padding: 2rem;
+    }
+
+    .page-header {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .page-title {
+        color: var(--text-primary);
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .questions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .question-card {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .question-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-color);
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .question-topic {
+        color: var(--accent-color);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .question-text {
+        color: var(--text-primary);
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .question-options {
+        margin-bottom: 1rem;
+    }
+
+    .option {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        padding: 0.5rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 0.5rem;
+        background: var(--primary-bg);
+    }
+
+    .option.correct {
+        color: #10b981;
+        border-left: 3px solid #10b981;
+    }
+
+    .question-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .btn-select {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-select:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    .btn-select.selected {
+        background: #10b981;
+    }
+
+    .btn-save {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 2rem auto;
+        width: 200px;
+    }
+
+    .btn-save:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    .selected-count {
+        color: var(--text-secondary);
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .questions-container {
+            margin: 6rem 1rem 1rem;
+            padding: 1rem;
+        }
+
+        .questions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="questions-container">
+    <div class="page-header">
+        <h1 class="page-title">Select Questions</h1>
+        <p class="page-subtitle">Choose questions for your test. Selected questions will be highlighted.</p>
+    </div>
+
+    <div class="selected-count">
+        Selected: <span id="selectedCount">0</span> questions
+    </div>
+
+    <div class="questions-grid">
+        {% for quiz in quizzes %}
+            <div class="question-card" data-quiz-id="{{ quiz.id }}">
+                <div class="question-header">
+                    <span class="question-topic">{{ quiz.topic }}</span>
+                </div>
+                <div class="question-text">{{ quiz.quiz }}</div>
+                <div class="question-options">
+                    {% for option in quiz.options %}
+                        <div class="option {% if option.is_correct %}correct{% endif %}">
+                            {{ option.text }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="question-actions">
+                    <button class="btn-select" onclick="selectQuestion(this, {{ quiz.id }})">Select</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button class="btn-save" onclick="saveSelectedQuestions()">Save Selected Questions</button>
+</div>
+
+<script>
+    let selectedQuestions = new Set();
+
+    function selectQuestion(button, quizId) {
+        const card = button.closest('.question-card');
+        if (selectedQuestions.has(quizId)) {
+            selectedQuestions.delete(quizId);
+            button.classList.remove('selected');
+            card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        } else {
+            selectedQuestions.add(quizId);
+            button.classList.add('selected');
+            card.style.borderColor = '#6c5ce7';
+        }
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        document.getElementById('selectedCount').textContent = selectedQuestions.size;
+    }
+
+    function saveSelectedQuestions() {
+        if (selectedQuestions.size === 0) {
+            alert('Please select at least one question');
+            return;
+        }
+
+        // Send selected questions to server
+        fetch('/Teacher/add-quiz-to-session/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                selected: Array.from(selectedQuestions)
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/Teacher/save-test/';
+            } else {
+                alert('Error saving questions. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving questions. Please try again.');
+        });
+    }
+</script>
+
+{% endblock %} 

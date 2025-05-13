@@ -916,7 +916,7 @@ class Finish(LoginRequiredMixin, IsStudent, TemplateView):
                                        f"forward to your continued success in your studies! \n"
 
                                 # Send email
-                                # send_mail(user=user.email, subject=about, body=body)
+                                send_mail(user=user.email, subject=about, body=body)
                             except Exception as e:
                                 # Handle IntegrityError during notification creation
                                 messages.error(request, 'Sorry, we could not complete your request. If the problem '
@@ -1102,7 +1102,7 @@ class Syllabus(LoginRequiredMixin, TemplateView):
         return context
 
 
-class Assignment(LoginRequiredMixin, IsStudent, TemplateView):
+class Assignment(LoginRequiredMixin,  TemplateView):
     """
     View for viewing assignments based on the current class of the user.
     """
@@ -1121,12 +1121,14 @@ class Assignment(LoginRequiredMixin, IsStudent, TemplateView):
             dict: A dictionary containing context data for the template.
         """
         context = super().get_context_data(**kwargs)
-        user = self.request.user
+        user = Students.objects.get(adm_no=self.kwargs['adm_no'])
         try:
             
             # Fetch assignments for the current class
-            assignments = ClassTest.objects.filter(class_id__students=user)
+            assignments = ClassTest.objects.filter(class_id=user.academicprofile.current_class)
+            print(assignments)
             context['assignments'] = assignments
+            context['now'] = timezone.now().date()  # Add current date to context
             if not assignments:
                 messages.info(self.request, 'You do not have any pending assignments.')
 
@@ -1155,7 +1157,7 @@ class Assignment(LoginRequiredMixin, IsStudent, TemplateView):
         return context
 
 
-class AssignmentDetail(LoginRequiredMixin, IsStudent, TemplateView):
+class AssignmentDetail(LoginRequiredMixin, TemplateView):
     """
     View class assignments details
     """
@@ -1177,6 +1179,7 @@ class AssignmentDetail(LoginRequiredMixin, IsStudent, TemplateView):
         try:
             test = ClassTest.objects.get(uuid=test_uuid_str)
             context['assignment'] = test
+            context['user'] = Students.objects.get(adm_no=self.kwargs['adm_no'])
         except (ClassTest.DoesNotExist, ClassTest.MultipleObjectsReturned) as e:
             # Handle assignment not found
             messages.error(self.request,
@@ -1235,7 +1238,7 @@ class AssignmentDetail(LoginRequiredMixin, IsStudent, TemplateView):
         Handle the POST request to create a test for a learner related to the class test.
         """
         if request.method == "POST":
-            user = request.user
+            user = Students.objects.get(adm_no=self.kwargs['adm_no'])
             test_uuid = self.kwargs['uuid']  # Assuming you have 'uuid' in your URL kwargs
             if 'index' in self.request.session:
                 del self.request.session['index']
@@ -1250,7 +1253,7 @@ class AssignmentDetail(LoginRequiredMixin, IsStudent, TemplateView):
                 self.request.session['test_mode'] = 'test_mode'
 
                 # Redirect to the 'tests' view with appropriate arguments
-                return redirect('tests', 'ClassTests', test_uuid)
+                return redirect('tests',user.adm_no, 'ClassTests', test_uuid)
 
             except Exception as e:
                 # Handle IntegrityError

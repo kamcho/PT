@@ -6,8 +6,8 @@ urlpatterns = [
 
     path('<str:adm_no>/Grade-<str:grade>/Subjects/', Learning.as_view(), name='learn'),
     path('E-Learning/<str:topic> /<str:subtopic>/<str:media>/Study', Read.as_view(), name='read'),
-    path('Assignments/', Assignment.as_view(), name='assignments'),
-    path('<str:uuid>/Assignment-Lobby', AssignmentDetail.as_view(), name='assignment-lobby'),
+    path('Assignments/<str:adm_no>/', Assignment.as_view(), name='assignments'),
+    path('<str:adm_no>/<str:uuid>/Assignment-Lobby', AssignmentDetail.as_view(), name='assignment-lobby'),
     path('Save/<str:topic> /<str:subtopic>/Save-Progress/', Finish.as_view(), name='save-progress'),
     path('<str:adm_no>/<str:subject_id>/Syllabus-Coverage/', Syllabus.as_view(), name='syllabus'),
     path('<str:adm_no>/<str:subtopic>/Objectives/', SubtopicInfo.as_view(), name='subtopic-info'),

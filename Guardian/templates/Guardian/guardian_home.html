@@ -95,6 +95,28 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    height: 70vh;
+    overflow-y: scroll;
+    padding-right: 0.5rem;
+}
+
+/* Add a custom scrollbar style for better visual appearance */
+.updates-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.updates-list::-webkit-scrollbar-track {
+    background: var(--bg-card);
+    border-radius: 4px;
+}
+
+.updates-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.updates-list::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
 }
 
 .update-card {
@@ -280,7 +302,7 @@
                 <div class="filter-label">Sort By</div>
                 <div class="filter-options">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="schoolFilter">
+                        <input class="form-check-input" type="checkbox" id="schoolFilter" {% if school_filter %}checked{% endif %}>
                         <label class="form-check-label" for="schoolFilter">School</label>
                     </div>
                     <div class="form-check">
@@ -294,7 +316,7 @@
                 </div>
             </div>
 
-            <div class="updates-list">
+            <div class="updates-list" id="updatesList">
                 {% for update in updates %}
                 <a href="{% url 'notification' update.id %}" class="text-decoration-none">
                     <div class="update-card">
@@ -366,5 +388,30 @@
         </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const schoolFilter = document.getElementById('schoolFilter');
+    
+    function updateUpdates() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('school_filter', schoolFilter.checked);
+        
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newUpdatesList = doc.getElementById('updatesList');
+                document.getElementById('updatesList').innerHTML = newUpdatesList.innerHTML;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    
+    schoolFilter.addEventListener('change', updateUpdates);
+});
+</script>
+{% endblock %}
 
 {% endblock %}

@@ -1,32 +1,115 @@
-{% extends base_html %}
-{% load custom_filters %}
+{% extends 'Users/base.html' %}
+{% load static %}
 {% block content %}
 
-<div  style="background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%) !important; height: 100vh;color: white;" >
-    <form method="post" class="container" style="">
+<style>
+    :root {
+        --primary-bg: #1a1c23;
+        --secondary-bg: #242631;
+        --accent-color: #6c5ce7;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --border-radius: 8px;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+        min-height: 100vh;
+        color: var(--text-primary);
+    }
+
+    .contact-container {
+        max-width: 600px;
+        margin: 8rem auto 2rem;
+        padding: 2rem;
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-title {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        background: var(--primary-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        border-radius: var(--border-radius);
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-color);
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .btn-submit {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .btn-submit:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .contact-container {
+            margin: 6rem 1rem 1rem;
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="contact-container">
+    <h2 class="contact-title">Submit a Report</h2>
+    <form method="post">
         {% csrf_token %}
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-
-        <div class="mb-3">
-           <label for="exampleFormControlTextarea1" class="form-label">Enter your queries below</label>
-           <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="message" required></textarea>
+        <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input type="text" class="form-control" name="subject" required>
         </div>
-           <button class="btn btn-primary">Submit</button>
-
-
+        <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-control" name="message" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Send Report</button>
     </form>
-
- </div>
-
-
-
-
-
-
-
+</div>
 
 {% endblock %}

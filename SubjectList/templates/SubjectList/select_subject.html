@@ -227,7 +227,7 @@ body {
     {% else %}
         <div class="subjects-grid">
             {% for subject in subjects %}
-            <a href="{% url 'syllabus' student.adm_no subject.id %}" style="text-decoration: none;">
+            
                 <div class="subject-card">
                     <div class="subject-header">
                         <h5 class="subject-title">{{ subject }}</h5>
@@ -247,18 +247,25 @@ body {
                         </div>
                     {% endwith %}
 
-                    <div class="action-buttons">
+                    <div class="action-buttons"><a href="{% url 'syllabus' student.adm_no subject.id %}" style="text-decoration: none;color: #f0f2f8;">
                         <div class="action-btn syllabus-btn">
+                            
                             <i class="bi bi-book"></i> Syllabus
-                        </div>
+                            
+                        </div></a>
+                        <a href="{% url 'subject-analysis' student.adm_no subject.id %}" style="text-decoration: none;color: #f4f4f7;">   
                         <div class="action-btn analytics-btn">
+                            
                             <i class="bi bi-graph-up"></i> Analytics
-                        </div>
+                        
+                        </div></a>
+                        <a href="{% url 'kid-exam-topic-id' student.adm_no subject.id %}" style="text-decoration: none;color: #1a1c23;">
                         <div href="#" class="action-btn tests-btn">
+                            
                             <i class="bi bi-pencil-square"></i> Tests
-                        </div>
+                        </div></a>
                     </div>
-                </div></a>
+                </div>
             {% endfor %}
         </div>
     {% endif %}

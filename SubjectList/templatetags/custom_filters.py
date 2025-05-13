@@ -263,7 +263,7 @@ def get_accuracy(email, subject):
 @register.filter
 def class_test_progress(test_uuid):
     class_test = ClassTest.objects.filter(uuid=test_uuid).last()
-    student_count = class_test.class_id.students.count()
+    student_count = AcademicProfile.objects.filter(current_class__class_id=class_test.class_id.class_id).count()
     test_count = ClassTestStudentTest.objects.filter(test=test_uuid).count()
     
 
@@ -661,4 +661,17 @@ def get_student_count(class_id):
         count = AcademicProfile.objects.filter(current_class=class_id).count()
         return count
     except Exception as e:
+        return 0
+
+@register.filter
+def get_teacher_tests(teacher):
+    """
+    Get all ClassTest objects where the teacher is the creator.
+    Returns the count of tests created by the teacher.
+    """
+    try:
+        tests = ClassTest.objects.filter(teacher=teacher).count()
+        return tests
+    except Exception as e:
+        logger.error(f"Error getting teacher tests: {str(e)}")
         return 0

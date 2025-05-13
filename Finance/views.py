@@ -1,4 +1,3 @@
-
 import logging
 from django.db.models import Q
 
@@ -1078,7 +1077,7 @@ class SchoolFeeTransactions(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            transactions = StudentFeeMpesaTransaction.objects.all().order_by('-date')
+            transactions = StudentFeeMesaTransaction.objects.all().order_by('-date')
             context['transactions'] = transactions
         except Exception as e:
             # Handle DatabaseError if needed
@@ -1128,7 +1127,7 @@ class SchoolFeeTransactions(TemplateView):
         try:
 
             # Filter transactions based on the conditions
-            transactions = StudentFeeMpesaTransaction.objects.filter(**filter_conditions).order_by('-date')
+            transactions = StudentFeeMesaTransaction.objects.filter(**filter_conditions).order_by('-date')
 
             # Add additional context if needed
             context = {
@@ -1359,9 +1358,9 @@ class ManageFeeTransaction(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         transaction_id = self.kwargs['id']
         try:
-            transaction = StudentFeeMpesaTransaction.objects.get(id=transaction_id)
+            transaction = StudentFeeMesaTransaction.objects.get(id=transaction_id)
             context['transaction'] = transaction
-        except StudentFeeMpesaTransaction.DoesNotExist:
+        except StudentFeeMesaTransaction.DoesNotExist:
             messages.error(self.request, 'We could not find a transaction with this ID !!')
         except Exception as e:
             # Handle DatabaseError if needed
@@ -1646,6 +1645,21 @@ def verifyPayment(receipt):
    
     
 
+class PrintReceipt(LoginRequiredMixin, TemplateView):
+    template_name = 'Finance/print_receipt.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        transaction_id = self.kwargs['transaction_id']
+        try:
+            fee_payment = StudentFeePayment.objects.get(transaction_id__receipt=transaction_id)
+            context['fee_payment'] = fee_payment
+            context['student'] = fee_payment.user
+            context['transaction'] = fee_payment.transaction_id
+        except StudentFeePayment.DoesNotExist:
+            messages.error(self.request, 'Receipt not found!')
+        return context
+
 class AddFeePayment(LoginRequiredMixin, TemplateView):
     template_name = 'Finance/add_fee_payment.html'
 
@@ -1661,17 +1675,11 @@ class AddFeePayment(LoginRequiredMixin, TemplateView):
             pass
         except:
             messages.error(self.request, 'We could not find a user matching your query!')
-        
-        # context['transactions'] = transactions
-
-
         return context
     
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
-           
             try:
-               
                 transaction_id = self.request.POST.get('receipt')
                 cash = self.request.POST.get('amount')
                 amount = int(float(cash))
@@ -1699,12 +1707,10 @@ class AddFeePayment(LoginRequiredMixin, TemplateView):
                 raw.status = True
                 raw.save()
                 profile.save()
-                messages.success(self.request, 'Payment was succesfully added to the system')
-
-                return redirect(self.request.get_full_path())
-              
-              
-                    
+                messages.success(self.request, 'Payment was successfully added to the system')
+                
+                # Redirect to print receipt view with the transaction ID
+                return redirect('print-receipt', transaction_id=transaction_id)
             except Exception as e:
                 messages.error(self.request, str(e))
                 return redirect(self.request.get_full_path())
@@ -1712,6 +1718,7 @@ class AddFeePayment(LoginRequiredMixin, TemplateView):
 
 
         return redirect('students-view')
+
 
 
 class CreateExpense(TemplateView):

@@ -46,7 +46,6 @@ urlpatterns = [
     path('Create-Expense', CreateExpense.as_view(), name='create-expense'),
     path('Manage-Expense/<str:id>', ManageExpense.as_view(), name='manage-expense'),
 
-
-
+    path('print-receipt/<str:transaction_id>/', PrintReceipt.as_view(), name='print-receipt'),
 
 ]

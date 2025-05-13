@@ -1,60 +1,215 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #1d4ed8;
+        --accent-color: #60a5fa;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+        --hover-color: rgba(255, 255, 255, 0.05);
+    }
 
-<div class="container">
-    <br><br><br><br>
-    <form method="post">
+    body {
+        background-color: var(--background-color);
+        min-height: 100vh;
+    }
+
+    .questions-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+    }
+
+    .filter-section {
+        background: var(--card-background);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-label {
+        color: var(--accent-color);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .filter-select {
+        background: var(--background-color);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .filter-select:hover, .filter-select:focus {
+        border-color: var(--accent-color);
+        outline: none;
+    }
+
+    .filter-select option {
+        background: var(--background-color);
+        color: var(--text-primary);
+    }
+
+    .btn-filter {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        height: 42px;
+    }
+
+    .btn-filter:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .questions-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .question-card {
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: block;
+    }
+
+    .question-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--accent-color);
+    }
+
+    .question-number {
+        color: var(--accent-color);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .question-text {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .question-meta {
+        display: flex;
+        gap: 1rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        align-items: center;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .meta-divider {
+        width: 4px;
+        height: 4px;
+        background: var(--text-secondary);
+        border-radius: 50%;
+    }
+
+    @media (max-width: 768px) {
+        .questions-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="questions-container">
+    <form method="post" class="filter-section">
         {% csrf_token %}
-    <div class="input-group mb-3">
-        <span class="input-group-text">Topic</span>
-        <select class="form-select" aria-label="Default select example" name="topic">
-            {% for topic in topics %}
-                <option value="{{ topic.id }}">{{ topic }}</option>
-            {% endfor %}
-          </select>
-    
-    
-            <span class="input-group-text">Subtopic</span>
-            <select class="form-select" aria-label="Default select example" name="subtopic">
-                <option value="" >Default</option>
-                {% for subtopic in subtopics %}
-                    <option value="{{ subtopic.id }}">{{ subtopic }}</option>
-                {% endfor %}
-              </select>
-            <button class="btn btn-warning" >Filter</button>
-       </div>
-        </form>
-        <br>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label class="filter-label">Topic</label>
+                <select class="filter-select" name="topic">
+                    {% for topic in topics %}
+                        <option value="{{ topic.id }}">{{ topic }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Subtopic</label>
+                <select class="filter-select" name="subtopic">
+                    <option value="">All Subtopics</option>
+                    {% for subtopic in subtopics %}
+                        <option value="{{ subtopic.id }}">{{ subtopic }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-
-    {% for quiz in questions %}
-        
-
-
-    <a href="{% url 'manage-questions' quiz.id %}">
-        <p>{{ forloop.counter }}). {{ quiz.quiz }}</p>
-    </a>    
-    
-        <div class="text-muted" style="padding: 20px;">
-            <small>{{ quiz.topic }}</small> - <small>{{ quiz.subtopic }}</small>
+            <button class="btn-filter">
+                <i class="bi bi-funnel"></i>
+                Filter Questions
+            </button>
         </div>
-        
+    </form>
 
-
-    {% endfor %}
-    <br><br>
-
-
-
-
-
-
-
-
-
-
+    <div class="questions-grid">
+        {% for quiz in questions %}
+            <a href="{% url 'manage-questions' quiz.id %}" class="question-card">
+                <div class="question-number">Question {{ forloop.counter }}</div>
+                <div class="question-text">{{ quiz.quiz }}</div>
+                <div class="question-meta">
+                    <div class="meta-item">
+                        <i class="bi bi-bookmark"></i>
+                        {{ quiz.topic }}
+                    </div>
+                    <div class="meta-divider"></div>
+                    <div class="meta-item">
+                        <i class="bi bi-diagram-2"></i>
+                        {{ quiz.subtopic }}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
 </div>
-
 
 {% endblock %}

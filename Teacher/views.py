@@ -3,6 +3,7 @@ import logging
 import random
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
@@ -11,7 +12,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from Exams.models import ClassTest, TopicalQuizes, TopicalQuizAnswers, StudentsAnswers, ClassTestStudentTest
 from SubjectList.models import Course, Topic, Subtopic
-from Users.models import AcademicProfile
+from Users.models import AcademicProfile, Classes
 from .models import *
 from django.views.generic import TemplateView
 from django.db import IntegrityError, DatabaseError
@@ -181,13 +182,11 @@ class TestsView(IsTeacher, LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TestsView, self).get_context_data(**kwargs)
         user = self.request.user
-        class_id = self.kwargs['class']  # get class name
         try:
             # Get class tests where author is the logged in user for specific class
-            tests = ClassTest.objects.filter(teacher=user, class_id__id=class_id).order_by('-date')
+            tests = ClassTest.objects.filter(teacher=user).order_by('-date')
 
             context['tests'] = tests
-            context['class'] = class_id
             context['today'] = datetime.date.today()
             # context['subject'] = 
         except Exception as e:
@@ -276,15 +275,16 @@ class ClassTestAnalytics(LoginRequiredMixin, TemplateView):
         class_test = ClassTest.objects.get(uuid=test_uuid)  # Get the class test
         context['test'] = class_test
         class_id = class_test.class_id
-        members = StudentList.objects.get(user=self.request.user, subject=class_test.subject)
-        dodgers = members.students.exclude(email__in=test_instance.values_list('user__email'))
+        members = AcademicProfile.objects.filter(current_class__class_id=class_id.class_id)
+        dodgers = members.exclude(user__adm_no__in=test_instance.values_list('user__adm_no'))
         print(dodgers)
         context['fails'] = dodgers
         context['passes'] = test_instance
+        print(test_instance, 'instanxe')
 
         
 
-        context['class_size'] = members.students.count()  # Get the number of students in that class
+        context['class_size'] = members.count()  # Get the number of students in that class
         test_dict = {}
         index = 1
         performance_data = {}
@@ -362,9 +362,8 @@ class InitialiseCreateTest(IsTeacher, LoginRequiredMixin, TemplateView):
         context = super(InitialiseCreateTest, self).get_context_data(**kwargs)
         id = self.kwargs['class']
         try:
-            student_list = StudentList.objects.get(user=self.request.user, id=id)
             # get class list
-            context['class'] = student_list
+            context['class'] = Classes.objects.get(class_id=id)
 
         except Exception as e:
             error_type = type(e).__name__
@@ -403,7 +402,7 @@ class InitialiseCreateTest(IsTeacher, LoginRequiredMixin, TemplateView):
             date = self.request.POST.get('date')
 
                 # Parse data to a dict and add to session
-            test_data = {'exam_type': exam_type, 'date': date,
+            test_data = {'exam_type': exam_type, 'date': date, 'subject': self.kwargs['id'],
                             'selection_type': selection_type, 'size': size, 'class_id': self.kwargs['class']}
             self.request.session['test_data'] = test_data
 
@@ -424,9 +423,10 @@ class ClassTestSelectTopic(IsTeacher, LoginRequiredMixin, TemplateView):
         # get data from session
         class_id = self.request.session.get('test_data')['class_id']
         exam_type = self.request.session.get('test_data')['exam_type']
+        subject = self.request.session.get('test_data')['subject']
         print(class_id, 'hjnkvrfv')
-        subject = StudentList.objects.get(id=class_id).subject.id
-        topics = Topic.objects.filter(subject__id=subject)  # filter topics by subject id
+        subject = Subject.objects.get(id=subject)
+        topics = Topic.objects.filter(subject=subject)  # filter topics by subject id
         print(topics)
         if not topics:
             messages.error(self.request, 'We could not find any topics of the said subject.'
@@ -547,39 +547,19 @@ def load_class(request):
 
 
 def get_topical_quizzes(request):
-    try:
-        topic_id = request.GET.get('topic_id')
+    
+    topic_id = request.GET.get('topic_id')
+    print(topic_id, 'topic id')
+    # Try to get the questions for the given topic_id
+    questions = TopicalQuizes.objects.filter(topic_id=topic_id)
+    if questions:
 
-        # Try to get the questions for the given topic_id
-        questions = TopicalQuizes.objects.filter(topic_id=topic_id)
-        if questions:
+        # Prepare the data in a format suitable for JSON serialization
+        questions_data = [{'id': question.id, 'quiz': question.quiz} for question in questions]
 
-            # Prepare the data in a format suitable for JSON serialization
-            questions_data = [{'id': question.id, 'quiz': question.quiz} for question in questions]
+        return JsonResponse({'questions': questions_data})
 
-            return JsonResponse({'questions': questions_data})
 
-    except Exception as e:
-        messages.error(request, 'We encountered an error when setting the test. Please contact @support')
-        # Handle other unexpected exceptions
-        error_message = str(e)  # Get the error message as a string
-        error_type = type(e).__name__
-
-        logger.critical(
-            error_message,
-            exc_info=True,  # Include exception info in the log message
-            extra={
-                'app_name': __name__,
-                'url': request.get_full_path(),
-                'school': settings.SCHOOL_ID,
-                'error_type': error_type,
-                'user': request.user,
-                'level': 'Critical',
-                'model': 'TopicalQuizzes',
-
-            }
-        )
-        return JsonResponse({'error': str(e)}, status=500)
 
 
 def add_question_to_session(request):
@@ -615,6 +595,7 @@ class UserQuestionsSelect(IsTeacher, LoginRequiredMixin, TemplateView):
         # Retrieve data from the session, providing default values if not present
         subject = self.request.session.get('test_data', {}).get('subject', None)
         selected_topics = self.request.session.get('selected_topics', [])
+        print(selected_topics, 'selected topics')
 
         try:
             # Query the Topic objects using the selected_topic IDs
@@ -657,8 +638,10 @@ class SaveTest(IsTeacher, LoginRequiredMixin, TemplateView):
             # Retrieve data from the session, providing default values if not present
             ids = self.request.session.get('selected', [])
             class_id = self.request.session.get('test_data', {}).get('class_id', None)
-
+            subject_id = self.request.session.get('test_data', {}).get('subject', None)
             # Query the TopicalQuizes objects using the selected IDs
+            context['subject'] = Subject.objects.get(id=subject_id)
+            context['class'] = Classes.objects.get(class_id=class_id)
             quizes = TopicalQuizes.objects.filter(id__in=ids)
             context['quizzes'] = quizes
 
@@ -692,13 +675,11 @@ class SaveTest(IsTeacher, LoginRequiredMixin, TemplateView):
     def post(self, request, **kwargs):
         if self.request.method == "POST":
             teacher = self.request.user
-            subject = self.request.session.get('test_data', {}).get('subject', None)
+            subject = self.get_context_data()['subject']
             size = self.request.session.get('test_data', {}).get('size', None)
             date = self.request.session.get('test_data', {}).get('date', None)
-            class_id = self.request.session.get('test_data', {}).get('class_id', None)
-            subject = StudentList.objects.get(id=class_id)
-            class_id = subject
-            subject = subject.subject
+            class_id = self.get_context_data()['class']
+           
             
             ids = self.request.session.get('selected', [])
 
@@ -1680,3 +1661,46 @@ class AddContent(TemplateView):
                 if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                     return JsonResponse({"status": "error", "message": str(e)}, status=400)
                 return redirect(self.request.get_full_path())
+
+@login_required
+def remove_quiz_from_session(request):
+    if request.method == 'POST':
+        question_id = request.POST.get('question_id')
+        
+        # Get the current session data
+        selected = request.session.get('selected', [])
+        
+        # Remove the question if it exists
+        if question_id in selected:
+            selected.remove(question_id)
+            request.session['selected'] = selected
+            
+            return JsonResponse({
+                'status': 'success',
+                'session_data': len(selected)
+            })
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request'
+    }, status=400)
+
+@login_required
+def reset_session(request):
+    if request.method == 'POST':
+        print('im here  ')
+        # Clear test_data and selected questions from session
+        if 'test_data' in request.session:
+            del request.session['test_data']
+        if 'selected' in request.session:
+            del request.session['selected']
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Session data cleared successfully'
+        })
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=400)

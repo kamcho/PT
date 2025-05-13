@@ -324,7 +324,7 @@ def get_explanation(request):
     
     
 
-class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
+class TestDetail(LoginRequiredMixin, TemplateView):
     template_name = 'Exams/test_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -340,7 +340,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
             dict: A dictionary containing context data for the template.
         """
         context = super(TestDetail, self).get_context_data(**kwargs)
-        user = self.request.user
+        user = Students.objects.get(adm_no=self.kwargs['adm_no'])
         test_uuid = self.kwargs['uuid']
         instance = self.kwargs['instance']
         try:
@@ -371,6 +371,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
                 elif instance == 'ClassTests':
 
                     model = 'ClassTestStudentTest'
+                    print(test_uuid, 'test_uuid')
                     answers = StudentsAnswers.objects.filter(user=user, test_object_id=test_uuid)
                     test = ClassTestStudentTest.objects.get(user=user, test=test_uuid)
                    
@@ -391,7 +392,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
         
 
         except ObjectDoesNotExist as e:
-            messages.error(self.request, 'We could not find the test!. please contact @support')
+            messages.error(self.request, str(e))
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
@@ -435,7 +436,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
             )
         except Exception as e:
             # Handle invalid UUID format
-            messages.error(self.request, 'Invalid Test. This test was not completed and cannot be revised!')
+            messages.error(self.request, str(e))
         # Set the base HTML template based on user role
         if self.request.user.role == 'Guardian':
             context['base_html'] = 'Guardian/baseg.html'
@@ -443,7 +444,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
             context['base_html'] = 'Teacher/teachers_base.html'
         else:
             context['base_html'] = 'Users/base.html'
-
+        context['student'] = user
         return context
 
 

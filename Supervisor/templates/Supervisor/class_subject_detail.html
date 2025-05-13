@@ -221,7 +221,11 @@
           <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             {{ csubject }}  {{ class }}
           </a>
+
         </div>
+        <a href="{% url 'initialise-test' class.class_id subject %}" class="btn btn-secondary">
+          Set New Test
+        </a>
       </h6>
     </div>
 

@@ -1,63 +1,67 @@
 {% extends 'Teacher/teachers_base.html' %}
+{% load static %}
 
 {% block content %}
-
-
-<div  class="container">
-    <br><br><br>
-    <div>
-        <h6>Progress</h6>
-        <p><small id="selectedValue">{{  request.session.selected|length  }}</small> / {{ request.session.test_data.size }}</p>
-
-    </div>
-
-    <div>
-
-            <a href="{% url 'save-test' %}"><button class="btn btn-warning" id="finish" disabled>Finish</button></a>
-
-
-    </div>
-<br>
-    <div>
-       <select class="form-select" id="topicSelect" name="subject" aria-label="Default select example">
-            <option></option>
-             {% for topic in topics %}
-               <option value="{{ topic.id }}">{{ topic }}</option>
-             {% endfor %}
-       </select>
-    </div>
-
-    <br>
-    <div>
-        <div id="questionsDiv"></div>
-    </div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
+    // Define updateProgress in global scope
+    window.updateProgress = function(sessionData) {
+        $('#selectedValue').text(sessionData);
+        var testSize = parseInt("{{ request.session.test_data.size }}");
+        var progress = (sessionData / testSize) * 100;
+        $('#progressBar').css('width', progress + '%');
+        
+        if(sessionData === testSize) {
+            $('#finish').prop('disabled', false);
+            // Disable all add buttons when test size is reached
+            $('.btn-add').prop('disabled', true).addClass('disabled');
+        } else {
+            $('#finish').prop('disabled', true);
+            // Enable all add buttons when below test size
+            $('.btn-add').prop('disabled', false).removeClass('disabled');
+        }
+    };
 
+    // Define resetQuestions in global scope
+    window.resetQuestions = function() {
+        console.log('Reset function called');
+        if (confirm('Are you sure you want to reset all selected questions? This action cannot be undone.')) {
+            console.log('Reset confirmed');
+            $.ajax({
+                url: '/Teacher/reset-session/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    console.log('Reset response:', response);
+                    if (response.status === 'success') {
+                        // Clear the questions div
+                        $('#questionsDiv').empty();
+                        // Reset progress
+                        updateProgress(0);
+                        // Reset topic select
+                        $('#topicSelect').val('');
+                        // Show success message
+                        alert('All questions have been reset successfully.');
+                        // Redirect to the test initialization page
+                        window.location.href = '/Teacher/Home';
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log('Reset error:', errmsg);
+                    alert('Error resetting questions. Please try again.');
+                }
+            });
+        }
+    };
 
-    $(document).ready(function () {
-    // Obtain the CSRF token from the cookie
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
                 var cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
@@ -67,92 +71,431 @@
         return cookieValue;
     }
 
-    // Add the CSRF token to all AJAX requests
     function csrfSafeMethod(method) {
-        // These HTTP methods do not require CSRF protection
         return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
     }
-    var csrftoken = getCookie('csrftoken');
-
-    $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader('X-CSRFToken', csrftoken);
-            }
-        }
-    });
-
-    $('#topicSelect').change(function () {
-        var selectedTopic = $(this).val();
-
-        $.ajax({
-            url: '/Teacher/get-questions/',
-            type: 'GET',
-            data: {
-                'topic_id': selectedTopic
-            },
-            success: function (response) {
-                // Handle the response and update the UI with the questions
-                var questions = response.questions;
-                var questionsDiv = $('#questionsDiv');
-                questionsDiv.empty();
-
-                if (questions.length > 0) {
-                    for (var i = 0; i < questions.length; i++) {
-                        questionsDiv.append('<p>' + questions[i].quiz + '</p>');
-                        questionsDiv.append('<button class="btn btn-info add-button" value="' + questions[i].id + '">Add</button>');
-                    }
-                } else {
-                    questionsDiv.append('<p>No questions found.</p>');
-                }
-
-                // Add click event handler to the "Add" buttons
-                $('.add-button').click(function () {
-                    var questionId = $(this).val();
-
-                    $.ajax({
-                        url: '/Teacher/add-quiz-to-session/',
-                        type: 'POST',
-                        data: {
-                            'question_id': questionId
-                        },
-                        success: function (response) {
-                            // Handle success if needed
-                            var sessionData = response.session_data;
-
-                            $('#selectedValue').text(sessionData);
-                            var testSize = "{{ request.session.test_data.size }}";
-
-                            if(sessionData.toString() === testSize){
-                                $('#finish').prop('disabled', false);
-
-                            }
-                        },
-                        error: function (xhr, errmsg, err) {
-                            console.log(errmsg);
-                        }
-                    });
-                });
-            },
-            error: function (xhr, errmsg, err) {
-                console.log(errmsg);
-            }
-        });
-    });
-});
-
-
-
-
-
-
-
-
-
 </script>
 
+<style>
+    :root {
+        --primary-bg: #1a1c23;
+        --secondary-bg: #242631;
+        --accent-color: #6c5ce7;
+        --text-primary: #ffffff;
+        --text-secondary: #a0aec0;
+        --border-radius: 8px;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
 
+    body {
+        background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+        min-height: 100vh;
+        color: var(--text-primary);
+    }
 
+    .container {
+        max-width: 1200px;
+        margin: 8rem auto 2rem;
+        padding: 2rem;
+    }
 
+    .progress-section {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .progress-info {
+        flex: 1;
+        margin-right: 2rem;
+    }
+
+    .progress-info h6 {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .progress-count {
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+    }
+
+    .progress-count small {
+        color: var(--accent-color);
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .progress-bar-container {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: var(--accent-color);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .btn-finish {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-finish:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    .btn-finish:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .topic-select {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-select {
+        background: var(--primary-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        padding: 0.75rem;
+        border-radius: var(--border-radius);
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .form-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: none;
+    }
+
+    .questions-container {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .question-card {
+        background: var(--primary-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .question-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent-color);
+    }
+
+    .question-text {
+        color: var(--text-primary);
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .btn-add {
+        background: var(--accent-color);
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+
+    .btn-remove {
+        background: #dc3545;
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add:hover, .btn-remove:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    .btn-add.selected {
+        background: #10b981;
+    }
+
+    .question-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        margin: 2rem 0;
+        color: var(--text-secondary);
+    }
+
+    .loading-spinner.active {
+        display: block;
+    }
+
+    .btn-reset {
+        background: #dc3545;
+        color: var(--text-primary);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-reset:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    .btn-reset i {
+        font-size: 1.2rem;
+    }
+
+    .alert-warning {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .alert-warning i {
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 6rem 1rem 1rem;
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="alert-warning">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Warning: Do not reload the page while selecting questions. This may cause issues with your selection.</span>
+    </div>
+
+    <div class="progress-section">
+        <div class="progress-info">
+            <h6>Progress</h6>
+            <div class="progress-count">
+                <small id="selectedValue">{{ request.session.selected|length }}</small> / {{ request.session.test_data.size }}
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: {% widthratio request.session.selected|length request.session.test_data.size 100 %}%"></div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn-reset" id="resetButton" onclick="resetQuestions()">
+                <i class="bi bi-trash-fill"></i>
+                Reset
+            </button>
+            <a href="{% url 'save-test' %}">
+                <button class="btn-finish" id="finish" disabled>Finish</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="topic-select">
+        <select class="form-select" id="topicSelect" name="subject">
+            <option value="">Select a topic</option>
+            {% for topic in topics %}
+                <option value="{{ topic.id }}">{{ topic }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="loading-spinner" id="loadingSpinner">
+        <i class="bi bi-arrow-repeat"></i> Loading questions...
+    </div>
+
+    <div class="questions-container" id="questionsDiv">
+        <!-- Questions will be loaded here -->
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+                }
+            }
+        });
+
+        $('#topicSelect').change(function () {
+            var selectedTopic = $(this).val();
+            if (!selectedTopic) return;
+
+            $('#loadingSpinner').addClass('active');
+            $('#questionsDiv').empty();
+
+            // Get current session data
+            var selectedQuestions = [];
+            try {
+                var sessionData = '{{ request.session.selected|safe }}';
+                if (sessionData) {
+                    selectedQuestions = JSON.parse(sessionData);
+                }
+            } catch (e) {
+                console.log('Error parsing session data:', e);
+            }
+
+            $.ajax({
+                url: '/Teacher/get-questions/',
+                type: 'GET',
+                data: {
+                    'topic_id': selectedTopic
+                },
+                success: function (response) {
+                    var questions = response.questions;
+                    var questionsDiv = $('#questionsDiv');
+                    var testSize = parseInt("{{ request.session.test_data.size }}");
+                    var currentCount = selectedQuestions.length;
+
+                    if (questions && questions.length > 0) {
+                        questions.forEach(function(question) {
+                            // Check if question is already in session
+                            var isSelected = selectedQuestions.includes(question.id.toString());
+                            var isDisabled = currentCount >= testSize && !isSelected;
+                            
+                            questionsDiv.append(`
+                                <div class="question-card">
+                                    <div class="question-text">${question.quiz}</div>
+                                    <div class="question-actions">
+                                        <button class="btn-add ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                                                value="${question.id}" 
+                                                style="${isSelected ? 'display: none;' : ''}"
+                                                ${isDisabled ? 'disabled' : ''}>
+                                            Add
+                                        </button>
+                                        <button class="btn-remove" 
+                                                value="${question.id}" 
+                                                style="${isSelected ? '' : 'display: none;'}">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    } else {
+                        questionsDiv.append('<div class="question-card">No questions found for this topic.</div>');
+                    }
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log('Error:', errmsg);
+                    console.log('Response:', xhr.responseText);
+                    $('#questionsDiv').append('<div class="question-card">Error loading questions. Please try again.</div>');
+                },
+                complete: function() {
+                    $('#loadingSpinner').removeClass('active');
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-add', function() {
+            var button = $(this);
+            var questionId = button.val();
+            var removeButton = button.siblings('.btn-remove');
+            var testSize = parseInt("{{ request.session.test_data.size }}");
+            var currentCount = parseInt($('#selectedValue').text());
+
+            // Check if we've reached the test size
+            if (currentCount >= testSize) {
+                return;
+            }
+
+            $.ajax({
+                url: '/Teacher/add-quiz-to-session/',
+                type: 'POST',
+                data: {
+                    'question_id': questionId
+                },
+                success: function (response) {
+                    updateProgress(response.session_data);
+                    button.addClass('selected').hide();
+                    removeButton.show();
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(errmsg);
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-remove', function() {
+            var button = $(this);
+            var questionId = button.val();
+            var addButton = button.siblings('.btn-add');
+
+            $.ajax({
+                url: '/Teacher/remove-quiz-from-session/',
+                type: 'POST',
+                data: {
+                    'question_id': questionId
+                },
+                success: function (response) {
+                    updateProgress(response.session_data);
+                    addButton.removeClass('selected').show();
+                    button.hide();
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(errmsg);
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock %}

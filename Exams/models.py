@@ -7,7 +7,7 @@ from SubjectList.models import Topic, Subject, Subtopic
 # from Supervisor.models import KnecQuizzes, KnecQuizAnswers
 
 from Teacher.models import MyClass
-from Users.models import MyUser, Students
+from Users.models import Classes, MyUser, Students
 
 
 class TopicalQuizes(models.Model):
@@ -156,7 +156,7 @@ class BaseGroupTest(models.Model):
 
 class ClassTest(BaseGroupTest):
     # MultipleObjectsReturned = None
-    class_id = models.ForeignKey(MyClass,  on_delete=models.CASCADE)
+    class_id = models.ForeignKey(Classes,  on_delete=models.CASCADE)
     quiz = models.ManyToManyField(TopicalQuizes)
 
 

@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from django.db.models import Q
+from django.db.models import Q, F
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -99,14 +99,29 @@ class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
         user = self.request.user  # get user
         try:
             # Get learners linked to logged in guardian
-            my_kids = MyKids.objects.get(user = user)  # get linked kids account
+            my_kids = MyKids.objects.get(user=user)  # get linked kids account
             mykids = my_kids.kids.all()
-            context['updates'] = Updates.objects.filter(Q(user__in=mykids)|Q(school__in=mykids.values_list('school')))
+            
+            # Get filter parameters
+            school_filter = self.request.GET.get('school_filter') == 'false'
+            
+            # Base query for updates
+            updates_query = Q(user__in=mykids) | Q(school__in=mykids.values_list('school'), user=None)
+            
+            # Add ministry filter if school is selected
+            if school_filter:
+                updates_query &= Q(ministry=F('School'))
+            
+            context['updates'] = Updates.objects.filter(updates_query).order_by('-id')
             
             if not my_kids.kids.all():
                 messages.error(self.request, f'We could not find any students linked to you.')
             else:
                 context['kids'] = my_kids
+                
+            # Pass the active filters to the template
+            context['school_filter'] = school_filter
+            
         except MyKids.DoesNotExist:
             pass
         except Exception as e:
@@ -126,7 +141,6 @@ class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
                     'user': self.request.user,
                     'level': 'Critical',
                     'model': 'DatabaseError',
-
                 }
             )
 
@@ -693,11 +707,11 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
             # Attempt to get the student's profile using the provided email
             email = Students.objects.get(adm_no=email)
-
+            print(email,'\n\n\n\n')
 
             # Attempt to get the student's profile using the provided email
             try:
-                student = MyKids.objects.get(kids=email)
+                student = MyKids.objects.get(kids=email, user=user)
                 return True
             except Exception:
                 return False
