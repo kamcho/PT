@@ -225,6 +225,12 @@
                     <i class="bi bi-graph-up-arrow"></i> Analytics
                   </a>
                 </li>
+                <li>
+                  <a class="nav-link" href="{% url 'exam-mode' %}">
+                    <i class="bi bi-journal-text"></i> Exam Mode
+                  </a>
+                </li>
+                
               {% elif user.role == 'Finance' %}
                 <li>
                   <a class="nav-link" href="{% url 'finance' %}">

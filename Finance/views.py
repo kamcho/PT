@@ -14,7 +14,7 @@ from Finance.models import  Expenses, InvoicePayments, Invoices, ProcessedSalari
 from Finance.tests import pullTransactions
 from Subscription.views import initiate_b2c_payment
 from Term.models import Terms
-from Users.models import Accounts, MyUser, Schools, StudentProfile, Students, StudentsFeeAccount
+from Users.models import Accounts, MyUser, Schools, StudentProfile, Students, StudentsFeeAccount, Classes
 # Create your views here.
 from django.db.models import Q
 
@@ -1458,6 +1458,7 @@ class SchoolFeesBalance(LoginRequiredMixin, TemplateView):
             
             context['balance'] = balances
             context['profiles'] = profiles
+            context['classes'] = Classes.objects.filter(school=self.request.user.school, is_active=True)
             
         except Exception:
             messages.error(self.request, 'Database Error !! Contact @support')
@@ -1468,7 +1469,9 @@ class SchoolFeesBalance(LoginRequiredMixin, TemplateView):
         if request.method == 'POST':
             limit = request.POST.get('limit')
             grade = request.POST.get('grade')
-            if not limit and not grade:
+            class_name = request.POST.get('class_name')
+            
+            if not limit and not grade and not class_name:
                 return redirect(self.request.get_full_path())
             
             else:
@@ -1478,38 +1481,38 @@ class SchoolFeesBalance(LoginRequiredMixin, TemplateView):
                     if int(limit) < 0:
                         profiles = StudentsFeeAccount.objects.filter(balance__lte=limit,balance__lt=0).order_by('balance')
                     else:
-
                         profiles = StudentsFeeAccount.objects.filter(balance__gte=limit).order_by('-balance')
+                    
                     balances = profiles.aggregate(balances=Sum('balance'))['balances']
+                    
                     if grade:
                         profiles = profiles.filter(user__academicprofile__current_class__grade=grade)
-                        balance = profiles.aggregate(balances=Sum('balance'))['balances']
-                        context ={
-                            'profiles':profiles,
-                            'limit':limit,
-                            'grade':grade,
-                            'balance':self.get_context_data().get('balance'),
-                            'query_balance':balance
-                        }
-                    else:
-                        balance = profiles.aggregate(balances=Sum('balance'))['balances']
-                        context ={
-                            'profiles':profiles,
-                            'limit':limit,
-                            'balance':self.get_context_data().get('balance'),
-                            'query_balance':balance
-                        }
+                    
+                    if class_name:
+                        profiles = profiles.filter(user__academicprofile__current_class__class_id=class_name)
+                    
+                    balance = profiles.aggregate(balances=Sum('balance'))['balances']
+                    
+                    context = {
+                        'profiles': profiles,
+                        'limit': limit,
+                        'grade': grade,
+                        'class_name': class_name,
+                        'balance': self.get_context_data().get('balance'),
+                        'query_balance': balance,
+                        'classes': Classes.objects.filter(school=self.request.user.school, is_active=True)
+                    }
 
-                    return render(self.request, self.template_name, context )
+                    return render(self.request, self.template_name, context)
+                    
                 except Exception as e:
-                    # Handle DatabaseError if needed
                     messages.error(self.request, str(e))
-                    error_message = str(e)  # Get the error message as a string
+                    error_message = str(e)
                     error_type = type(e).__name__
 
                     logger.critical(
                         error_message,
-                        exc_info=True,  # Include exception info in the log message
+                        exc_info=True,
                         extra={
                             'app_name': __name__,
                             'url': self.request.get_full_path(),
@@ -1518,7 +1521,6 @@ class SchoolFeesBalance(LoginRequiredMixin, TemplateView):
                             'user': self.request.user,
                             'level': 'Critical',
                             'model': 'DatabaseError',
-
                         }
                     )
                     return redirect(self.request.get_full_path())

@@ -3,23 +3,35 @@
 {% load static %}
 {% block content %}
 
+<!-- Add Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
     :root {
-      --primary-color: #2563EB;  /* Blue */
-      --secondary-color: #10B981;  /* Green */
-      --dark-bg: #111827;  /* Dark background */
-      --darker-bg: #0F172A;  /* Darker background */
-      --card-bg: #1F2937;  /* Card background */
-      --text-primary: #F9FAFB;  /* Primary text */
-      --text-secondary: #9CA3AF;  /* Secondary text */
-      --accent-color: #3B82F6;  /* Accent blue */
-      --success-color: #059669;  /* Success green */
-      --warning-color: #D97706;  /* Warning orange */
-      --danger-color: #DC2626;  /* Danger red */
+        --primary-color: #2563EB;  /* Blue */
+        --secondary-color: #10B981;  /* Green */
+        --dark-bg: #111827;  /* Dark background */
+        --darker-bg: #0F172A;  /* Darker background */
+        --card-bg: #1F2937;  /* Card background */
+        --text-primary: #F9FAFB;  /* Primary text */
+        --text-secondary: #9CA3AF;  /* Secondary text */
+        --accent-color: #3B82F6;  /* Accent blue */
+        --success-color: #059669;  /* Success green */
+        --warning-color: #D97706;  /* Warning orange */
+        --danger-color: #DC2626;  /* Danger red */
     }
 
-    .main-fr{
-        display: grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap: 30px;width: 95%;margin: 0 auto;overflow-x: hidden;
+    body {
+        background-color: var(--dark-bg);
+    }
+
+    .main-fr {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        width: 95%;
+        margin: 0 auto;
+        overflow-x: hidden;
     }
     
     /* Remove styling from a tags */
@@ -60,11 +72,118 @@
         background-color: var(--card-bg);
         color: var(--text-primary);
     }
-</style>
 
-<style>
-    body{
-        background-color: var(--dark-bg);
+    .chart-container {
+        position: relative;
+        height: 200px;
+        width: 100%;
+    }
+    
+    .subject-chart-card {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+        color: var(--text-primary);
+        transition: transform 0.3s ease;
+    }
+    
+    .subject-chart-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .guardian-card {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 30px;
+        transition: all 0.3s ease;
+        margin: 30px auto;
+        width: 95%;
+        max-width: 1200px;
+    }
+
+    .guardian-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .guardian-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .guardian-header i {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .guardian-header h5 {
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .guardian-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .guardian-item {
+        background-color: var(--darker-bg);
+        border-radius: 10px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .guardian-item:hover {
+        transform: translateX(5px);
+        border: 1px solid var(--primary-color);
+    }
+
+    .guardian-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-primary);
+        font-size: 1.25rem;
+    }
+
+    .guardian-info {
+        flex: 1;
+    }
+
+    .guardian-info h6 {
+        color: var(--text-primary);
+        margin: 0 0 0.25rem 0;
+    }
+
+    .guardian-info small {
+        color: var(--text-secondary);
+        display: block;
+    }
+
+    .guardian-contact {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .guardian-contact a {
+        color: var(--primary-color);
+        font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .guardian-contact a:hover {
+        color: var(--accent-color);
     }
 </style>
 
@@ -172,98 +291,168 @@
 <br><br>
 </div>
 
-<div style="width: 95%;margin: 60px auto;position: relative;">
-    <h6 style="padding: 20px;color: var(--text-primary);" class="text-center">Performance <strong style="color: var(--primary-color);">Analytics</strong></h6>
-    <form method="post">{% csrf_token %}
-    <div style="justify-content: center;justify-items: center;justify-self: end;width: 400px;" class="input-group">
-    <select class="form-select" aria-label="Default select example" name="grade" required>
-        <option value="" selected>Select Grade</option>
-        {% for grade in grades %}
-            <option value="{{grade}}">Grade {{ grade }}</option>
-        {% endfor %}
-      </select>
-      <select class="form-select" aria-label="Default select example" name="term" required>
-        <option value="" selected>Select Term</option>
-            <option value="Term 1">Term 1</option>
-            <option value="Term 2">Term 2</option>
-            <option value="Term 3">Term 3</option>
-      </select>
-      <button class="btn" style="background-color: var(--primary-color); color: var(--text-primary);">Filter</button>
-    </div></form><br><br>
-
-    <div id="def" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 350px)); gap: 10px; width: 100%; margin: 0 auto; justify-content: center;">
-        {% for subject in student.mysubjects.name.all %}
-        <a href="{% url 'students-exam-profile' student.adm_no %}">
-        <div style="background-color: var(--card-bg); border-radius: 10px; padding: 30px; margin-top: 40px; color: var(--text-primary);">
-            <h6 class="text-center">{{ subject.name }}</h6>
-            <canvas id="chart-{{ forloop.counter }}"></canvas>
-        </div>
-        </a>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var openerScore = {% get_subject_score student.adm_no grade subject.id term 'OPENER' %};
-                var midtermScore = {% get_subject_score student.adm_no grade subject.id term 'MID' %};
-                var endtermScore = {% get_subject_score student.adm_no grade subject.id term 'END' %};
-                
-                var ctx = document.getElementById("chart-{{ forloop.counter }}").getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Opener', 'Mid-Term', 'End-Term'],
-                        datasets: [{
-                            label: '{{ subject.name }} Scores',
-                            data: [
-                                openerScore || 0,
-                                midtermScore || 0,
-                                endtermScore || 0
-                            ],
-                            backgroundColor: [
-                                'rgba(37, 99, 235, 0.2)',  // Primary color
-                                'rgba(16, 185, 129, 0.2)', // Secondary color
-                                'rgba(59, 130, 246, 0.2)'  // Accent color
-                            ],
-                            borderColor: [
-                                'rgba(37, 99, 235, 1)',   // Primary color
-                                'rgba(16, 185, 129, 1)',  // Secondary color
-                                'rgba(59, 130, 246, 1)'   // Accent color
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: { 
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(249, 250, 251, 0.1)'  // text-primary with low opacity
-                                },
-                                ticks: {
-                                    color: 'rgba(249, 250, 251, 0.7)'  // text-primary with medium opacity
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(249, 250, 251, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'rgba(249, 250, 251, 0.7)'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: 'rgba(249, 250, 251, 0.7)'
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
+<div class="guardian-card">
+    <div class="guardian-header">
+        <i class="bi bi-people-fill"></i>
+        <h5>Linked Guardians</h5>
+    </div>
+    <div class="guardian-list">
+        {% for pf in guardians %}
+            <div class="guardian-item">
+                <div class="guardian-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="guardian-info">
+                    <h6>{{ pf.user.personalprofile.get_names|title }}</h6>
+                    <small>{{ pf.user.personalprofile.gender }}</small>
+                    <small>{{pf.user.personalprofile.phone }}</small>
+                    <small>{{pf.user.personalprofile.phone2 }}</small>
+                    <small>{{pf.user.personalprofile.location }}</small>
+                    <div class="guardian-contact">
+                        {% if kid.guardian.personalprofile.phone %}
+                            <a href="tel:{{ kid.guardian.personalprofile.phone }}" title="Call">
+                                <i class="bi bi-telephone"></i>
+                            </a>
+                        {% endif %}
+                        {% if kid.guardian.email %}
+                            <a href="mailto:{{ kid.guardian.email }}" title="Email">
+                                <i class="bi bi-envelope"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="guardian-item" style="justify-content: center;">
+                <h6 style="color: var(--text-secondary); margin: 0;">No guardians linked to this student</h6>
+            </div>
         {% endfor %}
     </div>
 </div>
+
+<div style="width: 95%;margin: 60px auto;position: relative;">
+    <h6 style="padding: 20px;color: var(--text-primary);" class="text-center">Performance <strong style="color: var(--primary-color);">Analytics</strong></h6>
+    <form method="post" style="display: flex; justify-content: center; margin-bottom: 20px;">{% csrf_token %}
+        <div class="input-group" style="max-width: 600px;">
+            <select class="form-select" aria-label="Default select example" name="grade" required>
+                <option value="" selected>Select Grade</option>
+                {% for grade in grades %}
+                    <option value="{{grade}}">Grade {{ grade }}</option>
+                {% endfor %}
+            </select>
+            <select class="form-select" aria-label="Default select example" name="term" required>
+                <option value="" selected>Select Term</option>
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+            </select>
+            <button class="btn" style="background-color: var(--primary-color); color: var(--text-primary);">Filter</button>
+        </div>
+    </form>
+
+    <div id="def" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; margin: 0 auto; justify-content: center;">
+        {% for subject in student.mysubjects.name.all %}
+        <a href="{% url 'students-exam-profile' student.adm_no %}" class="text-decoration-none">
+            <div class="subject-chart-card">
+                <h6 class="text-center mb-3">{{ subject.name }}</h6>
+                <div class="chart-container">
+                    <canvas id="chart-{{ forloop.counter }}"></canvas>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+// Wait for DOM to be fully loaded
+document.addEventListener("DOMContentLoaded", function() {
+    {% for subject in student.mysubjects.name.all %}
+        var openerScore = {% get_subject_score student.adm_no grade subject.id term 'OPENER' %};
+        var midtermScore = {% get_subject_score student.adm_no grade subject.id term 'MID' %};
+        var endtermScore = {% get_subject_score student.adm_no grade subject.id term 'END' %};
+        
+        var ctx = document.getElementById("chart-{{ forloop.counter }}");
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Opener', 'Mid-Term', 'End-Term'],
+                    datasets: [{
+                        label: '{{ subject.name }} Scores',
+                        data: [
+                            openerScore || 0,
+                            midtermScore || 0,
+                            endtermScore || 0
+                        ],
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.5)',  // Primary color
+                            'rgba(79, 70, 229, 0.5)',   // Secondary color
+                            'rgba(129, 140, 248, 0.5)'  // Accent color
+                        ],
+                        borderColor: [
+                            'rgba(99, 102, 241, 1)',
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(129, 140, 248, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(248, 250, 252, 0.8)',
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: 'rgba(248, 250, 252, 0.8)',
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: {
+                                family: "'Inter', sans-serif",
+                                size: 14
+                            },
+                            bodyFont: {
+                                family: "'Inter', sans-serif",
+                                size: 12
+                            },
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    }
+                }
+            });
+        }
+    {% endfor %}
+});
+</script>
 
 <div style="width: 99%;margin: 150px auto 0 auto;background-color: var(--card-bg);color: var(--text-primary);position: relative;"><br><br>
     <h5 style="padding-left: 30px;" class="text-center">E-Learning, Assignments & Analytics</h5><br><br>

@@ -93,13 +93,13 @@
         color: var(--text-secondary);
     }
 
-    .form-control {
+    .form-control, .form-select {
         background: var(--background-color) !important;
         border: none !important;
         color: var(--text-primary) !important;
     }
 
-    .form-control:focus {
+    .form-control:focus, .form-select:focus {
         box-shadow: none !important;
     }
 
@@ -206,13 +206,104 @@
             padding: 1rem;
         }
     }
+
+    @media print {
+        /* Reset all margins and padding */
+        @page {
+            margin: 0;
+        }
+        
+        /* Hide everything except the table */
+        body * {
+            visibility: hidden;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .table-container,
+        .table-container * {
+            visibility: visible;
+        }
+        
+        .table-container {
+            width: calc(100% - 60px); /* Account for left and right padding */
+            margin: 0 !important;
+            padding: 30px !important; /* Add 30px padding on all sides */
+            position: static !important;
+        }
+        
+        /* Table styling for print */
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0 !important;
+            padding: 0 !important;
+            page-break-inside: auto;
+        }
+        
+        .table caption {
+            color: black !important;
+            font-weight: bold;
+            padding: 8px !important;
+            margin: 0 !important;
+        }
+        
+        .table th {
+            background-color: #f2f2f2 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            color: black !important;
+            font-weight: bold;
+        }
+        
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            color: black !important;
+        }
+        
+        /* Remove zebra stripes */
+        .table tr {
+            background-color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        /* Ensure rows can break across pages */
+        tr {
+            page-break-inside: avoid;
+        }
+        
+        /* Ensure links are readable in print */
+        .student-link {
+            color: black !important;
+            text-decoration: none !important;
+        }
+        
+        /* Ensure balance colors are visible in print */
+        .balance-positive {
+            color: #10b981 !important;
+            font-weight: bold;
+        }
+        .balance-negative {
+            color: #ef4444 !important;
+            font-weight: bold;
+        }
+    }
 </style>
 
 <div class="container">
     <div class="page-header">
         <h1 class="page-title">Students Fee Balances</h1>
-        <button class="export-btn" onclick="exportToExcel()">
-            <i class="bi bi-download"></i> Export to Excel
+        <button class="export-btn" onclick="printTable()">
+            <i class="bi bi-printer"></i> Print
         </button>
     </div>
 
@@ -239,6 +330,15 @@
             <div class="input-group">
                 <span class="input-group-text">Grade</span>
                 <input type="number" class="form-control" value="{{ grade }}" name="grade" placeholder="Enter grade">
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">Class</span>
+                <select class="form-select" name="class_name">
+                    <option value="">All Classes</option>
+                    {% for class in classes %}
+                        <option value="{{ class.class_id }}">{{ class.grade }} {{ class.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <button type="submit" class="btn-filter">
                 <i class="bi bi-funnel"></i> Filter
@@ -289,9 +389,8 @@
 </div>
 
 <script>
-function exportToExcel() {
-    // Add export functionality here
-    alert('Export functionality will be implemented soon!');
+function printTable() {
+    window.print();
 }
 </script>
 

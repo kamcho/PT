@@ -351,7 +351,7 @@ class CreateUser(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 
            
             except Exception as e:
-                messages.error(self.request, f'We could not save the student. Contact @support')
+                messages.error(self.request, str(e))
 
             return redirect(request.get_full_path())
 
@@ -864,6 +864,7 @@ class StudentsProfile(LoginRequiredMixin, TemplateView):
             guardians = MyKids.objects.filter(kids=user)
             context['guardians'] = guardians
             subjects = Subject.objects.filter(grade=grade)
+            print(subjects, 'subjects')
             context['subjects'] = subjects
             context['student'] = user
             mysubjects, obj = MySubjects.objects.get_or_create(user=user)
@@ -1015,31 +1016,51 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['base_html'] = check_role(self.request.user)
+        
+        # Set base template based on user role
+        if self.request.user.role == 'Student':
+            context['base_html'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor', 'Finance', 'Receptionist']:
+            context['base_html'] = 'Supervisor/base.html'
         
         id = self.kwargs['id']
         try:
             student = Students.objects.get(adm_no=id)
             grade = self.request.session.get('grade', student.academicprofile.current_class.grade)
             term = self.request.session.get('term', 'Term 1')
-            
+            period = self.request.session.get('period', 'MID')
             # Get all available grades (1-12)
             context['grades'] = list(range(1, 13))
             
-            scores = Exam.objects.filter(user__adm_no=id, subject__grade=grade, term__term=term) 
-            if scores:
-                opener = scores.filter(period='OPENER')
-                mid = scores.filter(period='MID')
-                end = scores.filter(period='END')
-                context['opener'] = opener
-                context['mid'] = mid
-                context['end'] = end
-                context['scores'] = scores
-                context['term'] = term
+            scores = Exam.objects.filter(user__adm_no=id, subject__grade=grade, term__term=term, period=period)
+            
+            # Calculate analytics
+            if scores.exists():
+                total_scores = scores.count()
+                total_points = sum(score.score for score in scores)
+                highest_score = max(score.score for score in scores)
+                average_score = round(total_points / total_scores, 1) if total_scores > 0 else 0
+                passing_scores = sum(1 for score in scores if score.score >= 50)  # Assuming 50 is passing score
+                passing_rate = round((passing_scores / total_scores * 100), 1) if total_scores > 0 else 0
+                
+                context.update({
+                    'average_score': average_score,
+                    'highest_score': highest_score,
+                    'total_exams': total_scores,
+                    'passing_rate': passing_rate
+                })
+            
+            context['scores'] = scores
+            context['term'] = term
             context['grade'] = grade
             context['student'] = student
-        except:
-            messages.error(self.request, 'We could not find a student matching your query !')
+            context['period'] = period
+        except Exception as e:
+            messages.error(self.request, f'We could not find a student matching your query! {str(e)}')
         
         return context
     
@@ -1047,8 +1068,10 @@ class StudentExamProfile(LoginRequiredMixin, TemplateView):
         if self.request.method == 'POST':
             selected = self.request.POST.get('grade')
             term = self.request.POST.get('term')
+            period = self.request.POST.get('period')
             self.request.session['grade'] = selected
             self.request.session['term'] = term
+            self.request.session['period'] = period
             return redirect(self.request.get_full_path())
 
 class StudentTaskSelect(TemplateView):

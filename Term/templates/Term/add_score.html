@@ -1,76 +1,323 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
+<style>
+:root {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --primary: #6366f1;
+    --primary-hover: #818cf8;
+    --success: #22c55e;
+    --warning: #eab308;
+    --danger: #ef4444;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+}
 
-<br><br><br><br>
-{% if period.status %}
-<div class="container" style="width: 95%;max-width: 900px;margin: 0 auto;">
-    <form method="post">
-        {% csrf_token %}
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+}
 
-        <h6 >{{ subject.name }} grade {{ subject.grade }} {{ period.period }} Term Period</h6>
-        {% if students %}
+.main-container {
+    min-height: 100vh;
+    background-color: var(--bg-main);
+    padding: 2rem 1rem;
+}
 
-        <br>
-            <select id="student" class="form-select"  aria-label="Default select example" name="user" required>
-                {% for student in students %}
-                    <option value="{{ student.user.adm_no }}">{{ student.user.studentprofile.get_names }} {{ student.user.adm_no }}</option>
-                {% endfor %}
-                
-            </select>
-        <br>
+.score-container {
+    max-width: 1000px;
+    margin: 4rem auto 2rem;
+    background: var(--bg-card);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
 
-        
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="inputField3" class="form-label">Score</label>
-                <input type="number" class="form-control" id="inputField3" name="score" maxlength="3" placeholder="score" required>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-warning">Save</button>
-        {% endif %}
-    </form>
+.header-section {
+    background: linear-gradient(45deg, var(--bg-card), var(--bg-card-hover));
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
 
-    <br><br>
-    <table class="container table">
-        <thead>
-          <tr style="background-color: black;color: white;text-transform: capitalize !important;">
-            <th><h6>ID</h6></th>
-            <th><h6 >STUDENT</th></h6></th>
-            <!-- <th><h6 >ADM No</th></h6></th> -->
-            <th><h6>SCORE</h6></th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for test in scores %}
-          <tr><td>{{ forloop.counter }}</td>
-            
-                <td><a href="{% url 'students-profile' test.user %}">{{ test.user.studentprofile.get_names }}<br><small>{{ test.user.adm_no }}</small></a></td>
-            <td>
-                <form method="post" class="input-group" style="width: 200px !important;">
-                    {% csrf_token %}
-                    <input type="number" class="form-control"  value="{{ test.score }}" id="inputField3" name="new" maxlength="3" placeholder="{{ test.score }}" required>
-                    <button class="btn btn-dark" value="{{ test.user }}" name="update">Update</button>
-                </form>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-     </table>
+.header-section h6 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
 
-    <div>
+.header-section h6 i {
+    color: var(--primary);
+}
+
+.form-section {
+    padding: 2rem;
+    background: var(--bg-card);
+}
+
+.form-select {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 12px;
+    padding: 1rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.form-select option {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    padding: 0.5rem;
+}
+
+.score-input-group {
+    background: var(--bg-main);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.form-control {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.btn {
+    padding: 0.875rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-warning {
+    background: var(--primary);
+    color: var(--text-primary);
+}
+
+.btn-warning:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-dark {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+}
+
+.btn-dark:hover {
+    background: var(--bg-main);
+    transform: translateY(-2px);
+}
+
+.scores-table {
+    margin-top: 2rem;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.scores-table thead th {
+    background: var(--bg-main);
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.scores-table tbody tr {
+    background: var(--bg-main);
+    transition: all 0.3s ease;
+}
+
+.scores-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scores-table td {
+    padding: 1rem;
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+.scores-table td a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.scores-table td a:hover {
+    color: var(--primary-hover);
+}
+
+.scores-table td small {
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    width: 100% !important;
+    max-width: 300px;
+}
+
+.input-group .form-control {
+    border-radius: 10px;
+    margin: 0;
+    min-width: 120px;
+    font-size: 1rem;
+    padding: 0.875rem 1rem;
+    text-align: center;
+}
+
+.input-group .btn {
+    white-space: nowrap;
+    padding: 0.875rem 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .score-container {
+        margin: 1rem auto;
+    }
     
+    .header-section,
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .input-group {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    
+    .input-group .form-control,
+    .input-group .btn {
+        width: 100%;
+    }
+    
+    .scores-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .scores-table td {
+        min-width: 100px;
+    }
+
+    .scores-table td:last-child {
+        min-width: 300px;
+    }
+}
+</style>
+
+<div class="main-container">
+    {% if period.status %}
+    <div class="score-container">
+        <div class="header-section">
+            <h6>
+                <i class="bi bi-journal-check"></i>
+                {{ subject.name }} grade {{ subject.grade }} {{ period.period }} Term Period
+            </h6>
+        </div>
+
+        <div class="form-section">
+            <form method="post">
+                {% csrf_token %}
+                {% if students %}
+                    <select id="student" class="form-select" aria-label="Select student" name="user" required>
+                        {% for student in students %}
+                            <option value="{{ student.user.adm_no }}">{{ student.user.studentprofile.get_names }} {{ student.user.adm_no }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="score-input-group">
+                        <label for="inputField3" class="form-label">Score</label>
+                        <input type="number" class="form-control" id="inputField3" name="score" maxlength="3" placeholder="Enter score" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-save"></i>
+                        Save Score
+                    </button>
+                {% endif %}
+            </form>
+
+            <table class="scores-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for test in scores %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'students-profile' test.user %}">
+                                {{ test.user.studentprofile.get_names }}
+                                <small>{{ test.user.adm_no }}</small>
+                            </a>
+                        </td>
+                        <td>
+                            <form method="post" class="input-group">
+                                {% csrf_token %}
+                                <input type="number" class="form-control" value="{{ test.score }}" name="new" maxlength="3" placeholder="{{ test.score }}" required>
+                                <button class="btn btn-dark" value="{{ test.user }}" name="update">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
-
-
+    {% endif %}
 </div>
-{% else %}
-
-{% endif %}
-
-
-
-
 
 {% endblock %}

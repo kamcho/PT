@@ -5,432 +5,504 @@
 
 <style>
 :root {
-    --bg-dark: #1a1c23;
-    --bg-card: #242631;
-    --bg-card-hover: #2d303d;
-    --primary-color: #6c5ce7;
-    --secondary-color: #a29bfe;
-    --accent-color: #fd79a8;
-    --text-primary: #ffffff;
-    --text-secondary: #a0aec0;
-    --success-color: #00b894;
-    --warning-color: #fdcb6e;
-    --danger-color: #d63031;
-    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    /* Modern dark theme color palette */
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --bg-card-darker: #0f172a;
+    --primary-color: #6366f1;
+    --secondary-color: #818cf8;
+    --accent-color: #f472b6;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --success-color: #22c55e;
+    --warning-color: #eab308;
+    --danger-color: #ef4444;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    --gradient-bg: linear-gradient(135deg, #1e293b, #0f172a);
 }
 
 body {
     background-color: var(--bg-dark);
     color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-.dashboard-container {
-    position: relative;
-    margin-bottom: 2rem;
-    padding: 0.5rem;
-}
-
-.wave-container {
-    position: relative;
-    width: 100%;
-    margin-top: 60px;
-    background: var(--gradient-bg);
-    overflow: hidden;
+.dashboard-header {
+    background: var(--bg-card-darker);
+    padding: 2rem;
     border-radius: 20px;
-    box-shadow: var(--card-shadow);
-}
-
-.wave {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 200%;
-    height: 100px;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23242631" fill-opacity="1" d="M0,192 C320,300 420,300 720,192 C1020,84 1320,84 1440,192 L1440,320 L0,320 Z"></path></svg>') repeat-x;
-    animation: wave-animation 20s linear infinite;
-    transform-origin: 0 100%;
-}
-
-@keyframes wave-animation {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
-.users-view {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    padding: 1rem;
+    margin: 2rem 1rem;
     position: relative;
-    z-index: 1;
-}
-
-.user-card {
-    background: var(--bg-card);
-    border-radius: 15px;
-    padding: 1rem;
-    text-align: center;
+    overflow: hidden;
     box-shadow: var(--card-shadow);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--bg-card-hover);
 }
 
-.user-card:hover {
-    transform: translateY(-5px);
-    background: var(--bg-card-hover);
-    border-color: var(--primary-color);
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E");
+    opacity: 0.3;
 }
 
-.user-card i {
+.header-title {
     font-size: 1.5rem;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-}
-
-.user-card h4 {
+    font-weight: 600;
+    margin-bottom: 1rem;
     color: var(--text-primary);
-    font-size: 1.5rem;
-    margin: 0.25rem 0;
 }
 
-.user-card small {
-    color: var(--text-secondary);
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.dashboard-grid {
+.stats-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
     margin-top: 1rem;
 }
 
-@media (min-width: 768px) {
-    .dashboard-grid {
-        grid-template-columns: 2fr 1fr;
-    }
+.stat-card {
+    background: var(--bg-card-darker);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid var(--bg-card-hover);
+    box-shadow: var(--card-shadow);
 }
 
-.service-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    background: var(--bg-card);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.stat-card h4 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.stat-card small {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.gender-stats {
+    display: flex;
+    justify-content: center;
     gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.gender-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+}
+
+.gender-stat i {
+    font-size: 1rem;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.gender-stat span {
+    color: var(--text-primary);
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 1.5rem;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+.quick-actions {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 1.5rem;
+    height: fit-content;
+    border: 1px solid var(--bg-card-hover);
+}
+
+.quick-actions h6 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+
+.action-link:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    transform: translateX(5px);
+}
+
+.action-link i {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
 }
 
 .service-card {
     background: var(--bg-card);
-    border-radius: 15px;
-    padding: 1rem;
-    box-shadow: var(--card-shadow);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid var(--bg-card-hover);
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .service-card:hover {
     transform: translateY(-5px);
-    background: var(--bg-card-hover);
     border-color: var(--primary-color);
+    background: var(--bg-card-hover);
 }
 
 .service-card i {
-    font-size: 1.25rem;
+    font-size: 2rem;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .service-card h6 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
-    font-size: 1rem;
 }
 
 .service-card p {
     color: var(--text-secondary);
+    font-size: 0.875rem;
     margin: 0;
-    font-size: 0.875rem;
 }
 
-.panel-card {
+.filter-section {
     background: var(--bg-card);
-    border-radius: 15px;
-    padding: 1rem;
-    color: var(--text-primary);
-    box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    height: fit-content;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border: 1px solid var(--bg-card-hover);
 }
 
-.panel-card h6 {
+.filter-section h6 {
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
     font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
 }
 
-.panel-card a {
-    color: var(--text-secondary);
-    text-decoration: none;
+.filter-form {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-label {
     display: block;
-    padding: 0.5rem 0;
-    transition: all 0.3s ease;
-    border-radius: 8px;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
     font-size: 0.875rem;
 }
 
-.panel-card a:hover {
+.form-control, .form-select {
+    background: var(--bg-dark);
+    border: 1px solid var(--bg-card-hover);
     color: var(--text-primary);
-    background: var(--bg-card-hover);
-    padding-left: 0.75rem;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    font-size: 0.875rem;
 }
 
-.panel-card i {
-    margin-right: 0.5rem;
-    color: var(--primary-color);
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
 .chart-container {
     background: var(--bg-card);
-    border-radius: 15px;
-    padding: 1rem;
-    box-shadow: var(--card-shadow);
-    margin: 1rem auto;
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border: 1px solid var(--bg-card-hover);
+    height: 400px;
 }
 
-.filter-form {
-    background: var(--bg-card);
-    border-radius: 15px;
-    padding: 1rem;
-    box-shadow: var(--card-shadow);
-    margin: 1rem auto;
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.filter-form .input-group {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.filter-form .form-control,
-.filter-form .form-select {
-    background: var(--bg-dark);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    flex: 1 1 150px;
-    max-width: 200px;
-    height: 38px;
-    font-size: 0.875rem;
-}
-
-.filter-form .form-control:focus,
-.filter-form .form-select:focus {
-    background: var(--bg-dark);
-    border-color: var(--primary-color);
-    color: var(--text-primary);
-    box-shadow: none;
-}
-
-.filter-form .btn-primary {
-    background: var(--primary-color);
-    border: none;
-    padding: 0.5rem 1rem;
-    flex: 0 1 auto;
-    height: 38px;
-    font-size: 0.875rem;
-}
-
-.filter-form .btn-primary:hover {
-    background: var(--secondary-color);
-}
-
-.no-style {
-    text-decoration: none;
-    color: inherit;
-}
-
-hr {
-    border-color: rgba(255, 255, 255, 0.1);
-    margin: 0.5rem 0;
-}
-
-@media (max-width: 576px) {
-    .users-view {
+@media (max-width: 1024px) {
+    .main-content {
         grid-template-columns: 1fr;
     }
     
-    .service-grid {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .stats-grid {
+        gap: 1rem;
+    }
+    
+    .services-grid {
         grid-template-columns: 1fr;
     }
     
-    .filter-form .input-group {
-        flex-direction: row;
-        justify-content: center;
+    .filter-form {
+        flex-direction: column;
     }
     
-    .filter-form .form-control,
-    .filter-form .form-select {
-        max-width: 120px;
-    }
-    
-    .filter-form .btn-primary {
-        max-width: 100px;
+    .form-group {
+        min-width: 100%;
     }
 }
 </style>
 
-<div class="dashboard-container">
-    <div class="wave-container">
-        <div class="wave"></div>
-        
-        <div class="users-view">
-            <div class="user-card">
-                <i class="bi bi-people-fill"></i>
-                <h4>{{ users }}</h4>
-                <small>Total Users</small>
-            </div>
-            
-            <a class="no-style" href="{% url 'students-view' %}">
-                <div class="user-card">
-                    <i class="bi bi-mortarboard-fill"></i>
-                    <h4>{{ students }}</h4>
-                    <small>
-                        <i class="bi bi-gender-male"></i> M {{ males }} | 
-                        <i class="bi bi-gender-female"></i> F {{ females }}
-                    </small>
-                </div>
-            </a>
-            
-            <a class="no-style" href="{% url 'teachers-view' %}">
-                <div class="user-card">
-                    <i class="bi bi-person-workspace"></i>
-                    <h4>{{ teachers }}</h4>
-                    <small>
-                        <i class="bi bi-gender-male"></i> M {{ t_males }} | 
-                        <i class="bi bi-gender-female"></i> F {{ t_females }}
-                    </small>
-                </div>
-            </a>
-            
-            <a class="no-style" href="{% url 'guardians-view' %}">
-                <div class="user-card">
-                    <i class="bi bi-people-fill"></i>
-                    <h4>{{ parents }}</h4>
-                    <small>
-                        <i class="bi bi-gender-male"></i> M {{ g_males }} | 
-                        <i class="bi bi-gender-female"></i> F {{ g_females }}
-                    </small>
-                </div>
-            </a>
+<div class="dashboard-header">
+    <h1 class="header-title">School Dashboard</h1>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="bi bi-people-fill"></i>
+            <h4>{{ users }}</h4>
+            <small>Total Users</small>
         </div>
+        
+        <a href="{% url 'students-view' %}" class="stat-card" style="text-decoration: none;">
+            <i class="bi bi-mortarboard-fill"></i>
+            <h4>{{ students }}</h4>
+            <small>Students</small>
+            <div class="gender-stats">
+                <div class="gender-stat">
+                    <i class="bi bi-gender-male"></i>
+                    <span>{{ males }}</span>
+                </div>
+                <div class="gender-stat">
+                    <i class="bi bi-gender-female"></i>
+                    <span>{{ females }}</span>
+                </div>
+            </div>
+        </a>
+        
+        <a href="{% url 'teachers-view' %}" class="stat-card" style="text-decoration: none;">
+            <i class="bi bi-person-workspace"></i>
+            <h4>{{ teachers }}</h4>
+            <small>Teachers</small>
+            <div class="gender-stats">
+                <div class="gender-stat">
+                    <i class="bi bi-gender-male"></i>
+                    <span>{{ t_males }}</span>
+                </div>
+                <div class="gender-stat">
+                    <i class="bi bi-gender-female"></i>
+                    <span>{{ t_females }}</span>
+                </div>
+            </div>
+        </a>
+        
+        <a href="{% url 'guardians-view' %}" class="stat-card" style="text-decoration: none;">
+            <i class="bi bi-people-fill"></i>
+            <h4>{{ parents }}</h4>
+            <small>Parents</small>
+            <div class="gender-stats">
+                <div class="gender-stat">
+                    <i class="bi bi-gender-male"></i>
+                    <span>{{ g_males }}</span>
+                </div>
+                <div class="gender-stat">
+                    <i class="bi bi-gender-female"></i>
+                    <span>{{ g_females }}</span>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 
-<div class="dashboard-grid">
-    <div class="service-grid">
-        <a class="no-style" href="{% url 'finance' %}">
-            <div class="service-card">
-                <i class="bi bi-cash-stack"></i>
-                <h6>Finance</h6>
-                <p>View and manage institution's finances</p>
-            </div>
+<div class="main-content">
+    <div class="services-grid">
+        <a href="{% url 'finance' %}" class="service-card" style="text-decoration: none;">
+            <i class="bi bi-cash-stack"></i>
+            <h6>Finance Management</h6>
+            <p>Track and manage school finances, fees, and payments</p>
         </a>
         
-        <a class="no-style" href="{% url 'classes' %}">
-            <div class="service-card">
-                <i class="bi bi-book"></i>
-                <h6>Classes</h6>
-                <p>View and manage classes</p>
-            </div>
+        <a href="{% url 'classes' %}" class="service-card" style="text-decoration: none;">
+            <i class="bi bi-book"></i>
+            <h6>Class Management</h6>
+            <p>Organize and monitor class activities and performance</p>
         </a>
         
-        <a class="no-style" href="{% url 'class-teacher' %}">
-            <div class="service-card">
-                <i class="bi bi-person-badge"></i>
-                <h6>Manage Teachers</h6>
-                <p>Add and manage class teachers</p>
-            </div>
+        <a href="{% url 'class-teacher' %}" class="service-card" style="text-decoration: none;">
+            <i class="bi bi-person-badge"></i>
+            <h6>Teacher Management</h6>
+            <p>Assign and manage class teachers and their responsibilities</p>
         </a>
         
-        <a class="no-style" href="{% url 'incidents' %}">
-            <div class="service-card">
-                <i class="bi bi-shield-exclamation"></i>
-                <h6>Discipline</h6>
-                <p>Create and manage indiscipline incidents</p>
-            </div>
+        <a href="{% url 'incidents' %}" class="service-card" style="text-decoration: none;">
+            <i class="bi bi-shield-exclamation"></i>
+            <h6>Discipline Records</h6>
+            <p>Track and manage student discipline and incidents</p>
         </a>
     </div>
 
-    <div class="panel-card">
-        <h6><i class="bi bi-gear"></i> Quick Actions</h6>
-        <hr>
-        <a href="{% url 'notices' %}"><i class="bi bi-megaphone"></i> Announcements</a>
-        <a href="{% url 'exam-mode' %}"><i class="bi bi-pencil-square"></i> Enable Exam Mode</a>
-        <a href="{% url 'create-class' %}"><i class="bi bi-plus-circle"></i> Create Class</a>
-        <a href="#"><i class="bi bi-wallet2"></i> Fee Balances</a>
+    <div class="quick-actions">
+        <h6><i class="bi bi-lightning-charge-fill"></i> Quick Actions</h6>
+        <a href="{% url 'notices' %}" class="action-link">
+            <i class="bi bi-megaphone"></i>
+            <span>Announcements</span>
+        </a>
+        <a href="{% url 'exam-mode' %}" class="action-link">
+            <i class="bi bi-pencil-square"></i>
+            <span>Exam Mode</span>
+        </a>
+        <a href="{% url 'create-class' %}" class="action-link">
+            <i class="bi bi-plus-circle"></i>
+            <span>Create Class</span>
+        </a>
+        <a href="#" class="action-link">
+            <i class="bi bi-wallet2"></i>
+            <span>Fee Balances</span>
+        </a>
     </div>
 </div>
 
-<div class="filter-form">
-    <form method="post">
+<div class="filter-section">
+    <h6><i class="bi bi-funnel"></i> Filter Results</h6>
+    <form method="post" class="filter-form">
         {% csrf_token %}
-        <div class="input-group">
-            <input type="number" class="form-control" placeholder="{{ year }}" name="year" required>
-            <select class="form-select" name="term" required>
+        <div class="form-group">
+            <label class="form-label" for="year">Academic Year</label>
+            <input type="number" id="year" class="form-control" placeholder="{{ year }}" name="year" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="term">Term</label>
+            <select class="form-select" id="term" name="term" required>
                 <option value="{{ term }}" selected>{{ term }}</option>
                 <option value="Term 1">Term 1</option>
                 <option value="Term 2">Term 2</option>
                 <option value="Term 3">Term 3</option>
             </select>
-            <select class="form-select" name="period" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="period">Period</label>
+            <select class="form-select" id="period" name="period" required>
                 <option value="{{ period }}" selected>{{ period }}</option>
                 <option value="OPENER">OPENER</option>
                 <option value="MID">MID TERM</option>
-                <option value="END Term">END TERM</option>
+                <option value="END">END TERM</option>
             </select>
-            <button class="btn btn-primary" type="submit">Update</button>
+        </div>
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-filter"></i>
+                Update Filters
+            </button>
         </div>
     </form>
 </div>
 
 <div class="chart-container">
-    <canvas id="myChart"></canvas>
+    <canvas id="performanceChart"></canvas>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var labels = {{ chart_data.labels|safe }};
-    var datasets = {{ chart_data.datasets|safe }};
-
-    // Update chart colors for dark theme
-    datasets.forEach(dataset => {
-        dataset.borderColor = dataset.backgroundColor;
-        dataset.backgroundColor = dataset.backgroundColor.replace('0.8', '0.2');
-    });
-
-    var config = {
+document.addEventListener('DOMContentLoaded', function() {
+    const chartData = {{ chart_data|safe }};
+    
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
-            datasets: datasets,
+            labels: chartData.labels,
+            datasets: chartData.datasets.map(dataset => ({
+                ...dataset,
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+            }))
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'top',
                     labels: {
-                        color: '#ffffff'
+                        color: 'rgb(248, 250, 252)',
+                        font: {
+                            family: "'Inter', system-ui, -apple-system, sans-serif"
+                        }
                     }
                 },
                 title: {
                     display: true,
-                    text: 'Student Performance Distribution',
-                    color: '#ffffff'
+                    text: 'Student Performance Distribution by Grade',
+                    color: 'rgb(248, 250, 252)',
+                    font: {
+                        size: 16,
+                        family: "'Inter', system-ui, -apple-system, sans-serif",
+                        weight: '600'
+                    }
                 }
             },
             scales: {
@@ -440,12 +512,18 @@ hr {
                         color: 'rgba(255, 255, 255, 0.1)'
                     },
                     ticks: {
-                        color: '#ffffff'
+                        color: 'rgb(248, 250, 252)',
+                        font: {
+                            family: "'Inter', system-ui, -apple-system, sans-serif"
+                        }
                     },
                     title: {
                         display: true,
                         text: 'Number of Students',
-                        color: '#ffffff'
+                        color: 'rgb(248, 250, 252)',
+                        font: {
+                            family: "'Inter', system-ui, -apple-system, sans-serif"
+                        }
                     }
                 },
                 x: {
@@ -453,21 +531,24 @@ hr {
                         color: 'rgba(255, 255, 255, 0.1)'
                     },
                     ticks: {
-                        color: '#ffffff'
+                        color: 'rgb(248, 250, 252)',
+                        font: {
+                            family: "'Inter', system-ui, -apple-system, sans-serif"
+                        }
                     },
                     title: {
                         display: true,
-                        text: 'Total Marks Distribution',
-                        color: '#ffffff'
+                        text: 'Score Ranges',
+                        color: 'rgb(248, 250, 252)',
+                        font: {
+                            family: "'Inter', system-ui, -apple-system, sans-serif"
+                        }
                     }
                 }
             }
         }
-    };
-
-    var myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-    );
+    });
+});
 </script>
+
 {% endblock %}
