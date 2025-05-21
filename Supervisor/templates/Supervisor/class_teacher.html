@@ -140,7 +140,7 @@
                                 required>
                             <option value="">Choose a teacher...</option>
                             {% for user in teachers %}
-                                <option value="{{ user.email }}">
+                                <option value="{{ user.id_number}}">
                                     {{ user.personalprofile.get_names|title }}
                                 </option>
                             {% endfor %}

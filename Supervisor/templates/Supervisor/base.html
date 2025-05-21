@@ -30,14 +30,17 @@
 
   <style>
     :root {
-      --bg-dark: #1a1c23;
-      --bg-card: #242631;
-      --text-primary: #e2e8f0;
-      --text-secondary: #a0aec0;
-      --primary-color: #6c5ce7;
-      --success-color: #00b894;
-      --danger-color: #d63031;
-      --border-color: #2d3748;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --primary-color: #6366f1;
+      --secondary-color: #818cf8;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --danger-color: #ef4444;
+      --success-color: #22c55e;
+      --warning-color: #f59e0b;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
     }
 
     body {
@@ -46,150 +49,274 @@
     }
 
     .navbar {
-      background-color: var(--bg-card) !important;
-      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-card) !important;
+      border-bottom: 1px solid var(--bg-card-hover);
+      padding: 0.75rem 1.5rem;
     }
 
     .navbar-brand {
       color: var(--text-primary) !important;
+      font-weight: 600;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .offcanvas {
-      background-color: var(--bg-card);
+    .navbar-brand i {
+      color: var(--primary-color);
+    }
+
+    .navbar-toggler {
+      border: none;
+      padding: 0.5rem;
       color: var(--text-primary);
     }
 
+    .navbar-toggler:focus {
+      box-shadow: none;
+    }
+
+    .offcanvas {
+      background: var(--bg-card);
+      border-left: 1px solid var(--bg-card-hover);
+    }
+
     .offcanvas-header {
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--bg-card-hover);
+      padding: 1.5rem;
     }
 
     .offcanvas-title {
       color: var(--text-primary);
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    .btn-close {
+      color: var(--text-primary);
+      opacity: 0.8;
     }
 
     .nav-link {
-      color: var(--text-primary) !important;
-      transition: color 0.2s;
+      color: var(--text-secondary) !important;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .nav-link:hover {
-      color: var(--primary-color) !important;
+      color: var(--text-primary) !important;
+      background: var(--bg-card-hover);
     }
 
-    .dropdown-menu {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-    }
-
-    .dropdown-item {
-      color: var(--text-primary);
-    }
-
-    .dropdown-item:hover {
-      background-color: var(--bg-dark);
+    .nav-link i {
+      font-size: 1.1rem;
       color: var(--primary-color);
     }
 
-    .btn-secondary {
-      background-color: var(--bg-dark);
-      border-color: var(--border-color);
+    .dropdown-menu {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-hover);
+      border-radius: 8px;
+      padding: 0.5rem;
+    }
+
+    .dropdown-item {
+      color: var(--text-secondary);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+      background: var(--bg-card-hover);
       color: var(--text-primary);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card-hover);
+      border: none;
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
     }
 
     .btn-secondary:hover {
-      background-color: var(--primary-color);
-      border-color: var(--primary-color);
-    }
-
-    .alert {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: var(--bg-card);
       color: var(--text-primary);
     }
 
-    .alert-danger {
-      border-color: var(--danger-color);
+    .time-display {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-card-hover);
+      border-radius: 6px;
+      margin-left: 1rem;
     }
 
-    .alert-success {
-      border-color: var(--success-color);
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-card-hover);
+      border-radius: 8px;
+      margin-bottom: 1rem;
     }
 
-    .alert-info {
-      border-color: var(--primary-color);
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
     }
 
-    .alert-warning {
-      border-color: #f1c40f;
+    .user-info {
+      flex: 1;
     }
 
-    .main-body {
-      min-height: 100vh;
-      padding-top: 4rem;
+    .user-name {
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin: 0;
     }
 
-    /* Override Bootstrap's default styles */
-    .form-control {
-      background-color: var(--bg-dark);
-      border-color: var(--border-color);
+    .user-role {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    .user-phone {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .manage-users-btn {
+      background: var(--bg-card-hover);
+      border: none;
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      text-align: left;
+    }
+
+    .manage-users-btn:hover {
+      background: var(--bg-card);
+    }
+
+    .manage-users-btn i {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+
+    .dropdown-menu {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-hover);
+      border-radius: 8px;
+      padding: 0.5rem;
+      min-width: 200px;
+    }
+
+    .dropdown-item {
+      color: var(--text-secondary);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dropdown-item i {
+      color: var(--primary-color);
+      font-size: 1rem;
+    }
+
+    .dropdown-item:hover {
+      background: var(--bg-card-hover);
       color: var(--text-primary);
     }
 
-    .form-control:focus {
-      background-color: var(--bg-dark);
-      border-color: var(--primary-color);
-      color: var(--text-primary);
+    .dropdown-divider {
+      border-color: var(--bg-card-hover);
+      margin: 0.5rem 0;
     }
 
-    .card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-    }
-
-    .table {
-      color: var(--text-primary);
-    }
-
-    .table thead {
-      background-color: var(--bg-dark);
-    }
-
-    .table td, .table th {
-      border-color: var(--border-color);
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0.5rem 1rem;
+      }
+      
+      .time-display {
+        display: none;
+      }
     }
   </style>
 </head>
 
 <body>
-  <nav class="navbar navbar-dark fixed-top" id="to-bar">
+  <nav class="navbar navbar-dark fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">{% if user.is_authenticated %}{{ user.school.display }}{% else %}Mwalimu Private{% endif %}</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-        aria-controls="offcanvasNavbar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Term 1</h5>
-          <h5>{% now "jS F  H:i" %}</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-mortarboard-fill"></i>
+        {% if user.is_authenticated %}{{ user.school.display }}{% else %}Mwalimu Private{% endif %}
+      </a>
+      
+      <div class="d-flex align-items-center">
+        <div class="time-display">
+          {% now "jS F  H:i" %}
         </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title">Term 1</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        
         <div class="offcanvas-body">
-          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-            <script>
-              function isWebView() {
-                var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                return /(wv|Android.*Version\/[\d.]+.*Chrome\/[0-9]{2,}.0.0.0)/i.test(userAgent);
-              }
-              if (isWebView()) {
-                document.getElementById("downloadApp").style.display = "none";
-              }
-            </script>
-            <li id="downloadApp">
-              <a class="nav-link" href="/static/Users/app-release.apk" download>
-                <i class="bi bi-google-play"></i> Download APP
-              </a>
-            </li>
+          {% if user.is_authenticated %}
+            <div class="user-profile">
+              <div class="user-avatar">
+                {{ user.personalprofile.f_name|first }}{{ user.personalprofile.l_name|first }}
+              </div>
+              <div class="user-info">
+                <p class="user-name">{{ user.personalprofile.get_names }}</p>
+                <p class="user-role">{{ user.role }}</p>
+                <p class="user-phone">
+                  <i class="bi bi-telephone"></i>
+                  {{ user.personalprofile.phone }}
+                </p>
+              </div>
+            </div>
+          {% endif %}
+
+          <ul class="navbar-nav">
             {% if user.is_authenticated %}
               {% if user.role == 'Supervisor' %}
                 <li>
@@ -204,21 +331,27 @@
                 </li>
                 <li>
                   <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      Manage Users
+                    <button class="manage-users-btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="bi bi-people"></i> Manage Users
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><a class="dropdown-item" href="{% url 'students-view' %}">Students</a></li>
-                      <li><a class="dropdown-item" href="{% url 'teachers-view' %}">Teachers</a></li>
-                      <li><a class="dropdown-item" href="{% url 'guardians-view' %}">Parents</a></li>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a class="dropdown-item" href="{% url 'students-view' %}">
+                          <i class="bi bi-mortarboard"></i> Students
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="{% url 'teachers-view' %}">
+                          <i class="bi bi-person-workspace"></i> Teachers
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="{% url 'guardians-view' %}">
+                          <i class="bi bi-person-badge"></i> Parents
+                        </a>
+                      </li>
                     </ul>
                   </div>
-                </li>
-                <li>
-                  <a class="nav-link" href="">
-                    <i class="bi bi-plus"></i> Discipline
-                  </a>
                 </li>
                 <li>
                   <a class="nav-link" href="{% url 'subject-view' 4 %}">
@@ -230,21 +363,14 @@
                     <i class="bi bi-journal-text"></i> Exam Mode
                   </a>
                 </li>
-                
-              {% elif user.role == 'Finance' %}
                 <li>
                   <a class="nav-link" href="{% url 'finance' %}">
-                    <i class="bi bi-house"></i> Home
+                    <i class="bi bi-cash-stack"></i> Finance
                   </a>
                 </li>
                 <li>
                   <a class="nav-link" href="{% url 'processed-fee-payments' %}">
                     <i class="bi bi-cash"></i> Fee Payments
-                  </a>
-                </li>
-                <li>
-                  <a class="nav-link" href="{% url 'students-view' %}">
-                    <i class="bi bi-currency-exchange"></i> Add Fee Payments
                   </a>
                 </li>
                 <li>
@@ -258,21 +384,25 @@
                   <i class="bi bi-person-circle"></i> Profile
                 </a>
               </li>
-              <li class="nav-item">
+              <li>
                 <a class="nav-link" href="{% url 'logout' %}">
                   <i class="bi bi-box-arrow-right"></i> Sign out
                 </a>
               </li>
             {% else %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+              <li>
+                <a class="nav-link" href="{% url 'login' %}">
+                  <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'register' %}">Sign Up</a>
+              <li>
+                <a class="nav-link" href="{% url 'register' %}">
+                  <i class="bi bi-person-plus"></i> Sign Up
+                </a>
               </li>
-              <li class="nav-item">
+              <li>
                 <a class="nav-link" href="{% url 'password-reset' %}">
-                  <i class="bi bi-x-octagon"></i> Reset
+                  <i class="bi bi-key"></i> Reset Password
                 </a>
               </li>
             {% endif %}

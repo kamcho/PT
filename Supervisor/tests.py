@@ -88,7 +88,40 @@ def create_topics_and_subtopics(course, subject, topics_data):
                     defaults={"id": uuid.uuid4(), "file1": "studyFiles/file.pdf", "file2": "studyFiles/start.mp4", "order": str(order)}
                 )
 
-                
+                def populate_class_incidents(apps, schema_editor):
+    ClassIncident = apps.get_model('your_app_name', 'ClassIncident')
+    
+    incidents = [
+        # Minor
+        ("Minor", "Noise Making", "Student disrupted class by making noise.", 2),
+        ("Minor", "Failure to Do Homework", "Student did not submit homework as required.", 2),
+        ("Minor", "Late to Class", "Student arrived after the lesson had started.", 1),
+        ("Minor", "Improper Uniform", "Student not in proper school uniform.", 1),
+        ("Minor", "Sleeping in Class", "Student was found sleeping during the lesson.", 1),
+
+        # Moderate
+        ("Moderate", "Refusing to Do Duty", "Student refused to perform assigned classroom or school duty.", 5),
+        ("Moderate", "Skipping Class", "Student missed class without valid reason.", 6),
+        ("Moderate", "Cheating in a Test", "Student caught cheating during a test or exam.", 8),
+        ("Moderate", "Damaging School Property", "Student damaged desks, books, or other property.", 7),
+        ("Moderate", "Verbal Bullying", "Student used abusive language toward another.", 6),
+
+        # Severe
+        ("Severe", "Fighting", "Student engaged in a physical fight with another student.", 10),
+        ("Severe", "Stealing", "Student caught stealing property or money.", 10),
+        ("Severe", "Substance Abuse", "Student caught using or possessing drugs/alcohol.", 12),
+        ("Severe", "Physical Bullying", "Student physically harmed another student intentionally.", 10),
+        ("Severe", "Vandalism", "Intentional destruction of school facilities.", 10),
+    ]
+
+    for degree, name, description, points in incidents:
+        ClassIncident.objects.create(
+            incident_degree=degree,
+            name=name,
+            description=description,
+            points=points
+        )
+
 def add_subject():
     subjects = Subject.objects.all()
     courses = Course.objects.all()

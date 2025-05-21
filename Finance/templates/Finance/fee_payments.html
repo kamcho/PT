@@ -215,8 +215,10 @@ body {
                     <span class="input-group-text">Mode</span>
                     <select class="form-select" name="mode">
                         <option value="">Select Mode</option>
-                        <option value="M-Pesa">M-Pesa</option>
-                        <option value="Bank">Bank</option>
+                        {% for account in accounts %}
+                            <option value="{{ account.account }}">{{ account  }}</option>
+                        {% endfor %}
+                        
                     </select>
                 </div>
             </div>

@@ -1,47 +1,137 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
+<style>
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --primary-color: #6366f1;
+    --secondary-color: #818cf8;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --danger-color: #ef4444;
+    --success-color: #22c55e;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
 
-<div class="container">
-  <br><br><br><br>
-  
-        <div class="mb-3">
-            <span>Student</span>
-            <input type="text" class="form-control" name="adm_no" value="{{ student.adm_no }} {{ student.studentprofile.get_names }}"  placeholder="ADM NO" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.page-container {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 20px;
+    margin: 2rem 1rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--bg-card-hover);
+}
+
+.page-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control, .form-select {
+    background: var(--bg-dark) !important;
+    border: 1px solid var(--bg-card-hover) !important;
+    color: var(--text-primary) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: none !important;
+    background: var(--bg-card-hover) !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-secondary);
+}
+
+.form-control[readonly] {
+    background: var(--bg-card-hover) !important;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.submit-btn {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 200px;
+}
+
+.submit-btn:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .submit-btn {
+        width: 100%;
+    }
+}
+</style>
+<br><br>
+<div class="page-container">
+    <h2 class="page-title">Book Discipline Incident</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label class="form-label">Student</label>
+            <input type="text" 
+                   class="form-control" 
+                   name="adm_no" 
+                   value="{{ student.adm_no }} {{ student.studentprofile.get_names }}"  
+                   placeholder="ADM NO" 
+                   readonly>
         </div>
 
-        <br>
- 
+        {% if student %}
+            <div class="mb-4">
+                <label class="form-label">Incident Type</label>
+                <select class="form-select" id="class-id" name="incident">
+                    <option value="">Select Incident Type</option>
+                    {% for incident in classes %}
+                        <option value="{{ incident.id }}">{{ incident.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    {% if student %}
-    <form  method="post">
-        {% csrf_token %}
-
-
-    {% else %}
-
-    {% endif %}
-
-
-<br><br>
-
-
-
-
-
-
-  <select class="form-select" id="class-id" name="incident" aria-label="Default select example">
-    {% for incident in classes %}
-        <option value="{{ incident.id }}">{{ incident.name }}</option>
-    {% endfor %}
-
-</select>
-<br>
-
-<button class="btn btn-danger">Book</button>
-
-</form>
-
+            <div class="text-center">
+                <button type="submit" class="submit-btn">
+                    <i class="bi bi-bookmark-plus"></i> Book Incident
+                </button>
+            </div>
+        {% endif %}
+    </form>
 </div>
 
 {% endblock %}

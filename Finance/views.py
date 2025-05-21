@@ -51,29 +51,22 @@ class FinanceHome(LoginRequiredMixin, TemplateView):
     
 
 class RawFeePayments(TemplateView):
-
     template_name = 'Finance/raw_fee_payments.html'
-    def dispatch(self, request, *args, **kwargs):       
-        if not request.user.groups.filter(name='manage_fee').exists():
-            return HttpResponseForbidden("You do not have permission to access this page.")
-        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
-
-
         context = super().get_context_data(**kwargs)
-        payments = RawFeePayment.objects.all().order_by('-id')[:30]
-        
+        payments = RawFeePayment.objects.filter(school=self.request.user.school).order_by('-id')[:30]
         context['transactions'] = payments
-
+        context['accounts'] = Accounts.objects.filter(school=self.request.user.school)
         return context
     
     def post(self, request, **kwargs):
         if self.request.method == 'POST':
-            start_date_str = self.request.POST.get('from')  # Assuming 'from' is the field for start date
+            start_date_str = self.request.POST.get('from')
             end_date_str = self.request.POST.get('to')
             tid = self.request.POST.get('receipt')
             adm = self.request.POST.get('adm')
-            account = self.request.POST.get('phone')
+            account_id = self.request.POST.get('account')
             status = self.request.POST.get('status')
 
             if start_date_str:
@@ -85,20 +78,16 @@ class RawFeePayments(TemplateView):
                 end_date += timedelta(days=1)
             else:
                 end_date = None
-
-            # Add one day to the end date to include transactions on that day
-            print(tid)
             
             try:
                 # Filter transactions within the date range
                 bank_kwargs = {}
                 stk_kwargs = {}
                 
-                if account:
-                    stk_kwargs['msdn'] = account
-                    bank_kwargs['account'] = account
+                if account_id:
+                    stk_kwargs['account_id'] = account_id
+                    bank_kwargs['account_id'] = account_id
                
-                    
                 if start_date:
                     bank_kwargs['date__gte'] = start_date
                     stk_kwargs['date__gte'] = start_date
@@ -112,23 +101,20 @@ class RawFeePayments(TemplateView):
                     stk_kwargs['adm_no'] = adm
                     bank_kwargs['adm_no'] = adm
                
-                
                 transactions = RawFeePayment.objects.filter(**stk_kwargs)
                 if status:
                     status = True if status == 'True' else False
                     transactions = transactions.filter(status=status)
                 totals = transactions.aggregate(totals=Sum('amount'))['totals'] or 0
  
-                print(totals, '\n\n\n')
-                
                 if not transactions:
                     messages.info(self.request, 'We could not find results matching your query!')
                     context = {'nun':'True'}
                 else:
-                    
                     context = {
                         'transactions': transactions,
-                        'totals':totals
+                        'totals': totals,
+                        'accounts': Accounts.objects.filter(school=self.request.user.school)
                     }
                 return render(self.request, self.template_name, context)
             except:
@@ -1176,6 +1162,8 @@ class ProcessedFeePayments(LoginRequiredMixin, TemplateView):
         try:
             transactions = StudentFeePayment.objects.filter(user__school=self.request.user.school).order_by('-date')[:30]
             context['transactions'] = transactions
+            print('accounts', Accounts.objects.filter(school=self.request.user.school), )
+            context['accounts'] = Accounts.objects.filter(school=self.request.user.school)
         except Exception as e:
             # Handle DatabaseError if needed
             messages.error(self.request, 'An error occurred. We are fixing it!')
@@ -1227,7 +1215,8 @@ class ProcessedFeePayments(LoginRequiredMixin, TemplateView):
         if admission_number_param:
             filter_conditions['user__adm_no__icontains'] = admission_number_param
         if mode:
-            filter_conditions['transaction_id__mode'] = mode
+            print(mode)
+            filter_conditions['transaction_id__account__account'] = mode
 
         # Filter transactions based on the conditions
         try:
@@ -1237,7 +1226,8 @@ class ProcessedFeePayments(LoginRequiredMixin, TemplateView):
             # Add additional context if needed
             context = {
                 'transactions': transactions,
-                'totals':totals
+                'totals':totals,
+                'accounts':self.get_context_data().get('accounts')
             }
 
             return render(self.request, self.template_name, context)

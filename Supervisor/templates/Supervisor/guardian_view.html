@@ -1,81 +1,301 @@
 {% extends 'Supervisor/base.html' %}
-{% load crispy_forms_tags %}
+{% load custom_filters %}
 
 {% block content %}
 
-{% if guardian %}
-<div class="container">
-        <br>
-        <br>
-        <br>
-        {% if user.role == 'Supervisor' %}
-        <div class="profile">
-            
-              <a href="{% url 'manage-user' guardian.id_number %}"><button class="btn btn-info">Manage Guardian</button></a>
-           
-        </div>
-        {% endif %}
+<style>
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
+.guardian-container {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
 
+.action-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
 
-        <div class="">
+.action-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
 
+.guardian-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    position: relative;
+}
 
+.guardian-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
 
+.guardian-id {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
 
-<br>
+.guardian-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
 
-  <div class="accordion" id="changePhoneNumberAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="changePhoneNumberHeader">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#changePhoneNumberCollapse" aria-expanded="true" aria-controls="changePhoneNumberCollapse">
-          <small>Edit Profile</small>
-        </button>
-      </h2>
-      <div id="changePhoneNumberCollapse" class="accordion-collapse" aria-labelledby="changePhoneNumberHeader" data-bs-parent="#changePhoneNumberAccordion">
-        <div class="accordion-body">
-          
-            <div class="form-group">
-              <label for="first-name">First Name</label>
-              <input  name="first-name" id="first-name" class="form-control" value="{{ guardian.personalprofile.f_name }}" readonly>
-            </div>
-            <div class="form-group">
-              <label for="last-name">Last Name</label>
-              <input  name="last-name" class="form-control" id="last-name" value="{{ guardian.personalprofile.l_name }}" readonly>
-            </div>
-            <div class="form-group">
-              <label for="surname">Surname</label>
-              <input id="surname"  name="surname" class="form-control" value="{{ guardian.personalprofile.surname }}" readonly>
-            </div>
-            <div class="form-group">
-              <label for="phone-number">Phone Number</label>
-              <input type="tel" name="phone-number" class="form-control" id="phone-number" placeholder="{{ guardian.personalprofile.phone }}" readonly>
-            </div>
+.guardian-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: rgba(0, 184, 148, 0.1);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+}
 
-              <br>
-            
-        </div>
-      </div>
+.guardian-status svg {
+    color: var(--success-color);
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.guardian-name {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.guardian-id-number {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.guardian-phone {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.guardian-email {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.students-section {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.section-title {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.student-card {
+    background: var(--bg-card-hover);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.student-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.student-name {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.student-id {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.class-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.class-card {
+    background: var(--bg-dark);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.class-name {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.class-details {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.status-badge.processed {
+    background: rgba(0, 184, 148, 0.1);
+    color: var(--success-color);
+}
+
+.status-badge.unprocessed {
+    background: rgba(214, 48, 49, 0.1);
+    color: var(--danger-color);
+}
+
+@media (max-width: 768px) {
+    .guardian-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .guardian-id {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .class-info {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<br><br>
+<div class="guardian-container">
+    <div class="page-header">
+        <a href="{% url 'guardians-view' %}" class="action-btn">
+            <i class="bi bi-arrow-left"></i> Back to Guardians
+        </a>
     </div>
-  </div>
 
-
-            <br>
-            <br>
+    <div class="guardian-card">
+        <div class="guardian-header">
+            <div class="guardian-id">Guardian #{{ guardian.id }}</div>
+            <div class="guardian-date">Joined: {{ guardian.date|date:'d M Y' }}</div>
         </div>
-  
-  
+
+        <div class="guardian-status">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 7L9.00004 18L3.99994 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <div class="guardian-name">{{ guardian.personalprofile.get_names|title }}</div>
+        <div class="guardian-id-number">{{ guardian.id_number|title }}</div>
+        <div class="guardian-phone">
+            <i class="bi bi-telephone"></i> {{ guardian.personalprofile.phone }}
+        </div>
+        <div class="guardian-email">
+            <i class="bi bi-envelope"></i> {{ guardian.email }}
+        </div>
+    </div>
+
+    <div class="students-section">
+        <h2 class="section-title">
+            <i class="bi bi-people"></i> Students
+        </h2>
         
-
-
-        
-
-    
-    
-    
-
-
+        {% if guardian.mykids %}
+            {% for student in guardian.mykids.kids.all %}
+            <div class="student-card">
+                <div class="student-header">
+                    <div class="student-name">{{ student.studentprofile.get_names|title }}</div>
+                    <div class="student-id">ID: {{ student.adm_no }}</div>
+                    
+                </div>
+                
+                <div class="class-info">
+                   
+                    <div class="class-card">
+                        <div class="class-details">
+                          <h6>{{ student.school }}</h6>
+                          <h6>{{ student.studentprofile.gender }} </h6>
+                            <i class="bi bi-info-circle"></i> {{ student.academicprofile.current_class.grade }} {{ student.academicprofile.current_class }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="student-card">
+                <div class="class-details">
+                    <i class="bi bi-info-circle"></i> No students assigned to this guardian
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="student-card">
+                <div class="class-details">
+                    <i class="bi bi-info-circle"></i> No students assigned to this guardian
+                </div>
+            </div>
+        {% endif %}
+    </div>
 </div>
-{% endif %}
+
 {% endblock %}

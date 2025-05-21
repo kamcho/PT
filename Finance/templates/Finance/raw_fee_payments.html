@@ -214,24 +214,47 @@
     <div class="filter-section">
         <form method="post">
             {% csrf_token %}
-            <div class="input-group">
-                <span class="input-group-text">From</span>
-                <input type="date" class="form-control" name="from" placeholder="01/12/2023">
-                <span class="input-group-text">To</span>
-                <input type="date" class="form-control" name="to" placeholder="01/12/2023">
-                <span class="input-group-text">Receipt</span>
-                <input type="text" class="form-control" name="receipt" placeholder="Enter receipt number">
-                <span class="input-group-text">Phone</span>
-                <input type="text" class="form-control" name="phone" placeholder="Enter phone number">
-                <span class="input-group-text">Status</span>
-                <select class="form-select" name="status">
-                    <option value="">All Status</option>
-                    <option value="True">Processed</option>
-                    <option value="False">Un-Processed</option>
-                </select>
-                <button type="submit" class="btn btn-secondary">
-                    <i class="bi bi-funnel"></i> Filter / Reset
-                </button>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">From</span>
+                        <input type="date" class="form-control" name="from" placeholder="01/12/2023">
+                        <span class="input-group-text">To</span>
+                        <input type="date" class="form-control" name="to" placeholder="01/12/2023">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">Receipt</span>
+                        <input type="text" class="form-control" name="receipt" placeholder="Enter receipt number">
+                        <span class="input-group-text">Phone</span>
+                        <input type="text" class="form-control" name="phone" placeholder="Enter phone number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">Account</span>
+                        <select class="form-select" name="account">
+                            <option value="">All Accounts</option>
+                            {% for account in accounts %}
+                                <option value="{{ account.id }}">{{ account.name }} | {{ account.account }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">Status</span>
+                        <select class="form-select" name="status">
+                            <option value="">All Status</option>
+                            <option value="True">Processed</option>
+                            <option value="False">Un-Processed</option>
+                        </select>
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="bi bi-funnel"></i> Filter / Reset
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

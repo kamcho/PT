@@ -3,130 +3,264 @@
 {% block content %}
 
 <style>
-    .table {
-        color: var(--text-primary);
+:root {
+    --bg-dark: #1a1c23;
+    --bg-card: #242631;
+    --bg-card-hover: #2d303d;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --accent-color: #fd79a8;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.search-section {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group {
+    background: var(--bg-card-hover);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group-text {
+    background: var(--bg-card);
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control {
+    background: var(--bg-card-hover);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+}
+
+.form-control:focus {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    box-shadow: none;
+    border-color: var(--primary-color);
+}
+
+.btn-secondary {
+    background: var(--primary-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.table-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 600px;
+    overflow-y: auto;
+}
+
+.table {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.table thead th {
+    background: var(--bg-card-hover);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table tbody td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.table a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.table a:hover {
+    color: var(--secondary-color);
+}
+
+.table small {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.guardian-id {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.guardian-info {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.status-badge.processed {
+    background: rgba(0, 184, 148, 0.1);
+    color: var(--success-color);
+}
+
+.status-badge.unprocessed {
+    background: rgba(214, 48, 49, 0.1);
+    color: var(--danger-color);
+}
+
+/* Custom scrollbar */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: var(--bg-card);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+    .search-section {
+        padding: 1rem;
     }
     
-    .table th {
-        color: var(--text-primary);
-        border-bottom-color: var(--border-color);
+    .table-container {
+        height: auto;
+        max-height: 600px;
     }
-    
-    .table td {
-        color: var(--text-primary);
-        border-color: var(--border-color);
-    }
-    
-    .table tbody tr:hover {
-        background-color: var(--bg-card);
-    }
-    
-    .status-active {
-        color: var(--success-color) !important;
-    }
-    
-    .status-disabled {
-        color: var(--danger-color) !important;
-    }
-    
-    .btn-link {
-        color: var(--primary-color);
-    }
-    
-    .btn-link:hover {
-        color: var(--primary-color);
-        opacity: 0.8;
-    }
-
-    .btn-outline-secondary {
-        color: var(--text-primary);
-        border-color: var(--border-color);
-    }
-
-    .btn-outline-secondary:hover {
-        background-color: var(--bg-card);
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
-
-    .form-control {
-        background-color: var(--bg-dark);
-        border-color: var(--border-color);
-        color: var(--text-primary);
-    }
-
-    .form-control:focus {
-        background-color: var(--bg-dark);
-        border-color: var(--primary-color);
-        color: var(--text-primary);
-    }
-
-    .form-control::placeholder {
-        color: var(--text-secondary);
-    }
-
-    a {
-        color: var(--primary-color);
-        text-decoration: none;
-    }
-
-    a:hover {
-        color: var(--primary-color);
-        opacity: 0.8;
-    }
-
-    h6 {
-        color: var(--text-primary);
-        margin: 0;
-    }
-
-    .disabled-text {
-        color: var(--danger-color);
-    }
+}
 </style>
 
-<div class="container py-4">
-    {% if user.role == 'Supervisor' %}
-    <a href="{% url 'create-staff' %}"><button class="btn btn-primary">Add User</button></a>
-    {% endif %}
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Guardians</h1>
+    </div>
 
-    <br><br>
-    <form method="post">
-        {% csrf_token %}
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="search" placeholder="Search by name, id_number or phone" aria-label="Search" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
-        </div>
-    </form>
+    <div class="search-section">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <span class="input-group-text">Search</span>
+                <input type="text" name="search" class="form-control" placeholder="Search by name, email, or ID number...">
+                <button type="submit" class="btn btn-secondary">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th><h6>Id</h6></th>
-                <th><h6>User</h6></th>
-                <th><h6>Account Number</h6></th>
-                <th><h6>Phone</h6></th>
-                <th><h6>Status</h6></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                {% if user.user.is_active %}
-                <td><a href="{% url 'guardian-view' user %}"><h6>{{ user.user.personalprofile.get_names|title }}</h6></a></td>
-                <td>{{ user.user }}</td>
-                <td>{{ user.user.personalprofile.phone }}</td>
-                <td class="status-active">Active</td>
-                {% else %}
-                <td><a href="{% url 'guardian-view' user %}" class="disabled-text"><h6>{{ user.user.personalprofile.get_names|title }}</h6></a></td>
-                <td class="disabled-text">{{ user.user }}</td>
-                <td class="disabled-text">{{ user.user.personalprofile.phone }}</td>
-                <td class="status-disabled">Disabled</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Students</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <span class="guardian-id">{{ forloop.counter }}</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'guardian-view' user.user.id %}">
+                            <div>{{ user.user.personalprofile.get_names|title }}</div>
+                            <small>{{ user }}</small>
+                        </a>
+                    </td>
+                    <td>
+                        <div class="guardian-info">
+                            <i class="bi bi-telephone"></i> {{ user.user.personalprofile.phone }}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="guardian-info">
+                            <i class="bi bi-people"></i> {{ user.user.mykids.kids.count }} Student{{ user.user.mykids.kids.count|pluralize }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge {% if user.user.is_active %}processed{% else %}unprocessed{% endif %}">
+                            {% if user.user.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

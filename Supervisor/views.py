@@ -30,7 +30,7 @@ from django.views.generic import TemplateView
 
 from Analytics.views import check_role
 # from Finance.models import MpesaPayouts
-from Discipline.models import StudentDisciplineScore
+from Discipline.models import ClassIncident, StudentDisciplineScore
 from Finance.models import FeeMigrations, InvoicePayments, Invoices, SupplierBalances
 from Guardian.models import MyKids
 from Supervisor.models import Attendance, ExamMode, FileModel, Updates
@@ -65,7 +65,7 @@ class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
        
-
+        populate_class_incidents()
 
         students = Students.objects.filter(school=self.request.user.school)
         guardians = MyKids.objects.filter(kids__in=students).distinct()
@@ -740,7 +740,7 @@ class GuardianView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         email = self.kwargs['email']
         try:
-            context['guardian'] = MyUser.objects.get(id_number=email)
+            context['guardian'] = MyUser.objects.get(id=email)
         except MyUser.DoesNotExist:
             messages.error(self.request, 'User does not exist !!')
         
@@ -1270,6 +1270,21 @@ class ClassList(LoginRequiredMixin, TemplateView):
         class_id = self.kwargs['class_id']
         class_ins = Classes.objects.get(class_id=class_id)
 
+        # Set base template based on user role
+        if self.request.user.role == 'Student':
+            context['base_html'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor', 'Finance', 'Receptionist']:
+            context['base_html'] = 'Supervisor/base.html'
+
+        # Check if user is the class teacher or supervisor
+        is_class_teacher = class_ins.class_teacher == self.request.user
+        is_supervisor = self.request.user.role == 'Supervisor'
+        context['can_mark_attendance'] = is_class_teacher
+
         attendance_date = datetime.date.today()
         try:
             attendance = Attendance.objects.get(
@@ -1284,23 +1299,35 @@ class ClassList(LoginRequiredMixin, TemplateView):
         students = Students.objects.filter(academicprofile__current_class=class_ins)
         context['students'] = students
 
-
         return context
 
     def post(self, request, **args):
         if request.method == 'POST':
-            missing = self.request.POST.getlist('attendance') 
             class_id = self.get_context_data().get('class')
+            
+            # Check if user has permission to mark attendance
+            is_class_teacher = class_id.class_teacher == self.request.user
+            is_supervisor = self.request.user.role == 'Supervisor'
+            
+            if not (is_class_teacher or is_supervisor):
+                messages.error(self.request, 'You do not have permission to mark attendance for this class.')
+                return redirect(self.request.get_full_path())
+
+            missing = self.request.POST.getlist('attendance') 
             attendance_date = datetime.date.today()
             attendance, created = Attendance.objects.get_or_create(
-            class_id=class_id,
-            date=attendance_date,
-            defaults={"marked_by": self.request.user}
-        )
+                class_id=class_id,
+                date=attendance_date,
+                defaults={"marked_by": self.request.user}
+            )
             students = Students.objects.filter(adm_no__in=missing)
             attendance.students.clear()
             attendance.students.add(*students)
             messages.info(self.request, f'Attendance marked! {students.count()} students were missing.')
+
+            # Maintain the base_html in the context when redirecting
+            context = self.get_context_data()
+            return render(self.request, self.template_name, context)
 
         return redirect(self.request.get_full_path())
 class ClassDetail(LoginRequiredMixin, TemplateView):
@@ -1701,7 +1728,8 @@ class ManageClassTeacher(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if self.request.method == 'POST':
             class_id = self.request.POST.get('class')
             teacher = self.request.POST.get('user')
-            teacher = MyUser.objects.get(email=teacher)
+            print(teacher)
+            teacher = MyUser.objects.get(id_number=teacher)
             class_instance = Classes.objects.get(class_id=class_id)
             class_instance.class_teacher = teacher
             class_instance.save()
@@ -2330,3 +2358,36 @@ class AbsentStudentsView(LoginRequiredMixin, TemplateView):
             'template': 'Supervisor/base.html'
         })
         return context
+def populate_class_incidents():
+    # ClassIncident = apps.get_model('your_app_name', 'ClassIncident')
+    
+    incidents = [
+        # Minor
+        ("Minor", "Noise Making", "Student disrupted class by making noise.", 2),
+        ("Minor", "Failure to Do Homework", "Student did not submit homework as required.", 2),
+        ("Minor", "Late to Class", "Student arrived after the lesson had started.", 1),
+        ("Minor", "Improper Uniform", "Student not in proper school uniform.", 1),
+        ("Minor", "Sleeping in Class", "Student was found sleeping during the lesson.", 1),
+
+        # Moderate
+        ("Moderate", "Refusing to Do Duty", "Student refused to perform assigned classroom or school duty.", 5),
+        ("Moderate", "Skipping Class", "Student missed class without valid reason.", 6),
+        ("Moderate", "Cheating in a Test", "Student caught cheating during a test or exam.", 8),
+        ("Moderate", "Damaging School Property", "Student damaged desks, books, or other property.", 7),
+        ("Moderate", "Verbal Bullying", "Student used abusive language toward another.", 6),
+
+        # Severe
+        ("Severe", "Fighting", "Student engaged in a physical fight with another student.", 10),
+        ("Severe", "Stealing", "Student caught stealing property or money.", 10),
+        ("Severe", "Substance Abuse", "Student caught using or possessing drugs/alcohol.", 12),
+        ("Severe", "Physical Bullying", "Student physically harmed another student intentionally.", 10),
+        ("Severe", "Vandalism", "Intentional destruction of school facilities.", 10),
+    ]
+
+    for degree, name, description, points in incidents:
+        ClassIncident.objects.create(
+            incident_degree=degree,
+            name=name,
+            description=description,
+            points=points
+        )

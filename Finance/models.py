@@ -93,6 +93,7 @@ class TermFeeStructure(models.Model):
 
 
 class RawFeePayment(models.Model):
+    school = models.ForeignKey(Schools, on_delete=models.CASCADE)
     receipt = models.CharField(max_length=100, unique=True)
     adm_no = models.CharField(max_length=10, null=True)
     amount = models.PositiveIntegerField()
