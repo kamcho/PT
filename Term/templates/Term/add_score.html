@@ -252,7 +252,7 @@ body {
 </style>
 
 <div class="main-container">
-    {% if period.status %}
+{% if period.status %}
     <div class="score-container">
         <div class="header-section">
             <h6>
@@ -262,37 +262,37 @@ body {
         </div>
 
         <div class="form-section">
-            <form method="post">
-                {% csrf_token %}
-                {% if students %}
+    <form method="post">
+        {% csrf_token %}
+        {% if students %}
                     <select id="student" class="form-select" aria-label="Select student" name="user" required>
-                        {% for student in students %}
-                            <option value="{{ student.user.adm_no }}">{{ student.user.studentprofile.get_names }} {{ student.user.adm_no }}</option>
-                        {% endfor %}
-                    </select>
-
+                {% for student in students %}
+                    <option value="{{ student.user.adm_no }}">{{ student.user.studentprofile.get_names }} {{ student.user.adm_no }}</option>
+                {% endfor %}
+            </select>
+        
                     <div class="score-input-group">
-                        <label for="inputField3" class="form-label">Score</label>
+                <label for="inputField3" class="form-label">Score</label>
                         <input type="number" class="form-control" id="inputField3" name="score" maxlength="3" placeholder="Enter score" required>
-                    </div>
+            </div>
 
                     <button type="submit" class="btn btn-warning">
                         <i class="bi bi-save"></i>
                         Save Score
                     </button>
-                {% endif %}
-            </form>
+        {% endif %}
+    </form>
 
             <table class="scores-table">
-                <thead>
+        <thead>
                     <tr>
                         <th>ID</th>
                         <th>Student</th>
                         <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for test in scores %}
+          </tr>
+        </thead>
+        <tbody>
+        {% for test in scores %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>
@@ -303,18 +303,18 @@ body {
                         </td>
                         <td>
                             <form method="post" class="input-group">
-                                {% csrf_token %}
+                    {% csrf_token %}
                                 <input type="number" class="form-control" value="{{ test.score }}" name="new" maxlength="3" placeholder="{{ test.score }}" required>
                                 <button class="btn btn-dark" value="{{ test.user }}" name="update">
                                     <i class="bi bi-arrow-clockwise"></i>
                                     Update
                                 </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     </table>
         </div>
     </div>
     {% endif %}

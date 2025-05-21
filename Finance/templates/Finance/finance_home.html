@@ -24,12 +24,11 @@ body {
 }
 
 .main-dis {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 65% 35%;
     gap: 1.5rem;
-    padding: 1rem;
-    max-width: 100%;
-    overflow-x: hidden;
+    width: 90%;
+    margin: 2rem auto;
 }
 
 .sub-dis {
@@ -45,8 +44,9 @@ body {
     border-radius: 15px;
     padding: 1.5rem;
     box-shadow: var(--card-shadow);
-    flex: 1;
-    min-width: 0; /* Prevents flex items from overflowing */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    height: fit-content;
 }
 
 .data-card:hover {
@@ -61,12 +61,9 @@ body {
 }
 
 .fee-card {
-    background: var(--bg-card);
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: var(--card-shadow);
-    flex: 1;
-    min-width: 0; /* Prevents flex items from overflowing */
+    padding: 1rem;
+    transition: all 0.3s ease;
+    text-align: center;
 }
 
 .fee-card:hover {
@@ -199,71 +196,6 @@ hr {
         width: 100%;
         margin: 1rem auto;
     }
-}
-
-@media (max-width: 768px) {
-    .main-dis {
-        padding: 0.5rem;
-    }
-
-    .main-dis > .data-card,
-    .main-dis .fee-card {
-        padding: 1rem;
-        width: 100%;
-        margin: 0;
-        max-height: 400px;
-        overflow-y: auto;
-    }
-
-    .progress-canvas {
-        height: 120px !important;
-        max-height: 120px;
-        width: 120px !important;
-        margin: 0 auto;
-        position: relative;
-    }
-
-    .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .table {
-        min-width: 600px; /* Ensures table doesn't get too squeezed */
-    }
-
-    .table th, .table td {
-        padding: 0.75rem;
-        font-size: 0.875rem;
-    }
-
-    .amount-badge {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
-    }
-}
-
-/* Add smooth scrolling for table container */
-.table-container {
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) var(--bg-card);
-}
-
-.table-container::-webkit-scrollbar {
-    height: 6px;
-}
-
-.table-container::-webkit-scrollbar-track {
-    background: var(--bg-card);
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 3px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-color);
 }
 </style>
 <br><br>
