@@ -26,12 +26,16 @@
     }
 
     .main-fr {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 30px;
-        width: 95%;
-        margin: 0 auto;
-        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        background: var(--bg-card);
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
     
     /* Remove styling from a tags */
@@ -183,6 +187,52 @@
     }
 
     .guardian-contact a:hover {
+        color: var(--accent-color);
+    }
+
+    @media screen and (max-width: 768px) {
+        .main-fr {
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .main-fr > div {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .main-fr table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .main-fr .table-responsive {
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .main-fr {
+            padding: 0.75rem;
+            gap: 0.75rem;
+        }
+
+        .main-fr h4 {
+            font-size: 1.1rem;
+        }
+
+        .main-fr .table th,
+        .main-fr .table td {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+    }
+
+    .main-fr h4 {
         color: var(--accent-color);
     }
 </style>
