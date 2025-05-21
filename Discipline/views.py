@@ -1,4 +1,3 @@
-
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
@@ -106,10 +105,26 @@ class BookedIncidents(LoginRequiredMixin,  TemplateView):
         
         role = self.request.user.role
         if role == 'Teacher':
-            incidents = IncidentBooking.objects.filter(booked_by=self.request.user).order_by('-date')
+            incidents = IncidentBooking.objects.filter(booked_by=self.request.user)
+        else:
+            incidents = IncidentBooking.objects.all()
+
+        # Filter by admission number
+        admission_number = self.request.GET.get('admission_number')
+        if admission_number:
+            incidents = incidents.filter(user__adm_no__icontains=admission_number)
+        
+        # Filter by date
+        date = self.request.GET.get('date')
+        if date:
+            incidents = incidents.filter(date__date=date)
+
+        # Order by date
+        incidents = incidents.order_by('-date')
+        
+        if role == 'Teacher':
             context['template'] = 'Teacher/teachers_base.html'
         else:
-            incidents = IncidentBooking.objects.all().order_by('date')
             context['template'] = 'Supervisor/base.html'
         context['incidents'] = incidents
         return context

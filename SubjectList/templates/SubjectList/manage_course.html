@@ -3,186 +3,540 @@
 {% load custom_filters %}
 {% block content %}
 
-
-<div class="bg-gradent">
-
-<div class="container">
-    <br><br><br><br>
-    
-      
-
-    <div class="text-center course-container" >
-        <button class="btn btn-danger" style="color: white;position: absolute;top: 60px;right: 12%;" onclick="toggleDeletePopUp()">Delete</button>  
-           <h3><i class="bi bi-bookmark-plus"></i> {{ course }}</h3>
-            <small >discipline.<strong style="font-size: 20px;color: coral;">{{ course.discipline }}</strong></small>
-            <br><br>
-
-            <h6>Subjects.</h6>
-            <div class="text-center course-view">
-    
-                {% for subject in subjects %}
-                    <a href="{% url 'manage-subject' subject.id %}" class="text-center"><h6><i class="bi bi-bookmark-plus"></i> {{ subject.name }} grade {{ subject.grade }}</h6></a>
-                {% endfor %}
-        
-            </div>
-        
-    </div>
-
-    
-    
-    <br><br><hr class="text-center"><br><br>
-    <div class="form-view">
-    <h5 style="font-size: 30px;"><i class="bi bi-plus-square-fill"> </i>Create Subject</h5>
-    <br>
-    
-    
-        <div class="row mb-3">
-            <div class="col-md-6">
-            
-                <label for="inputField1" class="form-label">Name*<strong style="color: crimson;">(required)</strong></label>
-                <input type="text" class="form-control"  name="subject" placeholder="Mathematics" required>
-            </div>
-           
-            <div class="col-md-6">
-                <label for="inputField2" class="form-label">Grade*<strong style="color: crimson;">(required)</strong></label>
-                <select class="form-select"  aria-label="Default select example" name="grade" required>
-                   <option value="1">Grade 1</option>
-                   <option value="2">Grade 2</option>
-                   <option value="3">Grade 3</option>
-                   <option value="4">Grade 4</option>
-                   <option value="5">Grade 5</option>
-                   <option value="6">Grade 6</option>
-                   <option value="7">Grade 7</option>
-                   <option value="8">Grade 8</option>
-                   <option value="9">Grade 9</option>
-                    
-                </select>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-            
-                <label for="inputField1" class="form-label">Number Of Topics*<strong style="color: crimson;">(required)</strong></label>
-                <input type="number" class="form-control"  name="count" placeholder="4" required>
-            </div>
-           
-            <div class="col-md-6">
-                <label for="inputField2" class="form-label">Course</label>
-                <select class="form-select"  aria-label="Default select example" name="course" required disabled >
-                    <option value="{{ course }}">{{ course }}</option>
-                    
-                     
-                 </select>
-            </div>
-        </div>
-
-        <button class="btn btn-primary" style="color: white;" onclick="togglePopUp()">Save</button>
-        
-<br><br>
-</div>
-<br><br>
-</div>
-</div>
-<form method="post">
-    {% csrf_token %}
-    <div class="pop-up">
-        <br>
-        <h5 style="font-family: cursive;" class="text-center">Create Subject </h5>
-        <br>
-        <div class="center-input">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                
-                    <input type="text" class="form-control"  name="set_name"   readonly>
-                </div>
-               
-                <div class="col-md-6">
-                
-                    <input type="text" class="form-control"  name="set_grade"  readonly>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                
-                    <input type="number" class="form-control"  name="set_count"  readonly>
-                </div>
-               
-                <div class="col-md-6">
-                    <select class="form-select"  aria-label="Default select example" name="set_course" required disabled>
-                        <option value="{{ course }}">{{ course }}</option>
-                        
-                         
-                     </select>
-                </div>
-            </div>
-            <br><br><br>
-            <button class="btn btn-primary" >Save</button>
-        </div>
-        
-        
-    </div>
-</form>
-
-<form method="post">
-    {% csrf_token %}
-    <div class="delete-pop-up">
-        <br>
-        <h5 style="font-family: cursive; color: coral;" class="text-center">Delete {{ course }} from system </h5>
-        <br>
-        
-        <div class="center-input">
-            <p style="color: crimson;">You are trying to delete this object from the system. Please not that this cannot be undone</p>
-        <p>Type <strong style="color: red;">delete</strong> to confirm</p>
-            <div class="col-md-6">
-                <input type="text" class="form-control"  name="option" placeholder="" >
-            </div>
-            <br>
-           
-            <br><br><br>
-            <button class="btn btn-danger" name="purge">DELETE</button>
-        </div>
-        
-        
-    </div>
-</form>
-<script>
-    function toggleDeletePopUp() {
-        var popUpDiv = document.querySelector('.delete-pop-up');
-        var containerDiv = document.querySelector('.container');
-
-        // Toggle the display of the pop-up
-        popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
-
-
-        // Toggle the opacity of the container
-        containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '.2' : '0.23';
-    }
-</script>
-<script>
-    function togglePopUp() {
-    var popUpDiv = document.querySelector('.pop-up');
-    var containerDiv = document.querySelector('.container');
-
-    // Get values from pop-up inputs
-    var nameInput = document.querySelector('.container [name="subject"]');
-    var gradeInput = document.querySelector('.container [name="grade"]');
-    var courseInput = document.querySelector('.container [name="course"]');
-    var countInput = document.querySelector('.container [name="count"]');
-
-    // Set values in the main form
-    
-
-    // Toggle the display of the pop-up
-    popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
-    document.querySelector('[name="set_name"]').value = nameInput.value;
-    document.querySelector('[name="set_grade"]').value = gradeInput.value;
-    document.querySelector('[name="set_course"]').value = courseInput.value;
-    document.querySelector('[name="set_count"]').value = countInput.value;
-    // Toggle the opacity of the container
-    containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '1' : '0.23';
+<style>
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
-</script>
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
 
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--bg-card);
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    background: var(--danger);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.course-header {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.course-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.course-discipline {
+    color: var(--warning);
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.subject-card {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.subject-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.subject-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.subject-icon i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.subject-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.subject-grade {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.form-container {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.form-title {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.form-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.form-select:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.submit-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.submit-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-input {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    width: 100%;
+}
+
+.modal-input:read-only {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.modal-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn.cancel {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.modal-btn.cancel:hover {
+    background: var(--bg-hover);
+}
+
+.modal-btn.confirm {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.modal-btn.confirm:hover {
+    background: var(--primary-dark);
+}
+
+.modal-btn.danger {
+    background: var(--danger);
+    color: white;
+    border: none;
+}
+
+.modal-btn.danger:hover {
+    background: #dc2626;
+}
+
+.warning-text {
+    color: var(--danger);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 1rem;
+    }
+    
+    .subjects-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<div class="dashboard">
+    <div class="page-header">
+        <a href="{% url 'create-course' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i>
+            Back to Courses
+        </a>
+        <button class="delete-btn" onclick="showDeleteModal()">
+            <i class="bi bi-trash"></i>
+            Delete Course
+        </button>
+    </div>
+
+    <div class="course-header">
+        <h1 class="course-title">{{ course }}</h1>
+        <div class="course-discipline">{{ course.discipline }}</div>
+    </div>
+
+    <div class="subjects-grid">
+        {% for subject in subjects %}
+        <a href="{% url 'manage-subject' subject.id %}" class="subject-card">
+            <div class="subject-icon">
+                <i class="bi bi-book"></i>
+            </div>
+            <h3 class="subject-name">{{ subject.name }}</h3>
+            <p class="subject-grade">Grade {{ subject.grade }}</p>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="bi bi-plus-circle-fill"></i>
+            Create New Subject
+        </h2>
+
+        <form method="post" id="subjectForm">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Subject Name</label>
+                        <input type="text" class="form-input" id="subject" name="subject" 
+                               placeholder="e.g., Mathematics" required>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="grade" class="form-label">Grade Level</label>
+                        <select class="form-select" id="grade" name="grade" required>
+                            <option value="">Select Grade</option>
+                            {% for i in "123456789" %}
+                            <option value="{{ i }}">Grade {{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="count" class="form-label">Number of Topics</label>
+                        <input type="number" class="form-input" id="count" name="count" 
+                               placeholder="e.g., 4" required>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="course" class="form-label">Course</label>
+                        <select class="form-select" id="course" name="course" required disabled>
+                            <option value="{{ course.id }}">{{ course }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="button" class="submit-btn" onclick="showConfirmModal()">
+                    <i class="bi bi-check2-circle"></i>
+                    Create Subject
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal" id="confirmModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Confirm Subject Details</h3>
+            <button class="modal-close" onclick="hideConfirmModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <form method="post" class="modal-body">
+            {% csrf_token %}
+            <input type="text" class="modal-input" name="set_name" placeholder="Subject Name" readonly>
+            <input type="text" class="modal-input" name="set_grade" placeholder="Grade Level" readonly>
+            <input type="number" class="modal-input" name="set_count" placeholder="Number of Topics" readonly>
+            <select class="form-select" name="set_course" required disabled>
+                <option value="{{ course.id }}">{{ course }}</option>
+            </select>
+            
+            <div class="modal-footer">
+                <button type="button" class="modal-btn cancel" onclick="hideConfirmModal()">Cancel</button>
+                <button type="submit" class="modal-btn confirm">Create Subject</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete Course</h3>
+            <button class="modal-close" onclick="hideDeleteModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <form method="post" class="modal-body">
+            {% csrf_token %}
+            <p class="warning-text">
+                You are about to delete this course from the system. This action cannot be undone.
+            </p>
+            <p>Type <strong style="color: var(--danger);">delete</strong> to confirm</p>
+            <input type="text" class="modal-input" name="option" placeholder="Type 'delete' to confirm">
+            
+            <div class="modal-footer">
+                <button type="button" class="modal-btn cancel" onclick="hideDeleteModal()">Cancel</button>
+                <button type="submit" name="purge" class="modal-btn danger">Delete Course</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    const subjectInput = document.getElementById('subject');
+    const gradeInput = document.getElementById('grade');
+    const countInput = document.getElementById('count');
+    
+    if (subjectInput.value && gradeInput.value && countInput.value) {
+        modal.style.display = 'flex';
+        document.querySelector('[name="set_name"]').value = subjectInput.value;
+        document.querySelector('[name="set_grade"]').value = gradeInput.value;
+        document.querySelector('[name="set_count"]').value = countInput.value;
+    }
+}
+
+function hideConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+function showDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Close modals when clicking outside
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+});
+
+// Close modals with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.display = 'none';
+        });
+    }
+});
+</script>
 
 {% endblock %}

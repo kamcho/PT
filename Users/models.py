@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
+    BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
 
 class Schools(models.Model):
@@ -53,7 +53,7 @@ class MyUserManager(BaseUserManager):
         return user
 
 
-class MyUser(AbstractBaseUser):
+class MyUser(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
         Student = "Student"
         Teacher = "Teacher"

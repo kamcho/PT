@@ -69,7 +69,7 @@
     transform: translateY(-1px);
 }
 
-.topic-header {
+.subtopic-header {
     background: var(--bg-card);
     border-radius: 1rem;
     padding: 2rem;
@@ -87,60 +87,16 @@
 
 .topic-name {
     color: var(--warning);
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.subtopics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.subtopic-card {
-    background: var(--bg-card);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    text-decoration: none;
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
-}
-
-.subtopic-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--primary);
-    box-shadow: var(--shadow-lg);
-}
-
-.subtopic-icon {
-    width: 48px;
-    height: 48px;
-    background: rgba(59, 130, 246, 0.1);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-}
-
-.subtopic-icon i {
     font-size: 1.5rem;
-    color: var(--primary);
-}
-
-.subtopic-order {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .subtopic-name {
-    font-size: 1.125rem;
+    color: var(--primary);
+    font-size: 2rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .form-container {
@@ -191,6 +147,46 @@
 
 .form-input::placeholder {
     color: var(--text-secondary);
+}
+
+.file-input {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-input input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.file-input-label:hover {
+    border-color: var(--primary);
+}
+
+.file-name {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
 }
 
 .submit-btn {
@@ -339,10 +335,6 @@
         padding: 1rem;
     }
     
-    .subtopics-grid {
-        grid-template-columns: 1fr;
-    }
-    
     .modal-content {
         padding: 1.5rem;
     }
@@ -351,58 +343,73 @@
 
 <div class="dashboard">
     <div class="page-header">
-        <a href="{% url 'manage-subject' topic.subject.id %}" class="back-btn">
+        <a href="{% url 'manage-topic' subtopic.topic.id %}" class="back-btn">
             <i class="bi bi-arrow-left"></i>
-            Back to Subject
+            Back to Topic
         </a>
         <button class="delete-btn" onclick="showDeleteModal()">
             <i class="bi bi-trash"></i>
-            Delete Topic
+            Delete Sub-topic
         </button>
     </div>
 
-    <div class="topic-header">
+    <div class="subtopic-header">
         <div class="subject-title">
             <i class="bi bi-bookmark"></i>
-            {{ topic.subject.name }} Grade {{ topic.subject.grade }}
+            {{ subtopic.subject.name }} Grade {{ subtopic.subject.grade }}
         </div>
-        <h1 class="topic-name">{{ topic.name }}</h1>
-    </div>
-
-    <div class="subtopics-grid">
-        {% for subtopic in subtopics %}
-        <a href="{% url 'manage-subtopic' subtopic.id %}" class="subtopic-card">
-            <div class="subtopic-icon">
-                <i class="bi bi-bookmark"></i>
-            </div>
-            <div class="subtopic-order">Sub-topic {{ subtopic.order }}</div>
-            <h3 class="subtopic-name">{{ subtopic.name }}</h3>
-        </a>
-        {% endfor %}
+        <div class="topic-name">
+            Topic {{ subtopic.topic.order }}: {{ subtopic.topic.name }}
+        </div>
+        <h1 class="subtopic-name">
+            Sub-topic {{ subtopic.order }}: {{ subtopic.name }}
+        </h1>
     </div>
 
     <div class="form-container">
         <h2 class="form-title">
-            <i class="bi bi-plus-circle-fill"></i>
-            Add New Sub-topic
+            <i class="bi bi-gear-fill"></i>
+            Manage Sub-topic
         </h2>
 
-        <form method="post" id="subtopicForm">
+        <form method="post" id="subtopicForm" enctype="multipart/form-data">
             {% csrf_token %}
+            <div class="form-group">
+                <label for="order" class="form-label">Order</label>
+                <input type="number" class="form-input" id="order" name="order" 
+                       placeholder="e.g., 1" required>
+            </div>
+
             <div class="row g-3">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="name" class="form-label">Sub-topic Name</label>
-                        <input type="text" class="form-input" id="name" name="name" 
-                               placeholder="e.g., Basic Addition" required>
+                        <label for="pdf" class="form-label">PDF File</label>
+                        <div class="file-input">
+                            <label class="file-input-label">
+                                <i class="bi bi-file-pdf"></i>
+                                Choose PDF File
+                                <input type="file" id="pdf" name="pdf" accept=".pdf" required>
+                            </label>
+                            {% if subtopic.file1 %}
+                            <div class="file-name">Current: {{ subtopic.file1 }}</div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="order" class="form-label">Order</label>
-                        <input type="number" class="form-input" id="order" name="order" 
-                               placeholder="e.g., 1" required>
+                        <label for="video" class="form-label">MP4 File</label>
+                        <div class="file-input">
+                            <label class="file-input-label">
+                                <i class="bi bi-file-play"></i>
+                                Choose MP4 File
+                                <input type="file" id="video" name="video" accept=".mp4" required>
+                            </label>
+                            {% if subtopic.file2 %}
+                            <div class="file-name">Current: {{ subtopic.file2 }}</div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -410,7 +417,7 @@
             <div class="text-center">
                 <button type="button" class="submit-btn" onclick="showConfirmModal()">
                     <i class="bi bi-check2-circle"></i>
-                    Create Sub-topic
+                    Save Changes
                 </button>
             </div>
         </form>
@@ -421,20 +428,33 @@
 <div class="modal" id="confirmModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="modal-title">Confirm Sub-topic Details</h3>
+            <h3 class="modal-title">Confirm Changes</h3>
             <button class="modal-close" onclick="hideConfirmModal()">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
         
-        <form method="post" class="modal-body">
+        <form method="post" class="modal-body" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="text" class="modal-input" name="set_name" placeholder="Sub-topic Name" readonly>
             <input type="number" class="modal-input" name="set_order" placeholder="Order" readonly>
+            <div class="file-input">
+                <label class="file-input-label">
+                    <i class="bi bi-file-pdf"></i>
+                    PDF File
+                    <input type="file" name="set_pdf" accept=".pdf" readonly>
+                </label>
+            </div>
+            <div class="file-input">
+                <label class="file-input-label">
+                    <i class="bi bi-file-play"></i>
+                    MP4 File
+                    <input type="file" name="set_video" accept=".mp4" readonly>
+                </label>
+            </div>
             
             <div class="modal-footer">
                 <button type="button" class="modal-btn cancel" onclick="hideConfirmModal()">Cancel</button>
-                <button type="submit" class="modal-btn confirm">Create Sub-topic</button>
+                <button type="submit" class="modal-btn confirm">Save Changes</button>
             </div>
         </form>
     </div>
@@ -444,7 +464,7 @@
 <div class="modal" id="deleteModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="modal-title">Delete Topic</h3>
+            <h3 class="modal-title">Delete Sub-topic</h3>
             <button class="modal-close" onclick="hideDeleteModal()">
                 <i class="bi bi-x-lg"></i>
             </button>
@@ -453,14 +473,14 @@
         <form method="post" class="modal-body">
             {% csrf_token %}
             <p class="warning-text">
-                You are about to delete this topic from the system. This action cannot be undone.
+                You are about to delete this sub-topic from the system. This action cannot be undone.
             </p>
             <p>Type <strong style="color: var(--danger);">delete</strong> to confirm</p>
             <input type="text" class="modal-input" name="option" placeholder="Type 'delete' to confirm">
             
             <div class="modal-footer">
                 <button type="button" class="modal-btn cancel" onclick="hideDeleteModal()">Cancel</button>
-                <button type="submit" name="delete" class="modal-btn danger">Delete Topic</button>
+                <button type="submit" name="delete" class="modal-btn danger">Delete Sub-topic</button>
             </div>
         </form>
     </div>
@@ -469,13 +489,15 @@
 <script>
 function showConfirmModal() {
     const modal = document.getElementById('confirmModal');
-    const nameInput = document.getElementById('name');
     const orderInput = document.getElementById('order');
+    const pdfInput = document.getElementById('pdf');
+    const videoInput = document.getElementById('video');
     
-    if (nameInput.value && orderInput.value) {
+    if (orderInput.value && pdfInput.files.length > 0 && videoInput.files.length > 0) {
         modal.style.display = 'flex';
-        document.querySelector('[name="set_name"]').value = nameInput.value;
         document.querySelector('[name="set_order"]').value = orderInput.value;
+        document.querySelector('[name="set_pdf"]').files = pdfInput.files;
+        document.querySelector('[name="set_video"]').files = videoInput.files;
     }
 }
 
@@ -508,6 +530,18 @@ document.addEventListener('keydown', function(e) {
         });
     }
 });
+
+// Update file input labels with selected file names
+document.querySelectorAll('input[type="file"]').forEach(input => {
+    input.addEventListener('change', function() {
+        const label = this.closest('.file-input-label');
+        if (this.files.length > 0) {
+            label.innerHTML = `<i class="bi bi-${this.accept.includes('pdf') ? 'file-pdf' : 'file-play'}"></i> ${this.files[0].name}`;
+        } else {
+            label.innerHTML = `<i class="bi bi-${this.accept.includes('pdf') ? 'file-pdf' : 'file-play'}"></i> Choose ${this.accept.includes('pdf') ? 'PDF' : 'MP4'} File`;
+        }
+    });
+});
 </script>
 
-{% endblock %}
+{% endblock %} 

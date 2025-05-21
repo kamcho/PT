@@ -14,6 +14,8 @@
     --border-color: #2d3748;
   }
 
+
+
   .container {
     margin-top: 6rem;
     padding: 2rem;
@@ -200,7 +202,9 @@
           <th>ADM No</th>
           <th>Class</th>
           <th>Status</th>
-          <th>Add Fee</th>
+          {% if can_add_fee %}
+            <th>Add Fee</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -226,11 +230,16 @@
               <td class="status-disabled">{{ user.academicprofile.current_class.grade }} {{ user.academicprofile.current_class }}</td>
               <td class="status-disabled">Disabled</td>
             {% endif %}
-            <td>
-              <a href="{% url 'add-fee-payment' user %}" class="fee-link">
-                <i class="bi bi-cash"></i>
-              </a>
-            </td>
+           
+              {% if can_add_fee %}
+              <td>
+                <a href="{% url 'add-fee-payment' user %}" class="fee-link">
+                  <i class="bi bi-cash"></i>
+                </a>
+              </td>
+              {% endif %}
+
+            
           </tr>
         {% endfor %}
       </tbody>

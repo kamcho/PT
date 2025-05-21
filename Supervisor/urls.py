@@ -59,4 +59,6 @@ urlpatterns = [        path('search-guardian/', SearchGuardianView.as_view(), na
 
     path('topicq-review/<str:subject>', TopicReview.as_view(), name='topic-review'),
 
+    path('absent-students/', views.AbsentStudentsView.as_view(), name='absent-students'),
+
 ]

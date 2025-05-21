@@ -39,6 +39,7 @@ from Term.models import CurrentTerm, Exam, Terms
 from Users.models import AcademicProfile, Accounts, Classes, MyUser, PersonalProfile, StudentProfile, Students, StudentsFeeAccount
 from Exams.models import ClassTest, ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizAnswers, TopicalQuizes
 from SubjectList.models import MySubjects, Subject, Subtopic, Course, Topic
+from django.utils import timezone
 
 def get_marks_distribution_data(grade, term, year, school, period):
     # Replace 'YourGradeModelField' with the actual field name representing the grade in your SchoolClass model
@@ -599,7 +600,8 @@ class StudentsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(StudentsView, self).get_context_data(**kwargs)
         user = self.request.user
-        
+        context['can_add_fee'] = self.request.user.groups.filter(name='manage_fee').exists()
+
         try:            
             users = Students.objects.filter(academicprofile__current_class__school=user.school).order_by('?')[:15]
             
@@ -2277,3 +2279,54 @@ def create_topics_and_subtopics(subject, topics_data):
                     defaults={"id": uuid.uuid4(), "file1": "studyFiles/file.pdf", "file2": "studyFiles/start.mp4", "order": str(order)}
                 )
                 print('done')
+
+class AbsentStudentsView(LoginRequiredMixin, TemplateView):
+    template_name = 'Supervisor/absent_students.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get date from query params or use today
+        date_str = self.request.GET.get('date')
+        if date_str:
+            try:
+                selected_date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+            except ValueError:
+                selected_date = timezone.now().date()
+        else:
+            selected_date = timezone.now().date()
+
+        # Get all classes
+        classes = Classes.objects.all()
+        
+        # Get attendance records for the selected date
+        attendance_records = Attendance.objects.filter(date=selected_date, class_id__school=self.request.user.school)
+        
+        # Get all students
+        all_students = Students.objects.all()
+        
+        # Get students who were marked absent (these are the ones in attendance records)
+        absent_students = Students.objects.filter(
+            attendance__in=attendance_records
+        ).distinct()
+
+        # Group absent students by class
+        absent_by_class = {}
+        for student in absent_students:
+            try:
+                class_name = student.academicprofile.current_class
+                if class_name not in absent_by_class:
+                    absent_by_class[class_name] = []
+                absent_by_class[class_name].append(student)
+            except (AttributeError, ObjectDoesNotExist):
+                # Skip students without academic profiles
+                continue
+
+        context.update({
+            'selected_date': selected_date,
+            'classes': classes,
+            'absent_by_class': absent_by_class,
+            'total_absent': absent_students.count(),
+            'template': 'Supervisor/base.html'
+        })
+        return context

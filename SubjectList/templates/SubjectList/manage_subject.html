@@ -3,187 +3,553 @@
 {% load custom_filters %}
 {% block content %}
 
-
-<div class="bg-grdient">
-
-<div class="container">
-    <br><br><br><br>
-    
-    <button class="btn btn-danger" style="color: white;position: absolute;top: 60px;right: 12%;" onclick="toggleDeletePopUp()">Delete</button>  
-
-    <div class="course-container">
-        
-           <h3><i class="bi bi-bookmark-plus"></i> {{ subject }} Grade {{ subject.grade }}</h3>
-            <br>
-            <h5>Topics</h5>
-            <br>
-            <div class="text-center course-view">
-        
-    
-                {% for topic in topics %}
-                    <a href="{% url 'manage-topic' topic.id %}"><h6><i class="bi bi-bookmark-plus"></i> {{ topic.order }}  {{ topic.name }}</h6></a>
-                {% endfor %}
-        
-            </div>
-        
-    </div>
-    
-    
-    
-    <br><br><hr class="text-center"><br><br>
-    <div class="form-view">
-    <h5 class="text-center"> <i class="bi bi-plus-square-fill" style="font-size: 30px;"></i> Add Topic</h5>
-    <br>
-    
- 
-        <div class="text-center">
-            
-            <label for="inputField1" class="form-label" >Order*<strong style="color: crimson;">(required)</strong></label>
-            <input type="number" class="form-control"  name="order" placeholder="1" style="border: 3px solid cornflowerblue;" required>
-        </div>
-        <br>
-        <div class="row mb-3">
-            <div class="col-md-6">
-            
-                <label for="inputField1" class="form-label">Name*<strong style="color: crimson;">(required)</strong></label>
-                <input type="text" class="form-control"  name="name" placeholder="Addition" style="border: 3px solid cornflowerblue;" required>
-            </div>
-           
-            <div class="col-md-6">
-                <label for="inputField2" class="form-label">Number of Sub-Topics*<strong style="color: crimson;">(required)</strong></label>
-                <input type="number" class="form-control"  name="subtopics" placeholder="4" style="border: 3px solid cornflowerblue;" required>
-               
-           
-            </div>
-        </div>
-        <br>
-        <div class="row mb-3">
-            <div class="col-md-6">
-            
-                <label for="inputField1" class="form-label">Default Test Size*<strong style="color: crimson;">(required)</strong></label>
-                <input type="number" class="form-control"  name="size" placeholder="10 Questions" style="border: 3px solid cornflowerblue;" required>
-            </div>
-           
-            <div class="col-md-6">
-                <label for="inputField2" class="form-label">Exam Time*<strong style="color: crimson;">(required)</strong></label>
-                <input type="number" class="form-control"  name="time" placeholder="30 Minutes" style="border: 3px solid cornflowerblue;" required>
-            </div>
-        </div>
-
-        <button class="btn btn-info" style="color: white;" onclick="togglePopUp()">Save</button>
-    
-
-</div>
-<br><br>
-</div>
-</div>
-<form method="post">
-    {% csrf_token %}
-    <div class="delete-pop-up">
-        <br>
-        <h5 style="font-family: cursive; color: coral;" class="text-center">Delete {{ course }} from system </h5>
-        <br>
-        
-        <div class="center-input">
-            <p style="color: crimson;">You are trying to delete this object from the system. Please not that this cannot be undone</p>
-        <p>Type <strong style="color: red;">delete</strong> to confirm</p>
-            <div class="col-md-6">
-                <input type="text" class="form-control"  name="option" placeholder="" >
-            </div>
-            <br>
-           
-            <br><br><br>
-            <button class="btn btn-danger" name="delete">DELETE</button>
-        </div>
-        
-        
-    </div>
-</form>
-<form method="post">
-    {% csrf_token %}
-    <div class="pop-up">
-        <br>
-        <h5 style="font-family: cursive;" class="text-center">Create Subject </h5>
-        <br>
-        <div class="center-input">
-            <div >
-            
-                <input type="number" class="form-control"  name="set_order" placeholder="1" readonly>
-            </div>
-            <br>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                
-                    <label for="inputField1" class="form-label">Name</label>
-                    <input type="text" class="form-control"  name="set_name" placeholder="Addition" readonly>
-                </div>
-               
-                <div class="col-md-6">
-                    <input type="number" class="form-control"  name="set_subtopics" placeholder="4" readonly>
-                   
-               
-                </div>
-            </div>
-            <br>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                
-                    <input type="number" class="form-control"  name="set_size" placeholder="10 Questions" readonly>
-                </div>
-               
-                <div class="col-md-6">
-                    <input type="number" class="form-control"  name="set_time" placeholder="30 Minutes" readonly>
-                </div>
-            </div>
-    
-            <button class="btn btn-info" style="color: white;">Save</button>
-        </div>
-        
-        
-    </div>
-</form>
-<script>
-    function togglePopUp() {
-    var popUpDiv = document.querySelector('.pop-up');
-    var containerDiv = document.querySelector('.container');
-
-    // Get values from pop-up inputs
-    var orderInput = document.querySelector('.container [name="order"]');
-    var nameInput = document.querySelector('.container [name="name"]');
-    var subtopicsInput = document.querySelector('.container [name="subtopics"]');
-    var sizeInput = document.querySelector('.container [name="size"]');
-    var timeInput = document.querySelector('.container [name="time"]');
-
-    // Set values in the main form
-    
-
-    // Toggle the display of the pop-up
-    popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
-    document.querySelector('[name="set_order"]').value = orderInput.value;
-    document.querySelector('[name="set_name"]').value = nameInput.value;
-    document.querySelector('[name="set_subtopics"]').value = subtopicsInput.value;
-    document.querySelector('[name="set_size"]').value = sizeInput.value;
-    document.querySelector('[name="set_time"]').value = timeInput.value;
-
-    // Toggle the opacity of the container
-    containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '1' : '0.23';
+<style>
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
-</script>
-<script>
-    function toggleDeletePopUp() {
-        var popUpDiv = document.querySelector('.delete-pop-up');
-        var containerDiv = document.querySelector('.container');
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
 
-        // Toggle the display of the pop-up
-        popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
 
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--bg-card);
+    transition: all 0.2s ease;
+}
 
-        // Toggle the opacity of the container
-        containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '.2' : '0.23';
+.back-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    background: var(--danger);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.subject-header {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.subject-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.subject-grade {
+    color: var(--warning);
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.topic-card {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.topic-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.topic-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.topic-icon i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.topic-order {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.topic-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.topic-meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.form-container {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.form-title {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-input {
+    width: 100%;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.form-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.submit-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.submit-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-input {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    width: 100%;
+}
+
+.modal-input:read-only {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.modal-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn.cancel {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.modal-btn.cancel:hover {
+    background: var(--bg-hover);
+}
+
+.modal-btn.confirm {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.modal-btn.confirm:hover {
+    background: var(--primary-dark);
+}
+
+.modal-btn.danger {
+    background: var(--danger);
+    color: white;
+    border: none;
+}
+
+.modal-btn.danger:hover {
+    background: #dc2626;
+}
+
+.warning-text {
+    color: var(--danger);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 1rem;
     }
+    
+    .topics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<div class="dashboard">
+    <div class="page-header">
+        <a href="{% url 'manage-course' subject.course.id %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i>
+            Back to Course
+        </a>
+        <button class="delete-btn" onclick="showDeleteModal()">
+            <i class="bi bi-trash"></i>
+            Delete Subject
+        </button>
+    </div>
+
+    <div class="subject-header">
+        <h1 class="subject-title">{{ subject }}</h1>
+        <div class="subject-grade">Grade {{ subject.grade }}</div>
+    </div>
+
+    <div class="topics-grid">
+        {% for topic in topics %}
+        <a href="{% url 'manage-topic' topic.id %}" class="topic-card">
+            <div class="topic-icon">
+                <i class="bi bi-bookmark"></i>
+            </div>
+            <div class="topic-order">Topic {{ topic.order }}</div>
+            <h3 class="topic-name">{{ topic.name }}</h3>
+            <div class="topic-meta">
+                <span>{{ topic.subtopics }} Sub-topics</span>
+                <span>{{ topic.size }} Questions</span>
+                <span>{{ topic.time }} Minutes</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="bi bi-plus-circle-fill"></i>
+            Add New Topic
+        </h2>
+
+        <form method="post" id="topicForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="order" class="form-label">Topic Order</label>
+                <input type="number" class="form-input" id="order" name="order" 
+                       placeholder="e.g., 1" required>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Topic Name</label>
+                        <input type="text" class="form-input" id="name" name="name" 
+                               placeholder="e.g., Addition" required>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="subtopics" class="form-label">Number of Sub-topics</label>
+                        <input type="number" class="form-input" id="subtopics" name="subtopics" 
+                               placeholder="e.g., 4" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="size" class="form-label">Default Test Size</label>
+                        <input type="number" class="form-input" id="size" name="size" 
+                               placeholder="e.g., 10 Questions" required>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="time" class="form-label">Exam Time (Minutes)</label>
+                        <input type="number" class="form-input" id="time" name="time" 
+                               placeholder="e.g., 30" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="button" class="submit-btn" onclick="showConfirmModal()">
+                    <i class="bi bi-check2-circle"></i>
+                    Create Topic
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal" id="confirmModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Confirm Topic Details</h3>
+            <button class="modal-close" onclick="hideConfirmModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <form method="post" class="modal-body">
+            {% csrf_token %}
+            <input type="number" class="modal-input" name="set_order" placeholder="Topic Order" readonly>
+            <input type="text" class="modal-input" name="set_name" placeholder="Topic Name" readonly>
+            <input type="number" class="modal-input" name="set_subtopics" placeholder="Number of Sub-topics" readonly>
+            <input type="number" class="modal-input" name="set_size" placeholder="Default Test Size" readonly>
+            <input type="number" class="modal-input" name="set_time" placeholder="Exam Time" readonly>
+            
+            <div class="modal-footer">
+                <button type="button" class="modal-btn cancel" onclick="hideConfirmModal()">Cancel</button>
+                <button type="submit" class="modal-btn confirm">Create Topic</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete Subject</h3>
+            <button class="modal-close" onclick="hideDeleteModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <form method="post" class="modal-body">
+            {% csrf_token %}
+            <p class="warning-text">
+                You are about to delete this subject from the system. This action cannot be undone.
+            </p>
+            <p>Type <strong style="color: var(--danger);">delete</strong> to confirm</p>
+            <input type="text" class="modal-input" name="option" placeholder="Type 'delete' to confirm">
+            
+            <div class="modal-footer">
+                <button type="button" class="modal-btn cancel" onclick="hideDeleteModal()">Cancel</button>
+                <button type="submit" name="delete" class="modal-btn danger">Delete Subject</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    const orderInput = document.getElementById('order');
+    const nameInput = document.getElementById('name');
+    const subtopicsInput = document.getElementById('subtopics');
+    const sizeInput = document.getElementById('size');
+    const timeInput = document.getElementById('time');
+    
+    if (orderInput.value && nameInput.value && subtopicsInput.value && 
+        sizeInput.value && timeInput.value) {
+        modal.style.display = 'flex';
+        document.querySelector('[name="set_order"]').value = orderInput.value;
+        document.querySelector('[name="set_name"]').value = nameInput.value;
+        document.querySelector('[name="set_subtopics"]').value = subtopicsInput.value;
+        document.querySelector('[name="set_size"]').value = sizeInput.value;
+        document.querySelector('[name="set_time"]').value = timeInput.value;
+    }
+}
+
+function hideConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+function showDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Close modals when clicking outside
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+});
+
+// Close modals with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.display = 'none';
+        });
+    }
+});
 </script>
-
-
 
 {% endblock %}

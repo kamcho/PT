@@ -650,8 +650,10 @@ def get_attendance(student, given_date):
 
         # Check if the student is present
         if attendance.students.filter(adm_no=student.adm_no).exists():
-            return 'PRESENT'  # Student is in the attendance
-        return 'ABSENT'  # Student is not in the attendance
+              # Student is in the attendance
+            return 'ABSENT'  # Student is not in the attendance
+        else:
+            return 'PRESENT'
     except Attendance.DoesNotExist:
         return 'N/A'
 

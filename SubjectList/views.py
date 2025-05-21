@@ -35,8 +35,13 @@ from Users.models import AcademicProfile, PersonalProfile, StudentProfile, Stude
 from django.views.generic import TemplateView
 
 logger = logging.getLogger('django')
-
-class CreateCourse(TemplateView):
+class IsAdmin(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated:
+            return self.request.user.role == 'Supervisor'
+        else:
+            return False
+class CreateCourse(IsAdmin,TemplateView):
     template_name = 'SubjectList/create_course.html'
 
     def get_context_data(self, **kwargs) :
@@ -56,7 +61,7 @@ class CreateCourse(TemplateView):
 
             return redirect(self.request.get_full_path())
         
-class ManageCourse(TemplateView):
+class ManageCourse(IsAdmin,TemplateView):
     template_name = 'SubjectList/manage_course.html'
 
     def get_context_data(self, **kwargs) :
@@ -96,7 +101,7 @@ class ManageCourse(TemplateView):
 
                 return redirect(self.request.get_full_path())
             
-class ManageSubject(TemplateView):
+class ManageSubject(IsAdmin,TemplateView):
     template_name = 'SubjectList/manage_subject.html'
 
     def get_context_data(self, **kwargs) :
@@ -137,7 +142,7 @@ class ManageSubject(TemplateView):
 
                 return redirect(self.request.get_full_path())
 
-class ManageTopic(TemplateView):
+class ManageTopic(IsAdmin,TemplateView):
     template_name = 'SubjectList/manage_topic.html'
 
     def get_context_data(self, **kwargs) :
@@ -174,7 +179,7 @@ class ManageTopic(TemplateView):
 
                 return redirect(self.request.get_full_path())
 
-class ManageSubTopic(TemplateView):
+class ManageSubTopic(IsAdmin,TemplateView):
     template_name = 'SubjectList/manage_subtopic.html'
 
     def get_context_data(self, **kwargs) :

@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Sum
 import random
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView
 from datetime import datetime, timedelta
@@ -24,7 +25,12 @@ logger = logging.getLogger('django')
 
 class FinanceHome(LoginRequiredMixin, TemplateView):
     template_name = 'Finance/finance_home.html'
-
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.groups.filter(name='view_fees').exists() or  request.user.groups.filter(name='manage_expenses').exists():
+            return super().dispatch(request, *args, **kwargs)
+        return HttpResponseForbidden("You do not have permission to access this page.")
+        
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -47,7 +53,10 @@ class FinanceHome(LoginRequiredMixin, TemplateView):
 class RawFeePayments(TemplateView):
 
     template_name = 'Finance/raw_fee_payments.html'
-
+    def dispatch(self, request, *args, **kwargs):       
+        if not request.user.groups.filter(name='manage_fee').exists():
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, *args, **kwargs):
 
 
@@ -129,7 +138,10 @@ class RawFeePayments(TemplateView):
 
 class CreateInvoice(LoginRequiredMixin, TemplateView):
     template_name = 'Finance/create_invoice.html'
-
+    def dispatch(self, request, *args, **kwargs):       
+        if not request.user.groups.filter(name='manage_expenses').exists():
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['associates'] = MyUser.objects.filter(role='Supplier', school=self.request.user.school)
@@ -448,14 +460,13 @@ class InvoicePaymentId(LoginRequiredMixin, TemplateView):
         try:
             payment = InvoicePayments.objects.get(id=payment_id)
             context['payment'] = payment
-            invoice = Invoices.objects.get(id=payment.invoice.id)
-            context['invoice'] = invoice
+          
 
         except InvoicePayments.DoesNotExist:
             messages.error(self.request, 'We could not find a transaction with the given id')
 
-        except Exception:
-            messages.error(self.request, 'System error please contact @support')
+        except Exception as e:
+            messages.error(self.request, f' {str(e)} System error please contact @support')
 
         return context
 
@@ -1450,10 +1461,14 @@ class StudentsFeeProfile(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 class SchoolFeesBalance(LoginRequiredMixin, TemplateView):
     template_name = 'Finance/all_credit_fees.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='view_fees').exists():
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
         try:
-            profiles = StudentsFeeAccount.objects.filter(balance__lt=0)
+            profiles = StudentsFeeAccount.objects.filter(balance__lt=0)[:20]
             balances = profiles.aggregate(balances=Sum('balance'))['balances']
             
             context['balance'] = balances
@@ -1665,6 +1680,10 @@ class PrintReceipt(LoginRequiredMixin, TemplateView):
 class AddFeePayment(LoginRequiredMixin, TemplateView):
     template_name = 'Finance/add_fee_payment.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='manage_fee').exists():
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         email = self.kwargs['email']
@@ -1725,7 +1744,10 @@ class AddFeePayment(LoginRequiredMixin, TemplateView):
 
 class CreateExpense(TemplateView):
     template_name = 'Finance/add_expense.html'
-
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='manage_expenses').exists():
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['accounts'] = Accounts.objects.filter(school=self.request.user.school, is_active='1')
@@ -1750,7 +1772,10 @@ class CreateExpense(TemplateView):
 
 class ManageExpense(TemplateView):
     template_name = 'Finance/manage_expense.html'
-
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='manage_expenses').exists():
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
@@ -1763,6 +1788,10 @@ class ManageExpense(TemplateView):
     
 class ExpensesView(TemplateView):
     template_name = 'Finance/expenses.html'
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='view_expenses').exists():
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return super().dispatch(request, *args, **kwargs)   
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

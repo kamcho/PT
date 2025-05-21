@@ -141,6 +141,71 @@
         padding: 1rem;
     }
 }
+
+.search-form {
+    background: var(--bg-card-hover);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-input {
+    width: 100%;
+    background: var(--bg-dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+}
+
+.form-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-items-end {
+    align-items: flex-end;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .search-form {
+        padding: 1rem;
+    }
+    
+    .col-md-2 {
+        margin-top: 1rem;
+    }
+}
 </style>
 
 <div class="container">
@@ -154,6 +219,30 @@
     </div>
 
     <div class="table-container">
+        <form method="get" class="search-form mb-4">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="admission_number" class="form-label">Admission Number</label>
+                        <input type="text" class="form-input" id="admission_number" name="admission_number" 
+                               placeholder="Enter admission number" value="{{ request.GET.admission_number }}">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-input" id="date" name="date" 
+                               value="{{ request.GET.date }}">
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </form>
+
         <table class="table">
             <thead>
                 <tr>
@@ -162,6 +251,7 @@
                     <th>Class</th>
                     <th>Offence</th>
                     <th>Points Remaining</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -182,6 +272,7 @@
                         <span class="points-badge">{{ incident.incident.points }}</span>
                     </td>
                     <td><span class="points-badge">{{ incident.user.studentdisciplinescore.points }}</span></td>
+                    <td><span class="offence-badge">{{ incident.date|date:"d M Y" }}</span></td>
                 </tr>
                 {% endfor %}
             </tbody>

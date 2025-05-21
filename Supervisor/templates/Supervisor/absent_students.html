@@ -1,0 +1,226 @@
+{% extends 'Supervisor/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --primary-color: #6366f1;
+    --secondary-color: #818cf8;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --danger-color: #ef4444;
+    --success-color: #22c55e;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.page-header {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 20px;
+    margin: 2rem 1rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--bg-card-hover);
+}
+
+.header-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.header-title h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.date-filter {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.date-filter input {
+    background: var(--bg-dark);
+    border: 1px solid var(--bg-card-hover);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.date-filter button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.date-filter button:hover {
+    background: var(--secondary-color);
+}
+
+.stats-card {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--bg-card-hover);
+}
+
+.stats-card h3 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.table-container {
+    background: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-primary);
+}
+
+.table thead th {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--bg-card-hover);
+}
+
+.table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--bg-card-hover);
+}
+
+.table tbody tr:hover {
+    background: var(--bg-card-hover);
+}
+
+.student-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.student-link:hover {
+    color: var(--primary-color);
+}
+
+.class-header {
+    background: var(--bg-dark);
+    padding: 1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.student-count {
+    background: var(--danger-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+}
+
+.no-absent {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .header-title {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .date-filter {
+        width: 100%;
+    }
+    
+    .date-filter input {
+        flex: 1;
+    }
+}
+</style>
+
+<div class="page-header">
+    <div class="header-title">
+        <h2>Absent Students Report</h2>
+        <form class="date-filter" method="get">
+            <input type="date" name="date" value="{{ selected_date|date:'Y-m-d' }}" onchange="this.form.submit()">
+            <button type="submit">
+                <i class="bi bi-search"></i> Filter
+            </button>
+        </form>
+    </div>
+
+    <div class="stats-card">
+        <h3>Summary for {{ selected_date|date:"F d, Y" }}</h3>
+        <p style="color: var(--text-secondary);">
+            Total Absent Students: <span style="color: var(--danger-color); font-weight: 500;">{{ total_absent }}</span>
+        </p>
+    </div>
+
+    {% if absent_by_class %}
+        {% for class_name, students in absent_by_class.items %}
+            <div class="table-container">
+                <div class="class-header">
+                    <span>{{ class_name.grade }} {{ class_name }}</span>
+                    <span class="student-count">{{ students|length }} Absent</span>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student Name</th>
+                            <th>Admission No</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{% url 'students-profile' student.adm_no %}" class="student-link">
+                                        {{ student.studentprofile.get_names }}
+                                    </a>
+                                </td>
+                                <td>{{ student.adm_no }}</td>
+                                <td>
+                                    <span style="color: var(--danger-color);">Absent</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-absent">
+            <i class="bi bi-check-circle" style="font-size: 2rem; color: var(--success-color);"></i>
+            <p>No absent students recorded for this date.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 
