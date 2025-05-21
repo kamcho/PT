@@ -359,15 +359,15 @@
             <i class="bi bi-trash"></i>
             Delete Topic
         </button>
-    </div>
+</div>
 
     <div class="topic-header">
         <div class="subject-title">
             <i class="bi bi-bookmark"></i>
             {{ topic.subject.name }} Grade {{ topic.subject.grade }}
-        </div>
+</div>
         <h1 class="topic-name">{{ topic.name }}</h1>
-    </div>
+</div>
 
     <div class="subtopics-grid">
         {% for subtopic in subtopics %}
@@ -379,8 +379,8 @@
             <h3 class="subtopic-name">{{ subtopic.name }}</h3>
         </a>
         {% endfor %}
-    </div>
-
+        </div>
+        
     <div class="form-container">
         <h2 class="form-title">
             <i class="bi bi-plus-circle-fill"></i>
@@ -388,7 +388,7 @@
         </h2>
 
         <form method="post" id="subtopicForm">
-            {% csrf_token %}
+    {% csrf_token %}
             <div class="row g-3">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -397,7 +397,7 @@
                                placeholder="e.g., Basic Addition" required>
                     </div>
                 </div>
-                
+               
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="order" class="form-label">Order</label>
@@ -475,7 +475,7 @@ function showConfirmModal() {
     if (nameInput.value && orderInput.value) {
         modal.style.display = 'flex';
         document.querySelector('[name="set_name"]').value = nameInput.value;
-        document.querySelector('[name="set_order"]').value = orderInput.value;
+    document.querySelector('[name="set_order"]').value = orderInput.value;
     }
 }
 

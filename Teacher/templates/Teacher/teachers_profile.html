@@ -261,8 +261,8 @@
         <!-- Sidebar -->
         <div class="profile-sidebar">
             <div class="profile-cover">
-                <div class="profile-avatar">
-                    <i class="bi bi-person"></i>
+            <div class="profile-avatar">
+                <i class="bi bi-person"></i>
                 </div>
             </div>
             <div class="sidebar-content">
@@ -332,14 +332,14 @@
                     <h2 class="card-title">Teaching Subjects</h2>
                 </div>
                 <div class="subjects-grid">
-                    {% for subject in teacher.teacherprofile.subject.all %}
+            {% for subject in teacher.teacherprofile.subject.all %}
                     <div class="subject-card">
                         <div class="subject-icon">
                             <i class="bi bi-journal-text"></i>
                         </div>
                         <div class="subject-name">{{ subject }}</div>
                     </div>
-                    {% endfor %}
+            {% endfor %}
                 </div>
             </div>
         </div>

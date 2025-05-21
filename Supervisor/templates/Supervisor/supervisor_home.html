@@ -331,17 +331,17 @@ body {
         <h2>School Dashboard</h2>
         <p class="text-secondary">Welcome back, {{ request.user.get_full_name }}</p>
     </div>
-
+        
     <div class="stats-grid">
         <div class="stat-card">
-            <i class="bi bi-people-fill"></i>
-            <h4>{{ users }}</h4>
-            <small>Total Users</small>
-        </div>
-        
+                <i class="bi bi-people-fill"></i>
+                <h4>{{ users }}</h4>
+                <small>Total Users</small>
+            </div>
+            
         <a href="{% url 'students-view' %}" class="stat-card" style="text-decoration: none;">
-            <i class="bi bi-mortarboard-fill"></i>
-            <h4>{{ students }}</h4>
+                    <i class="bi bi-mortarboard-fill"></i>
+                    <h4>{{ students }}</h4>
             <small>Students</small>
             <div class="gender-stats">
                 <div class="gender-stat">
@@ -352,12 +352,12 @@ body {
                     <i class="bi bi-gender-female"></i>
                     <span>{{ females }}</span>
                 </div>
-            </div>
-        </a>
-        
+                </div>
+            </a>
+            
         <a href="{% url 'teachers-view' %}" class="stat-card" style="text-decoration: none;">
-            <i class="bi bi-person-workspace"></i>
-            <h4>{{ teachers }}</h4>
+                    <i class="bi bi-person-workspace"></i>
+                    <h4>{{ teachers }}</h4>
             <small>Teachers</small>
             <div class="gender-stats">
                 <div class="gender-stat">
@@ -368,12 +368,12 @@ body {
                     <i class="bi bi-gender-female"></i>
                     <span>{{ t_females }}</span>
                 </div>
-            </div>
-        </a>
-        
+                </div>
+            </a>
+            
         <a href="{% url 'guardians-view' %}" class="stat-card" style="text-decoration: none;">
-            <i class="bi bi-people-fill"></i>
-            <h4>{{ parents }}</h4>
+                    <i class="bi bi-people-fill"></i>
+                    <h4>{{ parents }}</h4>
             <small>Parents</small>
             <div class="gender-stats">
                 <div class="gender-stat">
@@ -384,33 +384,33 @@ body {
                     <i class="bi bi-gender-female"></i>
                     <span>{{ g_females }}</span>
                 </div>
-            </div>
-        </a>
+                </div>
+            </a>
     </div>
 </div>
 
 <div class="main-content">
     <div class="services-grid">
         <a href="{% url 'finance' %}" class="service-card" style="text-decoration: none;">
-            <i class="bi bi-cash-stack"></i>
+                <i class="bi bi-cash-stack"></i>
             <h6>Finance Management</h6>
             <p>Track and manage school finances, fees, and payments</p>
         </a>
         
         <a href="{% url 'classes' %}" class="service-card" style="text-decoration: none;">
-            <i class="bi bi-book"></i>
+                <i class="bi bi-book"></i>
             <h6>Class Management</h6>
             <p>Organize and monitor class activities and performance</p>
         </a>
         
         <a href="{% url 'class-teacher' %}" class="service-card" style="text-decoration: none;">
-            <i class="bi bi-person-badge"></i>
+                <i class="bi bi-person-badge"></i>
             <h6>Teacher Management</h6>
             <p>Assign and manage class teachers and their responsibilities</p>
         </a>
         
         <a href="{% url 'booked-students' %}" class="service-card" style="text-decoration: none;">
-            <i class="bi bi-shield-exclamation"></i>
+                <i class="bi bi-shield-exclamation"></i>
             <h6>Discipline Records</h6>
             <p>Track and manage student discipline and incidents</p>
         </a>

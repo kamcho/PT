@@ -279,23 +279,23 @@
                             <i class="bi bi-info-circle"></i> {{ student.academicprofile.current_class.grade }} {{ student.academicprofile.current_class }}
                         </div>
                     </div>
-                </div>
+            </div>
             </div>
             {% empty %}
             <div class="student-card">
                 <div class="class-details">
                     <i class="bi bi-info-circle"></i> No students assigned to this guardian
-                </div>
+            </div>
             </div>
             {% endfor %}
         {% else %}
             <div class="student-card">
                 <div class="class-details">
                     <i class="bi bi-info-circle"></i> No students assigned to this guardian
-                </div>
-            </div>
+        </div>
+      </div>
         {% endif %}
     </div>
-</div>
+  </div>
 
 {% endblock %}

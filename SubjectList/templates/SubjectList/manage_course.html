@@ -362,13 +362,13 @@
             <i class="bi bi-trash"></i>
             Delete Course
         </button>
-    </div>
-
+            </div>
+           
     <div class="course-header">
         <h1 class="course-title">{{ course }}</h1>
         <div class="course-discipline">{{ course.discipline }}</div>
-    </div>
-
+            </div>
+           
     <div class="subjects-grid">
         {% for subject in subjects %}
         <a href="{% url 'manage-subject' subject.id %}" class="subject-card">
@@ -379,7 +379,7 @@
             <p class="subject-grade">Grade {{ subject.grade }}</p>
         </a>
         {% endfor %}
-    </div>
+        </div>
 
     <div class="form-container">
         <h2 class="form-title">
@@ -388,7 +388,7 @@
         </h2>
 
         <form method="post" id="subjectForm">
-            {% csrf_token %}
+    {% csrf_token %}
             <div class="row g-3">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -397,7 +397,7 @@
                                placeholder="e.g., Mathematics" required>
                     </div>
                 </div>
-                
+               
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="grade" class="form-label">Grade Level</label>
@@ -419,13 +419,13 @@
                                placeholder="e.g., 4" required>
                     </div>
                 </div>
-                
+               
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="course" class="form-label">Course</label>
                         <select class="form-select" id="course" name="course" required disabled>
                             <option value="{{ course.id }}">{{ course }}</option>
-                        </select>
+                     </select>
                     </div>
                 </div>
             </div>
@@ -451,7 +451,7 @@
         </div>
         
         <form method="post" class="modal-body">
-            {% csrf_token %}
+    {% csrf_token %}
             <input type="text" class="modal-input" name="set_name" placeholder="Subject Name" readonly>
             <input type="text" class="modal-input" name="set_grade" placeholder="Grade Level" readonly>
             <input type="number" class="modal-input" name="set_count" placeholder="Number of Topics" readonly>

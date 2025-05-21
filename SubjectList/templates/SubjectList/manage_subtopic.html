@@ -360,11 +360,11 @@
         </div>
         <div class="topic-name">
             Topic {{ subtopic.topic.order }}: {{ subtopic.topic.name }}
-        </div>
+</div>
         <h1 class="subtopic-name">
             Sub-topic {{ subtopic.order }}: {{ subtopic.name }}
         </h1>
-    </div>
+</div>
 
     <div class="form-container">
         <h2 class="form-title">
@@ -373,7 +373,7 @@
         </h2>
 
         <form method="post" id="subtopicForm" enctype="multipart/form-data">
-            {% csrf_token %}
+    {% csrf_token %}
             <div class="form-group">
                 <label for="order" class="form-label">Order</label>
                 <input type="number" class="form-input" id="order" name="order" 
@@ -396,7 +396,7 @@
                         </div>
                     </div>
                 </div>
-                
+               
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="video" class="form-label">MP4 File</label>
@@ -450,7 +450,7 @@
                     MP4 File
                     <input type="file" name="set_video" accept=".mp4" readonly>
                 </label>
-            </div>
+    </div>
             
             <div class="modal-footer">
                 <button type="button" class="modal-btn cancel" onclick="hideConfirmModal()">Cancel</button>

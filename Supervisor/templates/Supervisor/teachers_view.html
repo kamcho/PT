@@ -16,8 +16,8 @@
     --warning-color: #fdcb6e;
     --danger-color: #d63031;
     --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
+    }
+    
 .container {
     max-width: 1400px;
     margin: 6rem auto 2rem;
@@ -32,7 +32,7 @@
 }
 
 .page-title {
-    color: var(--text-primary);
+        color: var(--text-primary);
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
@@ -52,15 +52,15 @@
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
+    }
+    
 .input-group-text {
     background: var(--bg-card);
     border: none;
     color: var(--text-secondary);
     padding: 0.5rem 1rem;
-}
-
+    }
+    
 .form-control {
     background: var(--bg-card-hover);
     border: none;
@@ -73,21 +73,21 @@
     color: var(--text-primary);
     box-shadow: none;
     border-color: var(--primary-color);
-}
-
+    }
+    
 .btn-secondary {
     background: var(--primary-color);
     border: none;
-    color: var(--text-primary);
+        color: var(--text-primary);
     padding: 0.5rem 1.5rem;
     border-radius: 8px;
     transition: all 0.3s ease;
-}
+    }
 
 .btn-secondary:hover {
     background: var(--secondary-color);
     transform: translateY(-2px);
-}
+    }
 
 .table-container {
     background: var(--bg-card);
@@ -100,14 +100,14 @@
 }
 
 .table {
-    color: var(--text-primary);
+        color: var(--text-primary);
     margin: 0;
-}
+    }
 
 .table thead th {
     background: var(--bg-card-hover);
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-secondary);
+        color: var(--text-secondary);
     font-weight: 600;
     padding: 1rem;
     position: sticky;
@@ -123,13 +123,13 @@
 
 .table tbody tr:hover {
     background: var(--bg-card-hover);
-}
+    }
 
 .table a {
-    color: var(--primary-color);
-    text-decoration: none;
+        color: var(--primary-color);
+        text-decoration: none;
     transition: all 0.3s ease;
-}
+    }
 
 .table a:hover {
     color: var(--secondary-color);
@@ -182,7 +182,7 @@
     align-items: center;
     gap: 0.5rem;
     transition: all 0.3s ease;
-}
+    }
 
 .action-btn:hover {
     background: var(--secondary-color);
@@ -217,7 +217,7 @@
         height: auto;
         max-height: 600px;
     }
-}
+    }
 </style>
 
 <div class="container">
@@ -226,32 +226,32 @@
     </div>
 
     <div class="search-section">
-        <form method="post">
-            {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
             <div class="input-group">
                 <span class="input-group-text">Search</span>
                 <input type="text" name="search" class="form-control" placeholder="Search by name, email, or ID number...">
                 <button type="submit" class="btn btn-secondary">
                     <i class="bi bi-search"></i> Search
                 </button>
-            </div>
-        </form>
+        </div>
+    </form>
     </div>
 
     <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
+    <table class="table">
+        <thead>
+            <tr>
                     <th>ID</th>
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Subjects</th>
                     <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
                     <td>
                         <span class="teacher-id">{{ user.id_number }}</span>
                     </td>
@@ -266,21 +266,21 @@
                             <i class="bi bi-telephone"></i> {{ user.personalprofile.phone }}
                         </div>
                     </td>
-                    <td>
-                        {% for subject in user.teacherprofile.subject.all %}
+                <td>
+                    {% for subject in user.teacherprofile.subject.all %}
                         <span class="teacher-info">{{ subject }}</span>
                         {% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    </td>
+                    {% endfor %}
+                </td>
                     <td>
                         <span class="status-badge {% if user.is_active %}processed{% else %}unprocessed{% endif %}">
                             {% if user.is_active %}Active{% else %}Inactive{% endif %}
                         </span>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     </div>
 </div>
 {% endblock %}

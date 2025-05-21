@@ -328,7 +328,7 @@
                 <input type="text" class="form-input" id="name" name="name" 
                        placeholder="e.g., Advanced Mathematics" required>
             </div>
-            
+           
             <div class="form-group">
                 <label for="discipline" class="form-label">Discipline</label>
                 <input type="text" class="form-input" id="discipline" name="discipline" 
@@ -352,12 +352,12 @@
             <a href="{% url 'manage-course' course.id %}" class="course-card">
                 <div class="course-icon">
                     <i class="bi bi-book"></i>
-                </div>
+</div>
                 <h3 class="course-name">{{ course }}</h3>
                 <p class="course-discipline">{{ course.discipline }}</p>
             </a>
             {% endfor %}
-        </div>
+</div>
     </main>
 </div>
 
@@ -374,7 +374,7 @@
             {% csrf_token %}
             <input type="text" class="modal-input" name="subject" placeholder="Course Name" readonly>
             <input type="text" class="modal-input" name="type" placeholder="Discipline" readonly>
-            
+        
             <div class="modal-footer">
                 <button type="button" class="modal-btn cancel" onclick="hideModal()">Cancel</button>
                 <button type="submit" class="modal-btn confirm">Create Course</button>

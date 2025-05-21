@@ -206,10 +206,21 @@ hr {
         padding: 0.5rem;
     }
 
-    .data-card, .fee-card {
+    .main-dis > .data-card,
+    .main-dis .fee-card {
         padding: 1rem;
         width: 100%;
         margin: 0;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .progress-canvas {
+        height: 120px !important;
+        max-height: 120px;
+        width: 120px !important;
+        margin: 0 auto;
+        position: relative;
     }
 
     .table-container {

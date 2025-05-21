@@ -365,12 +365,12 @@
             <i class="bi bi-trash"></i>
             Delete Subject
         </button>
-    </div>
+</div>
 
     <div class="subject-header">
         <h1 class="subject-title">{{ subject }}</h1>
         <div class="subject-grade">Grade {{ subject.grade }}</div>
-    </div>
+</div>
 
     <div class="topics-grid">
         {% for topic in topics %}
@@ -384,7 +384,7 @@
                 <span>{{ topic.subtopics }} Sub-topics</span>
                 <span>{{ topic.size }} Questions</span>
                 <span>{{ topic.time }} Minutes</span>
-            </div>
+        </div>
         </a>
         {% endfor %}
     </div>
@@ -396,7 +396,7 @@
         </h2>
 
         <form method="post" id="topicForm">
-            {% csrf_token %}
+    {% csrf_token %}
             <div class="form-group">
                 <label for="order" class="form-label">Topic Order</label>
                 <input type="number" class="form-input" id="order" name="order" 
@@ -411,7 +411,7 @@
                                placeholder="e.g., Addition" required>
                     </div>
                 </div>
-                
+               
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="subtopics" class="form-label">Number of Sub-topics</label>
@@ -429,7 +429,7 @@
                                placeholder="e.g., 10 Questions" required>
                     </div>
                 </div>
-                
+               
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="time" class="form-label">Exam Time (Minutes)</label>
@@ -438,7 +438,7 @@
                     </div>
                 </div>
             </div>
-
+    
             <div class="text-center">
                 <button type="button" class="submit-btn" onclick="showConfirmModal()">
                     <i class="bi bi-check2-circle"></i>
@@ -513,11 +513,11 @@ function showConfirmModal() {
     if (orderInput.value && nameInput.value && subtopicsInput.value && 
         sizeInput.value && timeInput.value) {
         modal.style.display = 'flex';
-        document.querySelector('[name="set_order"]').value = orderInput.value;
-        document.querySelector('[name="set_name"]').value = nameInput.value;
-        document.querySelector('[name="set_subtopics"]').value = subtopicsInput.value;
-        document.querySelector('[name="set_size"]').value = sizeInput.value;
-        document.querySelector('[name="set_time"]').value = timeInput.value;
+    document.querySelector('[name="set_order"]').value = orderInput.value;
+    document.querySelector('[name="set_name"]').value = nameInput.value;
+    document.querySelector('[name="set_subtopics"]').value = subtopicsInput.value;
+    document.querySelector('[name="set_size"]').value = sizeInput.value;
+    document.querySelector('[name="set_time"]').value = timeInput.value;
     }
 }
 
