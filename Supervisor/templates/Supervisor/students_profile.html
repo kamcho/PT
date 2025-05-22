@@ -8,522 +8,499 @@
 
 <style>
     :root {
-        --primary-color: #2563EB;  /* Blue */
-        --secondary-color: #10B981;  /* Green */
-        --dark-bg: #111827;  /* Dark background */
-        --darker-bg: #0F172A;  /* Darker background */
-        --card-bg: #1F2937;  /* Card background */
-        --text-primary: #F9FAFB;  /* Primary text */
-        --text-secondary: #9CA3AF;  /* Secondary text */
-        --accent-color: #3B82F6;  /* Accent blue */
-        --success-color: #059669;  /* Success green */
-        --warning-color: #D97706;  /* Warning orange */
-        --danger-color: #DC2626;  /* Danger red */
+        --primary-color: #2563EB;
+        --secondary-color: #10B981;
+        --dark-bg: #111827;
+        --darker-bg: #0F172A;
+        --card-bg: #1F2937;
+        --text-primary: #F9FAFB;
+        --text-secondary: #9CA3AF;
+        --accent-color: #3B82F6;
+        --success-color: #059669;
+        --warning-color: #D97706;
+        --danger-color: #DC2626;
     }
 
     body {
         background-color: var(--dark-bg);
-        padding-top: 70px; /* Add space for fixed navbar */
+        color: var(--text-primary);
     }
 
-    .main-fr {
-        display: flex;
-        flex-direction: column;
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .grid-layout {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
         padding: 1.5rem;
-        background: var(--bg-card);
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-    
-    /* Remove styling from a tags */
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
-    
-    /* Style for fee balance and discipline score buttons */
-    .status-button {
-        border-radius: 30px;
-        min-height: 100px;
-        padding: 30px;
-        text-align: center;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        background-color: var(--card-bg);
-        color: var(--text-primary);
-    }
-    
-    .status-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--primary-color);
-    }
-    
-    .fee-positive {
-        background-color: var(--danger-color);
-        color: var(--text-primary);
-    }
-    
-    .fee-negative {
-        background-color: var(--success-color);
-        color: var(--text-primary);
-    }
-    
-    .discipline-score {
-        background-color: var(--card-bg);
-        color: var(--text-primary);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .chart-container {
-        position: relative;
-        height: 200px;
-        width: 100%;
-    }
-    
-    .subject-chart-card {
-        background-color: var(--card-bg);
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-        color: var(--text-primary);
-        transition: transform 0.3s ease;
-    }
-    
-    .subject-chart-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .guardian-card {
-        background-color: var(--card-bg);
-        border-radius: 10px;
-        padding: 30px;
-        transition: all 0.3s ease;
-        margin: 30px auto;
-        width: 95%;
-        max-width: 1200px;
-    }
-
-    .guardian-card:hover {
+    .card:hover {
         transform: translateY(-5px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    .guardian-header {
+    .profile-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
     }
 
-    .guardian-header i {
-        font-size: 1.5rem;
-        color: var(--primary-color);
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 1rem;
+        object-fit: cover;
     }
 
-    .guardian-header h5 {
+    .profile-info h2 {
         color: var(--text-primary);
         margin: 0;
+        font-size: 1.5rem;
+    }
+
+    .profile-info p {
+        color: var(--text-secondary);
+        margin: 0.5rem 0;
+    }
+
+    .attendance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .attendance-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.875rem;
+        color: var(--text-primary);
+    }
+
+    .attendance-present { background-color: var(--success-color); }
+    .attendance-absent { background-color: var(--danger-color); }
+    .attendance-na { background-color: var(--text-secondary); }
+
+    .subject-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--darker-bg);
+        border-radius: 2rem;
+        color: var(--text-primary);
+        margin: 0.25rem;
+    }
+
+    .subject-tag i {
+        font-size: 0.875rem;
+    }
+
+    .status-card {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .status-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .fee-positive, .fee-negative, .discipline-score {
+        background-color: var(--card-bg) !important;
+        border-left-width: 6px;
+        border-left-style: solid;
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px rgba(37,99,235,0.05);
+        margin-bottom: 1rem;
+    }
+    .fee-positive {
+        border-left-color: var(--danger-color);
+    }
+    .fee-negative {
+        border-left-color: var(--success-color);
+    }
+    .discipline-score {
+        border-left-color: var(--primary-color);
+    }
+    .fee-label {
+        color: var(--danger-color);
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .over-label {
+        color: var(--success-color);
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .discipline-label {
+        color: var(--primary-color);
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .chart-container {
+        height: 250px;
+        margin-top: 1rem;
+    }
+
+    .guardian-card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
     }
 
     .guardian-list {
         display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1rem;
+        margin-top: 1rem;
     }
 
     .guardian-item {
         background-color: var(--darker-bg);
-        border-radius: 10px;
+        border-radius: 0.75rem;
         padding: 1rem;
         display: flex;
         align-items: center;
         gap: 1rem;
-        transition: all 0.3s ease;
+        transition: transform 0.3s ease;
     }
 
     .guardian-item:hover {
         transform: translateX(5px);
-        border: 1px solid var(--primary-color);
     }
 
     .guardian-avatar {
-        width: 50px;
-        height: 50px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         background-color: var(--primary-color);
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--text-primary);
-        font-size: 1.25rem;
     }
 
-    .guardian-info {
-        flex: 1;
+    .progress-section {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
     }
 
-    .guardian-info h6 {
-        color: var(--text-primary);
-        margin: 0 0 0.25rem 0;
+    .progress-bar {
+        height: 0.75rem;
+        border-radius: 1rem;
+        background-color: var(--darker-bg);
+        overflow: hidden;
+        margin: 0.5rem 0;
     }
 
-    .guardian-info small {
-        color: var(--text-secondary);
-        display: block;
-    }
-
-    .guardian-contact {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    .guardian-contact a {
-        color: var(--primary-color);
-        font-size: 1rem;
-        transition: color 0.3s ease;
-    }
-
-    .guardian-contact a:hover {
-        color: var(--accent-color);
-    }
-
-    @media screen and (max-width: 768px) {
-        .main-fr {
-            padding: 1rem;
-            gap: 1rem;
-        }
-
-        .main-fr > div {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-
-        .main-fr table {
-            display: block;
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .main-fr .table-responsive {
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            padding-top: 60px; /* Slightly less padding for mobile */
-        }
-    }
-
-    @media screen and (max-width: 480px) {
-        .main-fr {
-            padding: 0.75rem;
-            gap: 0.75rem;
-        }
-
-        .main-fr h4 {
-            font-size: 1.1rem;
-        }
-
-        .main-fr .table th,
-        .main-fr .table td {
-            padding: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        body {
-            padding-top: 55px; /* Even less padding for smaller devices */
-        }
-    }
-
-    .main-fr h4 {
-        color: var(--accent-color);
+    .progress-bar-fill {
+        height: 100%;
+        border-radius: 1rem;
+        transition: width 0.3s ease;
     }
 
     .action-buttons {
         display: flex;
-        justify-content: flex-end;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        flex-wrap: nowrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
     }
 
     .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
         background-color: var(--primary-color);
         color: var(--text-primary);
-        padding: 0.5rem 0.75rem;
-        border: none;
-        border-radius: 10px;
-        font-size: 0.85rem;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        transition: all 0.3s ease;
-        white-space: nowrap;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        transition: transform 0.3s ease;
     }
 
     .action-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .action-btn i {
-        font-size: 0.9rem;
-    }
-
-    .attendance-days {
-        display: flex;
-        gap: 0.5rem;
-        padding: 1rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-
-    .attendance-days::-webkit-scrollbar {
-        display: none;
-    }
-
-    .day-box {
-        min-width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         color: var(--text-primary);
-        font-size: 0.9rem;
-        flex-shrink: 0;
     }
 
-    .day-present {
-        background-color: var(--success-color);
-    }
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
 
-    .day-absent {
-        background-color: var(--danger-color);
-    }
+        .grid-layout {
+            grid-template-columns: 1fr;
+        }
 
-    .day-na {
-        background-color: var(--text-secondary);
-    }
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
 
-    @media screen and (max-width: 768px) {
         .action-buttons {
             justify-content: center;
-            padding: 0.5rem;
-        }
-
-        .action-btn {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.6rem;
-        }
-
-        .day-box {
-            min-width: 35px;
-            height: 35px;
-            font-size: 0.8rem;
         }
     }
 
-    @media screen and (max-width: 480px) {
-        .action-btn {
-            font-size: 0.75rem;
-            padding: 0.35rem 0.5rem;
-        }
-
-        .day-box {
-            min-width: 30px;
-            height: 30px;
-            font-size: 0.75rem;
-        }
+    /* Section transitions and styled lines */
+    .section-header {
+        text-align: center;
+        margin: 4rem 0 2rem 0;
     }
-
-    .page-container {
-        padding-top: 1rem;
-        margin-top: 0;
+    .section-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+    .title-underline {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        margin: 0 auto;
+        border-radius: 2px;
+    }
+    .section-divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        border: none;
+        margin: 3rem 0 2rem 0;
     }
 </style>
 
-<div class="page-container" style="background-color:var(--card-bg);">
+<div class="page-top-space" style="height: 60px;"></div>
+<div class="dashboard-container">
+    <div class="section-header" style="margin-top: 0;">
+        <h2>Student Profile</h2>
+        <div class="title-underline"></div>
+    </div>
     {% if user.role == 'Guardian' %}
     <div class="action-buttons">
-        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}">
-            <button class="action-btn"><i class="bi bi-stars"></i>Exams</button>
+        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}" class="action-btn">
+            <i class="bi bi-stars"></i>Online Exams
         </a>
-        <a href="{% url 'ask-ai' student.adm_no %}">
-            <button class="action-btn"><i class="bi bi-robot"></i>AI</button>
+        <a href="{% url 'ask-ai' student.adm_no %}" class="action-btn">
+            <i class="bi bi-robot"></i>AI Assistant
         </a>
         {% if student.academicprofile.current_class %}
             {% with class_tests=student.academicprofile.current_class.classtest_set.all %}
                 {% if class_tests %}
-                    <a href="{% url 'assignments' student.adm_no %}">
-                        <button class="action-btn"><i class="bi bi-journal-text"></i>Tasks</button>
+                    <a href="{% url 'assignments' student.adm_no %}" class="action-btn">
+                        <i class="bi bi-journal-text"></i>Assignments
                     </a>
                 {% endif %}
             {% endwith %}
         {% endif %}
     </div>
     {% endif %}
-    <div class="main-fr">
-        <div style="background-color: var(--card-bg);border-radius: 10px;float: left;padding: 40px;">
-            <h5 style="color: var(--text-primary);">Personal Info</h5><br><br>
-            <div style="display: grid;grid-template-columns: 40% 60%;">
-                <img style="width: 100px; height: 100px;border-radius: 5%;" src="{% static 'Users/child.jpg' %}">
-            <div><h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
-                <h6 style="color: var(--text-secondary);">{{ student.adm_no }}</h6>
-                <h6 style="color: var(--text-secondary);">{{ student.studentprofile.gender }}</h6>
-                <h6 style="color: var(--primary-color);">{{ student.school }}</h6>
-                <h6 style="color: var(--text-secondary);">Grade {{ student.academicprofile.current_class.grade|title }}  {{ student.academicprofile.current_class|title }}</h6></div>
-                
-            </div><br><br>
-            <div style="background-color: var(--darker-bg);border-radius: 20px;padding: 1rem;">
-                <div class="attendance-days">
-                    {% for day in days %}
-                        {% with student|get_attendance:day.date as attendance %}
-                            <div class="day-box {% if attendance == 'PRESENT' %}day-present{% elif attendance == 'ABSENT' %}day-absent{% else %}day-na{% endif %}">
-                                {{ day.day }}
-                            </div>
-                        {% endwith %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div style="background-color: var(--card-bg);border-radius: 10px;padding: 30px;">
-            <h5 style="color: var(--text-primary);">My Subjects</h5>
-            <br><br><h6 style="color: var(--text-primary);">Selected Subjects</h6>
-            <div style="display: flex;flex-wrap: wrap;gap: 10px;">
-            {% if mysubjects %}
-            {% for subject in mysubjects %}
-                <div style="background-color: var(--darker-bg);color: var(--text-primary);padding: 5px;border-radius: 5px;">
-                    <small><i class="bi bi-check"></i>{{ subject }}</small>
-                </div>
-                {% endfor %}
-            {% else %}
-                <a href="{% url 'student-subject-select' student.adm_no %}"><h6 class="text-center" style="color: var(--danger-color);justify-content: center;"><i class="bi bi-info">You have not selected any subjects! </i></h6></a>
-            {% endif %}
-            </div><br><hr style="border-color: rgba(255, 255, 255, 0.1);">
-            <br><br>
-            {% if mysubjects %}
-            <h6 style="color: var(--danger-color);">ForeGone</h6>
-            <div style="display: flex;flex-wrap: wrap;gap: 10px;">
-            {% for subject in foregone %}
-                <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
-                    <small><i class="bi bi-x"></i>{{ subject }}</small>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <h6 style="color: var(--text-primary);">Available Subjects</h6>
-            <div style="display: flex;flex-wrap: wrap;gap: 10px;">
-            {% for subject in foregone %}
-                <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
-                    <small><i class="bi bi-x"></i>{{ subject }}</small>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div style="background-color: var(--card-bg); border-radius: 10px; padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center;">
-            <h5 style="color: var(--text-primary);">Fees & Discipline</h5>
-            <h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
-            <br><br>
-            <a href="{% url 'student-fee-profile' student.adm_no %}">
-                <div class="status-button {% if student.studentsfeeaccount.balance < 0 %}fee-positive{% else %}fee-negative{% endif %}">
-                    <h5>{% if student.studentsfeeaccount.balance < 0 %}Fee Balance - {{ student.studentsfeeaccount.balance|title }}{% else %}Fee Overpayment - {{ student.studentsfeeaccount.balance|title }}{% endif %}</h5>
-                </div>
-            </a><br><br>
-            <a href="{% url 'students-discipline' student.adm_no %}">
-                <div class="status-button discipline-score">
-                    <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: var(--primary-color);">100</strong></h5>
-                </div>
-            </a>
-        </div>
-    </div>
-    <br><br>
-</div>
 
-<div class="guardian-card">
-    <div class="guardian-header">
-        <i class="bi bi-people-fill"></i>
-        <h5>Linked Guardians</h5>
+    <div class="grid-layout">
+        <!-- Profile Card -->
+        <div class="card">
+            <div class="profile-header">
+                <img src="{% static 'Users/child.jpg' %}" alt="Profile" class="profile-image">
+                <div class="profile-info">
+                    <h2>{{ student.studentprofile.get_names|title }}</h2>
+                    <p>{{ student.adm_no }}</p>
+                    <p>{{ student.studentprofile.gender }}</p>
+                    <p style="color: var(--primary-color);">{{ student.school }}</p>
+                    <p>Grade {{ student.academicprofile.current_class.grade|title }} {{ student.academicprofile.current_class|title }}</p>
+                </div>
+            </div>
+            <div class="attendance-grid">
+                {% for day in days %}
+                    {% with student|get_attendance:day.date as attendance %}
+                        <div class="attendance-day {% if attendance == 'PRESENT' %}attendance-present{% elif attendance == 'ABSENT' %}attendance-absent{% else %}attendance-na{% endif %}">
+                            {{ day.day }}
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Subjects Card -->
+        <div class="card">
+            <h3>My Subjects</h3>
+            <div style="margin-top: 1rem;">
+                {% if mysubjects %}
+                    {% for subject in mysubjects %}
+                        <span class="subject-tag">
+                            <i class="bi bi-check"></i>{{ subject }}
+                        </span>
+                    {% endfor %}
+                {% else %}
+                    <a href="{% url 'student-subject-select' student.adm_no %}" style="color: var(--danger-color);">
+                        <i class="bi bi-info-circle"></i> You have not selected any subjects!
+                    </a>
+                {% endif %}
+            </div>
+            <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
+            <h4>{% if mysubjects %}Foregone{% else %}Available{% endif %} Subjects</h4>
+            <div style="margin-top: 1rem;">
+                {% for subject in foregone %}
+                    <span class="subject-tag">
+                        <i class="bi bi-x"></i>{{ subject }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Fees & Discipline Card -->
+        <div class="card">
+            <h3>Fees & Discipline</h3>
+            <div style="margin-top: 1.5rem;">
+                <a href="{% url 'student-fee-profile' student.adm_no %}" style="text-decoration: none;">
+                    <div class="status-card {% if student.studentsfeeaccount.balance < 0 %}fee-positive{% else %}fee-negative{% endif %}">
+                        <span class="{% if student.studentsfeeaccount.balance < 0 %}fee-label{% else %}over-label{% endif %}">{% if student.studentsfeeaccount.balance < 0 %}Fee Balance{% else %}Fee Overpayment{% endif %}</span>
+                        <h3 style="margin: 0; color: var(--text-primary);">{{ student.studentsfeeaccount.balance|title }}</h3>
+                    </div>
+                </a>
+                <a href="{% url 'students-discipline' student.adm_no %}" style="text-decoration: none;">
+                    <div class="status-card discipline-score">
+                        <span class="discipline-label">Discipline Score</span>
+                        <h3 style="margin: 0; color: var(--text-primary);">{{ student.studentdisciplinescore.points|title }} / 100</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="guardian-list">
-        {% for pf in guardians %}
+
+    <hr class="section-divider">
+    <div class="section-header">
+        <h2>Linked Guardians</h2>
+        <div class="title-underline"></div>
+    </div>
+    <div class="guardian-card">
+        <div class="guardian-list">
+            {% for pf in guardians %}
             <div class="guardian-item">
                 <div class="guardian-avatar">
                     <i class="bi bi-person"></i>
                 </div>
-                <div class="guardian-info">
-                    <h6>{{ pf.user.personalprofile.get_names|title }}</h6>
-                    <small>{{ pf.user.personalprofile.gender }}</small>
-                    <small>{{pf.user.personalprofile.phone }}</small>
-                    <small>{{pf.user.personalprofile.phone2 }}</small>
-                    <small>{{pf.user.personalprofile.location }}</small>
-                    <div class="guardian-contact">
-                        {% if kid.guardian.personalprofile.phone %}
-                            <a href="tel:{{ kid.guardian.personalprofile.phone }}" title="Call">
+                <div>
+                    <h5>{{ pf.user.personalprofile.get_names|title }}</h5>
+                    <p style="color: var(--text-secondary); margin: 0.25rem 0;">{{ pf.user.personalprofile.gender }}</p>
+                    <p style="color: var(--text-secondary); margin: 0.25rem 0;">{{ pf.user.personalprofile.phone }}</p>
+                    {% if pf.user.personalprofile.phone2 %}
+                        <p style="color: var(--text-secondary); margin: 0.25rem 0;">{{ pf.user.personalprofile.phone2 }}</p>
+                    {% endif %}
+                    <p style="color: var(--text-secondary); margin: 0.25rem 0;">{{ pf.user.personalprofile.location }}</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        {% if pf.user.personalprofile.phone %}
+                            <a href="tel:{{ pf.user.personalprofile.phone }}" style="color: var(--primary-color);">
                                 <i class="bi bi-telephone"></i>
                             </a>
                         {% endif %}
-                        {% if kid.guardian.email %}
-                            <a href="mailto:{{ kid.guardian.email }}" title="Email">
+                        {% if pf.user.email %}
+                            <a href="mailto:{{ pf.user.email }}" style="color: var(--primary-color);">
                                 <i class="bi bi-envelope"></i>
                             </a>
                         {% endif %}
                     </div>
                 </div>
             </div>
-        {% empty %}
+            {% empty %}
             <div class="guardian-item" style="justify-content: center;">
-                <h6 style="color: var(--text-secondary); margin: 0;">No guardians linked to this student</h6>
+                <p style="color: var(--text-secondary); margin: 0;">No guardians linked to this student</p>
             </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-</div>
 
-<div style="width: 95%;margin: 60px auto;position: relative;">
-    <h6 style="padding: 20px;color: var(--text-primary);" class="text-center">Performance <strong style="color: var(--primary-color);">Analytics</strong></h6>
-    <form method="post" style="display: flex; justify-content: center; margin-bottom: 20px;">{% csrf_token %}
-        <div class="input-group" style="max-width: 600px;">
-            <select class="form-select" aria-label="Default select example" name="grade" required>
+    <hr class="section-divider">
+    <div class="section-header">
+        <h2>Performance Analytics</h2>
+        <div class="title-underline"></div>
+    </div>
+    <div class="card">
+        <h3>Performance Analytics</h3>
+        <form method="post" style="display: flex; gap: 1rem; margin: 1.5rem 0;">{% csrf_token %}
+            <select class="form-select" name="grade" required>
                 <option value="" selected>Select Grade</option>
                 {% for grade in grades %}
                     <option value="{{grade}}">Grade {{ grade }}</option>
                 {% endfor %}
             </select>
-            <select class="form-select" aria-label="Default select example" name="term" required>
+            <select class="form-select" name="term" required>
                 <option value="" selected>Select Term</option>
                 <option value="Term 1">Term 1</option>
                 <option value="Term 2">Term 2</option>
                 <option value="Term 3">Term 3</option>
             </select>
-            <button class="btn" style="background-color: var(--primary-color); color: var(--text-primary);">Filter</button>
-        </div>
-    </form>
+            <button class="action-btn" type="submit">Filter</button>
+        </form>
 
-    <div id="def" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; margin: 0 auto; justify-content: center;">
-        {% for subject in student.mysubjects.name.all %}
-        <a href="{% url 'students-exam-profile' student.adm_no %}" class="text-decoration-none">
-            <div class="subject-chart-card">
-                <h6 class="text-center mb-3">{{ subject.name }}</h6>
+        <div class="grid-layout">
+            {% for subject in student.mysubjects.name.all %}
+            <div class="card">
+                <h4>{{ subject.name }}</h4>
                 <div class="chart-container">
                     <canvas id="chart-{{ forloop.counter }}"></canvas>
                 </div>
             </div>
-        </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr class="section-divider">
+    <div class="section-header">
+        <h2>E-Learning Progress</h2>
+        <div class="title-underline"></div>
+    </div>
+    <div class="progress-section" style="max-width: 900px; width: 90%; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>E-Learning Progress</h3>
+            <a href="{% url 'task-view-select' student.adm_no student.academicprofile.current_class.grade %}" class="action-btn">
+                View All
+            </a>
+        </div>
+        <select class="form-select" style="margin: 1rem 0;">
+            <option value="" selected>Select Grade</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+
+        {% for subject in student.mysubjects.name.all %}
+        <div style="margin: 1rem 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h5>{{ subject.name }}</h5>
+                <span>{% with student|subject_progress:subject.id as progressive %}{{ progressive }}%{% endwith %}</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar-fill" {% with student|subject_progress:subject.id as progressive %}
+                    style="width: {{ progressive }}%; background-color: {% if progressive < 50 %}var(--danger-color){% else %}var(--primary-color){% endif %};"
+                {% endwith %}></div>
+            </div>
+        </div>
         {% endfor %}
     </div>
 </div>
 
 <script>
-// Wait for DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function() {
     {% for subject in student.mysubjects.name.all %}
         var openerScore = {% get_subject_score student.adm_no grade subject.id term 'OPENER' %};
@@ -544,9 +521,9 @@ document.addEventListener("DOMContentLoaded", function() {
                             endtermScore || 0
                         ],
                         backgroundColor: [
-                            'rgba(99, 102, 241, 0.5)',  // Primary color
-                            'rgba(79, 70, 229, 0.5)',   // Secondary color
-                            'rgba(129, 140, 248, 0.5)'  // Accent color
+                            'rgba(99, 102, 241, 0.5)',
+                            'rgba(79, 70, 229, 0.5)',
+                            'rgba(129, 140, 248, 0.5)'
                         ],
                         borderColor: [
                             'rgba(99, 102, 241, 1)',
@@ -611,37 +588,5 @@ document.addEventListener("DOMContentLoaded", function() {
     {% endfor %}
 });
 </script>
-
-<div style="width: 99%;margin: 150px auto 0 auto;background-color: var(--card-bg);color: var(--text-primary);position: relative;"><br><br>
-    <h5 style="padding-left: 30px;" class="text-center">E-Learning, Assignments & Analytics</h5><br><br>
-    
-    <div style="gap: 10px; width: 100%; margin: 0 auto; justify-content: center;position: relative;">
-        <div style="padding: 30px;background-color: var(--darker-bg);color: var(--text-primary);width: 90%;max-width: 800px;margin: 0 auto;position: relative;">
-            <a class="btn" style="position: absolute;top: 10px;right: 30px;background-color: var(--card-bg);color: var(--text-primary);" href="{% url 'task-view-select' student.adm_no student.academicprofile.current_class.grade %}">View All</a>
-            <h6>E-Learning Progress</h6>
-            <select class="form-select" aria-label="Default select example">
-                <option value="" selected>Select Grade</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-              </select><br><br>
-            {% for subject in student.mysubjects.name.all %}
-            <h6>{{ subject.name }}</h6>
-            
-            <div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar" {% with student|subject_progress:subject.id as progressive  %}
-                {% if progressive < 50 %}
-                  style="width: {{ progressive }}%;background-color:var(--danger-color)"
-                {% else %}
-                  style="width: {{ progressive }}%;background-color: var(--primary-color);color:var(--text-primary);"
-                {% endif %}
-                  aria-valuenow="63" aria-valuemin="0" aria-valuemax="100">
-                  {{ progressive }}%
-              {% endwith %}</div>
-            </div><br>
-            {% endfor %}
-        </div>
-    </div>
-</div>
 
 {% endblock %}
