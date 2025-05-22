@@ -23,6 +23,7 @@
 
     body {
         background-color: var(--dark-bg);
+        padding-top: 70px; /* Add space for fixed navbar */
     }
 
     .main-fr {
@@ -213,6 +214,10 @@
             margin: 0;
             padding: 0;
         }
+
+        body {
+            padding-top: 60px; /* Slightly less padding for mobile */
+        }
     }
 
     @media screen and (max-width: 480px) {
@@ -229,6 +234,10 @@
         .main-fr .table td {
             padding: 0.5rem;
             font-size: 0.875rem;
+        }
+
+        body {
+            padding-top: 55px; /* Even less padding for smaller devices */
         }
     }
 
@@ -335,9 +344,14 @@
             font-size: 0.75rem;
         }
     }
+
+    .page-container {
+        padding-top: 1rem;
+        margin-top: 0;
+    }
 </style>
 
-<div style="background-color:var(--card-bg); margin-top: -9px;"><br><br>
+<div class="page-container" style="background-color:var(--card-bg);">
     {% if user.role == 'Guardian' %}
     <div class="action-buttons">
         <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}">
@@ -357,82 +371,82 @@
         {% endif %}
     </div>
     {% endif %}
-<div class="main-fr">
-    <div style="background-color: var(--card-bg);border-radius: 10px;float: left;padding: 40px;">
-        <h5 style="color: var(--text-primary);">Personal Info</h5><br><br>
-        <div style="display: grid;grid-template-columns: 40% 60%;">
-            <img style="width: 100px; height: 100px;border-radius: 5%;" src="{% static 'Users/child.jpg' %}">
-        <div><h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
-            <h6 style="color: var(--text-secondary);">{{ student.adm_no }}</h6>
-            <h6 style="color: var(--text-secondary);">{{ student.studentprofile.gender }}</h6>
-            <h6 style="color: var(--primary-color);">{{ student.school }}</h6>
-            <h6 style="color: var(--text-secondary);">Grade {{ student.academicprofile.current_class.grade|title }}  {{ student.academicprofile.current_class|title }}</h6></div>
-            
-        </div><br><br>
-        <div style="background-color: var(--darker-bg);border-radius: 20px;padding: 1rem;">
-            <div class="attendance-days">
-                {% for day in days %}
-                    {% with student|get_attendance:day.date as attendance %}
-                        <div class="day-box {% if attendance == 'PRESENT' %}day-present{% elif attendance == 'ABSENT' %}day-absent{% else %}day-na{% endif %}">
-                            {{ day.day }}
-                        </div>
-                    {% endwith %}
+    <div class="main-fr">
+        <div style="background-color: var(--card-bg);border-radius: 10px;float: left;padding: 40px;">
+            <h5 style="color: var(--text-primary);">Personal Info</h5><br><br>
+            <div style="display: grid;grid-template-columns: 40% 60%;">
+                <img style="width: 100px; height: 100px;border-radius: 5%;" src="{% static 'Users/child.jpg' %}">
+            <div><h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
+                <h6 style="color: var(--text-secondary);">{{ student.adm_no }}</h6>
+                <h6 style="color: var(--text-secondary);">{{ student.studentprofile.gender }}</h6>
+                <h6 style="color: var(--primary-color);">{{ student.school }}</h6>
+                <h6 style="color: var(--text-secondary);">Grade {{ student.academicprofile.current_class.grade|title }}  {{ student.academicprofile.current_class|title }}</h6></div>
+                
+            </div><br><br>
+            <div style="background-color: var(--darker-bg);border-radius: 20px;padding: 1rem;">
+                <div class="attendance-days">
+                    {% for day in days %}
+                        {% with student|get_attendance:day.date as attendance %}
+                            <div class="day-box {% if attendance == 'PRESENT' %}day-present{% elif attendance == 'ABSENT' %}day-absent{% else %}day-na{% endif %}">
+                                {{ day.day }}
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div style="background-color: var(--card-bg);border-radius: 10px;padding: 30px;">
+            <h5 style="color: var(--text-primary);">My Subjects</h5>
+            <br><br><h6 style="color: var(--text-primary);">Selected Subjects</h6>
+            <div style="display: flex;flex-wrap: wrap;gap: 10px;">
+            {% if mysubjects %}
+            {% for subject in mysubjects %}
+                <div style="background-color: var(--darker-bg);color: var(--text-primary);padding: 5px;border-radius: 5px;">
+                    <small><i class="bi bi-check"></i>{{ subject }}</small>
+                </div>
+                {% endfor %}
+            {% else %}
+                <a href="{% url 'student-subject-select' student.adm_no %}"><h6 class="text-center" style="color: var(--danger-color);justify-content: center;"><i class="bi bi-info">You have not selected any subjects! </i></h6></a>
+            {% endif %}
+            </div><br><hr style="border-color: rgba(255, 255, 255, 0.1);">
+            <br><br>
+            {% if mysubjects %}
+            <h6 style="color: var(--danger-color);">ForeGone</h6>
+            <div style="display: flex;flex-wrap: wrap;gap: 10px;">
+            {% for subject in foregone %}
+                <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
+                    <small><i class="bi bi-x"></i>{{ subject }}</small>
+                </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <h6 style="color: var(--text-primary);">Available Subjects</h6>
+            <div style="display: flex;flex-wrap: wrap;gap: 10px;">
+            {% for subject in foregone %}
+                <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
+                    <small><i class="bi bi-x"></i>{{ subject }}</small>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div style="background-color: var(--card-bg); border-radius: 10px; padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <h5 style="color: var(--text-primary);">Fees & Discipline</h5>
+            <h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
+            <br><br>
+            <a href="{% url 'student-fee-profile' student.adm_no %}">
+                <div class="status-button {% if student.studentsfeeaccount.balance < 0 %}fee-positive{% else %}fee-negative{% endif %}">
+                    <h5>{% if student.studentsfeeaccount.balance < 0 %}Fee Balance - {{ student.studentsfeeaccount.balance|title }}{% else %}Fee Overpayment - {{ student.studentsfeeaccount.balance|title }}{% endif %}</h5>
+                </div>
+            </a><br><br>
+            <a href="{% url 'students-discipline' student.adm_no %}">
+                <div class="status-button discipline-score">
+                    <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: var(--primary-color);">100</strong></h5>
+                </div>
+            </a>
         </div>
     </div>
-    <div style="background-color: var(--card-bg);border-radius: 10px;padding: 30px;">
-        <h5 style="color: var(--text-primary);">My Subjects</h5>
-        <br><br><h6 style="color: var(--text-primary);">Selected Subjects</h6>
-        <div style="display: flex;flex-wrap: wrap;gap: 10px;">
-        {% if mysubjects %}
-        {% for subject in mysubjects %}
-            <div style="background-color: var(--darker-bg);color: var(--text-primary);padding: 5px;border-radius: 5px;">
-                <small><i class="bi bi-check"></i>{{ subject }}</small>
-            </div>
-            {% endfor %}
-        {% else %}
-            <a href="{% url 'student-subject-select' student.adm_no %}"><h6 class="text-center" style="color: var(--danger-color);justify-content: center;"><i class="bi bi-info">You have not selected any subjects! </i></h6></a>
-        {% endif %}
-        </div><br><hr style="border-color: rgba(255, 255, 255, 0.1);">
-        <br><br>
-        {% if mysubjects %}
-        <h6 style="color: var(--danger-color);">ForeGone</h6>
-        <div style="display: flex;flex-wrap: wrap;gap: 10px;">
-        {% for subject in foregone %}
-            <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
-                <small><i class="bi bi-x"></i>{{ subject }}</small>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <h6 style="color: var(--text-primary);">Available Subjects</h6>
-        <div style="display: flex;flex-wrap: wrap;gap: 10px;">
-        {% for subject in foregone %}
-            <div style="background-color: var(--darker-bg);color: var(--text-secondary);padding: 5px;border-radius: 5px;">
-                <small><i class="bi bi-x"></i>{{ subject }}</small>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    <div style="background-color: var(--card-bg); border-radius: 10px; padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center;">
-        <h5 style="color: var(--text-primary);">Fees & Discipline</h5>
-        <h6 style="color: var(--text-primary);">{{ student.studentprofile.get_names|title }}</h6>
-        <br><br>
-        <a href="{% url 'student-fee-profile' student.adm_no %}">
-            <div class="status-button {% if student.studentsfeeaccount.balance < 0 %}fee-positive{% else %}fee-negative{% endif %}">
-                <h5>{% if student.studentsfeeaccount.balance < 0 %}Fee Balance - {{ student.studentsfeeaccount.balance|title }}{% else %}Fee Overpayment - {{ student.studentsfeeaccount.balance|title }}{% endif %}</h5>
-            </div>
-        </a><br><br>
-        <a href="{% url 'students-discipline' student.adm_no %}">
-            <div class="status-button discipline-score">
-                <h5>Discipline - {{ student.studentdisciplinescore.points|title }} | <strong style="font-weight: bolder;color: var(--primary-color);">100</strong></h5>
-            </div>
-        </a>
-    </div>
-</div>
-<br><br>
+    <br><br>
 </div>
 
 <div class="guardian-card">
