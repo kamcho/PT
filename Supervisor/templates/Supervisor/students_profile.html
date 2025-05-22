@@ -309,15 +309,9 @@
         <a href="{% url 'ask-ai' student.adm_no %}" class="action-btn">
             <i class="bi bi-robot"></i>AI Assistant
         </a>
-        {% if student.academicprofile.current_class %}
-            {% with class_tests=student.academicprofile.current_class.classtest_set.all %}
-                {% if class_tests %}
-                    <a href="{% url 'assignments' student.adm_no %}" class="action-btn">
-                        <i class="bi bi-journal-text"></i>Assignments
-                    </a>
-                {% endif %}
-            {% endwith %}
-        {% endif %}
+        <a href="{% url 'assignments' student.adm_no %}" class="action-btn">
+            <i class="bi bi-journal-text"></i>Assignments
+        </a>
     </div>
     {% endif %}
 
@@ -351,9 +345,9 @@
             <div style="margin-top: 1rem;">
                 {% if mysubjects %}
                     {% for subject in mysubjects %}
-                        <span class="subject-tag">
+                        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}?subject={{ subject.id }}" class="subject-tag" style="text-decoration: none;">
                             <i class="bi bi-check"></i>{{ subject }}
-                        </span>
+                        </a>
                     {% endfor %}
                 {% else %}
                     <a href="{% url 'student-subject-select' student.adm_no %}" style="color: var(--danger-color);">
