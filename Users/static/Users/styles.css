@@ -716,7 +716,7 @@ border-radius:10px ;
 
 @media (max-width: 991.98px) {
   .main-body {
-    padding-top: 86px; /* Slightly more space on mobile */
+    padding-top: 66px; /* Slightly more space on mobile */
   }
 }
 /* FOR HOME PAGE */
