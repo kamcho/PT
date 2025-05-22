@@ -235,21 +235,83 @@
     .main-fr h4 {
         color: var(--accent-color);
     }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        background-color: var(--primary-color);
+        color: var(--text-primary);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 15px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-btn i {
+        font-size: 1.1rem;
+    }
+
+    @media screen and (max-width: 768px) {
+        .action-buttons {
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .action-btn {
+            width: 100%;
+            justify-content: center;
+            font-size: 0.9rem;
+            padding: 0.75rem 1rem;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .action-buttons {
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            font-size: 0.85rem;
+            padding: 0.6rem 0.75rem;
+        }
+    }
 </style>
 
 <div style="background-color:var(--card-bg); margin-top: -9px;"><br><br>
     {% if user.role == 'Guardian' %}
-    <div style="justify-content: end;display: flex;gap: 30px;padding-right: 70px;">
-        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}"><button style="background-color: var(--primary-color);color: var(--text-primary);padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-stars"> </i>Online Exams</button></a>
-        <a href="{% url 'ask-ai' student.adm_no %}"> <button style="background-color: var(--secondary-color);color: var(--text-primary);padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-robot"> </i>AI Assistant</button></a>
+    <div class="action-buttons">
+        <a href="{% url 'learn' student.adm_no student.academicprofile.current_class.grade %}">
+            <button class="action-btn"><i class="bi bi-stars"></i>Online Exams</button>
+        </a>
+        <a href="{% url 'ask-ai' student.adm_no %}">
+            <button class="action-btn"><i class="bi bi-robot"></i>AI Assistant</button>
+        </a>
         {% if student.academicprofile.current_class %}
             {% with class_tests=student.academicprofile.current_class.classtest_set.all %}
                 {% if class_tests %}
-                    <a href="{% url 'assignments' student.adm_no %}"><button style="background-color: var(--accent-color);color: var(--text-primary);padding: 10px;border: none;border-radius: 15px;font-size: 18px;"><i class="bi bi-journal-text"> </i>Assignments</button></a>
+                    <a href="{% url 'assignments' student.adm_no %}">
+                        <button class="action-btn"><i class="bi bi-journal-text"></i>Assignments</button>
+                    </a>
                 {% endif %}
             {% endwith %}
         {% endif %}
-    </div><br>
+    </div>
     {% endif %}
 <div class="main-fr">
     <div style="background-color: var(--card-bg);border-radius: 10px;float: left;padding: 40px;">
